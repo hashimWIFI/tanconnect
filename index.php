@@ -217,7 +217,7 @@
             Umechagua kifurushi:<br> <strong id="summary-bold-text" style="color: #0033a0;">1,000 TZS || Masaa 24 kuperuzi || Unlimited DATA</strong>
         </div>
    
-<form id="payment-form" action="voucher.php" method="post">
+<form id="payment-form" action="login.php" method="post">
     <!-- Inside your <form id="payment-form"> container block -->
 <input type="hidden" id="selected-amount" name="amount" value="1000" />
 
