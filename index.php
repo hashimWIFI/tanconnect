@@ -30,7 +30,7 @@
         /* Dynamic Provider Button Base Style */
         .btn-submit { background:#0056b3; color:#0056b3; border: none; width: 53%; padding: 14px; font-color: white; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: all 0.3s ease; }
         .btn-submit:hover { filter: brightness(0.9); }
-        .title { color: #64748b; font-size: 16px; margin-bottom: 25px; font-family: arial black; font-weight: bold;}
+        .title { color: #64748b; font-size: 16px; margin-bottom: 10px; font-family: arial black; font-weight: bold;}
         .footer-text { font-size: 12px; color: #64748b; margin-top: 20px; line-height: 1.5; font-weight: bold}
         .logo { font-size: 24px; font-weight: bold; color: #1e3c72; letter-spacing: 1px; margin-bottom: 5px;font-family:Broadway, Helvetica, sans-serif; }
         .logo2 { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; font-size: 10px; font-weight: bold; color: #1e3c72;}
