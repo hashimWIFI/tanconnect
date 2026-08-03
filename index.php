@@ -121,7 +121,8 @@
 <body>
 <div class="container">
 <div class="portal-card">
- <div class="logo" style="font-size: 26px; font-family: Broadway, Helvetica, sans-serif; color: #1e3c72; display: flex; align-items: center; justify-content: center; gap: 2px;">TANConnect<sup><sup><sup style="font-family: Arial, Helvetica, sans-serif; font-size: 10px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup></sup></sup></div>
+
+ <div class="logo" style="font-size: 24px; font-family:Broadway, Helvetica, sans-serif;color:#1e3c72;">TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; vertical-align: super; line-height: 0;"><sup>®</sup></sup></div><div class="logo2">"We bring the world at your finger tips"</div>
 
 
     <div class="subtitle">
