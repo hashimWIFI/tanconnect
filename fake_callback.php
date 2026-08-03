@@ -52,6 +52,38 @@ $updateQuery = "UPDATE wifi_vouchers SET status = 'SUCCESS', purchased_at = NOW(
 
 // FIX: Run the instruction across your MySQL database connector stream!
 $conn->query($updateQuery);
+// ========================================================
+// 📱 DYNAMIC TANCONNECT AUTOMATED SMS DISPATCH ENGINE
+// ========================================================
+
+// 1. Map your notification message values character-for-character
+$customerNumber = $phone; // Captures incoming client telephone digits
+$smsAlertText = "TANConnect: Hongera! Vocha yako ya Wi-Fi ya Tsh $amount ni: $voucherCode. Bonyeza HODI kwenye screen yako na uingize namba hii ili kuanza kuperuzi mtandaoni. Asante!";
+
+// 2. Input your secure Textbee API parameters (Paste your phone values inside these quotes!)
+$textbeeApiKey = "txb_PMXBNXozCwUWzwIJuIoThJQ8V5EzBdOd";
+$textbeeDeviceId = "6a70f731f83fbea6290c1fff";
+
+// 3. Package your string variables into a standardized JSON packet layout
+$smsPacket = json_encode([
+    'deviceId' => $textbeeDeviceId,
+    'to'       => $customerNumber,
+    'message'  => $smsAlertText
+]);
+
+// 4. Fire an invisible high-speed web request straight to the gateway broker broker lane
+$ch = curl_init("https://textbee.site");
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $smsPacket);
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    "Content-Type: application/json",
+    "x-api-key: $textbeeApiKey"
+]);
+
+// Execute securely in the background without slowing down your user interface
+$gatewayResponse = curl_exec($ch);
+curl_close($ch);
 
 if ($conn->query($updateQuery) === TRUE) {
     echo "✓ SUCCESS! Database record updated flawlessly.\n";
