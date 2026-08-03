@@ -20,7 +20,8 @@ echo "✓ Connected to MySQL Database successfully.\n";
 // 2. CORRECT MATCH: Search the database for the most recent PENDING checkout row
 echo "Searching table rows for the most recent 'PENDING' checkout transaction...\n";
 
-$selectQuery = "SELECT id, voucher_code, transaction_id FROM wifi_vouchers WHERE status = 'PENDING' ORDER BY id DESC LIMIT 1";
+// Pulling extra variables: price_tier and assigned_phone so we can use them for our SMS notification text bundle!
+$selectQuery = "SELECT id, voucher_code, transaction_id, price_tier, assigned_phone FROM wifi_vouchers WHERE status = 'PENDING' ORDER BY id DESC LIMIT 1";
 $result = $conn->query($selectQuery);
 
 if (!$result || $result->num_rows == 0) {
@@ -35,6 +36,8 @@ $row = $result->fetch_assoc();
 $allocatedId = $row['id'];
 $voucherCode = $row['voucher_code'];
 $txId        = $row['transaction_id'];
+$amount      = $row['price_tier'];
+$phone       = $row['assigned_phone'];
 
 echo "Found pending transaction reference link ID: " . $txId . "\n";
 echo "Voucher PIN locked inside this row: " . $voucherCode . "\n\n";
@@ -44,23 +47,16 @@ echo "Simulating mock successful wallet PIN validation approval ping from AzamPa
 
 // This updates the status and records the exact current hour, minute, and second into your fixed timestamp column!
 $updateQuery = "UPDATE wifi_vouchers SET status = 'SUCCESS', purchased_at = NOW() WHERE id = $allocatedId";
-// 3. FAKE THE APPROVAL PING: Flip the status cells straight to SUCCESS!
-echo "Simulating mock successful wallet PIN validation approval ping from AzamPay network...\n";
 
-// This updates the status and records the exact current hour, minute, and second into your fixed timestamp column!
-$updateQuery = "UPDATE wifi_vouchers SET status = 'SUCCESS', purchased_at = NOW() WHERE id = $allocatedId";
-
-// FIX: Run the instruction across your MySQL database connector stream!
-$conn->query($updateQuery);
 // ========================================================
 // 📱 DYNAMIC TANCONNECT AUTOMATED SMS DISPATCH ENGINE
 // ========================================================
 
-// 1. Map your notification message values character-for-character
-$customerNumber = $phone; // Captures incoming client telephone digits
-$smsAlertText = "TANConnect: Hongera! Vocha yako ya Wi-Fi ya Tsh $amount ni: $voucherCode. Bonyeza HODI kwenye screen yako na uingize namba hii ili kuanza kuperuzi mtandaoni. Asante!";
+// 1. Map your notification message values character-for-character using valid database values
+$customerNumber = $phone; // Safely captured from the row record metrics
+$smsAlertText = "TANConnect: Hongera! Vocha yako ya Wi-Fi ya Tsh " . number_format($amount) . " ni: $voucherCode. Bonyeza HODI kwenye screen yako na uingize namba hii ili kuanza kuperuzi mtandaoni. Asante!";
 
-// 2. Input your secure Textbee API parameters (Paste your phone values inside these quotes!)
+// 2. Input your secure Textbee API parameters 
 $textbeeApiKey = "txb_PMXBNXozCwUWzwIJuIoThJQ8V5EzBdOd";
 $textbeeDeviceId = "6a70f731f83fbea6290c1fff";
 
@@ -71,7 +67,7 @@ $smsPacket = json_encode([
     'message'  => $smsAlertText
 ]);
 
-// 4. Fire an invisible high-speed web request straight to the gateway broker broker lane
+// 4. FIXED URL: Fire an invisible high-speed web request straight to the gateway broker api endpoint
 $ch = curl_init("https://textbee.site");
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POST, true);
@@ -85,10 +81,13 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, [
 $gatewayResponse = curl_exec($ch);
 curl_close($ch);
 
+// Run the instruction across your MySQL database connector stream!
 if ($conn->query($updateQuery) === TRUE) {
     echo "✓ SUCCESS! Database record updated flawlessly.\n";
     echo "The voucher state has flipped from PENDING to SUCCESS.\n";
     echo "The exact execution time has been logged in your 'purchased_at' column.\n\n";
+    echo "🟢 SMS DISPATCH TASK TRACE:\n";
+    echo "API Sent Signal to Device ID [$textbeeDeviceId] to target text straight to [$customerNumber].\n\n";
     echo "Go look at your active checkout storefront tab—your scrolling marquee will now clear away and reveal your voucher PIN code instantly!";
 } else {
     echo "❌ Error updating database state: " . $conn->error;
