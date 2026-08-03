@@ -33,6 +33,7 @@
         .title { color: #64748b; font-size: 16px; margin-bottom: 25px; font-family: arial black; font-weight: bold;}
         .footer-text { font-size: 12px; color: #64748b; margin-top: 20px; line-height: 1.5; font-weight: bold}
         .logo { font-size: 24px; font-weight: bold; color: #1e3c72; letter-spacing: 1px; margin-bottom: 5px;font-family:Broadway, Helvetica, sans-serif; }
+        .logo2 { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; font-size: 10px; font-weight: bold; color: #1e3c72;}
         .subtitle { color: #64748b; font-size: 14px; margin-bottom: 25px; text-align: left; font-weight: bold;}
         .plan-summary { background: #ebf3fc; border: 1px solid #d0e2fa; border-left: 5px solid #3498db; padding: 14px; border-radius: 4px; margin-bottom: 22px; color: #002e6e; font-size: 13px; }
 
