@@ -59,7 +59,7 @@ $rawPhone = trim($row['assigned_phone']);
 if (substr($rawPhone, 0, 1) === '0') {
     $customerNumber = '+255' . substr($rawPhone, 1);
 } elseif (substr($customerNumber, 0, 3) !== '255' && substr($customerNumber, 0, 4) !== '+255') {
-    $customerNumber = '+255' . $rawPhone;
+    $customerNumber = '+' . $rawPhone;
 } else {
     $customerNumber = $rawPhone;
 }
