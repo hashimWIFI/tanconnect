@@ -52,20 +52,20 @@ $updateQuery = "UPDATE wifi_vouchers SET status = 'SUCCESS', purchased_at = NOW(
 // 📱 DYNAMIC TANCONNECT AUTOMATED SMS DISPATCH ENGINE
 // ========================================================
 
-// 1. Map your notification message values character-for-character using valid database values
-$customerNumber = $phone; // Safely captured from the row record metrics
+// 1. Safely capture incoming number digits and convert to international format (+255)
+$rawPhone = trim($row['assigned_phone']);
+
+// If the customer phone number starts with a local '0', strip it away and append '+255'
+if (substr($rawPhone, 0, 1) === '0') {
+    $customerNumber = '+255' . substr($rawPhone, 1);
+} elseif (substr($customerNumber, 0, 3) !== '255' && substr($customerNumber, 0, 4) !== '+255') {
+    $customerNumber = '+255' . $rawPhone;
+} else {
+    $customerNumber = $rawPhone;
+}
+
 $smsAlertText = "TANConnect: Hongera! Vocha yako ya Wi-Fi ya Tsh " . number_format($amount) . " ni: $voucherCode. Bonyeza HODI kwenye screen yako na uingize namba hii ili kuanza kuperuzi mtandaoni. Asante!";
 
-// 2. Input your secure Textbee API parameters 
-$textbeeApiKey = "txb_PMXBNXozCwUWzwIJuIoThJQ8V5EzBdOd";
-$textbeeDeviceId = "6a70f731f83fbea6290c1fff";
-
-// 3. Package your string variables into a standardized JSON packet layout
-$smsPacket = json_encode([
-    'deviceId' => $textbeeDeviceId,
-    'to'       => $customerNumber,
-    'message'  => $smsAlertText
-]);
 
 // 4. FIXED URL: Fire an invisible high-speed web request straight to the gateway broker api endpoint
 $ch = curl_init("https://textbee.site");
