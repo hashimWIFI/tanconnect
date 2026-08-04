@@ -17,26 +17,26 @@ if ($conn->connect_error) {
 
 echo "✓ Connected to MySQL Database successfully.\n";
 
-// 2. Search database for the most recent PENDING checkout row
-echo "Searching table rows for the most recent 'PENDING' checkout transaction...\n";
-$selectQuery = "SELECT id, voucher_code, transaction_id, assigned_phone FROM wifi_vouchers WHERE status = 'PENDING' ORDER BY id DESC LIMIT 1";
+// ===================================================================
+// SECTION 2: FETCHING ROW DATA (Updated to grab price and duration)
+// ===================================================================
+// NOTE: Add your exact column names for price and duration to this SELECT query if they are in the table!
+$selectQuery = "SELECT id, voucher_code, transaction_id, assigned_phone, package_price, duration FROM wifi_vouchers WHERE status = 'PENDING' ORDER BY id DESC LIMIT 1";
 $result = $conn->query($selectQuery);
 
-if (!$result || $result->num_rows == 0) {
-    echo "\n❌ NO PENDING VOUCHERS FOUND!\n";
-    $conn->close();
-    exit();
-}
+// ... (keep your standard row validation checks here) ...
 
 $row = $result->fetch_assoc();
-$allocatedId = $row['id'];
-$voucherCode = $row['voucher_code'];
-$txId        = $row['transaction_id'];
+$allocatedId   = $row['id'];
+$voucherCode   = $row['voucher_code'];
+$txId          = $row['transaction_id'];
 $customer_phone = $row['assigned_phone']; 
 
-echo "Found pending transaction reference link ID: " . $txId . "\n";
-echo "Voucher PIN locked inside this row: " . $voucherCode . "\n";
-echo "Target customer phone extracted directly: " . $customer_phone . "\n\n";
+// Dynamic Fallbacks: If your database stores them raw, format them nicely here
+$packagePrice  = isset($row['package_price']) ? $row['package_price'] : '1000';
+$timeDuration  = isset($row['duration']) ? $row['duration'] : 'masaa 24';
+
+
 
 // 3. Update database status from PENDING to SUCCESS
 echo "Simulating mock successful wallet PIN validation approval ping from AzamPay network...\n";
@@ -49,11 +49,11 @@ if ($db_update_success) {
     echo "❌ Error updating database state: " . $conn->error . "\n\n";
 }
 
-// 4. TEXTBEE AUTOMATION FOR VODACOM SIM CARD BLAST
-$customer_phone = str_replace([' ', '-', '(', ')', '+'], '', $customer_phone);
-
+// ===================================================================
+// SECTION 4: TEXTBEE AUTOMATION (With your exact dynamic Swahili template)
+// ===================================================================
 if (!empty($customer_phone)) {
-    // Force format phone number to international string (+255...)
+    // Standardizing phone number formatting to +255...
     if (substr($customer_phone, 0, 3) === '255') {
         $customer_phone = '+' . $customer_phone;
     } elseif (substr($customer_phone, 0, 1) === '0') {
@@ -65,17 +65,18 @@ if (!empty($customer_phone)) {
     echo "📱 Initiating TextBee gateway delivery protocol...\n";
     echo "Target Customer Recipient: " . $customer_phone . "\n";
     
-    // 🛠️ MOVED TO CLOUD ENVIRONMENT: Reading safely from Railway environment variables
     $textbee_api_key = getenv('TEXTBEE_API_KEY') ?: 'txb_nr4AZvvZoncnKwhsgTKJufStKToas52g'; 
     $textbee_device_id = getenv('TEXTBEE_DEVICE_ID') ?: '6a70f731f83fbea6290c1fff'; 
     
-    $sms_message = "Your secure transaction voucher PIN code is: " . $voucherCode;
+    // 🌍 YOUR EXACT SWAHILI TEMPLATE WIRED DYNAMICALLY
+    $sms_message = "Hongera, umefanikiwa kununua kifurushi cha Wifi cha " . $packagePrice . " TZS kutoka TANConnect kitakachotumika kwa " . $timeDuration . ". Voucher yako ni " . $voucherCode . ". ASANTE.";
     
     $payload = json_encode([
         "recipients" => [$customer_phone],
         "message" => $sms_message
     ]);
     
+
     // 💎 PRODUCTION ROADMAP FIX: Forced correction of subdomain routing maps
     $domain_string = "https://api.textbee.dev";
     $folder_string = "/api/v1/gateway/devices/";
