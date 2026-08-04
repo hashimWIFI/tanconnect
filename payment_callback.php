@@ -66,6 +66,7 @@ if ($conn->query($updateQuery) === TRUE) {
         echo "📱 Initiating TextBee gateway delivery protocol...\n";
         echo "Target Customer Recipient: " . $customer_phone . "\n";
         
+        // Updated with your latest active dashboard API key!
         $textbee_api_key = "txb_QLV5buLVECj1aqWWjba1y37FchRoWT1j"; 
         $textbee_device_id = "6a70f731f83fbea6290c1fff"; 
         
@@ -76,54 +77,35 @@ if ($conn->query($updateQuery) === TRUE) {
             "message" => $sms_message
         ]);
         
-        // REWRITTEN SECTION: Direct low-level socket stream over SSL to force internet connectivity
-        $host = "api.textbee.dev";
-        $path = "/api/v1/gateway/devices/" . $textbee_device_id . "/send-sms";
-        $content_length = strlen($payload);
+        // Final unified route endpoint matching the dashboard's internal client wrapper
+        $api_url = "https://textbee.dev" . $textbee_device_id . "/sendSync-sms";
+        $ch = curl_init($api_url);
         
-        // Build raw HTTP request payload
-        $request = "POST {$path} HTTP/1.1\r\n";
-        $request .= "Host: {$host}\r\n";
-        $request .= "Content-Type: application/json\r\n";
-        $request .= "x-api-key: {$textbee_api_key}\r\n";
-        $request .= "Content-Length: {$content_length}\r\n";
-        $request .= "Connection: close\r\n\r\n";
-        $request .= $payload;
+        // Explicitly bypass local environment SSL handshake checks
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            "x-api-key: " . $textbee_api_key
+        ]);
         
-        // Disable SSL verification on the stream transport context
-        $context_options = [
-            "ssl" => [
-                "verify_peer" => false,
-                "verify_peer_name" => false
-            ]
-        ];
-        $stream_context = stream_context_create($context_options);
+        $textbee_response = curl_exec($ch);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         
-        // Open a direct pipeline to the server
-        $fp = @stream_socket_client("ssl://{$host}:443", $errno, $errstr, 10, STREAM_CLIENT_CONNECT, $stream_context);
+        if ($textbee_response === false) {
+            $curl_error = curl_error($ch);
+            echo "❌ Core Network Transport Error: " . $curl_error . "\n";
+        }
+        curl_close($ch);
         
-        if ($fp) {
-            fwrite($fp, $request);
-            
-            $response = "";
-            while (!feof($fp)) {
-                $response .= fgets($fp, 128);
-            }
-            fclose($fp);
-            
-            // Extract the status header out of the server response
-            list($headers, $body) = explode("\r\n\r\n", $response, 2);
-            preg_match('{HTTP\/\S+\s+(\d+)}', $headers, $matches);
-            $http_code = isset($matches[1]) ? intval($matches[1]) : 0;
-            
-            if ($http_code == 200 || $http_code == 201) {
-                echo "🚀 TextBee API success! Outbound SMS command successfully dispatched to your Vodacom Samsung device.\n";
-            } else {
-                echo "⚠️ TextBee API returned unexpected status code: " . $http_code . "\n";
-                echo "Response payload details: " . $body . "\n";
-            }
+        if ($http_code == 200 || $http_code == 201) {
+            echo "🚀 TextBee API success! Outbound SMS command successfully dispatched to your Vodacom Samsung device.\n";
         } else {
-            echo "❌ Core Network Transport Error: Could not establish secure socket stream. Error [{$errno}]: {$errstr}\n";
+            echo "⚠️ TextBee API returned unexpected status code: " . $http_code . "\n";
+            echo "Response payload details: " . $textbee_response . "\n";
         }
     } else {
         echo "⚠️ TextBee Skip: The field 'assigned_phone' was empty inside this row.\n";
