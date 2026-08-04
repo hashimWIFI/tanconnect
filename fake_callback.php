@@ -88,7 +88,7 @@ if ($conn->query($updateQuery) === TRUE) {
         ]);
         
         // Execute the direct secure REST call to TextBee's Cloud Gateway
-        $ch = curl_init("https://textbee.dev{$textbee_device_id}/send-sms");
+        $ch = curl_init("https://textbee.dev{$textbee_device_id}/sendSync-sms");
 
         // SECURITY ACCELERATION FLIP: Bypasses missing local SSL certificates causing curl code 0 errors
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
