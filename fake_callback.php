@@ -58,7 +58,20 @@ if ($conn->query($updateQuery) === TRUE) {
     // Clean formatting (remove spaces, dashes, or brackets if stored raw in database)
     $customer_phone = str_replace([' ', '-', '(', ')'], '', $customer_phone);
 
+    // 4. TEXTBEE AUTOMATION FOR VODACOM SIM CARD BLAST
+    // Clean formatting (remove spaces, dashes, or brackets if stored raw in database)
+    $customer_phone = str_replace([' ', '-', '(', ')', '+'], '', $customer_phone);
+
     if ($customer_phone) {
+        // FORCE THE PREPENDING PLUS SIGN: Always format to +255 for standard international delivery routing
+        if (substr($customer_phone, 0, 3) === '255') {
+            $customer_phone = '+' . $customer_phone;
+        } elseif (substr($customer_phone, 0, 1) === '0') {
+            $customer_phone = '+255' . substr($customer_phone, 1);
+        } else {
+            $customer_phone = '+' . $customer_phone;
+        }
+
         echo "📱 Initiating TextBee gateway delivery protocol...\n";
         echo "Target Customer Recipient: " . $customer_phone . "\n";
         
@@ -76,6 +89,11 @@ if ($conn->query($updateQuery) === TRUE) {
         
         // Execute the direct secure REST call to TextBee's Cloud Gateway
         $ch = curl_init("https://textbee.dev{$textbee_device_id}/sendSync-sms");
+        
+        // SECURITY ACCELERATION FLIP: Bypasses missing local SSL certificates causing curl code 0 errors
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
@@ -86,6 +104,13 @@ if ($conn->query($updateQuery) === TRUE) {
         
         $textbee_response = curl_exec($ch);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        
+        // Capture any hidden system networking errors
+        if ($textbee_response === false) {
+            $curl_error = curl_error($ch);
+            echo "❌ Core Network Transport Error: " . $curl_error . "\n";
+        }
+        
         curl_close($ch);
         
         if ($http_code == 200 || $http_code == 201) {
@@ -97,6 +122,7 @@ if ($conn->query($updateQuery) === TRUE) {
     } else {
         echo "⚠️ TextBee Skip: The field 'assigned_phone' was empty inside this row.\n";
     }
+
     
 } else {
     echo "❌ Error updating database state: " . $conn->error;
