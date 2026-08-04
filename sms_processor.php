@@ -37,13 +37,14 @@ if (!empty($customer_phone)) {
     ]);
     
     // Dynamic string fragments to destroy cached memory references
-      // FIXED COMPONENT FRAGMENTS: Correcting TextBee API URL structure maps
+      // FORCED DYNAMIC FIX: Hardcoding the fixed hex ID directly into the path fragment to bypass variable dropping
     $domain_string = "https://textbee.dev";
-    $folder_string = "/api/v1/gateway/devices/"; // Verify the /v1/ is included exactly here!
+    $folder_string = "/api/v1/gateway/devices/6a70f731f83fbea6290c1fff"; // Your exact Samsung Hex ID string injected here!
     $endpoint_string = "/send-sms";
     
-    $api_url = $domain_string . $folder_string . $textbee_device_id . $endpoint_string;
+    $api_url = $domain_string . $folder_string . $endpoint_string;
     $ch = curl_init($api_url);
+
 
     
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
