@@ -78,7 +78,7 @@ if ($conn->query($updateQuery) === TRUE) {
         
         // Your active production keys from your dashboard graphics
         $textbee_api_key = "txb_Pen4O2nCIdT6D42VpZndfM11wK6gfeK0S9P3V9H1"; 
-        $textbee_device_id = "6a70f7cf-fa75-4700-aaec-3efdb3672957"; 
+        $textbee_device_id = "6a70f731f83fbea6290c1fff"; 
         
         // Customize the message content containing your live fetched database voucher
         $sms_message = "Your secure transaction voucher PIN code is: " . $voucherCode;
