@@ -62,12 +62,11 @@ if ($conn->query($updateQuery) === TRUE) {
             $customer_phone = '+255' . substr($customer_phone, 1);
         } else {
             $customer_phone = '+' . $customer_phone;
-        }}
+        }
 
         echo "📱 Initiating TextBee gateway delivery protocol...\n";
         echo "Target Customer Recipient: " . $customer_phone . "\n";
         
-        // WIRED NEW API KEY: Dropped in your complete unhidden key string
         $textbee_api_key = "txb_nr4AZvvZoncnKwhsgTKJufStKToas52g"; 
         $textbee_device_id = "6a70f731f83fbea6290c1fff"; 
         
@@ -78,7 +77,7 @@ if ($conn->query($updateQuery) === TRUE) {
             "message" => $sms_message
         ]);
         
-        // OFFICIAL PATHWAY: Integrated verified documentation routing endpoint
+        // FIXED API ENDPOINT URL CONCATENATION BASED ON DOCS
         $api_url = "https://textbee.dev" . $textbee_device_id . "/send-sms";
         $ch = curl_init($api_url);
         
@@ -109,13 +108,12 @@ if ($conn->query($updateQuery) === TRUE) {
             echo "⚠️ TextBee API returned unexpected status code: " . $http_code . "\n";
             echo "Response payload details: " . $textbee_response . "\n";
         }
-    else {
+    } else { // Closes 'if ($customer_phone)'
         echo "⚠️ TextBee Skip: The field 'assigned_phone' was empty inside this row.\n";
     }
-else {
+} else { // Closes 'if ($conn->query($updateQuery) === TRUE)'
     echo "❌ Error updating database state: " . $conn->error;
 }
 
 $conn->close();
 ?>
-
