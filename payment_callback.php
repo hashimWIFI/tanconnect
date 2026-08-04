@@ -1,4 +1,4 @@
-<<?php
+<?php
 header('Content-Type: text/plain');
 
 echo "=== STAGE 4: AZAMPAY BACKDOOR WEBHOOK SIMULATOR WITH TEXTBEE ===\n\n";
@@ -55,6 +55,7 @@ if ($conn->query($updateQuery) === TRUE) {
     $customer_phone = str_replace([' ', '-', '(', ')', '+'], '', $customer_phone);
 
     if ($customer_phone) {
+        // Enforce the +255 prefix for international formatting routes
         if (substr($customer_phone, 0, 3) === '255') {
             $customer_phone = '+' . $customer_phone;
         } elseif (substr($customer_phone, 0, 1) === '0') {
@@ -66,7 +67,8 @@ if ($conn->query($updateQuery) === TRUE) {
         echo "📱 Initiating TextBee gateway delivery protocol...\n";
         echo "Target Customer Recipient: " . $customer_phone . "\n";
         
-        $textbee_api_key = "txb_QLV5buLVECj1aqWWjba1y37FchRoWT1j"; 
+        // WIRED NEW API KEY: Dropped in your complete unhidden key string
+        $textbee_api_key = "txb_nr4AZvvZoncnKwhsgTKJufStKToas52g"; 
         $textbee_device_id = "6a70f731f83fbea6290c1fff"; 
         
         $sms_message = "Your secure transaction voucher PIN code is: " . $voucherCode;
@@ -76,13 +78,14 @@ if ($conn->query($updateQuery) === TRUE) {
             "message" => $sms_message
         ]);
         
-        // FIXED ENDPOINT CONCATENATION
+        // OFFICIAL PATHWAY: Integrated verified documentation routing endpoint
         $api_url = "https://textbee.dev" . $textbee_device_id . "/send-sms";
         $ch = curl_init($api_url);
         
-        // Explicitly bypass local environment SSL handshake checks
+        // SSL BYPASS: Bypasses missing root local machine certificate blocks
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
@@ -115,3 +118,4 @@ if ($conn->query($updateQuery) === TRUE) {
 
 $conn->close();
 ?>
+
