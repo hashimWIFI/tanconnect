@@ -20,7 +20,8 @@ echo "✓ Connected to MySQL Database successfully.\n";
 // 2. CORRECT MATCH: Search the database for the most recent PENDING checkout row
 echo "Searching table rows for the most recent 'PENDING' checkout transaction...\n";
 
-$selectQuery = "SELECT id, voucher_code, transaction_id FROM wifi_vouchers WHERE status = 'PENDING' ORDER BY id DESC LIMIT 1";
+// FIXED QUERY: Now explicitly selecting the 'assigned_phone' column from your table layout
+$selectQuery = "SELECT id, voucher_code, transaction_id, assigned_phone FROM wifi_vouchers WHERE status = 'PENDING' ORDER BY id DESC LIMIT 1";
 $result = $conn->query($selectQuery);
 
 if (!$result || $result->num_rows == 0) {
@@ -35,18 +36,11 @@ $row = $result->fetch_assoc();
 $allocatedId = $row['id'];
 $voucherCode = $row['voucher_code'];
 $txId        = $row['transaction_id'];
+$customer_phone = $row['assigned_phone']; // Direct data pull from DB!
 
 echo "Found pending transaction reference link ID: " . $txId . "\n";
-echo "Voucher PIN locked inside this row: " . $voucherCode . "\n\n";
-
-// DYNAMIC EXTRACTION: Safely grab the customer's 10-digit Tigo phone number out of the AzamPay transaction string
-preg_match('/(0\d{9})/', $txId, $matches);
-$customer_phone = isset($matches[1]) ? $matches[1] : null;
-
-if (!$customer_phone) {
-    // If the transaction ID format changed, default back to checking the standard global HTTP form inputs
-    $customer_phone = $_POST['phone'] ?? $_GET['phone'] ?? null;
-}
+echo "Voucher PIN locked inside this row: " . $voucherCode . "\n";
+echo "Target customer phone extracted directly: " . $customer_phone . "\n\n";
 
 // 3. FAKE THE APPROVAL PING: Flip the status cells straight to SUCCESS!
 echo "Simulating mock successful wallet PIN validation approval ping from AzamPay network...\n";
@@ -61,6 +55,9 @@ if ($conn->query($updateQuery) === TRUE) {
     echo "Go look at your active checkout storefront tab—your scrolling marquee will now clear away and reveal your voucher PIN code instantly!\n\n";
     
     // 4. TEXTBEE AUTOMATION FOR VODACOM SIM CARD BLAST
+    // Clean formatting (remove spaces, dashes, or brackets if stored raw in database)
+    $customer_phone = str_replace([' ', '-', '(', ')'], '', $customer_phone);
+
     if ($customer_phone) {
         echo "📱 Initiating TextBee gateway delivery protocol...\n";
         echo "Target Customer Recipient: " . $customer_phone . "\n";
@@ -98,7 +95,7 @@ if ($conn->query($updateQuery) === TRUE) {
             echo "Response payload details: " . $textbee_response . "\n";
         }
     } else {
-        echo "⚠️ TextBee Skip: Could not automatically detect a valid 10-digit mobile phone number inside transaction target text.\n";
+        echo "⚠️ TextBee Skip: The field 'assigned_phone' was empty inside this row.\n";
     }
     
 } else {
@@ -107,4 +104,5 @@ if ($conn->query($updateQuery) === TRUE) {
 
 $conn->close();
 ?>
+
 
