@@ -1,4 +1,4 @@
-<?php
+<<?php
 header('Content-Type: text/plain');
 
 echo "=== STAGE 4: AZAMPAY BACKDOOR WEBHOOK SIMULATOR WITH TEXTBEE ===\n\n";
@@ -66,7 +66,6 @@ if ($conn->query($updateQuery) === TRUE) {
         echo "📱 Initiating TextBee gateway delivery protocol...\n";
         echo "Target Customer Recipient: " . $customer_phone . "\n";
         
-        // Updated with your latest active dashboard API key!
         $textbee_api_key = "txb_QLV5buLVECj1aqWWjba1y37FchRoWT1j"; 
         $textbee_device_id = "6a70f731f83fbea6290c1fff"; 
         
@@ -77,8 +76,8 @@ if ($conn->query($updateQuery) === TRUE) {
             "message" => $sms_message
         ]);
         
-        // Final unified route endpoint matching the dashboard's internal client wrapper
-        $api_url = "https://textbee.dev" . $textbee_device_id . "/sendSync-sms";
+        // FIXED ENDPOINT CONCATENATION
+        $api_url = "https://textbee.dev" . $textbee_device_id . "/send-sms";
         $ch = curl_init($api_url);
         
         // Explicitly bypass local environment SSL handshake checks
