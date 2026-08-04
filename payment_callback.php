@@ -62,7 +62,7 @@ if ($conn->query($updateQuery) === TRUE) {
             $customer_phone = '+255' . substr($customer_phone, 1);
         } else {
             $customer_phone = '+' . $customer_phone;
-        }
+        }}
 
         echo "📱 Initiating TextBee gateway delivery protocol...\n";
         echo "Target Customer Recipient: " . $customer_phone . "\n";
