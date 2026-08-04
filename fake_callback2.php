@@ -70,7 +70,7 @@ if (!empty($customer_phone)) {
     $textbee_api_key = getenv('TEXTBEE_API_KEY') ?: 'txb_nr4AZvvZoncnKwhsgTKJufStKToas52g'; 
     $textbee_device_id = getenv('TEXTBEE_DEVICE_ID') ?: '6a70f731f83fbea6290c1fff'; 
     
-    $sms_message = "Hongera!, umefanikiwa kununua kifushi cha Wi-Fi cha TZS" . $priceTier . "kutoka TANConnect. Voucher yako ni nambari: " . $voucherCode;
+    $sms_message = "Hongera!, umefanikiwa kununua kifushi cha Wi-Fi cha TZS" . $voucherCode . "kutoka TANConnect. Voucher yako ni nambari: " . $voucherCode;
     
     $payload = json_encode([
         "recipients" => [$customer_phone],
