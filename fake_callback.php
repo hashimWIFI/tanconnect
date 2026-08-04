@@ -181,7 +181,7 @@ if ($conn->query($updateQuery) === TRUE) {
         echo "📱 Initiating TextBee gateway delivery protocol...\n";
         echo "Target Customer Recipient: " . $customer_phone . "\n";
         
-        $textbee_api_key = "txb_Pen4O2nCIdT6D42VpZndfM11wK6gfeK0S9P3V9H1"; 
+        $textbee_api_key = "txb_QLV5buLVECj1aqWWjba1y37FchRoWT1j"; 
         $textbee_device_id = "6a70f731f83fbea6290c1fff"; 
         
         $sms_message = "Your secure transaction voucher PIN code is: " . $voucherCode;
