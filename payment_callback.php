@@ -109,10 +109,10 @@ if ($conn->query($updateQuery) === TRUE) {
             echo "⚠️ TextBee API returned unexpected status code: " . $http_code . "\n";
             echo "Response payload details: " . $textbee_response . "\n";
         }
-    } else {
+    else {
         echo "⚠️ TextBee Skip: The field 'assigned_phone' was empty inside this row.\n";
     }
-} else {
+else {
     echo "❌ Error updating database state: " . $conn->error;
 }
 
