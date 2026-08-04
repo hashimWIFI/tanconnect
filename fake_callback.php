@@ -20,7 +20,6 @@ echo "✓ Connected to MySQL Database successfully.\n";
 // 2. CORRECT MATCH: Search the database for the most recent PENDING checkout row
 echo "Searching table rows for the most recent 'PENDING' checkout transaction...\n";
 
-// FIXED QUERY: Now explicitly selecting the 'assigned_phone' column from your table layout
 $selectQuery = "SELECT id, voucher_code, transaction_id, assigned_phone FROM wifi_vouchers WHERE status = 'PENDING' ORDER BY id DESC LIMIT 1";
 $result = $conn->query($selectQuery);
 
@@ -36,7 +35,7 @@ $row = $result->fetch_assoc();
 $allocatedId = $row['id'];
 $voucherCode = $row['voucher_code'];
 $txId        = $row['transaction_id'];
-$customer_phone = $row['assigned_phone']; // Direct data pull from DB!
+$customer_phone = $row['assigned_phone']; 
 
 echo "Found pending transaction reference link ID: " . $txId . "\n";
 echo "Voucher PIN locked inside this row: " . $voucherCode . "\n";
@@ -45,26 +44,18 @@ echo "Target customer phone extracted directly: " . $customer_phone . "\n\n";
 // 3. FAKE THE APPROVAL PING: Flip the status cells straight to SUCCESS!
 echo "Simulating mock successful wallet PIN validation approval ping from AzamPay network...\n";
 
-// This updates the status and records the exact current hour, minute, and second into your fixed timestamp column!
 $updateQuery = "UPDATE wifi_vouchers SET status = 'SUCCESS', purchased_at = NOW() WHERE id = $allocatedId";
 
 if ($conn->query($updateQuery) === TRUE) {
     echo "✓ SUCCESS! Database record updated flawlessly.\n";
     echo "The voucher state has flipped from PENDING to SUCCESS.\n";
     echo "The exact execution time has been logged in your 'purchased_at' column.\n\n";
-    echo "Go look at your active checkout storefront tab—your scrolling marquee will now clear away and reveal your voucher PIN code instantly!\n\n";
     
     // 4. TEXTBEE AUTOMATION FOR VODACOM SIM CARD BLAST
-    // Clean formatting (remove spaces, dashes, or brackets if stored raw in database)
-    $customer_phone = str_replace([' ', '-', '(', ')'], '', $customer_phone);
-
-    // 4. TEXTBEE AUTOMATION FOR VODACOM SIM CARD BLAST
-      // 4. TEXTBEE AUTOMATION FOR VODACOM SIM CARD BLAST
-    // Clean formatting (remove spaces, dashes, or brackets if stored raw in database)
     $customer_phone = str_replace([' ', '-', '(', ')', '+'], '', $customer_phone);
 
     if ($customer_phone) {
-        // FORCE THE PREPENDING PLUS SIGN: Always format to +255 for standard international delivery routing
+        // Enforce the +255 prefix for international formatting routes
         if (substr($customer_phone, 0, 3) === '255') {
             $customer_phone = '+' . $customer_phone;
         } elseif (substr($customer_phone, 0, 1) === '0') {
@@ -76,43 +67,35 @@ if ($conn->query($updateQuery) === TRUE) {
         echo "📱 Initiating TextBee gateway delivery protocol...\n";
         echo "Target Customer Recipient: " . $customer_phone . "\n";
         
-        // Your active production keys from your dashboard graphics
         $textbee_api_key = "txb_Pen4O2nCIdT6D42VpZndfM11wK6gfeK0S9P3V9H1"; 
+        
+        // CONFIRMED ID FROM SCREENSHOT: Your clean 24-character hex ID string
         $textbee_device_id = "6a70f731f83fbea6290c1fff"; 
         
-        // Customize the message content containing your live fetched database voucher
         $sms_message = "Your secure transaction voucher PIN code is: " . $voucherCode;
         
+        // Correct array parameter keys matching the new TextBee API layout structure
         $payload = json_encode([
             "recipients" => [$customer_phone],
             "message" => $sms_message
         ]);
         
-        // FIX: Swapped out sendSync-sms for the standard official send-sms endpoint path
-        $api_url = "https://api.textbee.dev/api/v1/gateway/devices/" . $textbee_device_id . "/send-sms";
+        // Final unified route endpoint matching the dashboard's internal client wrapper
+        $api_url = "https://textbee.dev" . $textbee_device_id . "/send-sms";
         $ch = curl_init($api_url);
         
-        // SECURITY ACCELERATION FLIP: Bypasses missing local SSL certificates causing curl code 0 errors
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'Content-Type: application/json',
-            "x-api-key: {$textbee_api_key}"
+            "x-api-key: " . $textbee_api_key
         ]);
         
         $textbee_response = curl_exec($ch);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        
-        // Capture any hidden system networking errors
-        if ($textbee_response === false) {
-            $curl_error = curl_error($ch);
-            echo "❌ Core Network Transport Error: " . $curl_error . "\n";
-        }
-        
         curl_close($ch);
         
         if ($http_code == 200 || $http_code == 201) {
@@ -124,9 +107,9 @@ if ($conn->query($updateQuery) === TRUE) {
     } else {
         echo "⚠️ TextBee Skip: The field 'assigned_phone' was empty inside this row.\n";
     }
-
+} else {
+    echo "❌ Error updating database state: " . $conn->error;
+}
 
 $conn->close();
 ?>
-
-
