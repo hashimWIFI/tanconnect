@@ -73,3 +73,4 @@ if (!empty($customer_phone)) {
 } else {
     echo "⚠️ TextBee Skip: Customer phone number is missing.\n";
 }
+
