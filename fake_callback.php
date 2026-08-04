@@ -65,7 +65,7 @@ if (!empty($customer_phone)) {
     echo "📱 Initiating TextBee gateway delivery protocol...\n";
     echo "Target Customer Recipient: " . $customer_phone . "\n";
     
-    // 🛠️ MOVED TO CLOUD ENVIRONMENT: Reading safely from Railway variables
+    // 🛠️ MOVED TO CLOUD ENVIRONMENT: Reading safely from Railway environment variables
     $textbee_api_key = getenv('TEXTBEE_API_KEY') ?: 'txb_nr4AZvvZoncnKwhsgTKJufStKToas52g'; 
     $textbee_device_id = getenv('TEXTBEE_DEVICE_ID') ?: '6a70f731f83fbea6290c1fff'; 
     
@@ -76,7 +76,8 @@ if (!empty($customer_phone)) {
         "message" => $sms_message
     ]);
     
-    $domain_string = "https://textbee.dev";
+    // 💎 PRODUCTION ROADMAP FIX: Forced correction of subdomain routing maps
+    $domain_string = "https://api.textbee.dev";
     $folder_string = "/api/v1/gateway/devices/";
     $endpoint_string = "/send-sms";
     
@@ -110,7 +111,6 @@ if (!empty($customer_phone)) {
     echo "📡 TextBee Server HTTP Code: " . $http_code . "\n";
     echo "📝 Response Details: " . $textbee_response . "\n\n";
 
-    
     if ($http_code == 200 || $http_code == 201) {
         echo "🚀 TextBee API success! Outbound SMS command successfully dispatched to your Vodacom Samsung device.\n";
     } else {
