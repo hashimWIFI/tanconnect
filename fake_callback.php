@@ -65,24 +65,30 @@ if (!empty($customer_phone)) {
     echo "📱 Initiating TextBee gateway delivery protocol...\n";
     echo "Target Customer Recipient: " . $customer_phone . "\n";
     
-    // Credentials matching your visual active dashboards
-    $textbee_api_key = "txb_nr4AZvvZoncnKwhsgTKJufStKToas52g"; 
-    $textbee_device_id = "6a70f731f83fbea6290c1fff"; 
+    // 🛠️ MOVED TO CLOUD ENVIRONMENT: Reading safely from Railway variables
+    $textbee_api_key = getenv('TEXTBEE_API_KEY') ?: 'txb_nr4AZvvZoncnKwhsgTKJufStKToas52g'; 
+    $textbee_device_id = getenv('TEXTBEE_DEVICE_ID') ?: '6a70f731f83fbea6290c1fff'; 
+    
     $sms_message = "Your secure transaction voucher PIN code is: " . $voucherCode;
     
-    // Payload architecture matching the exact developer document layout
     $payload = json_encode([
         "recipients" => [$customer_phone],
         "message" => $sms_message
     ]);
     
-    // Correct URL Concatenation from the document screenshot
-    $api_url = "https://textbee.dev" . $textbee_device_id . "/send-sms";
+    $domain_string = "https://textbee.dev";
+    $folder_string = "/api/v1/gateway/devices/";
+    $endpoint_string = "/send-sms";
+    
+    $api_url = $domain_string . $folder_string . $textbee_device_id . $endpoint_string;
     $ch = curl_init($api_url);
     
-    // Explicit bypass configs for server environments
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15); 
+    curl_setopt($ch, CURLOPT_TIMEOUT, 20);        
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'); 
+    
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
@@ -93,10 +99,17 @@ if (!empty($customer_phone)) {
     
     $textbee_response = curl_exec($ch);
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    
+    if ($textbee_response === false) {
+        $curl_error_msg = curl_error($ch);
+        echo "❌ Internal Network Error Details: " . $curl_error_msg . "\n";
+    }
+    
     curl_close($ch);
     
     echo "📡 TextBee Server HTTP Code: " . $http_code . "\n";
     echo "📝 Response Details: " . $textbee_response . "\n\n";
+
     
     if ($http_code == 200 || $http_code == 201) {
         echo "🚀 TextBee API success! Outbound SMS command successfully dispatched to your Vodacom Samsung device.\n";
