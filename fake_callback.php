@@ -59,6 +59,7 @@ if ($conn->query($updateQuery) === TRUE) {
     $customer_phone = str_replace([' ', '-', '(', ')'], '', $customer_phone);
 
     // 4. TEXTBEE AUTOMATION FOR VODACOM SIM CARD BLAST
+      // 4. TEXTBEE AUTOMATION FOR VODACOM SIM CARD BLAST
     // Clean formatting (remove spaces, dashes, or brackets if stored raw in database)
     $customer_phone = str_replace([' ', '-', '(', ')', '+'], '', $customer_phone);
 
@@ -77,7 +78,7 @@ if ($conn->query($updateQuery) === TRUE) {
         
         // Your active production keys from your dashboard graphics
         $textbee_api_key = "txb_Pen4O2nCIdT6D42VpZndfM11wK6gfeK0S9P3V9H1"; 
-        $textbee_device_id = "6a70f731f83fbea6290c1fff"; 
+        $textbee_device_id = "6a70f7cf-fa75-4700-aaec-3efdb3672957"; 
         
         // Customize the message content containing your live fetched database voucher
         $sms_message = "Your secure transaction voucher PIN code is: " . $voucherCode;
@@ -87,9 +88,10 @@ if ($conn->query($updateQuery) === TRUE) {
             "message" => $sms_message
         ]);
         
-        // Execute the direct secure REST call to TextBee's Cloud Gateway
-        $ch = curl_init("https://textbee.dev{$textbee_device_id}/sendSync-sms");
-
+        // FIX: Swapped out sendSync-sms for the standard official send-sms endpoint path
+        $api_url = "https://api.textbee.dev/api/v1/gateway/devices/" . $textbee_device_id . "/send-sms";
+        $ch = curl_init($api_url);
+        
         // SECURITY ACCELERATION FLIP: Bypasses missing local SSL certificates causing curl code 0 errors
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
@@ -123,10 +125,6 @@ if ($conn->query($updateQuery) === TRUE) {
         echo "⚠️ TextBee Skip: The field 'assigned_phone' was empty inside this row.\n";
     }
 
-    
-} else {
-    echo "❌ Error updating database state: " . $conn->error;
-}
 
 $conn->close();
 ?>
