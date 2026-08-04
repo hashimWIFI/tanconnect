@@ -31,6 +31,7 @@ if (!$result || $result->num_rows == 0) {
 $row = $result->fetch_assoc();
 $allocatedId = $row['id'];
 $voucherCode = $row['voucher_code'];
+$priceTier = $row['price_tier'];
 $txId        = $row['transaction_id'];
 $customer_phone = $row['assigned_phone']; 
 
@@ -69,7 +70,7 @@ if (!empty($customer_phone)) {
     $textbee_api_key = getenv('TEXTBEE_API_KEY') ?: 'txb_nr4AZvvZoncnKwhsgTKJufStKToas52g'; 
     $textbee_device_id = getenv('TEXTBEE_DEVICE_ID') ?: '6a70f731f83fbea6290c1fff'; 
     
-    $sms_message = "Your secure transaction voucher PIN code is: " . $voucherCode;
+    $sms_message = "Hongera!, umefanikiwa kununua kifushi cha Wi-Fi cha TZS" . $priceTier . "kutoka TANConnect. Voucher yako ni nambari: " . $voucherCode;
     
     $payload = json_encode([
         "recipients" => [$customer_phone],
