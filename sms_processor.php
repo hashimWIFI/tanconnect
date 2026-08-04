@@ -20,7 +20,7 @@ if (!empty($customer_phone)) {
     echo "📱 Initiating TextBee gateway delivery protocol...\n";
     echo "Target Customer Recipient: " . $customer_phone . "\n";
     
-    // Read cleanly from Railway environment settings
+    // Read cleanly from Railway environment variables
     $textbee_api_key = getenv('TEXTBEE_API_KEY') ?: 'txb_nr4AZvvZoncnKwhsgTKJufStKToas52g'; 
     $textbee_device_id = getenv('TEXTBEE_DEVICE_ID') ?: '6a70f731f83fbea6290c1fff'; 
     
@@ -36,26 +36,23 @@ if (!empty($customer_phone)) {
         "message" => $sms_message
     ]);
     
-    // Dynamic string fragments to destroy cached memory references
-      // FORCED DYNAMIC FIX: Hardcoding the fixed hex ID directly into the path fragment to bypass variable dropping
-    $domain_string = "https://textbee.dev";
-    $folder_string = "/api/v1/gateway/devices/6a70f731f83fbea6290c1fff"; // Your exact Samsung Hex ID string injected here!
-    $endpoint_string = "/send-sms";
-    
-    $api_url = $domain_string . $folder_string . $endpoint_string;
+    // 💎 FIXED STABLE URL: Unified single string as per official textbee quickstart docs
+    $api_url = "https://api.textbee.dev/api/v1/gateway/devices/" . $textbee_device_id . "/send-sms";
     $ch = curl_init($api_url);
-
-
     
+    // Bypass local environment SSL restrictions safely
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15); 
-    curl_setopt($ch, CURLOPT_TIMEOUT, 20);        
-    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'); 
+    
+    // Timeout limits to avoid infinite hanging loops
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10); 
+    curl_setopt($ch, CURLOPT_TIMEOUT, 15);        
     
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+    
+    // Standard system API headers without custom user-agent blocks
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Content-Type: application/json',
         'x-api-key: ' . $textbee_api_key
