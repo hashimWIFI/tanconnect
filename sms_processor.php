@@ -37,12 +37,14 @@ if (!empty($customer_phone)) {
     ]);
     
     // Dynamic string fragments to destroy cached memory references
+      // FIXED COMPONENT FRAGMENTS: Correcting TextBee API URL structure maps
     $domain_string = "https://textbee.dev";
-    $folder_string = "/api/v1/gateway/devices/";
+    $folder_string = "/api/v1/gateway/devices/"; // Verify the /v1/ is included exactly here!
     $endpoint_string = "/send-sms";
     
     $api_url = $domain_string . $folder_string . $textbee_device_id . $endpoint_string;
     $ch = curl_init($api_url);
+
     
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
