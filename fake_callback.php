@@ -78,9 +78,14 @@ if ($conn->query($updateQuery) === TRUE) {
         ]);
         
         // FIXED API ENDPOINT URL CONCATENATION BASED ON DOCS
-        $api_url = "https://textbee.dev" . $textbee_device_id . "/sendSync-sms";
+    
+$base_url = "https://textbee.dev";
+$endpoint = "/send-sms";
 
-        $ch = curl_init($api_url);
+$api_url = $base_url . $textbee_device_id . $endpoint;
+
+
+        
         
         // SSL BYPASS: Bypasses missing root local machine certificate blocks
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
