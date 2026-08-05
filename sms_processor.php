@@ -25,7 +25,7 @@ if (!empty($customer_phone)) {
     $textbee_device_id = getenv('TEXTBEE_DEVICE_ID') ?: '6a70f731f83fbea6290c1fff'; 
     
     // Fallbacks to default values if package metadata isn't logged in row
-    $packagePrice = isset($packagePrice) ? $packagePrice : '1000';
+    $packagePrice = isset($price_tier) ? $packagePrice : '1000';
     $timeDuration = isset($timeDuration) ? $timeDuration : 'masaa 24';
 
     // 🌍 YOUR EXACT SWAHILI TEMPLATE
