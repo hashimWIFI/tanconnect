@@ -25,8 +25,25 @@ if (!empty($customer_phone)) {
     $textbee_device_id = getenv('TEXTBEE_DEVICE_ID') ?: '6a70f731f83fbea6290c1fff'; 
     
     // Fallbacks to default values if package metadata isn't logged in row
-    $packagePrice = isset($packagePrice) ? $packagePrice : '1000';
-    $timeDuration = isset($timeDuration) ? $timeDuration : 'masaa 24';
+    // 1. Grab your real database column name
+$packagePrice = isset($row['price_tier']) ? $row['price_tier'] : '1000';
+
+// 2. SMART AUTOMATION: Calculate duration automatically based on the price paid
+switch ($packagePrice) {
+    case '500':
+        $timeDuration = 'masaa 12'; // 500 TZS package duration
+        break;
+    case '1000':
+        $timeDuration = 'masaa 24'; // 1000 TZS package duration
+        break;
+    case '5000':
+        $timeDuration = 'siku 7';    // Example: 5000 TZS for 7 days
+        break;
+    default:
+        $timeDuration = 'masaa 24'; // Standard fallback if price doesn't match
+        break;
+}
+
 
     // 🌍 YOUR EXACT SWAHILI TEMPLATE
     $sms_message = "Hongera, umefanikiwa kununua kifurushi cha Wifi cha " . $packagePrice . " TZS kutoka TANConnect kitakachotumika kwa " . $timeDuration . ". Voucher yako ni " . $voucherCode . ". ASANTE.";
