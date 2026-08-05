@@ -35,7 +35,7 @@ $txId        = $row['transaction_id'];
 $customer_phone = $row['assigned_phone']; 
 
 // NOTE: If you add price & duration columns to your schema table, map them safely here
-$packagePrice = '1000'; 
+$packagePrice = $row['price_tier'];
 $timeDuration = 'masaa 24';
 
 echo "Found pending transaction reference link ID: " . $txId . "\n";
