@@ -29,7 +29,7 @@ if (!empty($customer_phone)) {
     $timeDuration = isset($timeDuration) ? $timeDuration : 'masaa 24';
 
     // 🌍 YOUR EXACT SWAHILI TEMPLATE
-    $sms_message = "Hongera, umefanikiwa kununua kifurushi cha Wifi cha " . $packagePrice . " TZS kutoka TANConnect kitakachotumika kwa " . $timeDuration . ". Voucher yako ni " . $voucherCode . ". ASANTE.";
+    $sms_message = "Hongera, umefanikiwa kununua kifurushi cha Wifi cha " . $price_tier . " TZS kutoka TANConnect kitakachotumika kwa " . $timeDuration . ". Voucher yako ni " . $voucherCode . ". ASANTE.";
     
     $payload = json_encode([
         "recipients" => [$customer_phone],
