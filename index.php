@@ -19,7 +19,7 @@
 
         
         /* Modal Popup Styles */
-.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 63%; background: rgba(15, 23, 42, 0.6); z-index: 99999; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 61%; background: rgba(15, 23, 42, 0.6); z-index: 99999; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
         .modal-card { background: white; max-width: 380 px; height: 55%; margin: 15% auto; padding: 20px; border-radius: 16px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); text-align: left; position: relative; }
         .close-btn { position: absolute; top: 10px; right: 15px; font-size: 32px; cursor: pointer; color: #7f8c8d; font-weight: bold; }
         .close-btn:hover { color: #34495e; }
