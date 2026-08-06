@@ -6,7 +6,7 @@
     <title>TANConnect - Karibu kwenye Wi-Fi</title>
     <style>
       body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; text-align: center; color: #2c3e50; }
-        .container { background: white; max-width: 1000px; height: 110%; margin: 15% auto; padding: 20px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: left; position: relative; }
+        .container { position: fixed; top: 0; left: 0; background: white; max-width: 1000px; height: 110%; margin: 15% auto; padding: 20px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: left; position: relative; }
 
 
         h1 { color: #3498db; margin-bottom: 5px; }
