@@ -153,11 +153,27 @@
             <div class="card-price">2,000 TZS</div>
             <div class="card-time">Siku 3</div>
             <div class="card-data">Unlimited DATA</div>
+    </div>
+<div class="package-card" onclick="document.getElementById('selected-amount').value='3000'; document.getElementById('summary-bold-text').innerHTML='3,000 TZS || Siku 3 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
+            <div class="card-price">3,000 TZS</div>
+            <div class="card-time">Siku 3</div>
+            <div class="card-data">Unlimited DATA</div>
 
         </div>
         <div class="package-card" onclick="document.getElementById('selected-amount').value='5000'; document.getElementById('summary-bold-text').innerHTML='5,000 TZS || Siku 7 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">5,000 TZS</div>
             <div class="card-time">Siku 7</div>
+            <div class="card-data">Unlimited DATA</div>   
+ </div>
+<div class="package-card" onclick="document.getElementById('selected-amount').value='7000'; document.getElementById('summary-bold-text').innerHTML='7,000 TZS || Siku 3 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
+            <div class="card-price">7,000 TZS</div>
+            <div class="card-time">Siku 3</div>
+            <div class="card-data">Unlimited DATA</div>
+
+    </div>
+<div class="package-card" onclick="document.getElementById('selected-amount').value='10000'; document.getElementById('summary-bold-text').innerHTML='10,000 TZS || Siku 3 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
+            <div class="card-price">10,000 TZS</div>
+            <div class="card-time">Siku 3</div>
             <div class="card-data">Unlimited DATA</div>
 
         </div>
@@ -172,34 +188,16 @@
             <div class="card-time">Miezi 2</div>
             <div class="card-data">Unlimited DATA</div>
 
-        </div>
- <div class="package-card" onclick="document.getElementById('selected-amount').value='50000'; document.getElementById('summary-bold-text').innerHTML='50,000 TZS || Miezi 3 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
-            <div class="card-price">50,000 TZS</div>
-            <div class="card-time">Miezi 3</div>
-            <div class="card-data">Unlimited DATA</div>
+     </div>  </div>      
 
-        </div>
-<div class="package-card" onclick="document.getElementById('selected-amount').value='100000'; document.getElementById('summary-bold-text').innerHTML='100,000 TZS || Miezi 6 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
-            <div class="card-price">100,000 TZS</div>
-            <div class="card-time">Miezi 6</div>
-            <div class="card-data">Unlimited DATA</div>
 
-        </div>
-        <div class="package-card" onclick="document.getElementById('selected-amount').value='200000'; document.getElementById('summary-bold-text').innerHTML='200,000 TZS || Mwaka 1 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
-            <div class="card-price">200,000 TZS</div>
-            <div class="card-time">Mwaka 1</div>
-            <div class="card-data">Unlimited DATA</div>
-</div>
-        
-
-    </div>
 <div style="margin: 15px auto; max-width: 450px; background: #ffffff; border-left: 5px solid #0284c7; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; border-radius: 0 8px 8px 0; padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-family: sans-serif;">
     <div style="display: flex; align-items: center; gap: 12px;">
         <span style="font-size: 24px;">💧</span>
         <div>
             <h5 style="margin: 0; color: #1e293b; font-size: 13px; font-weight: bold;">TANConnect Water ATM</h5>
             <p style="margin: 2px 0 0 0; color: #64748b; font-size: 11px; text-align: left;">Pata maji safi na salama yaliyochujwa kwa mitambo ya kisasa ya RO na UV. Nusu lita <b>Tsh 100.</b> lita moja <b>Tsh 200</b>.<br> Tupo mtaa MALUMBA!</p></div>
-
+    </div></div>
 
 <!-- Floating Form Modal Overlay Sheet Container -->
 <div id="payment-modal-overlay" class="modal-overlay">
