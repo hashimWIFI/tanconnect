@@ -9,7 +9,7 @@
         .container { position: fixed; top: 0; left: 0; background: white; max-width: 1000px; height: 110%; padding: 10px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: left; }
         h1 { color: #3498db; margin-bottom: 5px; }
         p { color: #7f8c8d; margin-bottom: 25px; }
-        .package-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 25px; }
+        .package-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 20px; }
         .package-card { border: 2px solid #e2e8f0; border-left: 4px solid #3498db; border-bottom: 4px solid #3498db; border-radius: 12px; padding: 15px; cursor: pointer; transition: all 0.2s; background: #f8fafc; }
         .package-card:hover { border-color: #3498db; background-color: #f7fafc; }
         .package-card.selected { border-color: #3498db; background-color: #ebf8ff; }
