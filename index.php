@@ -149,14 +149,14 @@
             <div class="card-data">Unlimited DATA</div>
 
         </div>
-<div class="package-card" onclick="document.getElementById('selected-amount').value='2000'; document.getElementById('summary-bold-text').innerHTML='2,000 TZS || Siku 3 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
+<div class="package-card" onclick="document.getElementById('selected-amount').value='2000'; document.getElementById('summary-bold-text').innerHTML='2,000 TZS || Siku 2 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">2,000 TZS</div>
-            <div class="card-time">Siku 3</div>
+            <div class="card-time">Siku 2</div>
             <div class="card-data">Unlimited DATA</div>
     </div>
-<div class="package-card" onclick="document.getElementById('selected-amount').value='3000'; document.getElementById('summary-bold-text').innerHTML='3,000 TZS || Siku 4 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
-            <div class="card-price">3,000 TZS</div>
-            <div class="card-time">Siku 4</div>
+<div class="package-card" onclick="document.getElementById('selected-amount').value='3000'; document.getElementById('summary-bold-text').innerHTML='4,000 TZS || Siku 5 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
+            <div class="card-price">4,000 TZS</div>
+            <div class="card-time">Siku 5</div>
             <div class="card-data">Unlimited DATA</div>
 
         </div>
@@ -165,27 +165,27 @@
             <div class="card-time">Siku 7</div>
             <div class="card-data">Unlimited DATA</div>   
  </div>
-<div class="package-card" onclick="document.getElementById('selected-amount').value='7000'; document.getElementById('summary-bold-text').innerHTML='7,000 TZS || Siku 8 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
+<div class="package-card" onclick="document.getElementById('selected-amount').value='7000'; document.getElementById('summary-bold-text').innerHTML='7,000 TZS || Siku 10 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">7,000 TZS</div>
-            <div class="card-time">Siku 8</div>
+            <div class="card-time">Siku 10</div>
             <div class="card-data">Unlimited DATA</div>
 
     </div>
+<div class="package-card" onclick="document.getElementById('selected-amount').value='9000'; document.getElementById('summary-bold-text').innerHTML='9,000 TZS || Siku 13 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
+            <div class="card-price">9,000 TZS</div>
+            <div class="card-time">Siku 13</div>
+            <div class="card-data">Unlimited DATA</div>
+
+        </div>
 <div class="package-card" onclick="document.getElementById('selected-amount').value='10000'; document.getElementById('summary-bold-text').innerHTML='10,000 TZS || Siku 15 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">10,000 TZS</div>
             <div class="card-time">Siku 15</div>
             <div class="card-data">Unlimited DATA</div>
 
         </div>
-<div class="package-card" onclick="document.getElementById('selected-amount').value='20000'; document.getElementById('summary-bold-text').innerHTML='20,000 TZS || Mwezi 1 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
+        <div class="package-card" onclick="document.getElementById('selected-amount').value='20000'; document.getElementById('summary-bold-text').innerHTML='20,000 TZS || Mwezi 1 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">20,000 TZS</div>
             <div class="card-time">Mwezi 1</div>
-            <div class="card-data">Unlimited DATA</div>
-
-        </div>
-        <div class="package-card" onclick="document.getElementById('selected-amount').value='35000'; document.getElementById('summary-bold-text').innerHTML='35,000 TZS || Miezi 2 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
-            <div class="card-price">35,000 TZS</div>
-            <div class="card-time">Miezi 2</div>
             <div class="card-data">Unlimited DATA</div>
 
      </div>  </div>      
