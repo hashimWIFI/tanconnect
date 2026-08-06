@@ -7,8 +7,6 @@
     <style>
       body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; padding: 10px; text-align: center; color: #2c3e50; }
         .container { position: fixed; top: 0; left: 0; background: white; max-width: 1000px; height: 110%; padding: 10px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: left; }
-
-
         h1 { color: #3498db; margin-bottom: 5px; }
         p { color: #7f8c8d; margin-bottom: 25px; }
         .package-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 25px; }
@@ -19,7 +17,6 @@
         .card-data { font-size: 13px;  color: #334155; text-align: left; }
         .card-time { font-size: 15px; color: #64748b; margin-top: 2px;font-weight: bold; text-align: left; }
 
-        
         /* Modal Popup Styles */
 .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
         .modal-card { background: white; max-width: 950px; height: 200px; margin: 15% auto; padding: 20px; border-radius: 16px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); text-align: left; position: relative; }
