@@ -295,7 +295,7 @@ function startPaymentVerificationLoop() {
                     
                     // Pull package tier details directly from your active PHP settings
                     var planAmount = "<?php echo htmlspecialchars($amount); ?>";
-                    var planDuration = (planAmount === "500") ? "Masaa 6" : (planAmount === "1000") ? "Siku 1" : (planAmount === "2000") ? "Siku 3" : (planAmount === "5000") ? "Wiki 1" : (planAmount === "20000") ? "Mwezi 1" : (planAmount === "35000") ? "Miezi 2" : (planAmount === "50000") ? "Miezi 3" : (planAmount === "100000") ? "Miezi 6" : (planAmount === "200000") ? "Mwaka 1" : "Siku 1";
+                    var planDuration = (planAmount === "500") ? "Masaa 6" : (planAmount === "1000") ? "Siku 1" : (planAmount === "2000") ? "Siku 2" : (planAmount === "4000") ? "Siku 5" : (planAmount === "5000") ? "Siku 7" : (planAmount === "7000") ? "Siku 10" : (planAmount === "9000") ? "Siku 13" : (planAmount === "10000") ? "Siku 15" : (planAmount === "20000") ? "Siku 30" : "Siku 1";
                     
                     // DYNAMIC STATE UPGRADE: Morph headline typography elements from Transit Blue straight to Success Green
                     var headlineElement = document.getElementById('payment-headline');
