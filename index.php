@@ -128,7 +128,7 @@
 
     <div class="subtitle">
  
-     <marquee hspace="-45" vspace="" behavior="" height="20" text-align="bottom" style="font-size: 18px><font color="white"><div>
+     <marquee hspace="-45" vspace="" behavior="" height="25" text-align="bottom" style="font-size: 18px><font color="white"><div>
     <b>Ndugu mteja, karibu kwenye mtandao wa Wi-Fi wa TANConnect &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     Tunakuletea internet isiyo na ukomo wa kasi ya kuperuzi mtandaoni &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
     Fuata maelekezo hapa chini kununua Voucher kupitia simu yako ya mkononi&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
