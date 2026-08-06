@@ -15,9 +15,9 @@
         .package-card { border: 2px solid #e2e8f0; border-left: 4px solid #3498db; border-bottom: 4px solid #3498db; border-radius: 12px; padding: 15px; cursor: pointer; transition: all 0.2s; background: #f8fafc; }
         .package-card:hover { border-color: #3498db; background-color: #f7fafc; }
         .package-card.selected { border-color: #3498db; background-color: #ebf8ff; }
-        .card-price { font-size: 16px; font-weight: bold; color: #0056b3; margin-bottom: 4px;text-align: left; font-family: toledo heavy; }
-        .card-data { font-size: 12px;  color: #334155; text-align: left; }
-        .card-time { font-size: 14px; color: #64748b; margin-top: 2px;font-weight: bold; text-align: left; }
+        .card-price { font-size: 17px; font-weight: bold; color: #0056b3; margin-bottom: 4px;text-align: left; font-family: toledo heavy; }
+        .card-data { font-size: 13px;  color: #334155; text-align: left; }
+        .card-time { font-size: 15px; color: #64748b; margin-top: 2px;font-weight: bold; text-align: left; }
 
         
         /* Modal Popup Styles */
@@ -193,10 +193,10 @@
 
 <div style="margin: 15px auto; max-width: 450px; background: #ffffff; border-left: 5px solid #0284c7; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; border-radius: 0 8px 8px 0; padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-family: sans-serif;">
     <div style="display: flex; align-items: center; gap: 12px;">
-        <span style="font-size: 24px;">💧</span>
+        <span style="font-size: 26px;">💧</span>
         <div>
-            <h5 style="margin: 0; color: #1e293b; font-size: 14px; font-weight: bold;">TANConnect Water ATM</h5>
-            <p style="margin: 2px 0 0 0; color: #64748b; font-size: 12px; text-align: left;">Karibu ujipatie maji safi na salama yaliyochujwa kwa mitambo ya kisasa ya RO na UV. <br> Bei yetu ni nusu lita <b>Tsh 100.</b> lita moja <b>Tsh 200</b>.<br> Tunapatikana TANDIKA, Mtaa MALUMBA!</p></b></div>
+            <h5 style="margin: 0; color: #1e293b; font-size: 15px; font-weight: bold;">TANConnect Water ATM</h5>
+            <p style="margin: 2px 0 0 0; color: #64748b; font-size: 13px; text-align: left;">Karibu ujipatie maji safi na salama yaliyochujwa kwa mitambo ya kisasa ya RO na UV. <br> Bei yetu ni nusu lita <b>Tsh 100.</b> lita moja <b>Tsh 200</b>.<br> Tunapatikana TANDIKA, Mtaa MALUMBA!</p></b></div>
     </div></div>
 
 <!-- Floating Form Modal Overlay Sheet Container -->
