@@ -191,9 +191,9 @@
             <div class="card-data">Unlimited DATA</div>
 
      </div>  </div>      
-<div style="margin: 15px auto; max-width: 450px; background: #ffffff; border-left: 5px solid #0284c7; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; border-radius: 0 8px 8px 0; padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-family: sans-serif;">
+<div style="margin: 10px auto; max-width: 450px; background: #ffffff; border-left: 5px solid #0284c7; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; border-radius: 0 8px 8px 0; padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-family: sans-serif;">
     <div style="display: flex; align-items: center; gap: 12px;">
-        <span style="font-size: 26px;">💧</span>
+        <span style="font-size: 30px;">💧</span>
         <div>
             <h5 style="margin: 0; color: #1e293b; font-size: 15px; font-weight: bold;">TANConnect Water ATM</h5>
             <p style="margin: 2px 0 0 0; color: #64748b; font-size: 13px; text-align: left;">Karibu ujipatie maji safi na salama yaliyochujwa kwa kutumia technolojia ya Reverse OSMOSIS na UV.<br><br><b>Tunapatikana TANDIKA, Mtaa MALUMBA!</p></b></div>
