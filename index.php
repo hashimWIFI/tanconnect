@@ -15,9 +15,9 @@
         .package-card { border: 2px solid #e2e8f0; border-left: 4px solid #3498db; border-bottom: 4px solid #3498db; border-radius: 12px; padding: 15px; cursor: pointer; transition: all 0.2s; background: #f8fafc; }
         .package-card:hover { border-color: #3498db; background-color: #f7fafc; }
         .package-card.selected { border-color: #3498db; background-color: #ebf8ff; }
-        .card-price { font-size: 14px; font-weight: bold; color: #0056b3; margin-bottom: 4px;text-align: left; font-family: toledo heavy; }
-        .card-data { font-size: 11px;  color: #334155; text-align: left; }
-        .card-time { font-size: 12px; color: #64748b; margin-top: 2px;font-weight: bold; text-align: left; }
+        .card-price { font-size: 16px; font-weight: bold; color: #0056b3; margin-bottom: 4px;text-align: left; font-family: toledo heavy; }
+        .card-data { font-size: 12px;  color: #334155; text-align: left; }
+        .card-time { font-size: 14px; color: #64748b; margin-top: 2px;font-weight: bold; text-align: left; }
 
         
         /* Modal Popup Styles */
