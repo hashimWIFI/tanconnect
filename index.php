@@ -189,7 +189,7 @@
             <div class="card-price">200,000 TZS</div>
             <div class="card-time">Mwaka 1</div>
             <div class="card-data">Unlimited DATA</div>
-
+</div>
          <div class="package-card" onclick="document.getElementById('selected-amount').value='50000'; document.getElementById('summary-bold-text').innerHTML='50,000 TZS || Miezi 3 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">XXX TZS</div>
             <div class="card-time">Miezi 3</div>
