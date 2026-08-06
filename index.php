@@ -123,14 +123,17 @@
 
 <div class="container">
 
- <div class="logo" style="font-size: 26px; font-family: Broadway, Helvetica, sans-serif; color: #1e3c72; display: flex; align-items: center; justify-content: center; gap: 2px;">TANConnect<sup><sup><sup style="font-family: Arial, Helvetica, sans-serif; font-size: 10px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup></sup></sup></div>
-
+ <div class="logo" style="font-size: 26px; font-family: Broadway, Helvetica, sans-serif; color: #1e3c72; display: flex; align-items: 
+     center; justify-content: center; gap: 2px;">TANConnect<sup><sup><sup style="font-family: Arial, Helvetica, sans-serif; font-size: 
+         10px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup></sup></sup></div>
 
     <div class="subtitle">
  
-
-<marquee hspace="-45" vspace="" behavior="" height="20" text-align="bottom" style="font-size: 18px><font color="white"><div><b>Ndugu mteja, karibu kwenye mtandao wa Wi-Fi wa TANConnect &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tunakuletea internet isiyo na ukomo wa kasi ya kuperuzi mtandaoni &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Fuata maelekezo hapa chini kununua Voucher kupitia simu yako ya mkononi&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Wasiliana nasi kwa nambari 0713 123 974, kwa ufafanuzi, malalamiko au maelekezo zaidi.</b></div></font></marquee></button>
-
+     <marquee hspace="-45" vspace="" behavior="" height="20" text-align="bottom" style="font-size: 18px><font color="white"><div>
+    <b>Ndugu mteja, karibu kwenye mtandao wa Wi-Fi wa TANConnect &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Tunakuletea internet isiyo na ukomo wa kasi ya kuperuzi mtandaoni &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    Fuata maelekezo hapa chini kununua Voucher kupitia simu yako ya mkononi&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    Wasiliana nasi kwa nambari 0713 123 974, kwa ufafanuzi, malalamiko au maelekezo zaidi.</b></div></font></marquee></button>
 
 <hr width="100%" align="center"></div>
 
@@ -154,9 +157,9 @@
             <div class="card-time">Siku 3</div>
             <div class="card-data">Unlimited DATA</div>
     </div>
-<div class="package-card" onclick="document.getElementById('selected-amount').value='3000'; document.getElementById('summary-bold-text').innerHTML='3,000 TZS || Siku 3 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
+<div class="package-card" onclick="document.getElementById('selected-amount').value='3000'; document.getElementById('summary-bold-text').innerHTML='3,000 TZS || Siku 4 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">3,000 TZS</div>
-            <div class="card-time">Siku 3</div>
+            <div class="card-time">Siku 4</div>
             <div class="card-data">Unlimited DATA</div>
 
         </div>
@@ -165,15 +168,15 @@
             <div class="card-time">Siku 7</div>
             <div class="card-data">Unlimited DATA</div>   
  </div>
-<div class="package-card" onclick="document.getElementById('selected-amount').value='7000'; document.getElementById('summary-bold-text').innerHTML='7,000 TZS || Siku 3 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
+<div class="package-card" onclick="document.getElementById('selected-amount').value='7000'; document.getElementById('summary-bold-text').innerHTML='7,000 TZS || Siku 8 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">7,000 TZS</div>
-            <div class="card-time">Siku 3</div>
+            <div class="card-time">Siku 8</div>
             <div class="card-data">Unlimited DATA</div>
 
     </div>
-<div class="package-card" onclick="document.getElementById('selected-amount').value='10000'; document.getElementById('summary-bold-text').innerHTML='10,000 TZS || Siku 3 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
+<div class="package-card" onclick="document.getElementById('selected-amount').value='10000'; document.getElementById('summary-bold-text').innerHTML='10,000 TZS || Siku 15 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">10,000 TZS</div>
-            <div class="card-time">Siku 3</div>
+            <div class="card-time">Siku 15</div>
             <div class="card-data">Unlimited DATA</div>
 
         </div>
@@ -189,8 +192,6 @@
             <div class="card-data">Unlimited DATA</div>
 
      </div>  </div>      
-
-
 <div style="margin: 15px auto; max-width: 450px; background: #ffffff; border-left: 5px solid #0284c7; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; border-radius: 0 8px 8px 0; padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-family: sans-serif;">
     <div style="display: flex; align-items: center; gap: 12px;">
         <span style="font-size: 26px;">💧</span>
@@ -203,10 +204,8 @@
 <div id="payment-modal-overlay" class="modal-overlay">
     <div class="modal-card">
         <span class="close-btn" onclick="document.getElementById('payment-modal-overlay').style.display='none';">&times;</span>
-        
            <h3 style="margin-top: 0; font-size: 16px; font-weight: bold; color: #34495e;">Checkout & Pay</h3>
-          
-        
+       
         <div id="modal-plan-summary" class="plan-summary">
             Umechagua kifurushi:<br> <strong id="summary-bold-text" style="color: #0033a0;">1,000 TZS || Masaa 24 kuperuzi || Unlimited DATA</strong>
         </div>
@@ -214,16 +213,10 @@
           <input type="hidden" id="selected-amount" name="amount" value="1000" /> 
             <div class="form-group" style="text-align: left; margin-bottom: 20px;">
                 <label for="phone-number">Ingiza nambari ya simu, kisha bonyeza PAY:</label>
-<div style="display: flex; gap: 10px;">
-
-<input class="button" name="customer_phone" id="phone-number" pattern="[0]{1}[6-7]{1}[0-9]{8}" type="tel" placeholder="0713123974" autocomplete="off" oninput="detectMobileProvider()" style="flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; color: black; text-align: center;" required/>
-
-<button type="button" id="submit-payment-btn" class="btn-popup-pay" style="margin: 0; padding: 0 30px; background: #3498db; border-radius: 6px; font-size: 13px; color: white; font-weight: bold; min-width: 180px;" onclick="dispatchToRailway(event)">Pay</button>                </div></div>
-
-
-
-
-        </form>
+     <div style="display: flex; gap: 10px;">
+     <input class="button" name="customer_phone" id="phone-number" pattern="[0]{1}[6-7]{1}[0-9]{8}" type="tel" placeholder="0713123974" autocomplete="off" oninput="detectMobileProvider()" style="flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; color: black; text-align: center;" required/>
+    <button type="button" id="submit-payment-btn" class="btn-popup-pay" style="margin: 0; padding: 0 30px; background: #3498db; border-radius: 6px; font-size: 13px; color: white; font-weight: bold; min-width: 180px;" onclick="dispatchToRailway(event)">Pay</button>                </div></div>
+</form>
 
 <!-- Centered Processing Overlay Mask (Fully transparent background layout) -->
 <div id="active-spinner-layer" style="display: none !important; position: absolute; top: 0; left: 0; width: 90%; height: 90%; background: transparent; z-index: 100; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box; padding: 20px;">
@@ -235,23 +228,14 @@
             <span class="spinner-text-center"><b>SUBIRI</b></span>
             <div class="the-revolving-dot"></div> <!-- Only 1 single dot item row remains! -->
         </div>
-        
-        
-        
+   
     </div>
 </div>
 
 </div>
 </div>
-    
-
-
-
-
 
 <script>
-
-
 // Live Operator Detection Engine
 function detectMobileProvider() {
     var phoneInput = document.getElementById("phone-number").value.trim();
