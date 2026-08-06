@@ -30,7 +30,7 @@
         .btn-submit { background:#0056b3; color:#0056b3; border: none; width: 53%; padding: 14px; font-color: white; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: all 0.3s ease; }
         .btn-submit:hover { filter: brightness(0.9); }
         .title { color: #64748b; font-size: 16px; margin-bottom: 20px; font-family: arial black; font-weight: bold;}
-        .footer { font-size: 12px; color: #64748b; margin-top: 10px; line-height: 1.5; font-weight: bold; text-align: center}
+        .footer { font-size: 12px; color: #64748b; margin-top: 2px; line-height: 1.5; font-weight: bold; text-align: center}
         .logo { font-size: 24px; font-weight: bold; color: #1e3c72; letter-spacing: 1px; margin-bottom: 5px;font-family:Broadway, Helvetica, sans-serif; }
         .subtitle { color: #1e293b; font-size: 15px; margin-bottom: 10px; text-align: left; font-weight: bold;}
         .plan-summary { background: #ebf3fc; border: 1px solid #d0e2fa; border-left: 5px solid #3498db; padding: 14px; border-radius: 4px; margin-bottom: 22px; color: #002e6e; font-size: 13px; }
