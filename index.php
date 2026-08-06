@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TANConnect - Karibu kwenye Wi-Fi </title>
+    <title>TANConnect - Karibu kwenye Wi-Fi</title>
     <style>
       body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; text-align: center; color: #2c3e50; }
-        .container { position: fixed; top: 0; left: 0; width: 100%; height: 100%;  margin: 40px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-
+        .container { position: fixed; top: 0; left: 0; width: 96.5%; height: 100%; margin: 20px auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h1 { color: #3498db; margin-bottom: 5px; }
+        p { color: #7f8c8d; margin-bottom: 25px; }
         .package-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 25px; }
         .package-card { border: 2px solid #e2e8f0; border-left: 4px solid #3498db; border-bottom: 4px solid #3498db; border-radius: 12px; padding: 15px; cursor: pointer; transition: all 0.2s; background: #f8fafc; }
         .package-card:hover { border-color: #3498db; background-color: #f7fafc; }
@@ -18,8 +19,8 @@
 
         
         /* Modal Popup Styles */
-.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 61%; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
-    .modal-card { background: white; max-width: 380 px; height: 55%; margin: 15% auto; padding: 20px; border-radius: 16px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); text-align: left; position: relative; }
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); z-index: 99999; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
+        .modal-card { background: white; max-width: 950px; height: 45%; margin: 15% auto; padding: 20px; border-radius: 16px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); text-align: left; position: relative; }
         .close-btn { position: absolute; top: 10px; right: 15px; font-size: 32px; cursor: pointer; color: #7f8c8d; font-weight: bold; }
         .close-btn:hover { color: #34495e; }
         .form-group { margin-bottom: 20px; font-size: 14px}
@@ -29,10 +30,9 @@
         /* Dynamic Provider Button Base Style */
         .btn-submit { background:#0056b3; color:#0056b3; border: none; width: 53%; padding: 14px; font-color: white; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: all 0.3s ease; }
         .btn-submit:hover { filter: brightness(0.9); }
-        .title { color: #64748b; font-size: 16px; margin-bottom: 10px; font-family: arial black; font-weight: bold;}
-        .footer-text { font-size: 12px; color: #64748b; margin-top: 20px; line-height: 1.5; font-weight: bold}
+        .title { color: #64748b; font-size: 16px; margin-bottom: 25px; font-family: arial black; font-weight: bold;}
+        .footer { font-size: 12px; color: #64748b; margin-top: 20px; line-height: 1.5; font-weight: bold}
         .logo { font-size: 24px; font-weight: bold; color: #1e3c72; letter-spacing: 1px; margin-bottom: 5px;font-family:Broadway, Helvetica, sans-serif; }
-        .logo2 { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; font-size: 10px; font-weight: bold; color: #1e3c72;}
         .subtitle { color: #64748b; font-size: 14px; margin-bottom: 25px; text-align: left; font-weight: bold;}
         .plan-summary { background: #ebf3fc; border: 1px solid #d0e2fa; border-left: 5px solid #3498db; padding: 14px; border-radius: 4px; margin-bottom: 22px; color: #002e6e; font-size: 13px; }
 
@@ -117,12 +117,11 @@
  
  </style>
 </head>
-
 <body>
 
 <div class="container">
 
- <div class="logo" style="font-size: 24px; font-family:Broadway, Helvetica, sans-serif;color:#1e3c72;">TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; vertical-align: super; line-height: 0;"><sup>®</sup></sup></div><div class="logo2">"We bring the world at your finger tips"</div>
+ <div class="logo" style="font-size: 26px; font-family: Broadway, Helvetica, sans-serif; color: #1e3c72; display: flex; align-items: center; justify-content: center; gap: 2px;">TANConnect<sup><sup><sup style="font-family: Arial, Helvetica, sans-serif; font-size: 10px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup></sup></sup></div>
 
 
     <div class="subtitle">
@@ -136,65 +135,55 @@
     <div class="subtitle">Bonyeza kifurushi unachohitaji kununua;</div>
     <div class="package-grid">
 
-        <div class="package-card" onclick="document.getElementById('selected-amount').value='500'; document.getElementById('summary-bold-text').innerHTML='500 TZS || Masaa 6 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState(); trackPopupOpeningSession();">
-
+        <div class="package-card" onclick="document.getElementById('selected-amount').value='500'; document.getElementById('summary-bold-text').innerHTML='500 TZS || Masaa 6 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">500 TZS</div>
             <div class="card-time">Masaa 6</div>
             <div class="card-data">Unlimited DATA</div>
 
         </div>
-
-        <div class="package-card" onclick="document.getElementById('selected-amount').value='1000'; document.getElementById('summary-bold-text').innerHTML='1,000 TZS || Siku 1 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState(); trackPopupOpeningSession();">
-
+        <div class="package-card" onclick="document.getElementById('selected-amount').value='1000'; document.getElementById('summary-bold-text').innerHTML='1,000 TZS || Siku 1 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">1,000 TZS</div>
             <div class="card-time">Siku 1</div>
             <div class="card-data">Unlimited DATA</div>
 
         </div>
-<div class="package-card" onclick="document.getElementById('selected-amount').value='2000'; document.getElementById('summary-bold-text').innerHTML='2,000 TZS || Siku 3 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState(); trackPopupOpeningSession();">
-
+<div class="package-card" onclick="document.getElementById('selected-amount').value='2000'; document.getElementById('summary-bold-text').innerHTML='2,000 TZS || Siku 3 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">2,000 TZS</div>
             <div class="card-time">Siku 3</div>
             <div class="card-data">Unlimited DATA</div>
 
         </div>
-        <div class="package-card" onclick="document.getElementById('selected-amount').value='5000'; document.getElementById('summary-bold-text').innerHTML='5,000 TZS || Siku 7 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState(); trackPopupOpeningSession();">
-
+        <div class="package-card" onclick="document.getElementById('selected-amount').value='5000'; document.getElementById('summary-bold-text').innerHTML='5,000 TZS || Siku 7 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">5,000 TZS</div>
             <div class="card-time">Siku 7</div>
             <div class="card-data">Unlimited DATA</div>
 
         </div>
-<div class="package-card" onclick="document.getElementById('selected-amount').value='20000'; document.getElementById('summary-bold-text').innerHTML='20,000 TZS || Mwezi 1 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState(); trackPopupOpeningSession();">
-
+<div class="package-card" onclick="document.getElementById('selected-amount').value='20000'; document.getElementById('summary-bold-text').innerHTML='20,000 TZS || Mwezi 1 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">20,000 TZS</div>
             <div class="card-time">Mwezi 1</div>
             <div class="card-data">Unlimited DATA</div>
 
         </div>
-        <div class="package-card" onclick="document.getElementById('selected-amount').value='35000'; document.getElementById('summary-bold-text').innerHTML='35,000 TZS || Miezi 2 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState(); trackPopupOpeningSession();">
-
+        <div class="package-card" onclick="document.getElementById('selected-amount').value='35000'; document.getElementById('summary-bold-text').innerHTML='35,000 TZS || Miezi 2 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">35,000 TZS</div>
             <div class="card-time">Miezi 2</div>
             <div class="card-data">Unlimited DATA</div>
 
         </div>
- <div class="package-card" onclick="document.getElementById('selected-amount').value='50000'; document.getElementById('summary-bold-text').innerHTML='50,000 TZS || Miezi 3 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState(); trackPopupOpeningSession();">
-
+ <div class="package-card" onclick="document.getElementById('selected-amount').value='50000'; document.getElementById('summary-bold-text').innerHTML='50,000 TZS || Miezi 3 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">50,000 TZS</div>
             <div class="card-time">Miezi 3</div>
             <div class="card-data">Unlimited DATA</div>
 
         </div>
-<div class="package-card" onclick="document.getElementById('selected-amount').value='100000'; document.getElementById('summary-bold-text').innerHTML='100,000 TZS || Miezi 6 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState(); trackPopupOpeningSession();">
-
+<div class="package-card" onclick="document.getElementById('selected-amount').value='100000'; document.getElementById('summary-bold-text').innerHTML='100,000 TZS || Miezi 6 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">100,000 TZS</div>
             <div class="card-time">Miezi 6</div>
             <div class="card-data">Unlimited DATA</div>
 
         </div>
-        <div class="package-card" onclick="document.getElementById('selected-amount').value='200000'; document.getElementById('summary-bold-text').innerHTML='200,000 TZS || Mwaka 1 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState(); trackPopupOpeningSession();">
-
+        <div class="package-card" onclick="document.getElementById('selected-amount').value='200000'; document.getElementById('summary-bold-text').innerHTML='200,000 TZS || Mwaka 1 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">200,000 TZS</div>
             <div class="card-time">Mwaka 1</div>
             <div class="card-data">Unlimited DATA</div>
@@ -202,8 +191,6 @@
         </div>
 
     </div>
-<!-- HIDDEN INPUT CARRIER: Passes the final computed session steps safely to login.php! -->
-<input type="hidden" id="pop-history-counter-field" name="history_steps_total" value="2" />
 
 
 <!-- Floating Form Modal Overlay Sheet Container -->
@@ -217,14 +204,8 @@
         <div id="modal-plan-summary" class="plan-summary">
             Umechagua kifurushi:<br> <strong id="summary-bold-text" style="color: #0033a0;">1,000 TZS || Masaa 24 kuperuzi || Unlimited DATA</strong>
         </div>
-   
 <form id="payment-form" action="login.php" method="post">
-    <!-- Inside your <form id="payment-form"> container block -->
-<input type="hidden" id="selected-amount" name="amount" value="1000" />
-
-<!-- FIX A: This hidden input field dynamically captures and carries the customer's MAC address forward to login.php! -->
-<input type="hidden" id="router-mac-carrier" name="mac_address" value="" />
-
+          <input type="hidden" id="selected-amount" name="amount" value="1000" /> 
             <div class="form-group" style="text-align: left; margin-bottom: 20px;">
                 <label for="phone-number">Ingiza nambari ya simu, kisha bonyeza PAY:</label>
 <div style="display: flex; gap: 10px;">
@@ -254,133 +235,80 @@
     </div>
 </div>
 
-</div></div>
-
-<!-- ========================================== -->
-<!-- 🎭 THE TANCONNECT MASTER POPUP OVERLAY LAYOUT -->
-<!-- ========================================== -->
-<div id="payment-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(44, 62, 80, 0.6); backdrop-filter: blur(4px); z-index: 99999; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box;">
-    
-    <!-- 📄 Dynamic Receipt Content Target Card -->
-    <div id="modal-card-content" style="background: #ffffff; width: 100%; max-width: 460px; border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; padding: 24px; position: relative; box-sizing: border-box;">
-        
-        <!-- ✕ Manual Close Button Option Anchor -->
-        <button onclick="closePaymentModal()" style="position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 24px; color: #95a5a6; cursor: pointer; line-height: 1; padding: 0;">&times;</button>
-        
-        <!-- Dynamic Layout Target Injection Node -->
-        <div id="modal-body-injector"></div>
-        
-    </div>
 </div>
-
-<!-- Simple Keyframe Scale Physics Simulation Animation Code -->
-<style>
-@keyframes popIn {
-    0% { transform: scale(0.8); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
-}
-</style>
-
-</body>
-<div class="footer-text"><hr width="100%" align="center">Unaweza kuwasiliana nasi kwa nambari 0713 123 974 au kwa kutembelea tovuti yetu "www.tanconnect.co.tz".</div> </div>
+</div>
     
+
+
+
+
+
 <script>
-// Replace your old form element submission redirect loop code block with this clean script:
-function triggerPaymentModal(amount, phone, trackingTxId) {
-    // 1. Reveal our master blurred modal framework canvas on top of the page screen view
-    var overlay = document.getElementById('payment-modal-overlay');
-    var injector = document.getElementById('modal-body-injector');
-    overlay.style.display = "flex";
-    
-    // 2. Initialize the default "Weka PIN" tracking marquee layout template view inside the modal card slot
-    injector.innerHTML = `
-        <div style="text-align: center; font-family: sans-serif;">
-            <h2 style="color: #2c3e50; font-size: 22px; margin-bottom: 5px; font-weight: bold; font-family: 'Century Gothic', sans-serif;">TANConnect <span style="font-size:12px; vertical-align:super;">®</span></h2>
-            <h3 id="modal-headline" style="color: #3498db; font-size: 16px; margin: 15px 0; font-weight: bold;">⏳ Tafadhali Weka PIN...</h3>
-            <p id="modal-subtext" style="color: #7f8c8d; font-size: 13px; line-height: 1.6; margin-bottom: 20px;">
-                Tafadhali angalia simu yako sasa hivi na uweke namba yako ya siri (PIN) ya siri kuruhusu muamala wa <b>Tsh ${parseInt(amount).toLocaleString()}</b> kukamilika kupitia AzamPay. ASANTE.
-            </p>
-            
-            <!-- Flex Row Box Holds Loader Canvas Info Panel Elements Line -->
-            <div style="display: flex; width: 100%; gap: 12px; margin-top: 15px;">
-                <div id="modal-loading-box" style="flex: 7; background: #e8f4fd; border: 2px dashed #3498db; border-radius: 8px; padding: 12px; min-height: 55px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px; color: #3498db; font-weight: bold; font-size: 12px; width: 100%;">
-                        <div style="width: 14px; height: 14px; border: 2px solid rgba(52,152,219,0.2); border-radius: 50%; border-top-color: #3498db; animation: spin 1s linear infinite; flex-shrink:0;"></div>
-                        <marquee behavior="scroll" direction="left" scrollamount="4" style="width: 100%;">Inasubiri uthibitisho wa malipo ya PIN kutoka mtandao wa AzamPay...</marquee>
-                    </div>
-                </div>
-                <div id="modal-copy-box" style="flex: 3; display: none; box-sizing: border-box;">
-                    <button onclick="copyModalVoucher()" style="width: 100%; background: #3498db; color: #fff; border: none; border-radius: 8px; font-weight: bold; font-size: 12px; height: 55px; cursor: pointer; text-transform: uppercase;">Nakili</button>
-                </div>
-            </div>
-            <p style="color: #7f8c8d; font-size: 11px; margin-top: 20px; font-style: italic;">"We bring the world at your finger tips"</p>
-        </div>
-    `;
 
-    // 3. Immediately launch our automated background loop targeting check_status.php right from this modal!
-    startModalVerificationLoop(trackingTxId, amount);
-}
 
-// Quick Global Close Method Component Action Pointer Rule
-function closePaymentModal() {
-    document.getElementById('payment-modal-overlay').style.color = "none";
-    document.getElementById('payment-modal-overlay').style.display = "none";
-}
-
-// Live Mobile Network Operator Color Detection Engine
+// Live Operator Detection Engine
 function detectMobileProvider() {
     var phoneInput = document.getElementById("phone-number").value.trim();
     var cleanDigits = phoneInput.replace(/[^0-9]/g, '');
     var payBtn = document.getElementById("submit-payment-btn");
     
-    payBtn.style.backgroundColor = "#f15a24"; // Default customized theme orange
-    payBtn.innerHTML = "Pay";
+    // 1. ALWAYS RESET BACK TO GREEN FIRST (Clears any previous sticky states)
+    payBtn.style.backgroundColor = "#f15a24";
+    payBtn.innerHTML = "PAY";
     
+    // 2. Standardize leading 0 to country code format maps
     var standardizedDigits = cleanDigits;
     if (standardizedDigits.startsWith('0')) {
         standardizedDigits = '255' + standardizedDigits.substring(1);
     }
     
-    if (cleanDigits.length < 2) return; 
-    
+    // 3. Extract the operator routing prefix block digits (e.g. from position 3 to 5)
     var prefix = standardizedDigits.substring(3, 5);
     
+    // Brand hex colors setup maps
+    var mpesaColor   = "#E60000"; // Vodacom Red
+    var tigoColor    = "#0033A0"; // Tigo Corporate Blue
+    var airtelColor  = "#FF0000"; // Airtel Red-Orange
+    var haloColor    = "#ffcc00"; // Halopesa Golden Yellow
+    var unknownColor = "#555555"; // Charcoal Gray for Unknown Networks
+    
+    // 4. Run your exact requested filter gates smoothly
     if (['74', '75', '76', '14'].includes(prefix)) {
-        payBtn.style.backgroundColor = "#E60000"; // Vodacom Red
-        payBtn.innerHTML = "M-Pesa";
+        payBtn.style.backgroundColor = mpesaColor;
+        payBtn.innerHTML = "PAY(M-pesa)";
     } else if (['71', '77', '65', '07', '67', '72'].includes(prefix)) {
-        payBtn.style.backgroundColor = "#0033A0"; // Tigo Blue
-        payBtn.innerHTML = "Tigo Pesa";
+        payBtn.style.backgroundColor = tigoColor;
+        payBtn.innerHTML = "PAY(Tigopesa)";
     } else if (['78', '79', '68', '69'].includes(prefix)) {
-        payBtn.style.backgroundColor = "#FF0000"; // Airtel Red
-        payBtn.innerHTML = "Airtel Money";
+        payBtn.style.backgroundColor = airtelColor;
+        payBtn.innerHTML = "PAY(Airtel Money)";
     } else if (['62', '61'].includes(prefix)) {
-        payBtn.style.backgroundColor = "#2ECC71"; // Halopesa Green
-        payBtn.innerHTML = "Halopesa";
-    } else {
-        if (cleanDigits.length >= 10) {
-            payBtn.style.backgroundColor = "#555555"; 
-            payBtn.innerHTML = "Unknown";
-        }
+        payBtn.style.backgroundColor = haloColor;
+        payBtn.innerHTML = "PAY(Halopesa)";
+     } else {
+        // The last gate: If it doesn't match any provider above, it is instantly unknown!
+        payBtn.style.backgroundColor = unknownColor;
+        payBtn.innerHTML = "Mtandao Hautambuliki ?";
     }
 }
+
+
+
 
 function resetButtonState() {
     var payBtn = document.getElementById("submit-payment-btn");
-    if (payBtn) {
-        payBtn.style.backgroundColor = "#f15a24";
-        payBtn.innerHTML = "Pay";
-    }
+    payBtn.style.backgroundColor = "#f15a24"; // Default emerald green
+    payBtn.innerHTML = "PAY";
 }
 
-// Full 10-Digit & Carrier Prefix Validation with Router Parameter Forwarding
+
 function dispatchToRailway(event) {
     if (event) event.preventDefault(); 
     
     var phoneInput = document.getElementById("phone-number").value.trim();
     var cleanDigitsOnly = phoneInput.replace(/[^0-9]/g, ''); 
 
-    // 1. Core Length Validation Checks
+    // 1. Basic Length Controls
     if (phoneInput === "") {
         alert("Tafadhali ingiza namba ya simu kwanza.");
         return;
@@ -392,52 +320,43 @@ function dispatchToRailway(event) {
         return;
     }
 
-    // 2. Standardize Prefix Extraction Configurations
+    // 2. Standardize prefix extraction layers
     var standardizedDigits = cleanDigitsOnly;
     if (standardizedDigits.startsWith('0')) {
         standardizedDigits = '255' + standardizedDigits.substring(1);
     }
     
+    // Extract the strict carrier routing suffix index code (e.g. 74, 75, 71, etc.)
     var carrierPrefix = standardizedDigits.substring(3, 5);
     
+    // 3. Define valid Tanzanian MNO network code buckets
     var validVodacom  = ['74', '75', '76', '14'];
     var validTigo     = ['71', '77', '65', '07', '67', '72'];
     var validAirtel   = ['78', '79', '68', '69'];
     var validHalotel  = ['62', '61'];
     
+    // Combine all recognized buckets into a single master validation dictionary array
     var allValidPrefixes = validVodacom.concat(validTigo, validAirtel, validHalotel);
 
-    // 3. Prefix Gate Validation Check
+    // 4. THE PREFIX GATE: If the extracted prefix is completely unknown, freeze submission instantly!
     if (!allValidPrefixes.includes(carrierPrefix)) {
         alert("Mtandao hautambuliki! Tafadhali ingiza nambari ya Vodacom, Tigo, Airtel, au Halotel.");
         return;
     }
 
-    // SUCCESS GATE: Unrolls the full-screen transparent loading spinner layer instantly
+    // SUCCESS GATE: Only unrolls the spinner and dispatches form if the prefix matches our dictionary!
     document.getElementById("active-spinner-layer").style.setProperty("display", "flex", "important");
-    
-    // FIX: Grabs the hidden router query strings (?device_id=...&mac=...) and sticks them right onto the form route!
-    var formElement = document.getElementById("payment-form");
-    if (formElement) {
-        formElement.action = "login.php" + window.location.search;
-        formElement.submit();
-    }
+    document.getElementById("payment-form").submit();
 }
 
-// Initialize the default history baseline steps needed to step past index.php
-var totalPopSessionSteps = 2; 
+</script>
+<hr width="100%" align="center">
+ 
+ <div class="footer">Unaweza kuwasiliana nasi kwa nambari 0713 123 974 au kwa kutembelea tovuti yetu "www.tanconnect.co.tz".</div> </div>
 
-function trackPopupOpeningSession() {
-    // Every single time the popup box opens without leaving index.php, 
-    // we update the tracking variable state to keep history.go completely accurate! [^2]
-    var hiddenCounterCarrier = document.getElementById('pop-history-counter-field');
-    if (hiddenCounterCarrier) {
-        hiddenCounterCarrier.value = totalPopSessionSteps.toString();
-    }
-    
-    console.log("Current calculated browser rewind step map: " + totalPopSessionSteps);
-    
-    // Increment the counter step map for any subsequent double-clicks or re-opens
-    totalPopSessionSteps++; 
-}
-  
+</body>
+</html>
+
+
+
+
