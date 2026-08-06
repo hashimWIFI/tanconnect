@@ -120,9 +120,11 @@
 
 <div class="container">
 
- <div class="logo" style="font-size: 26px; font-family: Broadway, Helvetica, sans-serif; color: #1e3c72; display: flex; align-items: 
-     center; justify-content: center; gap: 2px;">TANConnect<sup><sup><sup style="font-family: Arial, Helvetica, sans-serif; font-size: 
-         10px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup></sup></sup></div>
+<!-- REPLACE YOUR TEXT LOGO HEADER WITH THIS IMAGE UTILITY TAG -->
+<div style="text-align: center; margin: 15px auto;">
+    <img src="logo.png" alt="TANConnect Logo" style="max-width: 220px; height: auto; object-fit: contain;">
+</div>
+
 
     <div class="subtitle">
  
