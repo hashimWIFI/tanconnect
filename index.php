@@ -195,8 +195,8 @@
     <div style="display: flex; align-items: center; gap: 12px;">
         <span style="font-size: 24px;">💧</span>
         <div>
-            <h5 style="margin: 0; color: #1e293b; font-size: 13px; font-weight: bold;">TANConnect Water ATM</h5>
-            <p style="margin: 2px 0 0 0; color: #64748b; font-size: 11px; text-align: left;">Pata maji safi na salama yaliyochujwa kwa mitambo ya kisasa ya RO na UV. Nusu lita <b>Tsh 100.</b> lita moja <b>Tsh 200</b>.<br> Tupo mtaa MALUMBA!</p></div>
+            <h5 style="margin: 0; color: #1e293b; font-size: 14px; font-weight: bold;">TANConnect Water ATM</h5>
+            <p style="margin: 2px 0 0 0; color: #64748b; font-size: 12px; text-align: left;">Karibu ujipatie maji safi na salama yaliyochujwa kwa mitambo ya kisasa ya RO na UV. <br> Bei yetu ni nusu lita <b>Tsh 100.</b> lita moja <b>Tsh 200</b>.<br> Tunapatikana TANDIKA, Mtaa MALUMBA!</p></b></div>
     </div></div>
 
 <!-- Floating Form Modal Overlay Sheet Container -->
