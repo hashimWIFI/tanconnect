@@ -121,7 +121,7 @@
 <div class="container">
 
 <!-- REPLACE YOUR TEXT LOGO HEADER WITH THIS IMAGE UTILITY TAG -->
-<div style="text-align: center; margin: 15px auto;">
+<div style="text-align: center; margin: 5px auto;">
     <img src="logo.png" alt="TANConnect Logo" style="max-width: 250px; height: auto; object-fit: contain;">
 </div>
 
