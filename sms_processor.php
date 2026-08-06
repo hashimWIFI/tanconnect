@@ -36,8 +36,26 @@ switch ($packagePrice) {
     case '1000':
         $timeDuration = 'masaa 24'; // 1000 TZS package duration
         break;
+    case '2000':
+        $timeDuration = 'siku 3';    // Example: 5000 TZS for 7 days
+        break;
     case '5000':
         $timeDuration = 'siku 7';    // Example: 5000 TZS for 7 days
+        break;
+    case '20000':
+        $timeDuration = 'mwezi 1';    // Example: 5000 TZS for 7 days
+        break;
+    case '35000':
+        $timeDuration = 'miezi 2';    // Example: 5000 TZS for 7 days
+        break;
+    case '50000':
+        $timeDuration = 'miezi 3';    // Example: 5000 TZS for 7 days
+        break;
+    case '100000':
+        $timeDuration = 'miezi 6';    // Example: 5000 TZS for 7 days
+        break;
+    case '200000':
+        $timeDuration = 'mwaka 1';    // Example: 5000 TZS for 7 days
         break;
     default:
         $timeDuration = 'masaa 24'; // Standard fallback if price doesn't match
