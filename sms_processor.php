@@ -21,7 +21,7 @@ if (!empty($customer_phone)) {
     echo "Target Customer Recipient: " . $customer_phone . "\n";
     
     // Read cleanly from Railway environment variables
-    $textbee_api_key = getenv('TEXTBEE_API_KEY') ?: 'txb_u0liKgZdszGYc7NyXsOannnd4c6vqnlk'; 
+    $textbee_api_key = getenv('TEXTBEE_API_KEY') ?: 'txb_u0liKgZdszGYc7NyXsOannnd4c6vqnlk';
     $textbee_device_id = getenv('TEXTBEE_DEVICE_ID') ?: '6a742479f83fbea62920b02f'; 
     
     // Fallbacks to default values if package metadata isn't logged in row
