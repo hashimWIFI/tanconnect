@@ -6,9 +6,8 @@
     <title>TANConnect - Karibu kwenye Wi-Fi </title>
     <style>
       body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; text-align: center; color: #2c3e50; }
-        .container { max-width: 800px; margin: 40px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        h1 { color: #3498db; margin-bottom: 5px; }
-        p { color: #7f8c8d; margin-bottom: 25px; }
+        .container { position: fixed; top: 0; left: 0; width: 100%; height: 100%;  margin: 40px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+
         .package-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 25px; }
         .package-card { border: 2px solid #e2e8f0; border-left: 4px solid #3498db; border-bottom: 4px solid #3498db; border-radius: 12px; padding: 15px; cursor: pointer; transition: all 0.2s; background: #f8fafc; }
         .package-card:hover { border-color: #3498db; background-color: #f7fafc; }
@@ -19,8 +18,8 @@
 
         
         /* Modal Popup Styles */
-.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 61%; background: rgba(15, 23, 42, 0.6); z-index: 99999; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
-        .modal-card { background: white; max-width: 380 px; height: 55%; margin: 15% auto; padding: 20px; border-radius: 16px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); text-align: left; position: relative; }
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 61%; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
+    .modal-card { background: white; max-width: 380 px; height: 55%; margin: 15% auto; padding: 20px; border-radius: 16px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); text-align: left; position: relative; }
         .close-btn { position: absolute; top: 10px; right: 15px; font-size: 32px; cursor: pointer; color: #7f8c8d; font-weight: bold; }
         .close-btn:hover { color: #34495e; }
         .form-group { margin-bottom: 20px; font-size: 14px}
@@ -120,8 +119,8 @@
 </head>
 
 <body>
+
 <div class="container">
-<div class="portal-card">
 
  <div class="logo" style="font-size: 24px; font-family:Broadway, Helvetica, sans-serif;color:#1e3c72;">TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; vertical-align: super; line-height: 0;"><sup>®</sup></sup></div><div class="logo2">"We bring the world at your finger tips"</div>
 
@@ -255,8 +254,8 @@
     </div>
 </div>
 
-</div>
 </div></div>
+
 <!-- ========================================== -->
 <!-- 🎭 THE TANCONNECT MASTER POPUP OVERLAY LAYOUT -->
 <!-- ========================================== -->
@@ -442,4 +441,3 @@ function trackPopupOpeningSession() {
     totalPopSessionSteps++; 
 }
   
-</script>
