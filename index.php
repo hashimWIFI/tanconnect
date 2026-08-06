@@ -190,24 +190,7 @@
             <div class="card-time">Mwaka 1</div>
             <div class="card-data">Unlimited DATA</div>
 </div>
-         <div class="package-card" onclick="document.getElementById('selected-amount').value='50000'; document.getElementById('summary-bold-text').innerHTML='50,000 TZS || Miezi 3 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
-            <div class="card-price">XXX TZS</div>
-            <div class="card-time">Miezi 3</div>
-            <div class="card-data">Unlimited DATA</div>
-
-        </div>
-<div class="package-card" onclick="document.getElementById('selected-amount').value='100000'; document.getElementById('summary-bold-text').innerHTML='100,000 TZS || Miezi 6 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
-            <div class="card-price">YYY TZS</div>
-            <div class="card-time">Miezi 6</div>
-            <div class="card-data">Unlimited DATA</div>
-
-        </div>
-        <div class="package-card" onclick="document.getElementById('selected-amount').value='200000'; document.getElementById('summary-bold-text').innerHTML='200,000 TZS || Mwaka 1 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
-            <div class="card-price">ZZZ TZS</div>
-            <div class="card-time">Mwaka 1</div>
-            <div class="card-data">Unlimited DATA</div>
-
-        </div>
+        
 
     </div>
 
