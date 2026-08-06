@@ -11,7 +11,7 @@
 
         h1 { color: #3498db; margin-bottom: 5px; }
         p { color: #7f8c8d; margin-bottom: 25px; }
-        .package-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 25px; margin-bottom: 25px; }
+        .package-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 25px; }
         .package-card { border: 2px solid #e2e8f0; border-left: 4px solid #3498db; border-bottom: 4px solid #3498db; border-radius: 12px; padding: 15px; cursor: pointer; transition: all 0.2s; background: #f8fafc; }
         .package-card:hover { border-color: #3498db; background-color: #f7fafc; }
         .package-card.selected { border-color: #3498db; background-color: #ebf8ff; }
@@ -187,6 +187,23 @@
         </div>
         <div class="package-card" onclick="document.getElementById('selected-amount').value='200000'; document.getElementById('summary-bold-text').innerHTML='200,000 TZS || Mwaka 1 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">200,000 TZS</div>
+            <div class="card-time">Mwaka 1</div>
+            <div class="card-data">Unlimited DATA</div>
+
+         <div class="package-card" onclick="document.getElementById('selected-amount').value='50000'; document.getElementById('summary-bold-text').innerHTML='50,000 TZS || Miezi 3 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
+            <div class="card-price">XXX TZS</div>
+            <div class="card-time">Miezi 3</div>
+            <div class="card-data">Unlimited DATA</div>
+
+        </div>
+<div class="package-card" onclick="document.getElementById('selected-amount').value='100000'; document.getElementById('summary-bold-text').innerHTML='100,000 TZS || Miezi 6 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
+            <div class="card-price">YYY TZS</div>
+            <div class="card-time">Miezi 6</div>
+            <div class="card-data">Unlimited DATA</div>
+
+        </div>
+        <div class="package-card" onclick="document.getElementById('selected-amount').value='200000'; document.getElementById('summary-bold-text').innerHTML='200,000 TZS || Mwaka 1 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
+            <div class="card-price">ZZZ TZS</div>
             <div class="card-time">Mwaka 1</div>
             <div class="card-data">Unlimited DATA</div>
 
