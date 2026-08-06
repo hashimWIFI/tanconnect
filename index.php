@@ -22,7 +22,7 @@
         
         /* Modal Popup Styles */
 .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
-        .modal-card { background: white; max-width: 950px; height: 38%; margin: 15% auto; padding: 20px; border-radius: 16px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); text-align: left; position: relative; }
+        .modal-card { background: white; max-width: 950px; height: 400px; margin: 15% auto; padding: 20px; border-radius: 16px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); text-align: left; position: relative; }
         .close-btn { position: absolute; top: 10px; right: 15px; font-size: 32px; cursor: pointer; color: #7f8c8d; font-weight: bold; }
         .close-btn:hover { color: #34495e; }
         .form-group { margin-bottom: 20px; font-size: 14px}
