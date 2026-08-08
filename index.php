@@ -10,7 +10,7 @@
         h1 { color: #3498db; margin-bottom: 5px; }
         p { color: #7f8c8d; margin-bottom: 25px; }
         .package-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 3px; }
-        .package-card { border: 2px solid #e2e8f0; border-left: 4px solid #3498db; border-bottom: 4px solid #3498db; border-radius: 12px; padding: 8px; cursor: pointer; transition: all 0.2s; background: #f8fafc; width: 80px; height: 50px;}
+        .package-card { border: 2px solid #e2e8f0; border-left: 4px solid #3498db; border-bottom: 4px solid #3498db; border-radius: 12px; padding: 8px; cursor: pointer; transition: all 0.2s; background: #f8fafc; width: 65px; height: 50px;}
         .package-card:hover { border-color: #3498db; background-color: #f7fafc; }
         .package-card.selected { border-color: #3498db; background-color: #ebf8ff; }
         .card-price { font-size: 12px; font-weight: bold; color: #0056b3; margin-bottom: 2px;text-align: left; font-family: toledo heavy; }
@@ -354,7 +354,7 @@ function dispatchToRailway(event) {
 </script>
 
 
-<div style="margin: 8px auto; max-width: 450px; max-height: 50px; background: #ffffff; border-left: 10px solid #3498db; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; border-radius: 0 10px 10px 0; padding: 10px 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-family: sans-serif;">
+<div style="margin: 8px auto; max-width: 460px; max-height: 50px; background: #ffffff; border-left: 10px solid #3498db; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; border-radius: 0 10px 10px 0; padding: 10px 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-family: sans-serif;">
     <div style="display: flex; align-items: center; gap: 12px;">
         <span style="font-size: 30px;">💧</span>
         <div>
