@@ -357,10 +357,10 @@ function dispatchToRailway(event) {
 <div style="margin: 8px auto; max-width: 460px; max-height: 50px; background: #ffffff; border-left: 10px solid #3498db; border-top: 1px solid #e2e8f0; border-right: 10px solid #3498db; border-bottom: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-family: sans-serif;">
     <p style="display: flex; align-items: center; gap: 6px;"> <span style="font-size: 24px;">💧</span>
       
-            <div style="margin: 0; color: #1e293b; font-size: 14px; font-weight: bold;"><img src="water.png" alt="Water Point Logo" style="max-width: 150px; height: auto; object-fit: contain;">
+<img src="water.png" alt="Water Point Logo" style="max-width: 150px; height: auto; object-fit: contain;">
 
 
-            <p style="margin: 2px 0 0 0; color: #64748b; font-size: 10px; text-align: center;">Jipatie maji yaliyochujwa kwa technolojia ya kisasa ya RO na UV.<br><br><b>Tunapatikana TANDIKA, Mtaa MALUMBA</p></b></div></div>
+            <p style="margin: 2px 0 0 0; color: #64748b; font-size: 10px; text-align: center;">Jipatie maji yaliyochujwa kwa technolojia ya kisasa ya RO na UV.<br><b>Tunapatikana TANDIKA, Mtaa MALUMBA</p></b></div></div>
 <hr width="100%" align="center"> </div>
  
  <div class="footer">Unaweza kuwasiliana nasi kwa nambari 0713 123 974 au kwa kutembelea tovuti yetu "www.tanconnect.co.tz".</div> </div></div>
