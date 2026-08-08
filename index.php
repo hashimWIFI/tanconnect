@@ -5,21 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TANConnect - Karibu kwenye Wi-Fi</title>
     <style>
-      body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; padding: 10px; text-align: center; color: #2c3e50; }
-        .container { position: fixed; top: 0; left: 0; background: white; max-width: 1000px; height: 110%; padding: 10px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: left; }
+      body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 15px; text-align: center; color: #2c3e50; }
+        .container { max-width: 380px; margin: 40px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         h1 { color: #3498db; margin-bottom: 5px; }
         p { color: #7f8c8d; margin-bottom: 25px; }
-        .package-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .package-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 13px; margin-bottom: 14px; }
         .package-card { border: 2px solid #e2e8f0; border-left: 4px solid #3498db; border-bottom: 4px solid #3498db; border-radius: 12px; padding: 15px; cursor: pointer; transition: all 0.2s; background: #f8fafc; }
         .package-card:hover { border-color: #3498db; background-color: #f7fafc; }
         .package-card.selected { border-color: #3498db; background-color: #ebf8ff; }
-        .card-price { font-size: 17px; font-weight: bold; color: #0056b3; margin-bottom: 4px;text-align: left; font-family: toledo heavy; }
-        .card-data { font-size: 13px;  color: #334155; text-align: left; }
-        .card-time { font-size: 15px; color: #64748b; margin-top: 2px;font-weight: bold; text-align: left; }
+        .card-price { font-size: 14px; font-weight: bold; color: #0056b3; margin-bottom: 4px;text-align: left; font-family: toledo heavy; }
+        .card-data { font-size: 11px;  color: #334155; text-align: left; }
+        .card-time { font-size: 12px; color: #64748b; margin-top: 2px;font-weight: bold; text-align: left; }
 
+        
+
+        
         /* Modal Popup Styles */
-.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
-        .modal-card { background: white; max-width: 950px; height: 200px; margin: 15% auto; padding: 20px; border-radius: 16px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); text-align: left; position: relative; }
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); z-index: 99999; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
+        .modal-card { background: white; max-width: 340px; height: 38%; margin: 15% auto; padding: 20px; border-radius: 16px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); text-align: left; position: relative; }
         .close-btn { position: absolute; top: 10px; right: 15px; font-size: 32px; cursor: pointer; color: #7f8c8d; font-weight: bold; }
         .close-btn:hover { color: #34495e; }
         .form-group { margin-bottom: 20px; font-size: 14px}
@@ -29,10 +32,10 @@
         /* Dynamic Provider Button Base Style */
         .btn-submit { background:#0056b3; color:#0056b3; border: none; width: 53%; padding: 14px; font-color: white; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: all 0.3s ease; }
         .btn-submit:hover { filter: brightness(0.9); }
-        .title { color: #64748b; font-size: 16px; margin-bottom: 20px; font-family: arial black; font-weight: bold;}
-        .footer { font-size: 12px; color: #64748b; margin-top: 2px; line-height: 1.5; font-weight: bold; text-align: center}
+        .title { color: #64748b; font-size: 16px; margin-bottom: 25px; font-family: arial black; font-weight: bold;}
+        .footer { font-size: 12px; color: #64748b; margin-top: 10px; line-height: 1.5; font-weight: bold}
         .logo { font-size: 24px; font-weight: bold; color: #1e3c72; letter-spacing: 1px; margin-bottom: 5px;font-family:Broadway, Helvetica, sans-serif; }
-        .subtitle { color: #1e293b; font-size: 15px; margin-bottom: 10px; text-align: left; font-weight: bold;}
+        .subtitle { color: #64748b; font-size: 14px; margin-bottom: 15px; text-align: left; font-weight: bold;}
         .plan-summary { background: #ebf3fc; border: 1px solid #d0e2fa; border-left: 5px solid #3498db; padding: 14px; border-radius: 4px; margin-bottom: 22px; color: #002e6e; font-size: 13px; }
 
 /* 1. MASTER CONTAINER (PUSHED DOWN BY TWO LINES) */
@@ -119,20 +122,15 @@
 <body>
 
 <div class="container">
-
-<!-- REPLACE YOUR TEXT LOGO HEADER WITH THIS IMAGE UTILITY TAG -->
-<div style="text-align: center; margin: 5px auto;">
-    <img src="logo.png" alt="TANConnect Logo" style="max-width: 280px; height: auto; object-fit: contain;">
-</div>
+<div class="portal-card">
+ <div class="logo" style="font-size: 26px; font-family: Broadway, Helvetica, sans-serif; color: #1e3c72; display: flex; align-items: center; justify-content: center; gap: 2px;">TANConnect<sup><sup><sup style="font-family: Arial, Helvetica, sans-serif; font-size: 10px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup></sup></sup></div>
 
 
     <div class="subtitle">
  
-     <marquee hspace="-45" vspace="" behavior="" height="25" text-align="bottom" style="font-size: 18px><font color="white"><div>
-    <b>Ndugu mteja, karibu kwenye mtandao wa Wi-Fi wa TANConnect &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    Tunakuletea internet isiyo na ukomo wa kasi ya kuperuzi mtandaoni &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-    Fuata maelekezo hapa chini kununua Voucher kupitia simu yako ya mkononi&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-    Wasiliana nasi kwa nambari 0713 123 974, kwa ufafanuzi, malalamiko au maelekezo zaidi.</b></div></font></marquee></button>
+
+<marquee hspace="-45" vspace="" behavior="" height="20" text-align="bottom" style="font-size: 18px><font color="white"><div><b>Ndugu mteja, karibu kwenye mtandao wa Wi-Fi wa TANConnect &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tunakuletea internet isiyo na ukomo wa kasi ya kuperuzi mtandaoni &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Fuata maelekezo hapa chini kununua Voucher kupitia simu yako ya mkononi&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Wasiliana nasi kwa nambari 0713 123 974, kwa ufafanuzi, malalamiko au maelekezo zaidi.</b></div></font></marquee></button>
+
 
 <hr width="100%" align="center"></div>
 
@@ -151,71 +149,77 @@
             <div class="card-data">Unlimited DATA</div>
 
         </div>
-<div class="package-card" onclick="document.getElementById('selected-amount').value='2000'; document.getElementById('summary-bold-text').innerHTML='2,000 TZS || Siku 2 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
+<div class="package-card" onclick="document.getElementById('selected-amount').value='2000'; document.getElementById('summary-bold-text').innerHTML='2,000 TZS || Siku 3 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">2,000 TZS</div>
             <div class="card-time">Siku 2</div>
             <div class="card-data">Unlimited DATA</div>
-    </div>
-<div class="package-card" onclick="document.getElementById('selected-amount').value='4000'; document.getElementById('summary-bold-text').innerHTML='4,000 TZS || Siku 5 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
-            <div class="card-price">4,000 TZS</div>
-            <div class="card-time">Siku 5</div>
+       </div>
+<div class="package-card" onclick="document.getElementById('selected-amount').value='3000'; document.getElementById('summary-bold-text').innerHTML='3,000 TZS || Mwezi 1 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
+            <div class="card-price">3,000 TZS</div>
+            <div class="card-time">Siku 3</div>
             <div class="card-data">Unlimited DATA</div>
 
         </div>
         <div class="package-card" onclick="document.getElementById('selected-amount').value='5000'; document.getElementById('summary-bold-text').innerHTML='5,000 TZS || Siku 7 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">5,000 TZS</div>
             <div class="card-time">Siku 7</div>
-            <div class="card-data">Unlimited DATA</div>   
- </div>
-<div class="package-card" onclick="document.getElementById('selected-amount').value='7000'; document.getElementById('summary-bold-text').innerHTML='7,000 TZS || Siku 10 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
+            <div class="card-data">Unlimited DATA</div>
+
+        </div>
+<div class="package-card" onclick="document.getElementById('selected-amount').value='7000'; document.getElementById('summary-bold-text').innerHTML='7,000 TZS || Mwezi 1 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">7,000 TZS</div>
-            <div class="card-time">Siku 10</div>
+            <div class="card-time">Mwezi 1</div>
             <div class="card-data">Unlimited DATA</div>
 
-    </div>
-<div class="package-card" onclick="document.getElementById('selected-amount').value='9000'; document.getElementById('summary-bold-text').innerHTML='9,000 TZS || Siku 13 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
+        </div>
+        <div class="package-card" onclick="document.getElementById('selected-amount').value='9000'; document.getElementById('summary-bold-text').innerHTML='9,000 TZS || Miezi 2 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">9,000 TZS</div>
-            <div class="card-time">Siku 13</div>
+            <div class="card-time">Miezi 2</div>
             <div class="card-data">Unlimited DATA</div>
 
         </div>
-<div class="package-card" onclick="document.getElementById('selected-amount').value='10000'; document.getElementById('summary-bold-text').innerHTML='10,000 TZS || Siku 15 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
-            <div class="card-price">10,000 TZS</div>
-            <div class="card-time">Siku 15</div>
+ <div class="package-card" onclick="document.getElementById('selected-amount').value='15000'; document.getElementById('summary-bold-text').innerHTML='15,000 TZS || Miezi 3 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
+            <div class="card-price">15,000 TZS</div>
+            <div class="card-time">Siku 12</div>
             <div class="card-data">Unlimited DATA</div>
 
         </div>
-        <div class="package-card" onclick="document.getElementById('selected-amount').value='20000'; document.getElementById('summary-bold-text').innerHTML='20,000 TZS || Mwezi 1 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
+<div class="package-card" onclick="document.getElementById('selected-amount').value='20000'; document.getElementById('summary-bold-text').innerHTML='20,000 TZS || Miezi 6 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">20,000 TZS</div>
             <div class="card-time">Mwezi 1</div>
             <div class="card-data">Unlimited DATA</div>
 
-     </div>  </div>      
-<div style="margin: 10px auto; max-width: 450px; background: #ffffff; border-left: 5px solid #0284c7; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; border-radius: 0 8px 8px 0; padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-family: sans-serif;">
-    <div style="display: flex; align-items: center; gap: 12px;">
-        <span style="font-size: 30px;">💧</span>
-        <div>
-            <h5 style="margin: 0; color: #1e293b; font-size: 15px; font-weight: bold;">TANConnect Water ATM</h5>
-            <p style="margin: 2px 0 0 0; color: #64748b; font-size: 13px; text-align: left;">Karibu ujipatie maji safi na salama yaliyochujwa kwa kutumia technolojia ya Reverse OSMOSYS na UV.<br><br><b>Tunapatikana TANDIKA, Mtaa MALUMBA</p></b></div>
-    </div></div>
+        </div>
+
+    </div>
+
 
 <!-- Floating Form Modal Overlay Sheet Container -->
 <div id="payment-modal-overlay" class="modal-overlay">
     <div class="modal-card">
         <span class="close-btn" onclick="document.getElementById('payment-modal-overlay').style.display='none';">&times;</span>
+        
            <h3 style="margin-top: 0; font-size: 16px; font-weight: bold; color: #34495e;">Checkout & Pay</h3>
-       
+          
+        
         <div id="modal-plan-summary" class="plan-summary">
             Umechagua kifurushi:<br> <strong id="summary-bold-text" style="color: #0033a0;">1,000 TZS || Masaa 24 kuperuzi || Unlimited DATA</strong>
         </div>
+   
 <form id="payment-form" action="login.php" method="post">
           <input type="hidden" id="selected-amount" name="amount" value="1000" /> 
             <div class="form-group" style="text-align: left; margin-bottom: 20px;">
                 <label for="phone-number">Ingiza nambari ya simu, kisha bonyeza PAY:</label>
-     <div style="display: flex; gap: 10px;">
-     <input class="button" name="customer_phone" id="phone-number" pattern="[0]{1}[6-7]{1}[0-9]{8}" type="tel" placeholder="0713123974" autocomplete="off" oninput="detectMobileProvider()" style="flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; color: black; text-align: center;" required/>
-    <button type="button" id="submit-payment-btn" class="btn-popup-pay" style="margin: 0; padding: 0 30px; background: #3498db; border-radius: 6px; font-size: 13px; color: white; font-weight: bold; min-width: 180px;" onclick="dispatchToRailway(event)">Pay</button>                </div></div>
-</form>
+<div style="display: flex; gap: 10px;">
+
+<input class="button" name="customer_phone" id="phone-number" pattern="[0]{1}[6-7]{1}[0-9]{8}" type="tel" placeholder="0713123974" autocomplete="off" oninput="detectMobileProvider()" style="flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; color: black; text-align: center;" required/>
+
+<button type="button" id="submit-payment-btn" class="btn-popup-pay" style="margin: 0; padding: 0 30px; background: #3498db; border-radius: 6px; font-size: 13px; color: white; font-weight: bold; min-width: 180px;" onclick="dispatchToRailway(event)">Pay</button>                </div></div>
+
+
+
+
+        </form>
 
 <!-- Centered Processing Overlay Mask (Fully transparent background layout) -->
 <div id="active-spinner-layer" style="display: none !important; position: absolute; top: 0; left: 0; width: 90%; height: 90%; background: transparent; z-index: 100; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box; padding: 20px;">
@@ -227,14 +231,23 @@
             <span class="spinner-text-center"><b>SUBIRI</b></span>
             <div class="the-revolving-dot"></div> <!-- Only 1 single dot item row remains! -->
         </div>
-   
+        
+        
+        
     </div>
 </div>
 
 </div>
-</div>
+</div></div>
+    
+
+
+
+
 
 <script>
+
+
 // Live Operator Detection Engine
 function detectMobileProvider() {
     var phoneInput = document.getElementById("phone-number").value.trim();
@@ -339,13 +352,18 @@ function dispatchToRailway(event) {
 }
 
 </script>
+
+
+
+<div style="margin: 8px auto; max-width: 450px; background: #ffffff; border-left: 10px solid #3498db; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; border-radius: 0 10px 10px 0; padding: 10px 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-family: sans-serif;">
+    <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 30px;">💧</span>
+        <div>
+            <h5 style="margin: 0; color: #1e293b; font-size: 14px; font-weight: bold;">TANConnect Water Point</h5>
+            <p style="margin: 2px 0 0 0; color: #64748b; font-size: 11px; text-align: left;">Karibu ujipatie maji safi na salama yaliyochujwa kwa kutumia technolojia ya kisasa ya RO na UV.<br><br><b>Tunapatikana TANDIKA, Mtaa MALUMBA</p></b></div></div></div>
 <hr width="100%" align="center">
  
  <div class="footer">Unaweza kuwasiliana nasi kwa nambari 0713 123 974 au kwa kutembelea tovuti yetu "www.tanconnect.co.tz".</div> </div>
 
 </body>
 </html>
-
-
-
-
