@@ -355,7 +355,7 @@ function dispatchToRailway(event) {
 
 
 <div style="margin: 8px auto; max-width: 460px; max-height: 50px; background: #ffffff; border-left: 10px solid #3498db; border-top: 1px solid #e2e8f0; border-right: 10px solid #3498db; border-bottom: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-family: sans-serif;">
-    <p style="display: flex; align-items: center; gap: 12px;"> <span style="font-size: 30px;">💧</span>
+    <p style="display: flex; align-items: center; gap: 6px;"> <span style="font-size: 24px;">💧</span>
       
             <div style="margin: 0; color: #1e293b; font-size: 14px; font-weight: bold;"><img src="water.png" alt="Water Point Logo" style="max-width: 150px; height: auto; object-fit: contain;">
 
