@@ -156,9 +156,9 @@
             <div class="card-time">Siku 2</div>
             <div class="card-data">Unlimited DATA</div>
        </div>
-<div class="package-card" onclick="document.getElementById('selected-amount').value='3000'; document.getElementById('summary-bold-text').innerHTML='3,000 TZS || Mwezi 1 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
-            <div class="card-price">3,000 TZS</div>
-            <div class="card-time">Siku 3</div>
+<div class="package-card" onclick="document.getElementById('selected-amount').value='4000'; document.getElementById('summary-bold-text').innerHTML='4,000 TZS || Siku 5 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
+            <div class="card-price">4,000 TZS</div>
+            <div class="card-time">Siku 5</div>
             <div class="card-data">Unlimited DATA</div>
 
         </div>
@@ -180,9 +180,9 @@
             <div class="card-data">Unlimited DATA</div>
 
         </div>
- <div class="package-card" onclick="document.getElementById('selected-amount').value='15000'; document.getElementById('summary-bold-text').innerHTML='15,000 TZS || Siku 22 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
-            <div class="card-price">15,000 TZS</div>
-            <div class="card-time">Siku 22</div>
+ <div class="package-card" onclick="document.getElementById('selected-amount').value='10000'; document.getElementById('summary-bold-text').innerHTML='10,000 TZS || Siku 15 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
+            <div class="card-price">10,000 TZS</div>
+            <div class="card-time">Siku 15</div>
             <div class="card-data">Unlimited DATA</div>
 
         </div>
