@@ -357,7 +357,7 @@ function dispatchToRailway(event) {
         <span style="font-size: 26px;">💧</span>
         <div>
             <h5 style="margin: 0; color: #1e293b; font-size: 12px; font-weight: bold;">TANConnect Water Point</h5>
-            <p style="margin: 2px 0 0 0; color: #64748b; font-size: 9px; text-align: center;">Jipatie maji safi na salama yaliyochujwa kwa kutumia technolojia ya kisasa ya RO na UV.<br><b>Tunapatikana TANDIKA, Mtaa MALUMBA</p></b></div></div></div>
+            <p style="margin: 2px 0 0 0; color: #64748b; font-size: 9px; text-align: center;">Jipatie maji safi na salama yaliyochujwa kwa kutumia technolojia ya kisasa ya RO na UV.<br><br><b>Tunapatikana TANDIKA, Mtaa MALUMBA</p></b></div></div></div>
 <hr width="100%" align="center">
  
  <div class="footer">Unaweza kuwasiliana nasi kwa nambari 0713 123 974 au kwa kutembelea tovuti yetu "www.tanconnect.co.tz".</div> </div>
