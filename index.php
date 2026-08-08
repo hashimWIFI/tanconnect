@@ -360,8 +360,8 @@ function dispatchToRailway(event) {
     <div style="display: flex; align-items: center; gap: 12px;">
         <span style="font-size: 30px;">💧</span>
         <div>
-            <h5 style="margin: 0; color: #1e293b; font-size: 14px; font-weight: bold;"><img src="water.png" alt="Water Point Logo" style="max-width: 150px; height: auto; object-fit: contain;">
-</div>
+            <div style="margin: 0; color: #1e293b; font-size: 14px; font-weight: bold;"><img src="water.png" alt="Water Point Logo" style="max-width: 150px; height: auto; object-fit: contain;">
+</div><div>
 
             <p style="margin: 2px 0 0 0; color: #64748b; font-size: 10px; text-align: center;">Karibu ujipatie maji safi yaliyochujwa kwa technolojia ya kisasa ya RO na UV.<br><br><b>Tunapatikana TANDIKA, Mtaa MALUMBA</p></b></div></div></div>
 <hr width="100%" align="center">
