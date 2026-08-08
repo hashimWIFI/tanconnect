@@ -355,10 +355,10 @@ function dispatchToRailway(event) {
 
 <div style="margin: 0; margin: 8px auto; max-width: 450px; max-height: 50px; border-left: 10px solid #3498db; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; border-radius: 0 10px 10px 0; padding: 10px 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-family: sans-serif;" background-image: url('background.png');>
     <div style="display: flex; align-items: center; gap: 12px;">
-        <span style="font-size: 30px;">💧</span>
+        <span style="font-size: 24px;">💧</span>
         <div>
-            <h5 style="margin: 0; color: #1e293b; font-size: 14px; font-weight: bold;">TANConnect Water Point</h5>
-            <p style="margin: 2px 0 0 0; color: #64748b; font-size: 11px; text-align: left;">Karibu ujipatie maji safi na salama yaliyochujwa kwa kutumia technolojia ya kisasa ya RO na UV.<br><br><b>Tunapatikana TANDIKA, Mtaa MALUMBA</p></b></div></div></div>
+            <h5 style="margin: 0; color: #1e293b; font-size: 12px; font-weight: bold;">TANConnect Water Point</h5>
+            <p style="margin: 2px 0 0 0; color: #64748b; font-size: 9px; text-align: left;">Karibu ujipatie maji safi na salama yaliyochujwa kwa kutumia technolojia ya kisasa ya RO na UV.<br><br><b>Tunapatikana TANDIKA, Mtaa MALUMBA</p></b></div></div></div>
 <hr width="100%" align="center">
 
  <div class="footer">Unaweza kuwasiliana nasi kwa nambari 0713 123 974 au kwa kutembelea tovuti yetu "www.tanconnect.co.tz".</div> </div>
