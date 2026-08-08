@@ -10,7 +10,7 @@
         h1 { color: #3498db; margin-bottom: 5px; }
         p { color: #7f8c8d; margin-bottom: 25px; }
         .package-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 3px; }
-        .package-card { border: 2px solid #e2e8f0; border-left: 4px solid #3498db; border-bottom: 4px solid #3498db; border-radius: 12px; padding: 8px; cursor: pointer; transition: all 0.2s; background: #f8fafc; width: 100px; height: 50px;}
+        .package-card { border: 2px solid #e2e8f0; border-left: 4px solid #3498db; border-bottom: 4px solid #3498db; border-radius: 12px; padding: 8px; cursor: pointer; transition: all 0.2s; background: #f8fafc; width: 80px; height: 50px;}
         .package-card:hover { border-color: #3498db; background-color: #f7fafc; }
         .package-card.selected { border-color: #3498db; background-color: #ebf8ff; }
         .card-price { font-size: 12px; font-weight: bold; color: #0056b3; margin-bottom: 2px;text-align: left; font-family: toledo heavy; }
