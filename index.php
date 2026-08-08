@@ -168,25 +168,25 @@
             <div class="card-data">Unlimited DATA</div>
 
         </div>
-<div class="package-card" onclick="document.getElementById('selected-amount').value='7000'; document.getElementById('summary-bold-text').innerHTML='7,000 TZS || Mwezi 1 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
+<div class="package-card" onclick="document.getElementById('selected-amount').value='7000'; document.getElementById('summary-bold-text').innerHTML='7,000 TZS || Siku 10 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">7,000 TZS</div>
-            <div class="card-time">Mwezi 1</div>
+            <div class="card-time">Siku 10</div>
             <div class="card-data">Unlimited DATA</div>
 
         </div>
-        <div class="package-card" onclick="document.getElementById('selected-amount').value='9000'; document.getElementById('summary-bold-text').innerHTML='9,000 TZS || Miezi 2 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
+        <div class="package-card" onclick="document.getElementById('selected-amount').value='9000'; document.getElementById('summary-bold-text').innerHTML='9,000 TZS || Siku 13 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">9,000 TZS</div>
-            <div class="card-time">Miezi 2</div>
+            <div class="card-time">Siku 13</div>
             <div class="card-data">Unlimited DATA</div>
 
         </div>
- <div class="package-card" onclick="document.getElementById('selected-amount').value='15000'; document.getElementById('summary-bold-text').innerHTML='15,000 TZS || Miezi 3 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
+ <div class="package-card" onclick="document.getElementById('selected-amount').value='15000'; document.getElementById('summary-bold-text').innerHTML='15,000 TZS || Siku 22 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">15,000 TZS</div>
-            <div class="card-time">Siku 12</div>
+            <div class="card-time">Siku 22</div>
             <div class="card-data">Unlimited DATA</div>
 
         </div>
-<div class="package-card" onclick="document.getElementById('selected-amount').value='20000'; document.getElementById('summary-bold-text').innerHTML='20,000 TZS || Miezi 6 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
+<div class="package-card" onclick="document.getElementById('selected-amount').value='20000'; document.getElementById('summary-bold-text').innerHTML='20,000 TZS || Mwezi 1 kuperuzi|| Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">20,000 TZS</div>
             <div class="card-time">Mwezi 1</div>
             <div class="card-data">Unlimited DATA</div>
