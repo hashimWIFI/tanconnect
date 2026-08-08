@@ -123,7 +123,9 @@
 
 <div class="container">
 <div class="portal-card">
- <div class="logo" style="font-size: 26px; font-family: Broadway, Helvetica, sans-serif; color: #1e3c72; display: flex; align-items: center; justify-content: center; gap: 2px;">TANConnect<sup><sup><sup style="font-family: Arial, Helvetica, sans-serif; font-size: 10px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup></sup></sup></div>
+<img src="logo.png" alt="Water Point Logo" style="max-width: 280px; height: auto; object-fit: contain;">
+</div>
+
 
 
     <div class="subtitle">
@@ -358,7 +360,9 @@ function dispatchToRailway(event) {
     <div style="display: flex; align-items: center; gap: 12px;">
         <span style="font-size: 30px;">💧</span>
         <div>
-            <h5 style="margin: 0; color: #1e293b; font-size: 14px; font-weight: bold;">TANConnect Water Point</h5>
+            <h5 style="margin: 0; color: #1e293b; font-size: 14px; font-weight: bold;"><img src="water.png" alt="Water Point Logo" style="max-width: 150px; height: auto; object-fit: contain;">
+</div>
+
             <p style="margin: 2px 0 0 0; color: #64748b; font-size: 10px; text-align: center;">Karibu ujipatie maji safi yaliyochujwa kwa technolojia ya kisasa ya RO na UV.<br><br><b>Tunapatikana TANDIKA, Mtaa MALUMBA</p></b></div></div></div>
 <hr width="100%" align="center">
  
