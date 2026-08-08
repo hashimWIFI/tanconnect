@@ -352,7 +352,7 @@ function dispatchToRailway(event) {
 }
 
 </script>
-<div style="margin: 8px auto; max-width: 450px; max-height: 50px; background: #ffffff; border-left: 10px solid #3498db; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; border-radius: 0 10px 10px 0; padding: 10px 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-family: sans-serif;">
+<div style="margin: 8px auto; max-width: 450px; max-height: 50px; background: #ffffff; border-left: 10px solid #3498db; border-top: 1px solid #e2e8f0; border-right: 10px solid #3498db; border-bottom: 1px solid #e2e8f0; padding: 10px 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-family: sans-serif;">
     <div style="display: flex; align-items: center; gap: 12px;">
         <span style="font-size: 26px;">💧</span>
         <div>
