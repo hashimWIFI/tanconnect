@@ -18,7 +18,7 @@ $routingPrefix = substr($phone, 3, 2);
 
 if (in_array($routingPrefix, ['74', '75', '76', '14'])) {
     $provider = "Mpesa";
-} elseif (in_array($routingPrefix, ['71', '77', '65', '07', '67', '72'])) {
+} elseif (in_array($routingPrefix, ['70', '71', '77', '65', '07', '67', '72'])) {
     $provider = "Tigo";
 } elseif (in_array($routingPrefix, ['78', '79', '68', '69'])) {
     $provider = "Airtel";
