@@ -2,7 +2,7 @@
 <html lang="sw">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <title>TANConnect - Karibu kwenye Wi-Fi</title>
     <style>
       body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 15px; text-align: center; color: #2c3e50; }
@@ -361,7 +361,12 @@ function dispatchToRailway(event) {
             <p style="margin: 2px 0 0 0; color: #64748b; font-size: 9px; text-align: left;">Karibu ujipatie maji safi na salama yaliyochujwa kwa kutumia technolojia ya kisasa ya RO na UV.<br><br><b>Tunapatikana TANDIKA, Mtaa MALUMBA</p></b></div></div></div>
 <hr width="100%" align="center">
 
- <div class="footer">Unaweza kuwasiliana nasi kwa nambari 0713 123 974 au kwa kutembelea tovuti yetu "www.tanconnect.co.tz".</div> </div>
+<div style="text-align: center; margin-top: 5px; padding-top: 5px; border-top: 1px solid #e2e8f0; font-family: sans-serif;">
+    <p style="margin: 0; color: #64748b; font-size: 11px; line-height: 1.5;">
+        © 2026 TANConnect. All Rights Reserved.<br>
+        TANConnect is a registered trademark of <b>NIT Africa Solutions Limited</b>.
+    </p>
+</div>
 
 </body>
 </html>
