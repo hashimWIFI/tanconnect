@@ -333,7 +333,7 @@ function dispatchToRailway(event) {
     
     // 3. Define valid Tanzanian MNO network code buckets
     var validVodacom  = ['74', '75', '76', '14'];
-    var validTigo     = ['71', '77', '65', '07', '67', '72'];
+    var validTigo     = ['71', '77', '65', '07', '67', '72', '70'];
     var validAirtel   = ['78', '79', '68', '69'];
     var validHalotel  = ['62', '61'];
     
