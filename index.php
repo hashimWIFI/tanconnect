@@ -278,7 +278,7 @@ function detectMobileProvider() {
     if (['74', '75', '76', '14'].includes(prefix)) {
         payBtn.style.backgroundColor = mpesaColor;
         payBtn.innerHTML = "PAY(M-pesa)";
-    } else if (['71', '77', '65', '07', '67', '72'].includes(prefix)) {
+    } else if (['71', '77', '65', '07', '67', '72', '70'].includes(prefix)) {
         payBtn.style.backgroundColor = tigoColor;
         payBtn.innerHTML = "PAY(Tigopesa)";
     } else if (['78', '79', '68', '69'].includes(prefix)) {
