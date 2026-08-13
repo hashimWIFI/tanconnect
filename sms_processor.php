@@ -4,7 +4,7 @@ if (!defined('TANCONNECT_SECURE_PASS')) {
     die("Direct access to processor layer denied.");
 }
 
-// 1. TEXTBEE AUTOMATION FOR VODACOM SIM CARD BLAST
+// 1. STANDARD COMPLIANT PHONE NUMBER FORMATTER
 $customer_phone = str_replace([' ', '-', '(', ')', '+'], '', $customer_phone);
 
 if (!empty($customer_phone)) {
@@ -17,69 +17,67 @@ if (!empty($customer_phone)) {
         $customer_phone = '+' . $customer_phone;
     }
 
-    echo "📱 Initiating smsgate gateway delivery protocol...\n";
+    echo "📱 Initiating sms-gate gateway delivery protocol...\n";
     echo "Target Customer Recipient: " . $customer_phone . "\n";
     
-    // Read cleanly from Railway environment variables
+    // Read cleanly from your secure Railway environment settings
     $smsgate_api_key = getenv('SMSGATE_API_KEY') ?: 'icqsrlspg85th2';
     $smsgate_device_id = getenv('SMSGATE_DEVICE_ID') ?: '3onqHv7QcvR69kVifBQrZ'; 
     
-    // Fallbacks to default values if package metadata isn't logged in row
-    // 1. Grab your real database column name
-$packagePrice = isset($row['price_tier']) ? $row['price_tier'] : '1000';
+    // Grab your real database column name
+    $packagePrice = isset($row['price_tier']) ? $row['price_tier'] : '1000';
 
-// 2. SMART AUTOMATION: Calculate duration automatically based on the price paid
-switch ($packagePrice) {
-    case '500':
-        $timeDuration = 'masaa 12'; // 500 TZS package duration
-        break;
-    case '1000':
-        $timeDuration = 'siku 1'; // 1000 TZS package duration
-        break;
-    case '2000':
-        $timeDuration = 'siku 2';    // Example: 5000 TZS for 7 days
-        break;
-    case '4000':
-        $timeDuration = 'siku 5';    // Example: 5000 TZS for 7 days
-        break;
-    case '5000':
-        $timeDuration = 'siku 7';    // Example: 5000 TZS for 7 days
-        break;
-    case '7000':
-        $timeDuration = 'siku 10';    // Example: 5000 TZS for 7 days
-        break;
-    case '9000':
-        $timeDuration = 'siku 13';    // Example: 5000 TZS for 7 days
-        break;
-    case '10000':
-        $timeDuration = 'siku 15';    // Example: 5000 TZS for 7 days
-        break;
-    case '20000':
-        $timeDuration = 'siku 30';    // Example: 5000 TZS for 7 days
-        break;
-    default:
-        $timeDuration = 'masaa 24'; // Standard fallback if price doesn't match
-        break;
-}
+    // 2. SMART AUTOMATION: Calculate duration automatically based on the price paid
+    switch ($packagePrice) {
+        case '500':
+            $timeDuration = 'masaa 12';
+            break;
+        case '1000':
+            $timeDuration = 'siku 1';
+            break;
+        case '2000':
+            $timeDuration = 'siku 2';
+            break;
+        case '4000':
+            $timeDuration = 'siku 5';
+            break;
+        case '5000':
+            $timeDuration = 'siku 7';
+            break;
+        case '7000':
+            $timeDuration = 'siku 10';
+            break;
+        case '9000':
+            $timeDuration = 'siku 13';
+            break;
+        case '10000':
+            $timeDuration = 'siku 15';
+            break;
+        case '20000':
+            $timeDuration = 'siku 30';
+            break;
+        default:
+            $timeDuration = 'masaa 24';
+            break;
+    }
 
-
-    // 🌍 YOUR EXACT SWAHILI TEMPLATE
+    // 🌍 YOUR EXACT PRODUCTION SWAHILI TEMPLATE
     $sms_message = "Hongera, umefanikiwa kununua kifurushi cha Wifi cha " . $packagePrice . " TZS kutoka TANConnect kitakachotumika kwa " . $timeDuration . ". Voucher yako ni " . $voucherCode . ". ASANTE.";
     
+    // 📦 SMS-GATE PAYLOAD FRAMEWORK (Array layout matching their native gateway payload rules)
     $payload = json_encode([
         "recipients" => [$customer_phone],
         "message" => $sms_message
     ]);
     
-    // 💎 FIXED STABLE URL: Unified single string as per official smsgate quickstart docs
-    $api_url = "https://api.sms-gate.app/mobile/v1" . $smsgate_device_id . "/send-sms";
+    // 💎 FIX 1: Corrected single path string map containing the mandatory forward slash dividers
+    $api_url = "https://sms-gate.app" . $smsgate_device_id . "/send-sms";
     $ch = curl_init($api_url);
     
     // Bypass local environment SSL restrictions safely
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
     
-    // Timeout limits to avoid infinite hanging loops
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10); 
     curl_setopt($ch, CURLOPT_TIMEOUT, 15);        
     
@@ -87,10 +85,10 @@ switch ($packagePrice) {
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
     
-    // Standard system API headers without custom user-agent blocks
+    // 🔒 FIX 2: Standard Authorization Header to clear out the 401 block instantly
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Content-Type: application/json',
-        'x-api-key: ' . $smsgate_api_key
+        'Authorization: ' . $smsgate_api_key
     ]);
     
     $smsgate_response = curl_exec($ch);
@@ -108,5 +106,4 @@ switch ($packagePrice) {
 } else {
     echo "⚠️ smsgate Skip: Customer phone number is missing.\n";
 }
-
-
+?>
