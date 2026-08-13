@@ -17,12 +17,12 @@ if (!empty($customer_phone)) {
         $customer_phone = '+' . $customer_phone;
     }
 
-    echo "📱 Initiating TextBee gateway delivery protocol...\n";
+    echo "📱 Initiating smsgate gateway delivery protocol...\n";
     echo "Target Customer Recipient: " . $customer_phone . "\n";
     
     // Read cleanly from Railway environment variables
-    $textbee_api_key = getenv('SMSGATE_API_KEY') ?: 'icqsrlspg85th2';
-    $textbee_device_id = getenv('SMSGATE_DEVICE_ID') ?: '3onqHv7QcvR69kVifBQrZ'; 
+    $smsgate_api_key = getenv('SMSGATE_API_KEY') ?: 'icqsrlspg85th2';
+    $smsgate_device_id = getenv('SMSGATE_DEVICE_ID') ?: '3onqHv7QcvR69kVifBQrZ'; 
     
     // Fallbacks to default values if package metadata isn't logged in row
     // 1. Grab your real database column name
