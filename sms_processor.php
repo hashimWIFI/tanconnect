@@ -112,11 +112,12 @@ if (!empty($customer_phone)) {
     echo "Base Delivery Status Header Recieved: " . $http_code . "\n";
     echo "Raw Engine Trace Details: " . $smsgate_response . "\n\n";
 
-    if ($http_code == 200 || $http_code == 201) {
-        echo "🚀 sms-gate API success! Outbound SMS command successfully dispatched to your Vodacom Samsung device.\n";
+       // 🔗 UPDATED LOGIC TO ACCEPT THE 202 ACCEPTER HEADER
+    if ($http_code == 200 || $http_code == 201 || $http_code == 202) {
+        echo "🚀 smsgate API success! Outbound SMS command successfully dispatched to your Vodacom Samsung device.\n";
     } else {
-        echo "⚠️ sms-gate API rejected the packet structure.\n";
-    }
+        echo "⚠️ smsgate API rejected the packet structure.\n";
+
 } else {
     echo "⚠️ sms-gate Skip: Customer phone number is missing.\n";
 }
