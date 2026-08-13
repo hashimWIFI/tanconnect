@@ -65,15 +65,20 @@ if (!empty($customer_phone)) {
     // 🌍 YOUR PRODUCTION SWAHILI TEMPLATE
     $sms_message = "Hongera, umefanikiwa kununua kifurushi cha Wifi cha " . $packagePrice . " TZS kutoka TANConnect kitakachotumika kwa " . $timeDuration . ". Voucher yako ni " . $voucherCode . ". ASANTE.";
     
-    // 📦 RE-ALIGNED PAYLOAD KEYS FOR MOBILE API GATEWAYS
+    // 📦 NESTED JSON PAYLOAD DESIGN (Matches your exact documentation format)
     $payload = json_encode([
-        "to" => $customer_phone,
-        "message" => $sms_message,
-        "device_id" => $smsgate_device_id
+        "textMessage" => [
+            "text" => $sms_message
+        ],
+        "deviceId" => $smsgate_device_id,
+        "phoneNumbers" => [$customer_phone], // Passed as an array layout block
+        "simNumber" => 1,
+        "ttl" => 3600,
+        "priority" => 100
     ]);
     
-    // 💎 UPDATED DIRECT INLINE ACTION ROUTE (Fixes the 405 error block)
-    $api_url = "https://sms-gate.app";
+    // 💎 OFFICIAL GATEWAY ENDPOINT WITH DEVICE ACTIVE WINDOW PARAMETERS
+    $api_url = "https://api.sms-gate.app/3rdparty/v1/messages?skipPhoneValidation=true&deviceActiveWithin=12";
     $ch = curl_init($api_url);
     
     // Bypass local workspace certificate constraints safely
@@ -88,7 +93,7 @@ if (!empty($customer_phone)) {
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
     
-    // BASIC HTTP AUTHENTICATION INJECTION
+    // BASIC HTTP AUTHENTICATION INJECTION (-u parameter tracking)
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Content-Type: application/json',
         'Authorization: Basic ' . base64_encode($smsgate_username . ':' . $smsgate_password)
@@ -108,11 +113,11 @@ if (!empty($customer_phone)) {
     echo "Raw Engine Trace Details: " . $smsgate_response . "\n\n";
 
     if ($http_code == 200 || $http_code == 201) {
-        echo "🚀 smsgate API success! Outbound SMS command successfully dispatched to your Vodacom Samsung device.\n";
+        echo "🚀 sms-gate API success! Outbound SMS command successfully dispatched to your Vodacom Samsung device.\n";
     } else {
-        echo "⚠️ smsgate API rejected the packet structure.\n";
+        echo "⚠️ sms-gate API rejected the packet structure.\n";
     }
 } else {
-    echo "⚠️ smsgate Skip: Customer phone number is missing.\n";
+    echo "⚠️ sms-gate Skip: Customer phone number is missing.\n";
 }
 ?>
