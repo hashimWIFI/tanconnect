@@ -1,14 +1,13 @@
 <?php
-// Prevent unauthorized bypass execution of this standalone file
+// 1. Prevent direct browser execution of this component
 if (!defined('TANCONNECT_SECURE_PASS')) {
     die("Direct access to processor layer denied.");
 }
 
-// 1. STANDARD COMPLIANT PHONE NUMBER FORMATTER
+// 2. FORCE FORMAT PHONE NUMBER TO INTERNATIONAL STRING (+255...)
 $customer_phone = str_replace([' ', '-', '(', ')', '+'], '', $customer_phone);
 
 if (!empty($customer_phone)) {
-    // Force format phone number to international string (+255...)
     if (substr($customer_phone, 0, 3) === '255') {
         $customer_phone = '+' . $customer_phone;
     } elseif (substr($customer_phone, 0, 1) === '0') {
@@ -20,15 +19,15 @@ if (!empty($customer_phone)) {
     echo "📱 Initiating sms-gate gateway delivery protocol...\n";
     echo "Target Customer Recipient: " . $customer_phone . "\n";
     
-    // Aligned directly with your active mobile hardware dashboard values
+    // 🛠️ HARDCODED IDENTIFIERS FROM YOUR SCREENSHOT TO ELIMINATE CLOUD VARIABLE ISSUES
     $smsgate_username  = 'PKHHG1';
     $smsgate_password  = 'icqsrlspg85th2'; 
     $smsgate_device_id = '3onqHv7QcvR69kVifBQrZ'; 
     
-    // Grab your real database column name
+    // 3. READ METADATA SAFELY FROM DATABASE ROWS
     $packagePrice = isset($row['price_tier']) ? $row['price_tier'] : '1000';
 
-    // Calculate duration automatically based on the price paid
+    // 4. SMART AUTOMATION: Calculate duration automatically based on the price paid
     switch ($packagePrice) {
         case '500':
             $timeDuration = 'masaa 12';
@@ -62,7 +61,7 @@ if (!empty($customer_phone)) {
             break;
     }
 
-    // 🌍 YOUR PRODUCTION SWAHILI TEMPLATE
+    // 🌍 YOUR EXACT PRODUCTION SWAHILI TEMPLATE
     $sms_message = "Hongera, umefanikiwa kununua kifurushi cha Wifi cha " . $packagePrice . " TZS kutoka TANConnect kitakachotumika kwa " . $timeDuration . ". Voucher yako ni " . $voucherCode . ". ASANTE.";
     
     // 📦 NESTED JSON PAYLOAD DESIGN (Matches your exact documentation format)
@@ -71,14 +70,14 @@ if (!empty($customer_phone)) {
             "text" => $sms_message
         ],
         "deviceId" => $smsgate_device_id,
-        "phoneNumbers" => [$customer_phone], // Passed as an array layout block
+        "phoneNumbers" => [$customer_phone],
         "simNumber" => 1,
         "ttl" => 3600,
         "priority" => 100
     ]);
     
     // 💎 OFFICIAL GATEWAY ENDPOINT WITH DEVICE ACTIVE WINDOW PARAMETERS
-    $api_url = "https://api.sms-gate.app/3rdparty/v1/messages?skipPhoneValidation=true&deviceActiveWithin=12";
+    $api_url = "https://sms-gate.app";
     $ch = curl_init($api_url);
     
     // Bypass local workspace certificate constraints safely
@@ -112,12 +111,13 @@ if (!empty($customer_phone)) {
     echo "Base Delivery Status Header Recieved: " . $http_code . "\n";
     echo "Raw Engine Trace Details: " . $smsgate_response . "\n\n";
 
-       // 🔗 UPDATED LOGIC TO ACCEPT THE 202 ACCEPTER HEADER
-      // 🔗 UPDATED LOGIC TO ACCEPT THE 202 ACCEPTER HEADER
+    // 🔗 ACCEPT CODES 200, 201, AND YOUR VERIFIED 202 STATUSES AS SUCCESS
     if ($http_code == 200 || $http_code == 201 || $http_code == 202) {
-        echo "🚀 smsgate API success! Outbound SMS command successfully dispatched to your Vodacom Samsung device.\n";
+        echo "🚀 sms-gate API success! Outbound SMS command successfully dispatched to your Vodacom Samsung device.\n";
     } else {
-        echo "⚠️ smsgate API rejected the packet structure.\n";
+        echo "⚠️ sms-gate API rejected the packet structure.\n";
     }
-
+} else {
+    echo "⚠️ sms-gate Skip: Customer phone number is missing.\n";
+}
 ?>
