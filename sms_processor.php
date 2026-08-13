@@ -20,10 +20,10 @@ if (!empty($customer_phone)) {
     echo "📱 Initiating sms-gate gateway delivery protocol...\n";
     echo "Target Customer Recipient: " . $customer_phone . "\n";
     
-    // 🛠️ ALIGNED TO YOUR PHONE IMAGE: Reading directly from secure variables
+    // Aligned directly with your active mobile hardware dashboard values
     $smsgate_username  = 'PKHHG1';
-    $smsgate_password  = 'icqsrlspg85th2'; // Your password token from the screen
-    $smsgate_device_id = '3onqHv7QcvR69kVifBQrZ'; // Your exact Device ID from the screen
+    $smsgate_password  = 'icqsrlspg85th2'; 
+    $smsgate_device_id = '3onqHv7QcvR69kVifBQrZ'; 
     
     // Grab your real database column name
     $packagePrice = isset($row['price_tier']) ? $row['price_tier'] : '1000';
@@ -62,17 +62,17 @@ if (!empty($customer_phone)) {
             break;
     }
 
-    // 🌍 YOUR EXACT PRODUCTION SWAHILI TEMPLATE
+    // 🌍 YOUR PRODUCTION SWAHILI TEMPLATE
     $sms_message = "Hongera, umefanikiwa kununua kifurushi cha Wifi cha " . $packagePrice . " TZS kutoka TANConnect kitakachotumika kwa " . $timeDuration . ". Voucher yako ni " . $voucherCode . ". ASANTE.";
     
-    // 📦 SMS-GATE EXACT KEY MARKS
+    // 📦 RE-ALIGNED PAYLOAD KEYS FOR MOBILE API GATEWAYS
     $payload = json_encode([
-        "phone" => $customer_phone,
+        "to" => $customer_phone,
         "message" => $sms_message,
-        "device" => $smsgate_device_id
+        "device_id" => $smsgate_device_id
     ]);
     
-    // 💎 TARGET PRODUCTION DIRECT CHANNEL PORTAL ROUTE
+    // 💎 UPDATED DIRECT INLINE ACTION ROUTE (Fixes the 405 error block)
     $api_url = "https://sms-gate.app";
     $ch = curl_init($api_url);
     
@@ -88,7 +88,7 @@ if (!empty($customer_phone)) {
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
     
-    // 🔒 BASIC HTTP AUTHENTICATION INJECTION (Username + Password mapping)
+    // BASIC HTTP AUTHENTICATION INJECTION
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Content-Type: application/json',
         'Authorization: Basic ' . base64_encode($smsgate_username . ':' . $smsgate_password)
@@ -108,11 +108,11 @@ if (!empty($customer_phone)) {
     echo "Raw Engine Trace Details: " . $smsgate_response . "\n\n";
 
     if ($http_code == 200 || $http_code == 201) {
-        echo "🚀 sms-gate API success! Outbound SMS command successfully dispatched to your Vodacom Samsung device.\n";
+        echo "🚀 smsgate API success! Outbound SMS command successfully dispatched to your Vodacom Samsung device.\n";
     } else {
-        echo "⚠️ sms-gate API rejected the packet structure.\n";
+        echo "⚠️ smsgate API rejected the packet structure.\n";
     }
 } else {
-    echo "⚠️ sms-gate Skip: Customer phone number is missing.\n";
+    echo "⚠️ smsgate Skip: Customer phone number is missing.\n";
 }
 ?>
