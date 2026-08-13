@@ -21,8 +21,8 @@ if (!empty($customer_phone)) {
     echo "Target Customer Recipient: " . $customer_phone . "\n";
     
     // Read cleanly from Railway environment variables
-    $textbee_api_key = getenv('TEXTBEE_API_KEY') ?: 'txb_u0liKgZdszGYc7NyXsOannnd4c6vqnlk';
-    $textbee_device_id = getenv('TEXTBEE_DEVICE_ID') ?: '6a742479f83fbea62920b02f'; 
+    $textbee_api_key = getenv('SMSGATE_API_KEY') ?: 'icqsrlspg85th2';
+    $textbee_device_id = getenv('SMSGATE_DEVICE_ID') ?: '3onqHv7QcvR69kVifBQrZ'; 
     
     // Fallbacks to default values if package metadata isn't logged in row
     // 1. Grab your real database column name
@@ -71,8 +71,8 @@ switch ($packagePrice) {
         "message" => $sms_message
     ]);
     
-    // 💎 FIXED STABLE URL: Unified single string as per official textbee quickstart docs
-    $api_url = "https://api.textbee.dev/api/v1/gateway/devices/" . $textbee_device_id . "/send-sms";
+    // 💎 FIXED STABLE URL: Unified single string as per official smsgate quickstart docs
+    $api_url = "https://api.sms-gate.app/mobile/v1" . $smsgate_device_id . "/send-sms";
     $ch = curl_init($api_url);
     
     // Bypass local environment SSL restrictions safely
@@ -90,22 +90,23 @@ switch ($packagePrice) {
     // Standard system API headers without custom user-agent blocks
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Content-Type: application/json',
-        'x-api-key: ' . $textbee_api_key
+        'x-api-key: ' . $smsgate_api_key
     ]);
     
-    $textbee_response = curl_exec($ch);
+    $smsgate_response = curl_exec($ch);
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
     
     echo "Base Delivery Status Header Recieved: " . $http_code . "\n";
-    echo "Raw Engine Trace Details: " . $textbee_response . "\n\n";
+    echo "Raw Engine Trace Details: " . $smsgate_response . "\n\n";
 
     if ($http_code == 200 || $http_code == 201) {
-        echo "🚀 TextBee API success! Outbound SMS command successfully dispatched to your Vodacom Samsung device.\n";
+        echo "🚀 smsgate API success! Outbound SMS command successfully dispatched to your Vodacom Samsung device.\n";
     } else {
-        echo "⚠️ TextBee API rejected the packet structure.\n";
+        echo "⚠️ smsgate API rejected the packet structure.\n";
     }
 } else {
-    echo "⚠️ TextBee Skip: Customer phone number is missing.\n";
+    echo "⚠️ smsgate Skip: Customer phone number is missing.\n";
 }
+
 
