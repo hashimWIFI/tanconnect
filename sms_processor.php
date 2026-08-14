@@ -16,12 +16,10 @@ if (!empty($base_phone)) {
         $clean_phone = '+' . $base_phone;
     }
 
-    // 2. 💡 HARDCODED SAFETY CONTROLS: Read directly out of active script parameters
-    // This completely bypasses any database column naming issues ($row vs $result)
-    $packagePrice = '1000'; // Default test price anchor
+    // 2. META VARIABLES EXTRACTION
+    $packagePrice = '1000'; 
     $timeDuration = 'siku 1';
     
-    // If the database data is available, read it natively
     if (isset($row) && is_array($row)) {
         if (isset($row['price_tier'])) {
             $packagePrice = $row['price_tier'];
@@ -30,7 +28,6 @@ if (!empty($base_phone)) {
         }
     }
     
-    // Recalculate duration using standard clean strings
     switch ($packagePrice) {
         case '500': $timeDuration = 'masaa 12'; break;
         case '1000': $timeDuration = 'siku 1'; break;
@@ -39,42 +36,49 @@ if (!empty($base_phone)) {
         default: $timeDuration = 'siku 1'; break;
     }
     
-    // 🌍 VERIFIED PRODUCTION SWAHILI TEMPLATE STRING
     $sms_message = "Hongera, umefanikiwa kununua kifurushi cha Wifi cha " . $packagePrice . " TZS kutoka TANConnect kitakachotumika kwa " . $timeDuration . ". Voucher yako ni " . $voucherCode . ". ASANTE.";
 
     $sms_sent = false;
 
     // ===================================================================
-    // 🚀 STEP 1: TEXTBEE ROUTE (PRIMARY)
+    // 🚀 STEP 1: TEXTBEE ROUTE (PRIMARY WITH UNIQUE SOCKET SEPARATION)
     // ===================================================================
     $tb_api_key   = 'txb_nr4AZvvZoncnKwhsgTKJufStKToas52g';
     $tb_device_id = '6a70f731f83fbea6290c1fff';
 
     echo "📱 Running Primary Route (TextBee) for: " . $clean_phone . "\n";
     
-
-    $api_url = "https://api.textbee.dev/api/v1/gateway/devices/" . $tb_device_id . "/send-sms";
+    $tb_url = "https://textbee.dev" . $tb_device_id . "/send-sms";
     $tb_payload = json_encode([
         "recipients" => [$clean_phone],
         "message"    => $sms_message
     ]);
 
-    $ch1 = curl_init($tb_url);
-    curl_setopt($ch1, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch1, CURLOPT_SSL_VERIFYHOST, false);
-    curl_setopt($ch1, CURLOPT_CONNECTTIMEOUT, 15);
-    curl_setopt($ch1, CURLOPT_TIMEOUT, 20);
-    curl_setopt($ch1, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch1, CURLOPT_POST, true);
-    curl_setopt($ch1, CURLOPT_POSTFIELDS, $tb_payload);
-    curl_setopt($ch1, CURLOPT_HTTPHEADER, [
+    // 💡 FIX 1: Distinct socket identifier string to prevent variable collision with step 2
+    $ch_textbee = curl_init();
+    
+    curl_setopt($ch_textbee, CURLOPT_URL, $tb_url);
+    curl_setopt($ch_textbee, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch_textbee, CURLOPT_SSL_VERIFYHOST, false);
+    
+    // Force direct network resolution guidelines
+    curl_setopt($ch_textbee, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+    curl_setopt($ch_textbee, CURLOPT_CONNECTTIMEOUT, 15);
+    curl_setopt($ch_textbee, CURLOPT_TIMEOUT, 20);
+    
+    curl_setopt($ch_textbee, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch_textbee, CURLOPT_POST, true);
+    curl_setopt($ch_textbee, CURLOPT_POSTFIELDS, $tb_payload);
+    curl_setopt($ch_textbee, CURLOPT_HTTPHEADER, [
         'Content-Type: application/json',
         'x-api-key: ' . $tb_api_key
     ]);
 
-    $tb_response = curl_exec($ch1);
-    $tb_code     = curl_getinfo($ch1, CURLINFO_HTTP_CODE);
-    curl_close($ch1);
+    $tb_response = curl_exec($ch_textbee);
+    $tb_code     = curl_getinfo($ch_textbee, CURLINFO_HTTP_CODE);
+    
+    // 💡 FIX 2: Kill the active socket link completely to release cloud buffer memory rows
+    curl_close($ch_textbee);
 
     echo "TextBee Response Code: " . $tb_code . "\n";
     echo "TextBee Raw Trace Feedback: " . $tb_response . "\n\n";
@@ -85,7 +89,7 @@ if (!empty($base_phone)) {
     }
 
     // ===================================================================
-    // 🔀 STEP 2: FALLBACK TO SMSGATE (ONLY IF TEXTBEE METADATA COLLIDES)
+    // 🔀 STEP 2: FALLBACK TO SMSGATE (EXECUTED ONLY IF STEP 1 METRICS ARE ZERO)
     // ===================================================================
     if ($sms_sent === false) {
         echo "🚨 TextBee Route Failed. Triggering Smsgate backup...\n";
@@ -104,28 +108,30 @@ if (!empty($base_phone)) {
             "ttl" => 3600,
             "priority" => 100
         ]);
-   
-  
 
-        $smsgate_url = "https://api.sms-gate.app/3rdparty/v1/messages?skipPhoneValidation=true&deviceActiveWithin=12";
+        $smsgate_url = "https://sms-gate.app";
 
-        $ch2 = curl_init($smsgate_url);
-        curl_setopt($ch2, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch2, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($ch2, CURLOPT_CONNECTTIMEOUT, 15);
-        curl_setopt($ch2, CURLOPT_TIMEOUT, 20);
-        curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch2, CURLOPT_POST, true);
-        curl_setopt($ch2, CURLOPT_POSTFIELDS, $smsgate_payload);
+        // Distinct socket handle
+        $ch_smsgate = curl_init();
         
-        curl_setopt($ch2, CURLOPT_HTTPHEADER, [
+        curl_setopt($ch_smsgate, CURLOPT_URL, $smsgate_url);
+        curl_setopt($ch_smsgate, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch_smsgate, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch_smsgate, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+        curl_setopt($ch_smsgate, CURLOPT_CONNECTTIMEOUT, 15);
+        curl_setopt($ch_smsgate, CURLOPT_TIMEOUT, 20);
+        
+        curl_setopt($ch_smsgate, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch_smsgate, CURLOPT_POST, true);
+        curl_setopt($ch_smsgate, CURLOPT_POSTFIELDS, $smsgate_payload);
+        curl_setopt($ch_smsgate, CURLOPT_HTTPHEADER, [
             'Content-Type: application/json',
             'Authorization: Basic ' . base64_encode($smsgate_username . ':' . $smsgate_password)
         ]);
 
-        $smsgate_response = curl_exec($ch2);
-        $smsgate_code     = curl_getinfo($ch2, CURLINFO_HTTP_CODE);
-        curl_close($ch2);
+        $smsgate_response = curl_exec($ch_smsgate);
+        $smsgate_code     = curl_getinfo($ch_smsgate, CURLINFO_HTTP_CODE);
+        curl_close($ch_smsgate);
 
         echo "Smsgate Fallback Response Code: " . $smsgate_code . "\n";
     }
@@ -134,4 +140,3 @@ if (!empty($base_phone)) {
     echo "⚠️ SMS Skip: Empty phone number parameter.\n";
 }
 ?>
-
