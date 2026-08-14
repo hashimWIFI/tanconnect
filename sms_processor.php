@@ -62,7 +62,7 @@ if (!empty($customer_phone)) {
     }
 
     // 🌍 YOUR EXACT PRODUCTION SWAHILI TEMPLATE
-    $sms_message = "Hongera, umenunua kifurushi cha Wifi cha Tsh " . $packagePrice . " kitatumika kwa muda wa " . $timeDuration . ". Voucher yako ni " . $voucherCode . ". ASANTE";
+    $sms_message = "(Hongera, umenunua kifurushi cha Wifi cha Tsh " . $packagePrice . " kitatumika kwa muda wa " . $timeDuration . ". Voucher yako ni " . $voucherCode . ". ASANTE)";
     
     // 📦 NESTED JSON PAYLOAD DESIGN (Matches your exact documentation format)
     $payload = json_encode([
