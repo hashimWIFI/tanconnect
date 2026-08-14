@@ -62,7 +62,7 @@ if (!empty($customer_phone)) {
     }
 
     // 🌍 YOUR EXACT PRODUCTION SWAHILI TEMPLATE
-    $sms_message = "Hongera, umefanikiwa kununua kifurushi cha " . $packagePrice . " TZS kitakachotumika kwa " . $timeDuration . ". Voucher yako ni " . $voucherCode .";
+    $sms_message = "Hongera, umenunua kifurushi cha Wifi cha Tsh " . $packagePrice . " kitatumika kwa " . $timeDuration . ". Voucher yako ni " . $voucherCode . ".";
     
     // 📦 NESTED JSON PAYLOAD DESIGN (Matches your exact documentation format)
     $payload = json_encode([
