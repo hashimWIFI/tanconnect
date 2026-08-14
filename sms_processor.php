@@ -77,7 +77,7 @@ if (!empty($customer_phone)) {
     ]);
     
        // 💎 OFFICIAL GATEWAY ENDPOINT WITH DEVICE ACTIVE WINDOW PARAMETERS
-    $api_url = "https://api.sms-gate.app/3rdparty/v1/messages?skipPhoneValidation=true&deviceActiveWithin=12";
+    $api_url = "https://api.sms-gate.app/mobile/v1"
     $ch = curl_init($api_url);
     
     // Bypass local workspace certificate constraints safely
