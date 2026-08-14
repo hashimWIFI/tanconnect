@@ -1,33 +1,23 @@
 <?php
-// 1. Prevent direct browser execution of this component
+// Prevent direct browser execution of this component
 if (!defined('TANCONNECT_SECURE_PASS')) {
     die("Direct access to processor layer denied.");
 }
 
-// 2. FORCE FORMAT PHONE NUMBER TO INTERNATIONAL STRING (+255...)
-$customer_phone = str_replace([' ', '-', '(', ')', '+'], '', $customer_phone);
+// 1. CLEAN AND FORMAT THE PHONE NUMBER
+$base_phone = str_replace([' ', '-', '(', ')', '+'], '', $customer_phone);
 
-if (!empty($customer_phone)) {
-    if (substr($customer_phone, 0, 3) === '255') {
-        $customer_phone = '+' . $customer_phone;
-    } elseif (substr($customer_phone, 0, 1) === '0') {
-        $customer_phone = '+255' . substr($customer_phone, 1);
+if (!empty($base_phone)) {
+    if (substr($base_phone, 0, 3) === '255') {
+        $clean_phone = '+' . $base_phone;
+    } elseif (substr($base_phone, 0, 1) === '0') {
+        $clean_phone = '+255' . substr($base_phone, 1);
     } else {
-        $customer_phone = '+' . $customer_phone;
+        $clean_phone = '+' . $base_phone;
     }
 
-    echo "📱 Initiating sms-gate gateway delivery protocol...\n";
-    echo "Target Customer Recipient: " . $customer_phone . "\n";
-    
-    // 🛠️ HARDCODED IDENTIFIERS FROM YOUR SCREENSHOT TO ELIMINATE CLOUD VARIABLE ISSUES
-    $smsgate_username  = 'PKHHG1';
-    $smsgate_password  = 'icqsrlspg85th2'; 
-    $smsgate_device_id = '3onqHv7QcvR69kVifBQrZ'; 
-    
-    // 3. READ METADATA SAFELY FROM DATABASE ROWS
- 
+    // 2. BUILD YOUR SWAHILI SMS MESSAGE TEXT
     $packagePrice = isset($row['price_tier']) ? $row['price_tier'] : '1000';
-
     switch ($packagePrice) {
         case '500': $timeDuration = 'masaa 12'; break;
         case '1000': $timeDuration = 'siku 1'; break;
@@ -38,64 +28,50 @@ if (!empty($customer_phone)) {
         case '20000': $timeDuration = 'siku 30'; break;
         default: $timeDuration = 'masaa 24'; break;
     }
-
+    
     $sms_message = "Hongera, umefanikiwa kununua kifurushi cha Wifi cha " . $packagePrice . " TZS kutoka TANConnect kitakachotumika kwa " . $timeDuration . ". Voucher yako ni " . $voucherCode . ". ASANTE.";
-    
- $sms_sent = false;
-    // 📦 NESTED JSON PAYLOAD DESIGN (Matches your exact documentation format)
-    $payload = json_encode([
-        "textMessage" => [
-            "text" => $sms_message
-        ],
-        "deviceId" => $smsgate_device_id,
-        "phoneNumbers" => [$customer_phone],
-        "simNumber" => 1,
-        "ttl" => 3600,
-        "priority" => 100
-    ]);
-    
-       // 💎 OFFICIAL GATEWAY ENDPOINT WITH DEVICE ACTIVE WINDOW PARAMETERS
-    $api_url = "https://api.sms-gate.app/3rdparty/v1/messages?skipPhoneValidation=true&deviceActiveWithin=12";
-    $ch = curl_init($api_url);
-    
-    // Bypass local workspace certificate constraints safely
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-    
-    // Network stability buffers
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15); 
-    curl_setopt($ch, CURLOPT_TIMEOUT, 20);        
-    
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-    
-    // BASIC HTTP AUTHENTICATION INJECTION (-u parameter tracking)
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Content-Type: application/json',
-        'Authorization: Basic ' . base64_encode($smsgate_username . ':' . $smsgate_password)
-    ]);
-    
-    $smsgate_response = curl_exec($ch);
-    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    
-    if ($smsgate_response === false) {
-        $curl_error_msg = curl_error($ch);
-        echo "❌ Core Network Transport Error: " . $curl_error_msg . "\n";
-    }
-    
-    curl_close($ch);
-    
-    echo "Base Delivery Status Header Recieved: " . $http_code . "\n";
-    echo "Raw Engine Trace Details: " . $smsgate_response . "\n\n";
 
-    // 🔗 ACCEPT CODES 200, 201, AND YOUR VERIFIED 202 STATUSES AS SUCCESS
-    if ($http_code == 200 || $http_code == 201 || $http_code == 202) {
-       echo "✅ TextBee Success! Message sent via local device.\n";
+    $sms_sent = false;
+
+    // ===================================================================
+    // 🚀 STEP 1: RUN TEXTBEE AS PRIMARY ROUTE
+    // ===================================================================
+    $tb_api_key   = getenv('TEXTBEE_API_KEY') ?: 'txb_nr4AZvvZoncnKwhsgTKJufStKToas52g';
+    $tb_device_id = getenv('TEXTBEE_DEVICE_ID') ?: '6a70f731f83fbea6290c1fff';
+
+    if (!empty($tb_api_key) && !empty($tb_device_id)) {
+        echo "📱 Attempting Primary Route (TextBee) for: " . $clean_phone . "\n";
+        
+        $tb_url = "https://api.textbee.dev/api/v1/gateway/devices/" . $textbee_device_id . "/send-sms";
+        $tb_payload = json_encode([
+            "recipients" => [$clean_phone],
+            "message"    => $sms_message
+        ]);
+
+        $ch1 = curl_init($tb_url);
+        curl_setopt($ch1, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch1, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch1, CURLOPT_CONNECTTIMEOUT, 8);
+        curl_setopt($ch1, CURLOPT_TIMEOUT, 12);
+        curl_setopt($ch1, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch1, CURLOPT_POST, true);
+        curl_setopt($ch1, CURLOPT_POSTFIELDS, $tb_payload);
+        curl_setopt($ch1, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'x-api-key: ' . $tb_api_key
+        ]);
+
+        $tb_response = curl_exec($ch1);
+        $tb_code     = curl_getinfo($ch1, CURLINFO_HTTP_CODE);
+        curl_close($ch1);
+
+        echo "TextBee Response Code: " . $tb_code . "\n";
+
+        if ($tb_code == 200 || $tb_code == 201) {
+            echo "✅ TextBee Success! Message sent via local device.\n";
             $sms_sent = true;
         }
     }
-
 
     // ===================================================================
     // 🔀 STEP 2: FALLBACK TO SMSGATE (USING YOUR DOCUMENTED 3RDPARTY PATH)
