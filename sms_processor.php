@@ -1,10 +1,10 @@
 <?php
-// Prevent direct browser execution of this component if necessary
+// Prevent direct browser execution of this component
 if (!defined('TANCONNECT_SECURE_PASS')) {
     die("Direct access to processor layer denied.");
 }
 
-// 1. TEXTBEE AUTOMATION FOR VODACOM SIM CARD BLAST
+// 1. STANDARD COMPLIANT PHONE NUMBER FORMATTER
 $customer_phone = str_replace([' ', '-', '(', ')', '+'], '', $customer_phone);
 
 if (!empty($customer_phone)) {
@@ -17,96 +17,135 @@ if (!empty($customer_phone)) {
         $customer_phone = '+' . $customer_phone;
     }
 
-    echo "📱 Initiating TextBee gateway delivery protocol...\n";
-    echo "Target Customer Recipient: " . $customer_phone . "\n";
-    
-    // Read cleanly from Railway environment variables
-    $textbee_api_key = getenv('TEXTBEE_API_KEY') ?: 'txb_u0liKgZdszGYc7NyXsOannnd4c6vqnlk';
-    $textbee_device_id = getenv('TEXTBEE_DEVICE_ID') ?: '6a742479f83fbea62920b02f'; 
-    
-    // Fallbacks to default values if package metadata isn't logged in row
-    // 1. Grab your real database column name
-$packagePrice = isset($row['price_tier']) ? $row['price_tier'] : '1000';
+    // 2. READ METADATA SAFELY FROM DATABASE ROWS
+    $packagePrice = isset($row['price_tier']) ? $row['price_tier'] : '1000';
 
-// 2. SMART AUTOMATION: Calculate duration automatically based on the price paid
-switch ($packagePrice) {
-    case '500':
-        $timeDuration = 'masaa 12'; // 500 TZS package duration
-        break;
-    case '1000':
-        $timeDuration = 'siku 1'; // 1000 TZS package duration
-        break;
-    case '2000':
-        $timeDuration = 'siku 2';    // Example: 5000 TZS for 7 days
-        break;
-    case '4000':
-        $timeDuration = 'siku 5';    // Example: 5000 TZS for 7 days
-        break;
-    case '5000':
-        $timeDuration = 'siku 7';    // Example: 5000 TZS for 7 days
-        break;
-    case '7000':
-        $timeDuration = 'siku 10';    // Example: 5000 TZS for 7 days
-        break;
-    case '9000':
-        $timeDuration = 'siku 13';    // Example: 5000 TZS for 7 days
-        break;
-    case '10000':
-        $timeDuration = 'siku 15';    // Example: 5000 TZS for 7 days
-        break;
-    case '20000':
-        $timeDuration = 'siku 30';    // Example: 5000 TZS for 7 days
-        break;
-    default:
-        $timeDuration = 'masaa 24'; // Standard fallback if price doesn't match
-        break;
-}
+    // 3. COMPLETE DYNAMIC BILLING ENGINE: Maps every package price to its exact duration
+    switch ($packagePrice) {
+        case '500':
+            $timeDuration = 'Masaa 12';
+            break;
+        case '1000':
+            $timeDuration = 'Siku 1';
+            break;
+        case '2000':
+            $timeDuration = 'Siku 2';
+            break;
+        case '4000':
+            $timeDuration = 'Siku 5';
+            break;
+        case '5000':
+            $timeDuration = 'Wiki 1';
+            break;
+        case '7000':
+            $timeDuration = 'Siku 10';
+            break;
+        case '9000':
+            $timeDuration = 'Siku 13';
+            break;
+        case '10000':
+            $timeDuration = 'Siku 15';
+            break;
+        case '20000':
+            $timeDuration = 'Siku 30';
+            break;
+        default:
+            $timeDuration = 'Masaa 24'; // Protective system fallback
+            break;
+    }
 
-
-    // 🌍 YOUR EXACT SWAHILI TEMPLATE
+    // 🌍 YOUR EXACT PRODUCTION SWAHILI TEMPLATE
     $sms_message = "Hongera, umefanikiwa kununua kifurushi cha Wifi cha " . $packagePrice . " TZS kutoka TANConnect kitakachotumika kwa " . $timeDuration . ". Voucher yako ni " . $voucherCode . ". ASANTE.";
-    
-    $payload = json_encode([
-        "recipients" => [$customer_phone],
-        "message" => $sms_message
-    ]);
-    
-    // 💎 FIXED STABLE URL: Unified single string as per official textbee quickstart docs
-    $api_url = "https://api.textbee.dev/api/v1/gateway/devices/" . $textbee_device_id . "/send-sms";
-    $ch = curl_init($api_url);
-    
-    // Bypass local environment SSL restrictions safely
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-    
-    // Timeout limits to avoid infinite hanging loops
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10); 
-    curl_setopt($ch, CURLOPT_TIMEOUT, 15);        
-    
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-    
-    // Standard system API headers without custom user-agent blocks
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Content-Type: application/json',
-        'x-api-key: ' . $textbee_api_key
-    ]);
-    
-    $textbee_response = curl_exec($ch);
-    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    
-    echo "Base Delivery Status Header Recieved: " . $http_code . "\n";
-    echo "Raw Engine Trace Details: " . $textbee_response . "\n\n";
 
-    if ($http_code == 200 || $http_code == 201) {
-        echo "🚀 TextBee API success! Outbound SMS command successfully dispatched to your Vodacom Samsung device.\n";
+    // 4. HARDCODED PRIMARY ROUTE: TEXTBEE CONFIGURATION
+    $textbee_api_key   = 'txb_nr4AZvvZoncnKwhsgTKJufStKToas52g';
+    $textbee_device_id = '6a70f731f83fbea6290c1fff';
+    $sms_sent          = false;
+
+    if (!empty($textbee_api_key) && !empty($textbee_device_id)) {
+        echo "📱 Attempting Primary Route (TextBee) for: " . $customer_phone . "\n";
+
+        
+        $tb_url     = ""https://api.textbee.dev/api/v1/gateway/devices/" . $textbee_device_id . "/send-sms";
+        $tb_payload = json_encode([
+            "recipients" => [$customer_phone],
+            "message"    => $sms_message
+        ]);
+
+        $ch1 = curl_init($tb_url);
+        // 🛠️ ADD THESE TWO LINES HERE TO FIX TEXTBEE HTTP CODE 0:
+        curl_setopt($ch1, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch1, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch1, CURLOPT_CONNECTTIMEOUT, 10);
+        curl_setopt($ch1, CURLOPT_TIMEOUT, 15);
+        curl_setopt($ch1, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch1, CURLOPT_POST, true);
+        curl_setopt($ch1, CURLOPT_POSTFIELDS, $tb_payload);
+        curl_setopt($ch1, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'x-api-key: ' . $textbee_api_key
+        ]);
+
+        $tb_response = curl_exec($ch1);
+        $tb_http_code = curl_getinfo($ch1, CURLINFO_HTTP_CODE);
+        curl_close($ch1);
+
+        if ($tb_http_code == 200 || $tb_http_code == 201) {
+            echo "🚀 TextBee API success! SMS sent via primary line.\n";
+            $sms_sent = true;
+        } else {
+            echo "⚠️ TextBee API failed (HTTP Code: $tb_http_code). Engaging Failover...\n";
+        }
     } else {
-        echo "⚠️ TextBee API rejected the packet structure.\n";
+        echo "Primary Route Skipped: Hardcoded TextBee tokens are empty. Engaging Failover...\n";
+    }
+
+    // 5. FAILOVER ROUTE: SMS-GATE.APP CONFIGURATION
+    if (!$sms_sent) {
+        echo "📱 Initiating Backup Route (sms-gate.app) for: " . $customer_phone . "\n";
+
+        $smsgate_username  = 'PKHHG1';
+        $smsgate_password  = 'icqsrlspg85th2';
+        $smsgate_device_id = '3onqHv7QcvR69kVifBQrZ';
+
+        $smsgate_payload = json_encode([
+            "textMessage"  => ["text" => $sms_message],
+            "deviceId"     => $smsgate_device_id,
+            "phoneNumbers" => [$customer_phone],
+            "simNumber"    => 1,
+            "ttl"          => 3600,
+            "priority"     => 100
+        ]);
+       
+        $api_url = "https://api.sms-gate.app/3rdparty/v1/messages?skipPhoneValidation=true&deviceActiveWithin=12";
+        $ch2     = curl_init($api_url);
+
+        curl_setopt($ch2, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch2, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch2, CURLOPT_CONNECTTIMEOUT, 15);
+        curl_setopt($ch2, CURLOPT_TIMEOUT, 20);
+        curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch2, CURLOPT_POST, true);
+        curl_setopt($ch2, CURLOPT_POSTFIELDS, $smsgate_payload);
+        curl_setopt($ch2, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'Authorization: Basic ' . base64_encode($smsgate_username . ':' . $smsgate_password)
+        ]);
+
+        $smsgate_response = curl_exec($ch2);
+        $http_code        = curl_getinfo($ch2, CURLINFO_HTTP_CODE);
+        curl_close($ch2);
+
+        echo "Base Delivery Status Header Received: " . $http_code . "\n";
+        echo "Raw Engine Trace Details: " . $smsgate_response . "\n\n";
+
+        if ($http_code == 200 || $http_code == 201 || $http_code == 202) {
+            echo "🚀 sms-gate backup API success! Outbound SMS command successfully queued.\n";
+        } else {
+            echo "⚠️ sms-gate API rejected the packet structure.\n";
+        }
     }
 } else {
-    echo "⚠️ TextBee Skip: Customer phone number is missing.\n";
+    echo "⚠️ SMS Skip: Customer phone number is missing or empty.\n";
 }
 ?>
-
