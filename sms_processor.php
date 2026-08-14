@@ -103,23 +103,8 @@ switch ($packagePrice) {
     if ($http_code == 200 || $http_code == 201) {
         echo "🚀 TextBee API success! Outbound SMS command successfully dispatched to your Vodacom Samsung device.\n";
     } else {
-       <?php
-// 1. Prevent direct browser execution of this component
-if (!defined('TANCONNECT_SECURE_PASS')) {
-    die("Direct access to processor layer denied.");
-}
 
-// 2. FORCE FORMAT PHONE NUMBER TO INTERNATIONAL STRING (+255...)
-$customer_phone = str_replace([' ', '-', '(', ')', '+'], '', $customer_phone);
-
-if (!empty($customer_phone)) {
-    if (substr($customer_phone, 0, 3) === '255') {
-        $customer_phone = '+' . $customer_phone;
-    } elseif (substr($customer_phone, 0, 1) === '0') {
-        $customer_phone = '+255' . substr($customer_phone, 1);
-    } else {
-        $customer_phone = '+' . $customer_phone;
-    }
+     
 
     echo "📱 Initiating sms-gate gateway delivery protocol...\n";
     echo "Target Customer Recipient: " . $customer_phone . "\n";
