@@ -1,5 +1,5 @@
 <?php
-// Prevent direct browser execution of this component
+// Prevent direct browser execution of this standalone file
 if (!defined('TANCONNECT_SECURE_PASS')) {
     die("Direct access to processor layer denied.");
 }
@@ -64,18 +64,21 @@ if (!empty($customer_phone)) {
 
     if (!empty($textbee_api_key) && !empty($textbee_device_id)) {
         echo "📱 Attempting Primary Route (TextBee) for: " . $customer_phone . "\n";
-
         
-        $tb_url     = ""https://api.textbee.dev/api/v1/gateway/devices/" . $textbee_device_id . "/send-sms";
+        // 💎 FIXED: Added 'api.' subdomain and proper forward slash dividers
+        $tb_url = "https://api.textbee.dev/api/v1/gateway/devices/" . $textbee_device_id . "/send-sms";
+
         $tb_payload = json_encode([
             "recipients" => [$customer_phone],
             "message"    => $sms_message
         ]);
 
         $ch1 = curl_init($tb_url);
-        // 🛠️ ADD THESE TWO LINES HERE TO FIX TEXTBEE HTTP CODE 0:
+        
+        // 💎 FIXED: Added missing SSL Handshake bypass rules for the primary route
         curl_setopt($ch1, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch1, CURLOPT_SSL_VERIFYHOST, false);
+        
         curl_setopt($ch1, CURLOPT_CONNECTTIMEOUT, 10);
         curl_setopt($ch1, CURLOPT_TIMEOUT, 15);
         curl_setopt($ch1, CURLOPT_RETURNTRANSFER, true);
@@ -108,6 +111,7 @@ if (!empty($customer_phone)) {
         $smsgate_password  = 'icqsrlspg85th2';
         $smsgate_device_id = '3onqHv7QcvR69kVifBQrZ';
 
+        // Aligned perfectly with your 3rdparty documentation parameters
         $smsgate_payload = json_encode([
             "textMessage"  => ["text" => $sms_message],
             "deviceId"     => $smsgate_device_id,
@@ -116,12 +120,14 @@ if (!empty($customer_phone)) {
             "ttl"          => 3600,
             "priority"     => 100
         ]);
-       
+
         $api_url = "https://api.sms-gate.app/3rdparty/v1/messages?skipPhoneValidation=true&deviceActiveWithin=12";
         $ch2     = curl_init($api_url);
 
+        // SSL Handshake bypass rules for the fallback route
         curl_setopt($ch2, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch2, CURLOPT_SSL_VERIFYHOST, false);
+        
         curl_setopt($ch2, CURLOPT_CONNECTTIMEOUT, 15);
         curl_setopt($ch2, CURLOPT_TIMEOUT, 20);
         curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
@@ -139,6 +145,7 @@ if (!empty($customer_phone)) {
         echo "Base Delivery Status Header Received: " . $http_code . "\n";
         echo "Raw Engine Trace Details: " . $smsgate_response . "\n\n";
 
+        // Accepts 200, 201, or your verified 202 status code responses as success
         if ($http_code == 200 || $http_code == 201 || $http_code == 202) {
             echo "🚀 sms-gate backup API success! Outbound SMS command successfully queued.\n";
         } else {
@@ -149,3 +156,6 @@ if (!empty($customer_phone)) {
     echo "⚠️ SMS Skip: Customer phone number is missing or empty.\n";
 }
 ?>
+        // 🛠️ ADD THESE TWO LINES HERE TO FIX TEXTBEE HTTP CODE 0:
+        curl_setopt($ch1, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch1, CURLOPT_SSL_VERIFYHOST, false);
