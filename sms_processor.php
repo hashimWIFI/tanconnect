@@ -43,8 +43,8 @@ if (!empty($base_phone)) {
     // ===================================================================
     // 🚀 STEP 1: TEXTBEE PRIMARY ROUTE (URL-ENCODED FORMAT FIX)
     // ===================================================================
-    $tb_api_key   = 'txb_nr4AZvvZoncnKwhsgTKJufStKToas52g';
-    $tb_device_id = '6a70f731f83fbea6290c1fff';
+    $tb_api_key   = 'txb_u0liKgZdszGYc7NyXsOannnd4c6vqnlk';
+    $tb_device_id = '6a742479f83fbea62920b02f'; 
 
     echo "📱 Running Primary Route (TextBee) for: " . $clean_phone . "\n";
     
