@@ -19,9 +19,42 @@ if (!empty($customer_phone)) {
     echo "Target Customer Recipient: " . $customer_phone . "\n\n";
     
     // Fetch dynamic package fields from row array or set standard text fallbacks
-    $packagePrice = isset($row['price_tier']) ? $row['price_tier'] : '1000';
-    $timeDuration = 'Siku 1'; 
-    if ($packagePrice == '5000') { $timeDuration = 'Wiki 1'; }
+$packagePrice = isset($row['price_tier']) ? $row['price_tier'] : '1000';
+
+// ⚙️ COMPLETE DYNAMIC BILLING ENGINE: Maps every package price to its exact duration
+switch ($packagePrice) {
+    case '500':
+        $timeDuration = 'Masaa 12';
+        break;
+    case '1000':
+        $timeDuration = 'Siku 1';
+        break;
+    case '2000':
+        $timeDuration = 'Siku 2';
+        break;
+    case '4000':
+        $timeDuration = 'Siku 5';
+        break;
+    case '5000':
+        $timeDuration = 'Wiki 1';
+        break;
+    case '7000':
+        $timeDuration = 'Siku 10';
+        break;
+    case '9000':
+        $timeDuration = 'Siku 13';
+        break;
+    case '10000':
+        $timeDuration = 'Siku 15';
+        break;
+    case '20000':
+        $timeDuration = 'Siku 30';
+        break;
+    default:
+        $timeDuration = 'Masaa 24'; // Protective system fallback if price doesn't match
+        break;
+}
+
 
     // 🌍 DYNAMIC SWAHILI SMS TEMPLATE TEXT (Stays under 150 characters safety buffer)
     $sms_message = "Hongera! Umefanikiwa kununua kifurushi cha Wi-Fi cha Tsh " . number_format($packagePrice) . " kitakachotumika kwa muda wa " . $timeDuration . ". Voucher yako ni " . $voucherCode . ".";
