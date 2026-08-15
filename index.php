@@ -34,7 +34,7 @@ ini_set('display_errors', 0);
 
         .container {
             width: 100%;
-            max-width: 500px;
+            max-width: 520px;
             margin: 0 auto;
         }
 
