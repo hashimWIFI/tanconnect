@@ -258,7 +258,7 @@ ini_set('display_errors', 0);
     <div class="container">
         <!-- SECTIONS 1 & 2: PORTAL HEADER & SCROLLING ANNOUNCEMENT -->
         <div class="portal-card">
-            <img src="logo3.png" alt="Water Point Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
+            <img src="logo.png" alt="Water Point Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
             <div class="subtitle">
                 <marquee behavior="scroll" direction="left" scrollamount="4" style="color: black; font-weight: bold; margin-bottom: 10px;font-family: 'Segoe UI', Arial, sans-serif;">
                     Ndugu mteja, karibu kwenye mtandao wa Wi-Fi wa TANConnect || Tunakuletea internet isiyo na ukomo wa kasi kuperuzi mtandaoni || Fuata maelekezo hapa chini kununua Voucher kupitia simu yako ya mkononi || Kwa ufafanuzi, malamiko au maelekezo zaidi, wasiliana nasi kwa nambari 0713 123 974 
