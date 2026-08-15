@@ -307,7 +307,7 @@ function startPaymentVerificationLoop() {
                     // Dynamically map amount and period confirmation notification text strings
                     var subtextElement = document.getElementById('payment-subtext');
                     if (subtextElement) {
-                        subtextElement.innerHTML = "Hongera! Umefanikiwa kununua kifurushi cha Wi-Fi cha <b><br>Tsh " + parseInt(planAmount).toLocaleString() + "</b> kitatumika kwa muda wa <b> " + planDuration + ".</b>"; 
+                        subtextElement.innerHTML = "Hongera! Umefanikiwa kununua kifurushi cha <b><br>Tsh " + parseInt(planAmount).toLocaleString() + "</b> kitatumika kwa muda wa <b> " + planDuration + ".</b> kuingia mtandaoni"; 
                     }
                     
                     // INLINE REVEAL LOGIC: Capture our twin structural layer elements safely
