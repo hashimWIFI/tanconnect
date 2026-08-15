@@ -275,13 +275,13 @@ ini_set('display_errors', 0);
                 <div class="card-price">500<span style= "font-size: 12px; font-weight: bold; color: #34495e;"> TZS</span></div>
 
                 <div class="card-time">Masaa 12</div>
-                <div class="card-data">Unlimited DATA</div>
+                <div class="card-data">Unlimited Data</div>
             </div>
 
             <div class="package-card" onclick="selectPackage('1000', '1,000 TZS || Siku 1 kuperuzi mtandaoni || Unlimited DATA')">
                 <div class="card-price">1,000<span style= "font-size: 12px; font-weight: bold; color: #34495e;"> TZS</span></div>
                 <div class="card-time">Siku 1</div>
-                <div class="card-data">Unlimited DATA</div>
+                <div class="card-data">Unlimited Data</div>
             </div>
 
             <div class="package-card" onclick="selectPackage('2000', '2,000 TZS || Siku 2 kuperuzi mtandaoni || Unlimited DATA')">
