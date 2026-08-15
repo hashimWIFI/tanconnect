@@ -340,7 +340,7 @@ function copyVoucherToClipboard() {
     navigator.clipboard.writeText(pinText).then(function() {
         var copyBtn = document.getElementById("copy-btn-trigger");
         if (copyBtn) {
-            copyBtn.innerHTML = "✓ IMENAKILIWA! INARUDI...";
+            copyBtn.innerHTML = "✓ SUBIRI...";
             copyBtn.style.background = "#2ecc71"; // Flashes success green instantly!
         }
         
