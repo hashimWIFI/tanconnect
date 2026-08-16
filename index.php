@@ -368,16 +368,12 @@ ini_set('display_errors', 0);
                 <span><img src="water.png" style="max-width: 100px; height: auto; object-fit: contain; margin-bottom: 1px;"></span>
             
 
-<marquee behavior="scroll" direction="left" scrollamount="4" style="color: #000000; font-weight: bold; margin-bottom: 10px;font-family: 'Segoe UI', Arial, sans-serif;"> Ndugu mteja, karibu WATER Point ujipatie maji safi na salama yaliyochujwa kwa kutumia teknolojia ya kisasa ya RO na UV || Yanapatikana kwa bei ya nusu lita Tsh 100 na lita moja Tsh 200 || Tupo Tandika Mtaa MALUMBA, Nyumba No 1 || </marquee>
+<marquee behavior="scroll" direction="left" scrollamount="4" style="color: #000000; font-weight: 500px; margin-bottom: 10px;font-family: 'Segoe UI', Arial, sans-serif;  font-size: 10px;"> Ndugu mteja, karibu WATER Point ujipatie maji safi na salama yaliyochujwa kwa kutumia teknolojia ya kisasa ya RO na UV || Yanapatikana kwa bei ya nusu lita Tsh 100 na lita moja Tsh 200 || Tupo Tandika Mtaa MALUMBA, Nyumba No 1 || </marquee>
 
          </div>       
                 
-          
-      
-       
-
         <div style="text-align: center; margin-top: 5px; padding-top: 5px; border-top: 1px solid #334155; font-size: 11px; color: #64748b;">
-            <p>© 2026 TANConnect. All Rights Reserved.<br>
+            <p>© 2026 TANConnect <sup>®</sup>. All Rights Reserved.<br>
             TANConnect is a registered trademark of <b>NIT Africa Solutions Limited</b>.</p>
         </div>
     </div></div></div>
