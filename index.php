@@ -363,20 +363,17 @@ ini_set('display_errors', 0);
         </div>
 
         <!-- SECTION 6: PHYSICAL LOCATION WATER POINT FOOOTER -->
-        <div class="badge-footer" style="border-left: 10px solid #349dbb; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; border-radius: 0 10px 10px 0; padding: 10px; display: flex; justify-content: space-between; gap: 10px; background-image: url('background.png');">
+   
             <div style="display: flex; align-items: center; gap: 12px;">
-                <span><img src="water.png" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;"></span>
-                <div>
-                   
-                    <p style="margin: 2px 0 0 0; color: #000000; font-size: 12px; text-align: left;">
+                <span><img src="water.png" style="max-width: 100px; height: auto; object-fit: contain; margin-bottom: 1px;"></span>
+            
 
-<marquee behavior="scroll" direction="left" scrollamount="4" style="color: #000000; font-weight: bold; margin-bottom: 10px;font-family: 'Segoe UI', Arial, sans-serif;">
-                    Ndugu mteja, karibu WATER Point ujipatie maji safi na salama yaliyochujwa kwa kutumia teknolojia ya kisasa ya RO na UV || Yanapatikana kwa bei ya nusu lita Tsh 100 na lita moja Tsh 200 || Tupo Tandika Mtaa MALUMBA Nyumba No 1 ||                 </marquee>
+<marquee behavior="scroll" direction="left" scrollamount="4" style="color: #000000; font-weight: bold; margin-bottom: 10px;font-family: 'Segoe UI', Arial, sans-serif;"> Ndugu mteja, karibu WATER Point ujipatie maji safi na salama yaliyochujwa kwa kutumia teknolojia ya kisasa ya RO na UV || Yanapatikana kwa bei ya nusu lita Tsh 100 na lita moja Tsh 200 || Tupo Tandika Mtaa MALUMBA, Nyumba No 1 || </marquee>
 
+         </div>       
                 
-                </div>
-            </div>
-        </div>
+          
+      
        
 
         <div style="text-align: center; margin-top: 5px; padding-top: 5px; border-top: 1px solid #334155; font-size: 11px; color: #64748b;">
