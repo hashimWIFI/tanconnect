@@ -272,55 +272,55 @@ ini_set('display_errors', 0);
         <!-- SECTION 3: THE PACKAGE SELECTION GRID LOOP -->
         <div class="package-grid">
             <div class="package-card" onclick="selectPackage('500', '500 TZS || Masaa 12 kuperuzi mtandaoni || Unlimited DATA')">
-                <div class="card-price">500<span style= "font-size: 10px; font-weight: bold; color: #34495e;"> TZS</span></div>
+                <div class="card-price">500<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
 
                 <div class="card-time">Masaa 12</div>
                 <div class="card-data">Unlimited Data</div>
             </div>
 
             <div class="package-card" onclick="selectPackage('1000', '1,000 TZS || Siku 1 kuperuzi mtandaoni || Unlimited DATA')">
-                <div class="card-price">1,000<span style= "font-size: 10px; font-weight: bold; color: #34495e;"> TZS</span></div>
+                <div class="card-price">1,000<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
                 <div class="card-time">Siku 1</div>
                 <div class="card-data">Unlimited Data</div>
             </div>
 
             <div class="package-card" onclick="selectPackage('2000', '2,000 TZS || Siku 2 kuperuzi mtandaoni || Unlimited DATA')">
-                <div class="card-price">2,000<span style= "font-size: 10px; font-weight: bold; color: #34495e;"> TZS</span></div>
+                <div class="card-price">2,000<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
                 <div class="card-time">Siku 2</div>
                 <div class="card-data">Unlimited Data</div>
             </div>
 
             <div class="package-card" onclick="selectPackage('4000', '4,000 TZS || Siku 5 kuperuzi mtandaoni || Unlimited DATA')">
-                <div class="card-price">4,000<span style= "font-size: 10px; font-weight: bold; color: #34495e;"> TZS</span></div>
+                <div class="card-price">4,000<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
                 <div class="card-time">Siku 5</div>
                 <div class="card-data">Unlimited Data</div>
             </div>
 
             <div class="package-card" onclick="selectPackage('5000', '5,000 TZS || Siku 7 kuperuzi mtandaoni || Unlimited DATA')">
-                <div class="card-price">5,000<span style= "font-size: 10px; font-weight: bold; color: #34495e;"> TZS</span></div>
+                <div class="card-price">5,000<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
                 <div class="card-time">Siku 7</div>
                 <div class="card-data">Unlimited Data</div>
             </div>
             
             <div class="package-card" onclick="selectPackage('7000', '7,000 TZS || Siku 10 kuperuzi mtandaoni || Unlimited DATA')">
-                <div class="card-price">7,000<span style= "font-size: 10px; font-weight: bold; color: #34495e;"> TZS</span></div>
+                <div class="card-price">7,000<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
                 <div class="card-time">Siku 10</div>
                 <div class="card-data">Unlimited Data</div>
             </div>
  <div class="package-card" onclick="selectPackage('9000', '9,000 TZS || Siku 13 kuperuzi mtandaoni || Unlimited DATA')">
-                <div class="card-price">9,000<span style= "font-size: 10px; font-weight: bold; color: #34495e;"> TZS</span></div>
+                <div class="card-price">9,000<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
                 <div class="card-time">Siku 13</div>
                 <div class="card-data">Unlimited Data</div>
             </div>
 
             <div class="package-card" onclick="selectPackage('10000', '10,000 TZS || Siku 15 kuperuzi mtandaoni || Unlimited DATA')">
-                <div class="card-price">10,000<span style= "font-size: 10px; font-weight: bold; color: #34495e;"> TZS</span></div>
+                <div class="card-price">10,000<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
                 <div class="card-time">Siku 15</div>
                 <div class="card-data">Unlimited Data</div>
             </div>
             
             <div class="package-card" onclick="selectPackage('20000', '20,000 TZS || Siku 30 kuperuzi mtandaoni || Unlimited DATA')">
-                <div class="card-price">20,000<span style= "font-size: 10px; font-weight: bold; color: #34495e;"> TZS</span></div>
+                <div class="card-price">20,000<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
                 <div class="card-time">Siku 30</div>
                 <div class="card-data">Unlimited Data</div>
             </div>
