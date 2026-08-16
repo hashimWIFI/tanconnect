@@ -238,7 +238,6 @@ ini_set('display_errors', 0);
             transition: background 0.2s;
             margin-top: 10px;
             width: 35%;
-            text-transform: uppercase;
         }
 
 
