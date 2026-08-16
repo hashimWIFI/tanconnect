@@ -210,7 +210,7 @@ ini_set('display_errors', 0);
             flex-direction: column;
             gap: 6px;
             font-weight: bold;
-            min-width: 100px;
+            min-width: 50px;
 
         }
 
