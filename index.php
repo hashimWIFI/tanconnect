@@ -1,6 +1,6 @@
 <?php
 // ===================================================================
-// 🏆 TANCONNECT WATER POINT & WIFI HOTSPOT CONTROL SYSTEM (PRODUCTION)
+// 🏆 WIFI HOTSPOT CONTROL SYSTEM (PRODUCTION)
 // ===================================================================
 error_reporting(0);
 ini_set('display_errors', 0);
@@ -10,7 +10,7 @@ ini_set('display_errors', 0);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TANConnect - Lipia Kifurushi</title>
+    <title>TANConnect - Huduma ya Mtandao wa Wi-Fi</title>
     <style>
         :root {
             --primary: #0284c7;
@@ -21,7 +21,7 @@ ini_set('display_errors', 0);
         }
 
         body {
-            background-color:white; <!--var(--bg-dark); -->
+            background-color:#ffffff; <!--var(--bg-dark); -->
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             margin: 0;
             padding: 10px;
@@ -39,7 +39,7 @@ ini_set('display_errors', 0);
         }
 
         .portal-card {
-            background-color:white; <!-- var(--card-bg);-->
+            background-color: #ffffff; <!-- var(--card-bg);-->
             border-radius: 12px;
             padding: 24px;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
@@ -88,13 +88,13 @@ ini_set('display_errors', 0);
         .card-price {
             font-size: 15px;
             font-weight: bold;
-            color: darkblue;
+            color: #00008b;
         }
 
         .card-time {
             font-size: 14px;
             font-weight: bold;
-            color: black;
+            color: #000000;
         }
 
         .card-data {
@@ -102,6 +102,7 @@ ini_set('display_errors', 0);
             color: #94a3b8;
             font-weight: bold;
         }
+
 .plan-summary { background: #ebf3fc; border: 1px solid #d0e2fa; border-left: 5px solid #3498db; padding: 14px; border-radius: 4px; margin-bottom: 22px; color: #002e6e; font-size: 13px; text-align: left;}
 
 
@@ -227,7 +228,7 @@ ini_set('display_errors', 0);
 
         .btn-popup-pay {
             background-color: #f15a24;
-            color: white;
+            color: #ffffff;
             border: 2px solid #334155;
             padding: 14px;
             font-size: 16px;
@@ -260,67 +261,67 @@ ini_set('display_errors', 0);
         <div class="portal-card">
             <img src="logo.png" alt="Water Point Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
             <div class="subtitle">
-                <marquee behavior="scroll" direction="left" scrollamount="4" style="color: black; font-weight: bold; margin-bottom: 10px;font-family: 'Segoe UI', Arial, sans-serif;">
+                <marquee behavior="scroll" direction="left" scrollamount="4" style="color: #000000; font-weight: bold; margin-bottom: 10px;font-family: 'Segoe UI', Arial, sans-serif;">
                     Ndugu mteja, karibu kwenye mtandao wa Wi-Fi wa TANConnect || Tunakuletea internet isiyo na ukomo wa kasi kuperuzi mtandaoni || Fuata maelekezo hapa chini kununua Voucher kupitia simu yako ya mkononi || Kwa ufafanuzi, malamiko au maelekezo zaidi, wasiliana nasi kwa nambari 0713 123 974 
                 </marquee>
             </div>
       <hr width="100%" align="center"></hr>
 
-            <div style="font-weight: bold; color: black; text-align: left;">Bonyeza kifurushi unachohitaji kununua:<br><br>
+            <div style="font-weight: bold; color: #000000; text-align: left;">Bonyeza kifurushi unachohitaji kununua:<br><br>
         
 
         <!-- SECTION 3: THE PACKAGE SELECTION GRID LOOP -->
         <div class="package-grid">
             <div class="package-card" onclick="selectPackage('500', '500 TZS || Masaa 12 kuperuzi mtandaoni || Unlimited DATA')">
-                <div class="card-price">500<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
+                <div class="card-price">500<span style= "font-size: 8px; font-weight: bold; color: #00008b;"> TZS</span></div>
 
                 <div class="card-time">Masaa 12</div>
                 <div class="card-data">Unlimited </div>
             </div>
 
             <div class="package-card" onclick="selectPackage('1000', '1,000 TZS || Siku 1 kuperuzi mtandaoni || Unlimited DATA')">
-                <div class="card-price">1,000<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
+                <div class="card-price">1,000<span style= "font-size: 8px; font-weight: bold; color: #00008b;"> TZS</span></div>
                 <div class="card-time">Siku 1</div>
                 <div class="card-data">Unlimited </div>
             </div>
 
             <div class="package-card" onclick="selectPackage('2000', '2,000 TZS || Siku 2 kuperuzi mtandaoni || Unlimited DATA')">
-                <div class="card-price">2,000<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
+                <div class="card-price">2,000<span style= "font-size: 8px; font-weight: bold; color: #00008b;"> TZS</span></div>
                 <div class="card-time">Siku 2</div>
                 <div class="card-data">Unlimited </div>
             </div>
 
             <div class="package-card" onclick="selectPackage('4000', '4,000 TZS || Siku 5 kuperuzi mtandaoni || Unlimited DATA')">
-                <div class="card-price">4,000<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
+                <div class="card-price">4,000<span style= "font-size: 8px; font-weight: bold; color: #00008b;"> TZS</span></div>
                 <div class="card-time">Siku 5</div>
                 <div class="card-data">Unlimited </div>
             </div>
 
             <div class="package-card" onclick="selectPackage('5000', '5,000 TZS || Siku 7 kuperuzi mtandaoni || Unlimited DATA')">
-                <div class="card-price">5,000<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
+                <div class="card-price">5,000<span style= "font-size: 8px; font-weight: bold; color: #00008b;"> TZS</span></div>
                 <div class="card-time">Siku 7</div>
                 <div class="card-data">Unlimited </div>
             </div>
             
             <div class="package-card" onclick="selectPackage('7000', '7,000 TZS || Siku 10 kuperuzi mtandaoni || Unlimited DATA')">
-                <div class="card-price">7,000<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
+                <div class="card-price">7,000<span style= "font-size: 8px; font-weight: bold; color: #00008b;"> TZS</span></div>
                 <div class="card-time">Siku 10</div>
                 <div class="card-data">Unlimited </div>
             </div>
  <div class="package-card" onclick="selectPackage('9000', '9,000 TZS || Siku 13 kuperuzi mtandaoni || Unlimited DATA')">
-                <div class="card-price">9,000<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
+                <div class="card-price">9,000<span style= "font-size: 8px; font-weight: bold; color: #00008b;"> TZS</span></div>
                 <div class="card-time">Siku 13</div>
                 <div class="card-data">Unlimited </div>
             </div>
 
             <div class="package-card" onclick="selectPackage('10000', '10,000 TZS || Siku 15 kuperuzi mtandaoni || Unlimited DATA')">
-                <div class="card-price">10,000<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
+                <div class="card-price">10,000<span style= "font-size: 8px; font-weight: bold; color: #00008b;"> TZS</span></div>
                 <div class="card-time">Siku 15</div>
                 <div class="card-data">Unlimited </div>
             </div>
             
             <div class="package-card" onclick="selectPackage('20000', '20,000 TZS || Siku 30 kuperuzi mtandaoni || Unlimited DATA')">
-                <div class="card-price">20,000<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
+                <div class="card-price">20,000<span style= "font-size: 8px; font-weight: bold; color: #00008b;"> TZS</span></div>
                 <div class="card-time">Siku 30</div>
                 <div class="card-data">Unlimited </div>
             </div>
@@ -346,9 +347,9 @@ ini_set('display_errors', 0);
                 <label for="phone-number">Ingiza nambari ya simu, kisha bonyeza PAY:</label>
 <div style="display: flex; gap: 10px;">
 
-<input class="button-submit" name="customer_phone" id="phone-number" pattern="[0]{1}[6-7]{1}[0-9]{8}" type="tel" placeholder="0713123974" autocomplete="off" oninput="detectMobileProvider()" style="flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; color: black; text-align: center;" required/>
+<input class="button-submit" name="customer_phone" id="phone-number" pattern="[0]{1}[6-7]{1}[0-9]{8}" type="tel" placeholder="0713123974" autocomplete="off" oninput="detectMobileProvider()" style="flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; color: #000000; text-align: center;" required/>
 
-<button type="button" id="submit-payment-btn" class="btn-popup-pay" style="margin: 0; padding: 0 30px; background: #3498db; border-radius: 6px; font-size: 13px; color: white; font-weight: bold; min-width: 180px;" onclick="dispatchToRailway(event)">Pay</button>                </div></div>
+<button type="button" id="submit-payment-btn" class="btn-popup-pay" style="margin: 0; padding: 0 30px; background: #3498db; border-radius: 6px; font-size: 13px; color: #ffffff; font-weight: bold; min-width: 180px;" onclick="dispatchToRailway(event)">Pay</button>                </div></div>
 
         </form> </div></div>
 
@@ -367,7 +368,7 @@ ini_set('display_errors', 0);
                 <span style="font-size: 24px;">💧</span>
                 <div>
                     <h5 style="margin: 0; color: #1e293b; font-size: 12px; font-weight: bold;">Water Point</h5>
-                    <p style="margin: 2px 0 0 0; color: black; font-size: 9px; text-align: left;">
+                    <p style="margin: 2px 0 0 0; color: #000000; font-size: 9px; text-align: left;">
                         Karibu ujipatie maji safi na salama yaliyochujwa kwa kutumia teknolojia ya RO na UV.<br><br>
                         <b>Tupo TANDIKA, Mtaa MALUMBA</b>
                     </p>
