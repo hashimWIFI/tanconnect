@@ -75,7 +75,6 @@ if (!$dbResult) {
 
     <img src="logo.png" alt="Water Point Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
 
-    
     <!-- FIX 1: Aligned the opening and closing tag matching properties character-for-character -->
     <div class="error-color">Uhaba wa Vifurushi Umejitokeza!</div>
 
@@ -83,8 +82,6 @@ if (!$dbResult) {
     
     <a href="index.php" class="btn-done" style="background: #e74c3c;">Jaribu</a>
     <br><br><div class="footer">"We bring the world at your finger tips" </div></div>
-
-
 
 <script>
 function closeThisWindow() {
@@ -100,7 +97,6 @@ function closeThisWindow() {
     }
 }
 </script>
-
 </body>
 </html>
     <?php
@@ -110,7 +106,6 @@ function closeThisWindow() {
 
 $allocatedVoucherId   = $dbResult['id'];
 $allocatedVoucherCode = $dbResult['voucher_code'];
-
 $appName   = "Tanconnect";
 $clientId  = "678beae1-7761-47fb-8111-858fb60d7ad3";
 $secretKey = "VsZ0sQJpaxcWpkm5WtfmQNfjqwq0WqeQ/4qiFI044jmdSvq5ksVo3GWtT6yjQYVr4uqgn4X9hUdnrBaf3opZI/HdK2PzbxzBLlBf5xBhTY8WeyjPgnTWbEBkkIA+8Z3MBCItvm83FBLdv/hOBAwtRbnOSNfPSKxs3TgtTGo1xMBc/NqGWAsMRKgEH5m5v0mO9jxgRQzRezzSE4ibKDrRg1bswh7GWN6u7SfKvzyZN1ZnSJPC6iTcgDz4gzeoygb9nyOprJCfwe0fEJd9ohfVMhOG/FGyXsEcG2UKjoeH12p1+/LqjzCOUyR1aYWv4R8GdizIzghOTtZCmnOb35XuyRbQkwdEq6lbC5naP322gvE+pQ/MAhS1q5ZeS3FzIYmaZ1yrcT10mIUNasaCsa+1oMmF8E/zrRnNnVPymU9S5pzjzCK44uRQHqoSnn3E44agwMq9y1A6JnCVeRAYsoI64xzjThf9DFgafop8ToYcisKqIaxYclEgJMtYX/hrIaWKGBNV+WUX0kRFh/KTLYtpOvLUpui1KMIQNEYwQDBG8gcV+uieN1VxwA780QRj1zdZI8K9HWeqzPwxgmYyi2CGeYzuLdAzC4X84NanxCMOoHCO/IFwuYhPTMqSnjMEaRoPKcymxHk0KwHN9rnzC6UKaXleNuTOG/szi2qYAr2XImY=";
@@ -121,7 +116,6 @@ $transactionId = 'WIFI-' . time();
 // 3. STAGE 1: AUTOMATED TOKEN GENERATION BLOCK
 // ==========================================
 $authUrl = "https://authenticator-sandbox.azampay.co.tz/AppRegistration/GenerateToken";
-
 $authPayload = json_encode([
     'appname'      => $appName,
     'clientid'     => $clientId,
@@ -135,7 +129,6 @@ curl_setopt($chAuth, CURLOPT_POSTFIELDS, $authPayload);
 curl_setopt($chAuth, CURLOPT_HTTPHEADER, ["Content-Type: application/json", "Accept: application/json"]);
 curl_setopt($chAuth, CURLOPT_SSL_VERIFYPEER, false);
 curl_setopt($chAuth, CURLOPT_SSL_VERIFYHOST, false);
-
 curl_setopt($chAuth, CURLOPT_CONNECTTIMEOUT, 15);
 curl_setopt($chAuth, CURLOPT_TIMEOUT, 30);
 curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
@@ -218,21 +211,17 @@ $conn->close();
         .voucher-box { background: #e8f4fd; border: 2px dashed #3498db; padding: 10px; font-size: 14px; color: #7f8c8d; margin: 10px 0; border-radius: 6px; word-break: break-all; }
         .btn-done { background: #3498db; color: white; border: none; padding: 14px; font-size: 14px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 2px; width: 100%; box-sizing: border-box; font-weight: bold; }
    /* Animated Status Spinner Logic */
-
     </style>
 
  <?php if ($httpStatusCode === 200): ?>
 <div class="receipt-card" style="position: relative; overflow: hidden; padding-top: 40px;">
 <img src="logo.png" alt="Water Point Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
-
         <span class="close-btn" onclick="closeThisWindow()" style="position: absolute; top: 12px; right: 18px; font-size: 26px; cursor: pointer; color: #7f8c8d; font-weight: bold; z-index: 110;">&times;</span>
 
         <!-- FIX 1: Starts out with a professional transit-color blue text theme style! -->
         <h2 id="payment-headline" style="color: #3498db; margin-bottom: 15px; font-size: 16px; font-weight: bold; transition: color 0.4s ease;">Ombi la Malipo Umetumiwa!</h2>
-        
        <p id="payment-subtext" style="font-size: 14px; color: black; line-height: 1.5; margin-top: 5px;"> Tafadhali weka (PIN) kwenye simu yako kuruhusu malipo ya <b>Tsh <?php echo htmlspecialchars($amount); ?></b> kwenda TANConnect Wi-Fi.</p>
 
-        
                <!-- UPDATED TWIN-BOX AREA: The box container acts as an invisible horizontal row holding two small inline boxes -->
         <div id="voucher-display-box" data-real-pin="<?php echo htmlspecialchars($allocatedVoucherCode); ?>" style="display: flex; gap: 10px; align-items: center; justify-content: space-between; margin: 25px 0; width: 100%; box-sizing: border-box;">
             
@@ -241,20 +230,15 @@ $conn->close();
                 <div style="display: flex; align-items: center; justify-content: center; gap: 10px; color: #3498db; font-weight: bold; font-size: 13px;">
                <marquee hspace="-45" vspace="" behavior="" height="20" text-align="bottom" style="font-size: 14px><font color="white">
                 <div><b>Malipo yanafanyika kupitia mtandao wa AzamPay. &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp; Voucher yako itajitokeza hapa utapoweka PIN kwenye simu yako. &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp; Vilevile utapokea SMS yenye Voucher yako kutoka 0753 476 850.</b></div>
-               
                 </marquee>
                 
-            </div>
-            
-        </div>
+            </div></div>
             
             <!-- RIGHT BOX (30%): Holds the copy link trigger button completely hidden until payment clears successfully -->
             <div id="copy-button-container" style="flex: 3; display: none; min-height: 55px; box-sizing: border-box;">
                 <!-- Buttons styles adjusted with relative positioning parameters to frame tightly inside the small box -->
                 <button onclick="copyVoucherToClipboard()" id="copy-btn-trigger" style="width: 100%; height: 55px; background: #3498db; color: white; border: none; font-size: 13px; font-weight: bold; border-radius: 8px; cursor: pointer; text-transform: uppercase; transition: background 0.2s; box-shadow: 0 4px 10px rgba(52,152,219,0.15);">Nakili</button>
-            </div>
-            
-        </div>
+            </div></div>
 <div class="footer">"We bring the world at your finger tips" </div>
 </body>
  </html>       
