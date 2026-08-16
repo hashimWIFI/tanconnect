@@ -24,17 +24,17 @@ ini_set('display_errors', 0);
             background-color:white; <!--var(--bg-dark); -->
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
+            min-height: 110vh;
             color: #ffffff;
         }
 
         .container {
-            width: 120%;
-            max-width: 450px;
+            width: 100%;
+            max-width: 800px;
             margin: 0 auto;
         }
 
