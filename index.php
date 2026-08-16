@@ -238,7 +238,7 @@ ini_set('display_errors', 0);
             cursor: pointer;
             transition: background 0.2s;
             margin-top: 10px;
-            width: 80%;
+          <!--  width: 80%; -->
         }
 
      <!--  .btn-submit { padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; color: blue; text-align: center; min-width: 35%;
