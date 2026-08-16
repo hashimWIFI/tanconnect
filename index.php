@@ -86,7 +86,7 @@ ini_set('display_errors', 0);
         }
 
         .card-price {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             color: darkblue;
         }
@@ -272,7 +272,7 @@ ini_set('display_errors', 0);
         <!-- SECTION 3: THE PACKAGE SELECTION GRID LOOP -->
         <div class="package-grid">
             <div class="package-card" onclick="selectPackage('500', '500 TZS || Masaa 12 kuperuzi mtandaoni || Unlimited DATA')">
-                <div class="card-price">500<span style= "font-size: 12px; font-weight: bold; color: #34495e;"> TZS</span></div>
+                <div class="card-price">500<span style= "font-size: 10px; font-weight: bold; color: #34495e;"> TZS</span></div>
 
                 <div class="card-time">Masaa 12</div>
                 <div class="card-data">Unlimited Data</div>
