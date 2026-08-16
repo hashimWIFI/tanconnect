@@ -98,7 +98,7 @@ ini_set('display_errors', 0);
         }
 
         .card-data {
-            font-size: 12px;
+            font-size: 14px;
             color: #94a3b8;
             font-weight: bold;
         }
