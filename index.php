@@ -189,7 +189,7 @@ ini_set('display_errors', 0);
             background: #ffffff;
             color: #1e293b;
             border-radius: 12px;
-            width: 90%;
+            width: 80%;
             max-width: 400px;
             padding: 24px;
             position: relative;
