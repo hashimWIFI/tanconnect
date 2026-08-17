@@ -239,7 +239,7 @@ $conn->close();
               
 
   <!-- Buttons styles adjusted with relative positioning parameters to frame tightly inside the small box -->
-                <button onclick=""processAndRedirect()" id="copy-btn-trigger" style="width: 100%; height: 55px; background: #3498db; color: white; border: none; font-size: 13px; font-weight: bold; border-radius: 8px; cursor: pointer; text-transform: uppercase; transition: background 0.2s; box-shadow: 0 4px 10px rgba(52,152,219,0.15);">Nakili</button>
+                <button onclick=""processAndRedirect()" style="width: 100%; height: 55px; background: #3498db; color: white; border: none; font-size: 13px; font-weight: bold; border-radius: 8px; cursor: pointer; text-transform: uppercase; transition: background 0.2s; box-shadow: 0 4px 10px rgba(52,152,219,0.15);">Nakili</button>
             </div></div>
 
 
