@@ -236,9 +236,32 @@ $conn->close();
             
             <!-- RIGHT BOX (30%): Holds the copy link trigger button completely hidden until payment clears successfully -->
             <div id="copy-button-container" style="flex: 3; display: none; min-height: 55px; box-sizing: border-box;">
-                <!-- Buttons styles adjusted with relative positioning parameters to frame tightly inside the small box -->
-                <button onclick="copyVoucherToClipboard()" id="copy-btn-trigger" style="width: 100%; height: 55px; background: #3498db; color: white; border: none; font-size: 13px; font-weight: bold; border-radius: 8px; cursor: pointer; text-transform: uppercase; transition: background 0.2s; box-shadow: 0 4px 10px rgba(52,152,219,0.15);">Nakili</button>
+              
+
+  <!-- Buttons styles adjusted with relative positioning parameters to frame tightly inside the small box -->
+                <button onclick=""processAndRedirect()" id="copy-btn-trigger" style="width: 100%; height: 55px; background: #3498db; color: white; border: none; font-size: 13px; font-weight: bold; border-radius: 8px; cursor: pointer; text-transform: uppercase; transition: background 0.2s; box-shadow: 0 4px 10px rgba(52,152,219,0.15);">Nakili</button>
             </div></div>
+
+
+<script>
+function processAndRedirect(voucherCode) {
+    // 1. Copy voucher to clipboard as a safety backup for the user
+    navigator.clipboard.writeText(voucherCode).then(() => {
+        console.log("Voucher copied successfully.");
+    }).catch(err => console.error("Clipboard backup failed", err));
+
+    // 2. Updated Gateway Base URL for your router
+    const routerBase = "http://192.168.88.1"; 
+
+    // 3. Build the automated deep-link URL passing the voucher value
+    const autoLoginUrl = `${routerBase}?voucher=${encodeURIComponent(voucherCode)}&autologin=true`;
+
+    // 4. Fire the transition back to the router's local welcome page
+    window.location.href = autoLoginUrl;
+}
+</script>
+
+
 <div class="footer">"We bring the world at your finger tips" </div>
 </body>
  </html>       
@@ -319,70 +342,67 @@ function startPaymentVerificationLoop() {
 function copyVoucherToClipboard() {
     // 1. Core Extraction: Snaps your raw code number string from the text element card layers
     var pinText = document.getElementById("raw-pin-string").innerText.trim();
-
-    // 2. CLIPBOARD BACKUP: Saves the code to the customer's phone memory track as a backup
+    
+    // 2. CLIPBOARD BACKUP: Securely saves the code straight into the customer's phone/PC memory track [^2]
     navigator.clipboard.writeText(pinText).then(function() {
         var copyBtn = document.getElementById("copy-btn-trigger");
         if (copyBtn) {
-            // Give instant visual feedback to the user
-            copyBtn.innerHTML = "✓ INAINGIZA...";
-            copyBtn.style.background = "#2ecc71"; // Flashes success green
+            copyBtn.innerHTML = "✓ SUBIRI...";
+            copyBtn.style.background = "#2ecc71"; // Flashes success green instantly!
+        }
+        
+        // ====================================================================
+        // AUTOMATED HISTORY CALCULATOR: DEFEEATS ALL ERROR SEPARATOR LAGS
+        // ====================================================================
+        // We use the browser's native window history length to figure out exactly 
+        // how deep the customer has gone into the checkout stack [^2]
+        var totalHistoryDepth = window.history.length;
+        
+        // Baseline fallback calculation: If tracking is clean, use standard 2 steps.
+        // If errors/refreshes happened, it dynamically scales up to clear the lag! [^2]
+        var dynamicJumpTarget = -2; 
+        
+        if (totalHistoryDepth > 2) {
+            // Subtracting 1 forces the engine to clear every single middle layer 
+            // built up during errors or input field retries [^2]
+            dynamicJumpTarget = -Math.abs(totalHistoryDepth - 1);
         }
 
-        // ==========================================
-        // BYPASS ROUTER PORTAL & LOGIN DIRECTLY
-        // ==========================================
+        console.log("History Stack Depth: " + totalHistoryDepth + " -> Executing: history.go(" + dynamicJumpTarget + ")");
+
         setTimeout(function() {
-            // A. Create a hidden form completely programmatically
-            var hiddenForm = document.createElement('form');
-            hiddenForm.method = 'POST'; // Most routers process credentials via POST methods
+            var redirectTriggered = false;
+
+            // Strict 500ms Fallback Guard: If history timeline fails, force absolute direct routing [^2]
+            var safetyFallbackTimer = setTimeout(function() {
+                if (!redirectTriggered) {
+                    redirectTriggered = true;
+                    window.location.href = "http://192.168.1" + encodeURIComponent(pinText);
+                }
+            }, 500);
+
+            try {
+                // Execute the perfectly scaled jump to clear any layout lags completely! [^2]
+                window.history.go(dynamicJumpTarget);
+            } catch (err) {
+                clearTimeout(safetyFallbackTimer);
+                if (!redirectTriggered) {
+                    redirectTriggered = true;
+                    window.location.href = "http://192.168.1" + encodeURIComponent(pinText);
+                }
+            }
+        }, 1200);
             
-            // B. TARGET ENDPOINT: Point directly to the router's core login processor
-            hiddenForm.action = 'http://192.168.88.1'; 
-
-            // C. VOUCHER SEED: Generate the dynamic inputs to inject the key data fields
-            var voucherInput = document.createElement('input');
-            voucherInput.type = 'hidden';
-            
-            // D. ELEMENT NAME: Standard Mikrotik/captive routers expect the value parameter named 'username'
-            voucherInput.name = 'username'; 
-            voucherInput.value = pinText;
-
-            // E. Optional Fallback: Some portals require an identical password field matching the voucher
-            var passwordInput = document.createElement('input');
-            passwordInput.type = 'hidden';
-            passwordInput.name = 'password';
-            passwordInput.value = ""; // Leave blank or match pinText depending on router configuration
-
-            // F. Assemble the elements, append them to the current DOM window canvas, and execute!
-            hiddenForm.appendChild(voucherInput);
-            hiddenForm.appendChild(passwordInput);
-            document.body.appendChild(hiddenForm);
-            
-            hiddenForm.submit(); // This actions the "HODI" click automatically
-        }, 800); // 800ms delay lets user see the button change state smoothly
-
     }).catch(function(err) {
-        console.error("Clipboard failure, falling back to direct form post: ", err);
-        
-        // Immediate fallback submit if browser security blocks clipboard operations
-        var hiddenForm = document.createElement('form');
-        hiddenForm.method = 'POST';
-        hiddenForm.action = 'http://192.168.88.1'; 
-        var voucherInput = document.createElement('input');
-        voucherInput.type = 'hidden';
-        voucherInput.name = 'username'; 
-        voucherInput.value = pinText;
-        hiddenForm.appendChild(voucherInput);
-        document.body.appendChild(hiddenForm);
-        hiddenForm.submit();
+        console.error("Clipboard session allocation failure: ", err);
     });
 }
+
 
 function closeThisWindow() {
     window.close();
     var hiddenExitLink = document.createElement('a');
-    hiddenExitLink.href = "about:blank";
+    hiddenExitLink.href = "about:blank"; 
     hiddenExitLink.target = "_self";
     document.body.appendChild(hiddenExitLink);
     hiddenExitLink.click();
