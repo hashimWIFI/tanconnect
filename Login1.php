@@ -236,32 +236,9 @@ $conn->close();
             
             <!-- RIGHT BOX (30%): Holds the copy link trigger button completely hidden until payment clears successfully -->
             <div id="copy-button-container" style="flex: 3; display: none; min-height: 55px; box-sizing: border-box;">
-              
-
-  <!-- Buttons styles adjusted with relative positioning parameters to frame tightly inside the small box -->
-                <button onclick=""processAndRedirect()" style="width: 100%; height: 55px; background: #3498db; color: white; border: none; font-size: 13px; font-weight: bold; border-radius: 8px; cursor: pointer; text-transform: uppercase; transition: background 0.2s; box-shadow: 0 4px 10px rgba(52,152,219,0.15);">Nakili</button>
+                <!-- Buttons styles adjusted with relative positioning parameters to frame tightly inside the small box -->
+                <button onclick="copyVoucherToClipboard()" id="copy-btn-trigger" style="width: 100%; height: 55px; background: #3498db; color: white; border: none; font-size: 13px; font-weight: bold; border-radius: 8px; cursor: pointer; text-transform: uppercase; transition: background 0.2s; box-shadow: 0 4px 10px rgba(52,152,219,0.15);">Nakili</button>
             </div></div>
-
-
-<script>
-function processAndRedirect(voucherCode) {
-    // 1. Copy voucher to clipboard as a safety backup for the user
-    navigator.clipboard.writeText(voucherCode).then(() => {
-        console.log("Voucher copied successfully.");
-    }).catch(err => console.error("Clipboard backup failed", err));
-
-    // 2. Updated Gateway Base URL for your router
-    const routerBase = "http://192.168.88.1"; 
-
-    // 3. Build the automated deep-link URL passing the voucher value
-    const autoLoginUrl = `${routerBase}?voucher=${encodeURIComponent(voucherCode)}&autologin=true`;
-
-    // 4. Fire the transition back to the router's local welcome page
-    window.location.href = autoLoginUrl;
-}
-</script>
-
-
 <div class="footer">"We bring the world at your finger tips" </div>
 </body>
  </html>       
@@ -314,7 +291,7 @@ function startPaymentVerificationLoop() {
                     // Dynamically map amount and period confirmation notification text strings
                     var subtextElement = document.getElementById('payment-subtext');
                     if (subtextElement) {
-                        subtextElement.innerHTML = "Hongera! Umefanikiwa kununua kifurushi cha <b><br>Tsh " + parseInt(planAmount).toLocaleString() + "</b> kitatumika kwa muda wa <b> " + planDuration + ".</b> kuingia mtandaoni"; 
+                        subtextElement.innerHTML = "Hongera! Umefanikiwa kununua kifurushi cha Wi-Fi cha<b> Tsh " + parseInt(planAmount).toLocaleString() + "Utatumia nambari hii kwa muda wa <b> " + planDuration + "</b> kuingia mtandaoni"; 
                     }
                     
                     // INLINE REVEAL LOGIC: Capture our twin structural layer elements safely
