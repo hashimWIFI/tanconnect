@@ -367,8 +367,7 @@ ini_set('display_errors', 0);
                     <h5 style="margin: 0; color: #1e293b; font-size: 12px; font-weight: bold;">Water Point</h5>
                     <p style="margin: 2px 0 0 0; color: black; font-size: 9px; text-align: left;">
                         Karibu ujipatie maji safi na salama yaliyochujwa kwa <br>kutumia teknolojia ya RO na UV.<br><br>
-                        <b>Tupo TANDIKA, Mtaa MALUMBA
-b>
+                        <b>Tupo TANDIKA, Mtaa MALUMBA <b>
                     </p>
                 </div>
             </div>
