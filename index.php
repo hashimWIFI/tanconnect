@@ -257,7 +257,7 @@ ini_set('display_errors', 0);
     <div class="container">
         <!-- SECTIONS 1 & 2: PORTAL HEADER & SCROLLING ANNOUNCEMENT -->
         <div class="portal-card">
-            <img src="logo3.png" alt="Water Point Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
+            <img src="logo.png" alt="Water Point Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
             <div class="subtitle">
                 <marquee behavior="scroll" direction="left" scrollamount="4" style="color: black; font-weight: bold; margin-bottom: 10px;font-family: 'Segoe UI', Arial, sans-serif;">
                     Ndugu mteja, karibu kwenye mtandao wa Wi-Fi wa TANConnect || Tunakuletea internet isiyo na ukomo wa kasi kuperuzi mtandaoni || Fuata maelekezo hapa chini kununua Voucher kupitia simu yako ya mkononi || Kwa ufafanuzi, malamiko au maelekezo zaidi, wasiliana nasi kwa nambari 0713 123 974 
@@ -373,9 +373,7 @@ b>
                 </div>
             </div>
         </div></b>
-        <p style="text-align:center; margin: 10px auto;"><a href=http://www.5wifi.net><span>💳</span>TOP-UP</a>
-
-
+      
         <div style="text-align: center; margin-top: 5px; padding-top: 5px; border-top: 1px solid #334155; font-size: 8px; color: #64748b;">
             <p>© 2026 TANConnect. All Rights Reserved.<br>
             TANConnect is a registered trademark of <b>NIT Africa Solutions Limited</b>.</p>
