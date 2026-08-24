@@ -317,63 +317,15 @@ function startPaymentVerificationLoop() {
 }
 
 function copyVoucherToClipboard() {
-    // 1. Core Extraction: Snaps your raw code number string from the text element card layers
-    var pinText = document.getElementById("raw-pin-string").innerText.trim();
-    
-    // 2. CLIPBOARD BACKUP: Securely saves the code straight into the customer's phone/PC memory track [^2]
+    var pinText = document.getElementById("raw-pin-string").innerText;
     navigator.clipboard.writeText(pinText).then(function() {
-        var copyBtn = document.getElementById("copy-btn-trigger");
-        if (copyBtn) {
-            copyBtn.innerHTML = "✓ SUBIRI...";
-            copyBtn.style.background = "#2ecc71"; // Flashes success green instantly!
-        }
-        
-        // ====================================================================
-        // AUTOMATED HISTORY CALCULATOR: DEFEEATS ALL ERROR SEPARATOR LAGS
-        // ====================================================================
-        // We use the browser's native window history length to figure out exactly 
-        // how deep the customer has gone into the checkout stack [^2]
-        var totalHistoryDepth = window.history.length;
-        
-        // Baseline fallback calculation: If tracking is clean, use standard 2 steps.
-        // If errors/refreshes happened, it dynamically scales up to clear the lag! [^2]
-        var dynamicJumpTarget = -2; 
-        
-        if (totalHistoryDepth > 2) {
-            // Subtracting 1 forces the engine to clear every single middle layer 
-            // built up during errors or input field retries [^2]
-            dynamicJumpTarget = -Math.abs(totalHistoryDepth - 1);
-        }
-
-        console.log("History Stack Depth: " + totalHistoryDepth + " -> Executing: history.go(" + dynamicJumpTarget + ")");
-
-        setTimeout(function() {
-            var redirectTriggered = false;
-
-            // Strict 500ms Fallback Guard: If history timeline fails, force absolute direct routing [^2]
-            var safetyFallbackTimer = setTimeout(function() {
-                if (!redirectTriggered) {
-                    redirectTriggered = true;
-                    window.location.href = "http://192.168.1" + encodeURIComponent(pinText);
-                }
-            }, 500);
-
-            try {
-                // Execute the perfectly scaled jump to clear any layout lags completely! [^2]
-                window.history.go(dynamicJumpTarget);
-            } catch (err) {
-                clearTimeout(safetyFallbackTimer);
-                if (!redirectTriggered) {
-                    redirectTriggered = true;
-                    window.location.href = "http://192.168.1" + encodeURIComponent(pinText);
-                }
-            }
-        }, 1200);
-            
-    }).catch(function(err) {
-        console.error("Clipboard session allocation failure: ", err);
+        alert("Voucher yako imenakiliwa! Bonyeza HODI kwenye ukurasa unaofuata, kisha ingiza voucher kuingia mtandaoni.");
+        window.location.href = "https://www.5wifi.net";
+    }, function() {
+        window.location.href = "https://www.5wifi.net";
     });
 }
+
 
 
 function closeThisWindow() {
