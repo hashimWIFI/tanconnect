@@ -291,7 +291,7 @@ function startPaymentVerificationLoop() {
                     // Dynamically map amount and period confirmation notification text strings
                     var subtextElement = document.getElementById('payment-subtext');
                     if (subtextElement) {
-                        subtextElement.innerHTML = "Hongera! Umefanikiwa kununua kifurushi cha <b><br>Tsh " + parseInt(planAmount).toLocaleString() + "</b> kitatumika kwa muda wa <b> " + planDuration + ".</b> Bonyeza NAKILI kuhifadhi voucher yako"; 
+                        subtextElement.innerHTML = "Umefanikiwa kununua kifurushi cha <b>Tsh " + parseInt(planAmount).toLocaleString() + "</b> kitatumika kwa <b> " + planDuration + ".</b> Bonyeza NAKILI kuhifadhi voucher yako, kisha fuata maelekezo"; 
                     }
                     
                     // INLINE REVEAL LOGIC: Capture our twin structural layer elements safely
