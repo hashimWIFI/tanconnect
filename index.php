@@ -359,24 +359,20 @@ ini_set('display_errors', 0);
             <div class="loading-text">Tafadhali subiri, tunatayarisha malipo...</div>
         </div>
 
-        <!-- SECTION 6: PHYSICAL LOCATION WATER POINT FOOOTER -->
-        <div class="badge-footer" style="border-left: 10px solid #349dbb; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; border-radius: 0 10px 10px 0; padding: 10px; display: flex; justify-content: space-between; gap: 10px; background-image: url('background.png');">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <span style="font-size: 24px;">💧</span>
-                <div>
-                    <h5 style="margin: 0; color: #1e293b; font-size: 12px; font-weight: bold;">Water Point</h5>
-                    <p style="margin: 2px 0 0 0; color: black; font-size: 9px; text-align: left;">
-                        Karibu ujipatie maji safi na salama yaliyochujwa kwa <br>kutumia teknolojia ya RO na UV.<br><br>
-                        <b>Tupo TANDIKA, Mtaa MALUMBA <b>
-                    </p>
-                </div>
-            </div>
-        </div></b>
-      
-        <div style="text-align: center; margin-top: 5px; padding-top: 5px; border-top: 1px solid #334155; font-size: 8px; color: #64748b;">
-            <p>© 2026 TANConnect. All Rights Reserved.<br>
-            TANConnect is a registered trademark of <b>NIT Africa Solutions Limited</b>.</p>
-        </div>
+        <!-- START OF AZAMPAY MANDATORY COMPLIANCE FOOTER -->
+<footer style="margin-top: 20px; padding: 15px 15px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 8px; color: #555555; border-top: 1px solid #e0e0e0; background-color: #fafafa;">
+    <p style="margin: 0 0 10px 0; font-weight: bold;">© 2026 NIT Africa Solutions Limited. All Rights Reserved. <br>TANConnect is a registered trademark of NIT Africa Solutions Limited.</p>
+    <p style="margin: 0 0 15px 0;">
+        <a href="/privacy.php" style="color: #0066cc; text-decoration: none; margin: 0 12px; font-weight: 500;">Privacy Policy</a> | 
+        <a href="/terms.php" style="color: #0066cc; text-decoration: none; margin: 0 12px; font-weight: 500;">Terms & Conditions</a> | 
+        <a href="/refund.php" style="color: #0066cc; text-decoration: none; margin: 0 12px; font-weight: 500;">Refund Policy</a>
+    </p>
+    <p style="margin: 0; font-size: 9px; color: #777777; line-height: 1.6;">
+        <strong>Customer Support Desk:</strong><br>
+        📧<b> Email:  support@tanconnect.co.tz &nbsp;&nbsp;|&nbsp;&nbsp; 📞 Phone: +255 713 123 974
+    </p></b>
+</footer>
+<!-- END OF AZAMPAY MANDATORY COMPLIANCE FOOTER -->
     </div></div></div>
 
 
