@@ -259,7 +259,7 @@ ini_set('display_errors', 0);
         <div class="portal-card">
             <img src="logo.png" alt="Water Point Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
             <div class="subtitle">
-                <marquee behavior="scroll" direction="left" scrollamount="4" style="color: black; border-bottom: 1px solid #334155; font-weight: bold; font-size: 13px; margin-bottom: 10px;font-family: 'Segoe UI', Arial, sans-serif;">
+                <marquee behavior="scroll" direction="left" scrollamount="4" style="color: black; border-bottom: 2px solid #e2e8f0; font-weight: bold; font-size: 13px; margin-bottom: 10px;font-family: 'Segoe UI', Arial, sans-serif;">
                     Ndugu mteja, karibu kwenye mtandao wa Wi-Fi wa TANConnect || Tunakuletea internet isiyo na ukomo wa kasi kuperuzi mtandaoni || Fuata maelekezo hapa chini kununua Voucher kupitia simu yako ya mkononi || Kwa ufafanuzi, malamiko au maelekezo zaidi, wasiliana nasi kwa nambari 0713 123 974 <br>
                 </marquee> <br>
             </div>
