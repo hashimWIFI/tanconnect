@@ -263,11 +263,7 @@ ini_set('display_errors', 0);
                     Ndugu mteja, karibu kwenye mtandao wa Wi-Fi wa TANConnect || Tunakuletea internet isiyo na ukomo wa kasi kuperuzi mtandaoni || Fuata maelekezo hapa chini kununua Voucher kupitia simu yako ya mkononi || Kwa ufafanuzi, malamiko au maelekezo zaidi, wasiliana nasi kwa nambari 0713 123 974 
                 </marquee>
             </div>
-      <hr width="100%" align="center"></hr>
-
             <div style="font-weight: bold; font-size: 13px; color: black; text-align: left;">Bonyeza kifurushi unachohitaji kununua:<br><br>
-        
-
         <!-- SECTION 3: THE PACKAGE SELECTION GRID LOOP -->
         <div class="package-grid">
             <div class="package-card" onclick="selectPackage('500', '500 TZS || Masaa 12 kuperuzi || Unlimited DATA')">
