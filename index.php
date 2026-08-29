@@ -265,7 +265,7 @@ ini_set('display_errors', 0);
             </div>
       <hr width="100%" align="center"></hr>
 
-            <div style="font-weight: bold; color: black; text-align: left;">Bonyeza kifurushi unachohitaji kununua:<br><br>
+            <div style="font-weight: bold; font-size: 13px; color: black; text-align: left;">Bonyeza kifurushi unachohitaji kununua:<br><br>
         
 
         <!-- SECTION 3: THE PACKAGE SELECTION GRID LOOP -->
