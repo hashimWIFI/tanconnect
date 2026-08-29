@@ -356,7 +356,7 @@ ini_set('display_errors', 0);
         </div>
 
         <!-- START OF AZAMPAY MANDATORY COMPLIANCE FOOTER -->
-<footer style="margin-top: 15px; padding: 15px 15px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 9px; color: #555555; background-color: #fafafa;">
+<footer style="margin-top: 15px; padding: 15px 15px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 9px; color: #555555; background-color: #fafafa;">
     <p style="margin: 0 0 10px 0; font-weight: bold;">© 2026 NIT Africa Solutions Limited. All Rights Reserved. <br>TANConnect is a registered trademark of NIT Africa Solutions Limited.</p>
     <p style="margin: 0 0 15px 0;">
         <a href="/privacy.php" style="color: #0066cc; text-decoration: none; margin: 0 12px; font-weight: 500;">Privacy Policy</a> | 
