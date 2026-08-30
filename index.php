@@ -90,7 +90,11 @@ ini_set('display_errors', 0);
             font-weight: bold;
             color: darkblue;
         }
-
+        .card-price1 {
+            font-size: 14px;
+            font-weight: bold;
+            color: darkblue;
+        }
         .card-time {
             font-size: 12px;
             font-weight: bold;
@@ -315,13 +319,13 @@ ini_set('display_errors', 0);
             </div>
 
             <div class="package-card" onclick="selectPackage('10000', '10,000 TZS || Siku 15 kuperuzi || Unlimited DATA')">
-                <div class="card-price">10,000<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
+                <div class="card-price1">10,000<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
                 <div class="card-time">Siku 15</div>
                 <div class="card-data">Unlimited DATA</div>
             </div>
             
             <div class="package-card" onclick="selectPackage('20000', '20,000 TZS || Siku 30 kuperuzi || Unlimited DATA')">
-                <div class="card-price">20,000<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
+                <div class="card-price1">20,000<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
                 <div class="card-time">Siku 30</div>
                 <div class="card-data">Unlimited DATA</div>
             </div>
