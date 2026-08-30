@@ -231,7 +231,7 @@ ini_set('display_errors', 0);
             cursor: pointer;
             transition: background 0.2s;
             margin-top: 10px;
-            min-width: 70%;
+            min-width: 50%;
         }
 
 
@@ -246,7 +246,7 @@ ini_set('display_errors', 0);
             color: #94a3b8;
         }
 
-.btn-submit { background:#0056b3; color:#0056b3;  border: 1px solid #334155; width: 30%; padding: 14px; font-color: white; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: all 0.3s ease; }
+.btn-submit { background:#0056b3; color:#0056b3;  border: 1px solid #334155; min-width: 30%; padding: 14px; font-color: white; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: all 0.3s ease; }
 
     </style>
 </head>
