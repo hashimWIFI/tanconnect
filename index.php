@@ -358,7 +358,7 @@ ini_set('display_errors', 0);
                 <div></div><div></div><div></div><div></div><div></div>
                 <div></div><div></div><div></div><div></div><div></div>
             </div>
-            <div class="loading-text">Tafadhali subiri, tunatayarisha malipo...</div>
+            <div class="loading-text">TUNAWASILIANA NA MTANDAO WAKO <br> TAFADHALI SUBIRI ...</div>
         </div>
 
         <!-- START OF AZAMPAY MANDATORY COMPLIANCE FOOTER -->
