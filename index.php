@@ -233,7 +233,6 @@ ini_set('display_errors', 0);
             transition: background 0.2s;
             margin-top: 10px;
             min-width: 70%;
-            text-transform: uppercase;
         }
 
 
