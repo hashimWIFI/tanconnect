@@ -23,8 +23,8 @@ ini_set('display_errors', 0);
         body {
             background-color:white;
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            margin: 0;
-            padding: 20px;
+            margin: 5px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -174,7 +174,7 @@ ini_set('display_errors', 0);
         /* 📋 MODAL OVERLAY STYLES */
         .modal-overlay {
             position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
+            top: 0; left: 0; width: 90vw; height: 100vh;
             background: rgba(15, 23, 42, 0.85);
             display: none;
             justify-content: center;
