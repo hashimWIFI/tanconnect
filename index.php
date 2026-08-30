@@ -174,7 +174,7 @@ ini_set('display_errors', 0);
         /* 📋 MODAL OVERLAY STYLES */
         .modal-overlay {
             position: fixed;
-            top: 0; left: 0; width: 90vw; height: 100vh;
+            top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(15, 23, 42, 0.85);
             display: none;
             justify-content: center;
