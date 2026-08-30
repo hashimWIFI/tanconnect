@@ -338,7 +338,7 @@ ini_set('display_errors', 0);
                 <label for="phone-number">Ingiza nambari ya simu, kisha bonyeza PAY:</label>
 <div style="display: flex; gap: 10px;">
 
-<input class="button-submit" name="customer_phone" id="phone-number" pattern="[0]{1}[6-7]{1}[0-9]{8}" type="tel" placeholder="0713123974" autocomplete="off" oninput="detectMobileProvider()" style="flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; color: black; text-align: center;" required/>
+<input class="btn-submit" name="customer_phone" id="phone-number" pattern="[0]{1}[6-7]{1}[0-9]{8}" type="tel" placeholder="0713123974" autocomplete="off" oninput="detectMobileProvider()" style="flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; color: black; text-align: center;" required/>
 
 <button type="button" id="submit-payment-btn" class="btn-popup-pay" style="margin: 0; padding: 0 30px; background: #3498db; border-radius: 6px; font-size: 13px; color: white; font-weight: bold; min-width: 180px;" onclick="dispatchToRailway(event)">Pay</button>                </div></div>
 
