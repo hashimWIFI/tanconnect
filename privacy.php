@@ -14,8 +14,9 @@
             margin-bottom: 20px;
         }
         </style>
-    <h2>Privacy Policy - TANConnect<sup><sup style="font-family: Arial, Helvetica, sans-serif; font-size: 10px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup></sup></h2>
-    <p>NIT Africa Solutions Limited operates the TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 8px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup> portal. We collect and store customer mobile phone digits exclusively to initialize your cellular mobile wallet checkout sequence through AzamPay and dispatch your corresponding internet connectivity token string via automated local SMS network routes. We protect this data using strict encryption layers and never distribute your credentials to third-party databases.</p>
+    <h2>Privacy Policy;</h2>
+    <p>NIT Africa Solutions Limited operates the TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 8px; vertical-align:
+        super; line-height: 0;">&reg;</sup> portal. We collect and store customer mobile phone digits exclusively to initialize your cellular mobile wallet checkout sequence through AzamPay and dispatch your corresponding internet connectivity token string via automated local SMS network routes. We protect this data using strict encryption layers and never distribute your credentials to third-party databases.</p>
     <hr><p><a href="/" style="color: #0066cc; text-decoration: none;">← Rudi Ukurasa wa Mwanzo (Back to Home)</a></p>
 </div>
 </body>
