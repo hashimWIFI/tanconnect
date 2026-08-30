@@ -162,7 +162,6 @@ ini_set('display_errors', 0);
             font-weight: bold !important;
             letter-spacing: 0.5px !important;
             color: #94a3b8 !important;
-            text-transform: uppercase !important;
             animation: textFlickerPulse 1.5s ease-in-out infinite !important;
         }
 
@@ -174,7 +173,7 @@ ini_set('display_errors', 0);
         /* 📋 MODAL OVERLAY STYLES */
         .modal-overlay {
             position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
+            top: 0; left: 0; width: 80vw; height: 100vh;
             background: rgba(15, 23, 42, 0.85);
             display: none;
             justify-content: center;
@@ -187,7 +186,7 @@ ini_set('display_errors', 0);
             color: #1e293b;
             border-radius: 12px;
             width: 100%;
-            max-width: 360px;
+            max-width: 380px;
             padding: 24px;
             position: relative;
             box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5);
