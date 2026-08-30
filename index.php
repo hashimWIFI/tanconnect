@@ -231,7 +231,7 @@ ini_set('display_errors', 0);
             cursor: pointer;
             transition: background 0.2s;
             margin-top: 10px;
-            min-width: 15%;
+            min-width: 35%;
         }
 
 
