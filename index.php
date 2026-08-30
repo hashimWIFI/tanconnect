@@ -423,7 +423,7 @@ ini_set('display_errors', 0);
                 payBtn.innerHTML = "PAY (TigoPesa)";
             } else if (['78', '79', '68', '69'].includes(prefix)) {
                 payBtn.style.backgroundColor = airtelColor;
-                payBtn.innerHTML = "PAY (Airtel Money)";
+                payBtn.innerHTML = "PAY (Airt Money)";
             } else if (['62', '61'].includes(prefix)) {
                 payBtn.style.backgroundColor = haloloColor;
                 payBtn.innerHTML = "PAY (Halopesa)";
