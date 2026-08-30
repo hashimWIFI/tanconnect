@@ -33,8 +33,8 @@ ini_set('display_errors', 0);
         }
 
         .container {
-            width: 100%;
-            max-width: 450px;
+            width: 55%;
+            max-width: 900px;
             margin: 0 auto;
         }
 
