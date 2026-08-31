@@ -126,7 +126,7 @@ ini_set('display_errors', 0);
 
         /* 🌀 THE CHASING 10-DOT CIRCLE RADIUS ENGINE */
         .chasing-spinner {
-            position: relative !important;
+            position: relataive !important;
             width: 100px !important;
             height: 100px !important;
             margin-bottom: 25px !important;
@@ -165,6 +165,7 @@ ini_set('display_errors', 0);
             font-size: 14px !important;
             font-weight: bold !important;
             letter-spacing: 0.5px !important;
+             text-align: center;
             color: #94a3b8 !important;
             animation: textFlickerPulse 1.5s ease-in-out infinite !important;
         }
