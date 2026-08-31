@@ -1,23 +1,30 @@
 <!DOCTYPE html>
 <html lang="sw">
-    <div class="portal-card">
-            <img src="logo.png" alt="Water Point Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
-<head><meta charset="UTF-8"><title>Privacy Policy - TANConnect</title></head>
-        <style>
-            .body {font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.6; color: #333;  }
-     .portal-card {
-            background-color:white; 
+<head><meta charset="UTF-8"><title>Privacy Policy - TanConnect</title></head>
+
+<style>
+       
+    .portal-card {
             border-radius: 12px;
             padding: 24px;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
             text-align: center;
             margin-bottom: 20px;
-        }
-        </style>
-    <h2>Privacy Policy;</h2>
-    <p>NIT Africa Solutions Limited operates the TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 8px; vertical-align:
-        super; line-height: 0;">&reg;</sup> portal. We collect and store customer mobile phone digits exclusively to initialize your cellular mobile wallet checkout sequence through AzamPay and dispatch your corresponding internet connectivity token string via automated local SMS network routes. We protect this data using strict encryption layers and never distribute your credentials to third-party databases.</p>
-    <hr><p><a href="/" style="color: #0066cc; text-decoration: none;">← Rudi Ukurasa wa Mwanzo (Back to Home)</a></p>
+        }     
+    
+
+</style>
+
+
+ <div class="portal-card">
+            <img src="logo.png" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
+
+    <p style="font-size: 16px; font-weight: bold; text-align: left;"> Privacy Policy </p>
+<p style="font-size: 14px; text-align: left;">
+NIT Africa Solutions Limited operates the TANConnect portal. We collect and store customer mobile phone digits exclusively to initialize your cellular mobile wallet checkout sequence through AzamPay and dispatch your corresponding internet connectivity token string via automated local SMS network routes. We protect this data using strict encryption layers and never distribute your credentials to third-party databases.</p>
+    
+<hr><p><a href="/" style="color: #0066cc; text-decoration: none;">← Rudi Ukurasa wa Mwanzo (Back to Home)</a></p>
+
 </div>
 </body>
 </html>
