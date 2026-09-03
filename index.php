@@ -162,7 +162,7 @@ ini_set('display_errors', 0);
         }
 
         .loading-text {
-            font-size: 14px !important;
+            font-size: 18px !important;
             font-weight: bold !important;
             letter-spacing: 0.5px !important;
              text-align: center;
