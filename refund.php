@@ -21,10 +21,11 @@
   <img src="logo.png" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
 
   <div class="sub-title"> Refund & Cancellation Policy; </div> <p style="font-size: 13px; text-align: left;">
- All micro-payments completed for local Wi-Fi digital voucher tokens are final following receipt of a valid "success" webhook payload validation check from AzamPay servers. If an operational infrastructure breakdown happens where your money wallet is drawn down but an SMS voucher token is delayed, you can request support from our local administration cell. We will cross-reference your validation identifier and issue your connection path code manually.</p>
+ All micro-payments done to purchase local Wi-Fi digital voucher tokens are completed following receipt of a valid "SUCCESS" webhook payload validation check from AzamPay servers. If an operational infrastructure breakdown happens where customer money is withdrawn but an SMS with voucher token is delayed, you can contact support team to intervene. Support team will cross-reference your validation identifier and issue your voucher token manually.</p>
 
 <a href="/" class="btn-home" style="background: darkblue; width: 100%; box-sizing: border-box; text-decoration: none;">← RUDI NYUMA (BACK HOME)</a>
-  
+<footer style="margin-top: 15px; padding: 15px 15px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 9px; color: #555555; background-color: #fafafa;">
+    <p style="margin: 0 0 10px 0; font-weight: bold;">© 2026 NIT Africa Solutions Limited. All Rights Reserved. <br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 8px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup> is a registered trademark of NIT Africa Solutions Limited.</p> 
 </div>
  
 <script>
