@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TANConnect - Uhaba wa Vifurushi</title>
+    <title>TANConnect - Privacy Policy</title>
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; text-align: center; padding: 50px 20px; color: #2c3e50; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 90vh; }
         .receipt-card { background: white; max-width: 450px; width: 100%; margin: 0 auto; padding: 40px 30px 30px 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; position: relative; }
@@ -21,10 +21,11 @@
   <img src="logo.png" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
 
   <div class="sub-title">  Privacy Policy; </div> <p style="font-size: 13px; text-align: left;">
-NIT Africa Solutions Limited operates the TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 8px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup> portal. We collect and store customer mobile phone digits exclusively to initialize your cellular mobile wallet checkout sequence through AzamPay and dispatch your corresponding internet connectivity token string via automated local SMS network routes. We protect this data using strict encryption layers and never distribute your credentials to third-party databases.</p>
+We collect and store customer mobile phone digits exclusively to initialize your cellular mobile wallet checkout sequence through AzamPay and dispatch your corresponding internet connectivity token string via automated local SMS network routes. We protect this data using strict encryption layers and never distribute your credentials to third-party databases.</p>
 
 <a href="/" class="btn-home" style="background: darkblue; width: 100%; box-sizing: border-box; text-decoration: none;">← RUDI NYUMA (BACK HOME)</a>
-  
+ <footer style="margin-top: 15px; padding: 15px 15px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 9px; color: #555555; background-color: #fafafa;">
+    <p style="margin: 0 0 10px 0; font-weight: bold;">© 2026 NIT Africa Solutions Limited. All Rights Reserved. <br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 8px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup> is a registered trademark of NIT Africa Solutions Limited.</p> 
 </div>
 
 <script>
