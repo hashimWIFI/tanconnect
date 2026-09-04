@@ -24,7 +24,8 @@
 By executing a commercial purchase request on TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 8px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup>, you are buying a digital access authorization voucher for our wireless connectivity network footprint. Access is valid strictly for the continuous time interval purchased. Users are prohibited from utilizing this connectivity connection to run illegal distributed networking software, distribute bulk electronic text mail blocks, or participate in malicious cyber actions.</p>
 
 <a href="/" class="btn-home" style="background: darkblue; width: 100%; box-sizing: border-box; text-decoration: none;">← RUDI NYUMA (BACK HOME)</a>
-  
+<footer style="margin-top: 15px; padding: 15px 15px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 9px; color: #555555; background-color: #fafafa;">
+    <p style="margin: 0 0 10px 0; font-weight: bold;">© 2026 NIT Africa Solutions Limited. All Rights Reserved. <br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 8px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup> is a registered trademark of NIT Africa Solutions Limited.</p> 
 </div>
 
 <script>
