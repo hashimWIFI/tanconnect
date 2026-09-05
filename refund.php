@@ -20,7 +20,7 @@
 
   <img src="logo.png" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
 
-  <div class="sub-title"> Refund & Cancellation Policy; </div> <p style="font-size: 13px; text-align: left;">
+  <div class="sub-title"> Refund & Cancellation Policy; </div> <p style="font-size: 13px; text-align: justify;">
  All micro-payments done to purchase local Wi-Fi digital voucher tokens are completed following receipt of a valid "SUCCESS" webhook payload validation check from AzamPay servers. If an operational infrastructure breakdown happens where customer money is withdrawn but an SMS with voucher token is delayed, you can contact support team to intervene. Support team will cross-reference your validation identifier and issue your voucher token manually.</p>
 
 <a href="/" class="btn-home" style="background: darkblue; width: 100%; box-sizing: border-box; text-decoration: none;">← RUDI NYUMA (BACK HOME)</a>
