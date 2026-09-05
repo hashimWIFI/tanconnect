@@ -376,8 +376,8 @@ ini_set('display_errors', 0);
     </p>
 
     <p style="margin: 0; font-size: 9px; color: #777777; line-height: 1.6;">
-        <strong>Customer Support Desk:</strong><br>
-        📧<b> Email:  support@tanconnect.co.tz &nbsp;&nbsp;|&nbsp;&nbsp; 📞 Phone: +255 713 123 974
+           <strong>Customer Support Desk:</strong><br>
+        📧<b> Email: <a href="mailto:support@tanconnect.co.tz" style="color: #0066cc; text-decoration: none;">support@tanconnect.co.tz</a> &nbsp;&nbsp;|&nbsp;&nbsp; 📞 Phone: +255 713 123 974
     </p></b>
 </footer>
 <!-- END OF AZAMPAY MANDATORY COMPLIANCE FOOTER -->
