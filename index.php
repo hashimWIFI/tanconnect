@@ -368,12 +368,13 @@ ini_set('display_errors', 0);
 
         <!-- START OF AZAMPAY MANDATORY COMPLIANCE FOOTER -->
 <footer style="margin-top: 15px; padding: 15px 15px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 9px; color: #555555; background-color: #fafafa;">
-    <p style="margin: 0 0 10px 0; font-weight: bold;">© 2026 NIT Africa Solutions Limited. All Rights Reserved. <br>TANConnect is a registered trademark of NIT Africa Solutions Limited.</p>
+    <p style="margin: 0 0 10px 0; font-weight: bold;"> © 2026 NIT Africa Solutions Limited. All Rights Reserved. <br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup> is a registered trademark of<a href= https://nitafricasolutions-production-2f54.up.railway.app style="color: #0066cc; text-decoration: none; font-weight: 500;"> NIT Africa Solutions Limited</a></p>
     <p style="margin: 0 0 15px 0;">
         <a href="/privacy.php" style="color: #0066cc; text-decoration: none; margin: 0 12px; font-weight: 500;">Privacy Policy</a> | 
         <a href="/terms.php" style="color: #0066cc; text-decoration: none; margin: 0 12px; font-weight: 500;">Terms & Conditions</a> | 
         <a href="/refund.php" style="color: #0066cc; text-decoration: none; margin: 0 12px; font-weight: 500;">Refund Policy</a>
     </p>
+
     <p style="margin: 0; font-size: 9px; color: #777777; line-height: 1.6;">
         <strong>Customer Support Desk:</strong><br>
         📧<b> Email:  support@tanconnect.co.tz &nbsp;&nbsp;|&nbsp;&nbsp; 📞 Phone: +255 713 123 974
