@@ -20,7 +20,7 @@
 
   <img src="logo.png" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
 
-  <div class="sub-title">  Terms & Conditions; </div> <p style="font-size: 13px; text-align: left;">
+  <div class="sub-title">  Terms & Conditions; </div> <p style="font-size: 13px; text-align: justify;">
 By executing a commercial purchase request on TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 8px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup>, you are buying a digital access authorization voucher for our wireless connectivity network footprint. Access is valid strictly for the continuous time interval purchased. Users are prohibited from utilizing this connectivity connection to run illegal distributed networking software, distribute bulk electronic text mail blocks, or participate in malicious cyber actions.</p>
 
 <a href="/" class="btn-home" style="background: darkblue; width: 100%; box-sizing: border-box; text-decoration: none;">← RUDI NYUMA (BACK HOME)</a>
