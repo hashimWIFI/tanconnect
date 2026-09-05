@@ -20,7 +20,7 @@
 
   <img src="logo.png" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
 
-  <div class="sub-title">  Privacy Policy; </div> <p style="font-size: 13px; text-align: left;">
+  <div class="sub-title">  Privacy Policy; </div> <p style="font-size: 13px; text-align: justify;">
 We collect and store customer mobile phone digits exclusively to initialize cellular mobile wallet checkout sequence through AzamPay and dispatch corresponding internet connectivity token string to both customer storefront and mobile local SMS network routes. We protect these data using strict encryption layers and never distribute customer credentials to third-party databases.</p>
 
 <a href="/" class="btn-home" style="background: darkblue; width: 100%; box-sizing: border-box; text-decoration: none;">← RUDI NYUMA (BACK HOME)</a>
