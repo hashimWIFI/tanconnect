@@ -223,8 +223,9 @@
             transition: background 0.2s;
             margin-top: 10px;
             min-width: 50%;
+margin: 0; padding: 0 30px; background: #3498db; border-radius: 6px; font-size: 13px; color: white; font-weight: bold;
         }
-
+.style-group {flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; color: black; }
 
         .badge-footer {
             margin-top: 25px;
