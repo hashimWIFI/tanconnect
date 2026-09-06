@@ -25,7 +25,7 @@
   <div class="sub-title">  Privacy Policy; </div> <p style="font-size: 13px; text-align: justify;">
 We collect and store customer mobile phone digits exclusively to initialize cellular mobile wallet checkout sequence through AzamPay and dispatch corresponding internet connectivity token string to both customer storefront and mobile local SMS network routes. We protect these data using strict encryption layers and never distribute customer credentials to third-party databases.</p>
 
-<a href="/" class="btn-home" style="background: darkblue; width: 100%; box-sizing: border-box; text-decoration: none;">← RUDI NYUMA (BACK HOME)</a>
+<p style="text-align:center; margin: 6px auto;"><a href="/" class="btn-portal btn-home">← RUDI NYUMA (BACK HOME)</a></p>
 <footer style="margin-top: 5px; padding: 10px 10px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 10px; color: #555555; background-color: #fafafa;">
  <p> <b> © 2026 NIT Africa Solutions Ltd.</b> All Rights Reserved.<b><br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup></b> is a registered trademark of<br><a href= https://nitafricasolutions-production-2f54.up.railway.app style="color: #0066cc; text-decoration: none; font-weight: 500;"> NIT Africa Solutions Ltd</a></p>
 
