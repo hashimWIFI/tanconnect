@@ -120,7 +120,7 @@ if (!$dbResult) {
     
     <a href="index.php" class="btn-done" style="background: #e74c3c;">← RUDI NYUMA (BACK HOME)</a>
     <br><br> <footer style="padding: 6px 6px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 10px; color: #555555; background-color: #fafafa;">
-  <p><b> © 2026 NIT Africa Solutions Ltd.</b> All Rights Reserved.<b><br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup></b> is a registered trademark of<br><a href= https://nitafricasolutions-production-2f54.up.railway.app style="color: #0066cc; text-decoration: none; font-weight: 500;"> NIT Africa Solutions Limited</a></p></div>
+  <p><b> © 2026 NIT Africa Solutions Ltd.</b> All Rights Reserved.<b><br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup></b> is a registered trademark of <br> <a href= https://nitafricasolutions-production-2f54.up.railway.app style="color: #0066cc; text-decoration: none; font-weight: 500;"> NIT Africa Solutions Limited</a></p></div>
 
 <script>
 function closeThisWindow() {
@@ -278,7 +278,7 @@ $conn->close();
                 <!-- Buttons styles adjusted with relative positioning parameters to frame tightly inside the small box -->
                 <button onclick="copyVoucherToClipboard()" id="copy-btn-trigger" style="width: 100%; height: 55px; background: #3498db; color: white; border: none; font-size: 13px; font-weight: bold; border-radius: 8px; cursor: pointer; text-transform: uppercase; transition: background 0.2s; box-shadow: 0 4px 10px rgba(52,152,219,0.15);">Nakili</button>
 </div></div> <footer style="padding: 6px 6px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 10px; color: #555555; background-color: #fafafa;">
-  <p><b> © 2026 NIT Africa Solutions Ltd.</b> All Rights Reserved.<b><br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup></b> is a registered trademark of<br><a href= https://nitafricasolutions-production-2f54.up.railway.app style="color: #0066cc; text-decoration: none; font-weight: 500;"> NIT Africa Solutions Limited</a></p>
+  <p><b> © 2026 NIT Africa Solutions Ltd.</b> All Rights Reserved.<b><br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup></b> is a registered trademark of <br><a href= https://nitafricasolutions-production-2f54.up.railway.app style="color: #0066cc; text-decoration: none; font-weight: 500;"> NIT Africa Solutions Limited</a></p>
 </body>
  </html>       
 
