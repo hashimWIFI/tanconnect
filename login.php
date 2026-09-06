@@ -4,25 +4,13 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-/**
- * GATEKEEPER 1: Ensure they have a valid mobile number in their request or session.
- * Change 'mobile_number' to match your actual form field or URL parameter name.
- */
 $mobileFromGet  = isset($_GET['customer_phone']) ? trim($_GET['customer_phone']) : null;
 $mobileFromPost = isset($_POST['customer_phone']) ? trim($_POST['customer_phone']) : null;
 $mobileFromSession = isset($_SESSION['user_mobile']) ? $_SESSION['user_mobile'] : null;
 
-// Combine them to see if a mobile number exists anywhere
 $activeMobile = $mobileFromGet ?? $mobileFromPost ?? $mobileFromSession;
-
 // If NO mobile number is found, block them right here at the gate!
 if (empty($activeMobile)) {
-    // Option A: Send them back to your landing page/homepage
-    //header("Location: https://tanconnect.co.tz"); 
-   // exit();
-    
-    /* 
-    // Option B: Or show a strict access error message instead:
     http_response_code(403);
     die("Access Denied: Mobile number authentication is required to access this portal.");
     */
