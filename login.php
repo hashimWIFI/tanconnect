@@ -296,7 +296,7 @@ $conn->close();
 <body>
     <div class="error-color">✕ Hitilafu ya Mtandao Imejitokeza!</div>
         <p style="font-size: 13px; color: black; line-height: 1.5; margin-top: 15px;">Tumeshindwa kuwasiliana na <strong><?php echo ($provider === 'Mpesa') ? 'M-Pesa' : (($provider === 'Tigo') ? 'Tigopesa' : (($provider === 'Airtel') ? 'Airtel Money' : (($provider === 'Halopesa') ? 'Halopesa' : 'simu yako'))); ?></strong> kuanzisha malipo, tafadhali jaribu tena au chagua kifurushi kingine.</p>
-            <a href="/" style=" background: green; color: white; border: none; padding: 14px; font-size: 14px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 2px;margin-right: 10px; width: 100%; box-sizing: border-box; font-weight: bold;">← RUDI NYUMA (BACK HOME)</a>
+            <a href="/" style=" background: green; color: white; border: none; padding: 14px; font-size: 14px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 2px;margin-right: 10px; width: justify; box-sizing: border-box; font-weight: bold;">← RUDI NYUMA (BACK HOME)</a>
 
       <br> <div class="footer">"We bring the world at your finger tips" </div></div> 
 </body>
