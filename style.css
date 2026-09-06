@@ -55,7 +55,7 @@
             border: 2px solid #e2e8f0;
             background: #f8fafc;
             border-left: 4px solid #3498db;
-             border-bottom: 2px solid orange;
+            border-bottom: 2px solid orange;
             border-radius: 8px;
             padding: 16px;
             cursor: pointer;
@@ -211,20 +211,24 @@
             border: 1px solid #ccc;
 
         }
+ .btn-portal { display: block; text-decoration: none; padding: 10px; font-size: 14px; width: flex; font-weight: bold; border-radius: 8px; letter-spacing: 0.5px; transition: transform 0.1s ease, filter 0.2s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-align: center; }
+        .btn-portal:active { transform: scale(0.98); }
+        .btn-portal:hover { filter: brightness(0.95); }
+        .btn-buy { background-color: #3498db; color: black; border: 2px solid grey; }
 
-        .btn-popup-pay {
-            background-color: #f15a24;
+
+        .btn-buy1 {
             color: white;
-            border: none;
-            padding: 14px;
+            padding: 10px;
             font-size: 16px;
             font-weight: bold;
             border-radius: 6px;
+            border: 2px solid grey;
             cursor: pointer;
             transition: background 0.2s;
             margin-top: 10px;
             min-width: 50%;
-margin: 0; padding: 0 30px; background: #3498db; border-radius: 6px; font-size: 13px; color: white; font-weight: bold;
+          
         }
 .style-group {flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; color: black; }
 
@@ -241,10 +245,11 @@ margin: 0; padding: 0 30px; background: #3498db; border-radius: 6px; font-size: 
 
 .btn-submit { border: 1px solid #334155; 
              min-width: 35%; 
-             padding: 14px; 
+             padding: 10px; 
              font-color: black; 
              font-size: 14px; 
              font-weight: bold; 
              border-radius: 6px; 
              cursor: pointer; 
-             transition: all 0.3s ease; }
+             transition: all 0.3s ease;  text-align: center;  margin-top: 10px;
+}
