@@ -257,8 +257,9 @@ $conn->close();
 </head>
 <body>
     <div class="error-color">✕ Hitilafu ya Mtandao Imejitokeza!</div>
-        <p style="font-size: 14px; color: black; line-height: 1.5; margin-top: 15px;">Tumeshindwa kuwasiliana na <strong><?php echo ($provider === 'Mpesa') ? 'M-Pesa' : (($provider === 'Tigo') ? 'Tigopesa' : (($provider === 'Airtel') ? 'Airtel Money' : (($provider === 'Halopesa') ? 'Halopesa' : 'simu yako'))); ?></strong> kuanzisha malipo, tafadhali jaribu tena.</p>
-       <a href="index.php" class="btn-done" style="background: #e74c3c; width: 100%; box-sizing: border-box; text-decoration: none;">JARIBU</a><br>
+        <p style="font-size: 13px; color: black; line-height: 1.5; margin-top: 15px;">Tumeshindwa kuwasiliana na <strong><?php echo ($provider === 'Mpesa') ? 'M-Pesa' : (($provider === 'Tigo') ? 'Tigopesa' : (($provider === 'Airtel') ? 'Airtel Money' : (($provider === 'Halopesa') ? 'Halopesa' : 'simu yako'))); ?></strong> kuanzisha malipo, tafadhali jaribu tena au chagua kifurushi kingine.</p>
+            <a href="/" style=" background: green; color: white; border: none; padding: 14px; font-size: 14px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 2px;margin-right: 10px; width: 45%; box-sizing: border-box; font-weight: bold;">JARIBU </a>
+      <a href="index.php" style=" background: darkblue; color: white; border: none; padding: 14px; font-size: 14px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 2px; width: 45%; box-sizing: border-box; font-weight: bold;">CHAGUA </a><br>
       <br> <div class="footer">"We bring the world at your finger tips" </div></div> 
 </body>
 </html>
