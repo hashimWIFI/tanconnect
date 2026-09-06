@@ -6,7 +6,7 @@
     <title>TANConnect - Uhaba wa Vifurushi</title>
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; text-align: center; padding: 50px 20px; color: #2c3e50; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 90vh; }
-        .receipt-card { background: white; max-width: 500px; width: 100%; margin: 0 auto; padding: 40px 30px 30px 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; position: relative; }
+        .receipt-card { background: white; max-width: 450px; width: 100%; margin: 0 auto; padding: 40px 30px 30px 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; position: relative; }
         .sub-title { color: #e74c3c; font-size: 17px; font-weight: bold; margin-top: 10px; text-align: left; }
          .btn-home { background: #3498db; color: white; border: none; padding: 14px; font-size: 16px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 15px; width: 100%; box-sizing: border-box; font-weight: bold; }
 
@@ -25,7 +25,7 @@ By executing a commercial purchase request on TANConnect<sup style="font-family:
 
 <a href="/" class="btn-home" style="background: darkblue; width: 100%; box-sizing: border-box; text-decoration: none;">← RUDI NYUMA (BACK HOME)</a>
 <footer style="margin-top: 5px; padding: 10px 10px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 10px; color: #555555; background-color: #fafafa;">
- <p style="margin: 0 0 10px 0; " <strong> © 2026 NIT Africa Solutions Limited.</strong> All Rights Reserved. <br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup> is a registered trademark of<a href= https://nitafricasolutions-production-2f54.up.railway.app style="color: #0066cc; text-decoration: none; font-weight: 500;"> NIT Africa Solutions Limited</a></p>
+ <p style="margin: 0 0 10px 0; " <strong> © 2026 NIT Africa Solutions Ltd.</strong> All Rights Reserved. <br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup> is a registered trademark of<a href= https://nitafricasolutions-production-2f54.up.railway.app style="color: #0066cc; text-decoration: none; font-weight: 500;"> NIT Africa Solutions Ltd</a></p>
 
 </div>
 
