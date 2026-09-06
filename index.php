@@ -7,7 +7,7 @@ error_reporting(0); ini_set('display_errors', 0);?><!DOCTYPE html><html lang="sw
     <p style="margin: 0 0 15px 0;">
         <a href="/privacy.php" style="color: #0066cc; text-decoration: none; margin: 0 12px; font-weight: bold;">Privacy Policy</a> | 
         <a href="/terms.php" style="color: #0066cc; text-decoration: none; margin: 0 12px; font-weight: bold;">Terms & Conditions</a> | 
-        <a href="/refund.php" style="color: #0066cc; text-decoration: none; margin: 0 12px; font-weight: bold;">Refund & Cancellation Policy</a>
+        <a href="/refund.php" style="color: #0066cc; text-decoration: none; margin: 0 12px; font-weight: bold;">Refund Policy</a>
     </p>
 
     <p style="margin: 0; font-size: 9px; color: #777777; line-height: 1.6;">
