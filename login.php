@@ -6,7 +6,7 @@ ini_set('display_errors', 1);
 // 1. DATA HARVESTING & PHONE STANDARDIZATION
 // ==========================================
 $phone  = isset($_POST['customer_phone']) ? trim($_POST['customer_phone']) : '';
-$amount = isset($_POST['amount']) ? trim($_POST['amount']) : '1000'; 
+$amount = isset($_POST['amount']) ? trim($_POST['amount']) : ''; 
 
 $amount = str_replace(',', '', $amount);
 
