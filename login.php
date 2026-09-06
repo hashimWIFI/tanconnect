@@ -6,7 +6,6 @@ if (session_status() === PHP_SESSION_NONE) {
 
 /**
  * GATEKEEPER 1: Ensure they have a valid mobile number in their request or session.
- * Change 'mobile_number' to match your actual form field or URL parameter name.
  */
 $mobileFromGet  = isset($_GET['customer_phone']) ? trim($_GET['customer_phone']) : null;
 $mobileFromPost = isset($_POST['customer_phone']) ? trim($_POST['customer_phone']) : null;
@@ -25,7 +24,6 @@ if (empty($activeMobile)) {
 /**
  * GATEKEEPER 2: Check if they just typed the URL directly.
  * If there is no HTTP_REFERER (meaning they typed it or used a bookmark),
- * you can force them to go through your main site first.
  */
 if (!isset($_SERVER['HTTP_REFERER'])) {
     header("Location: https://www.tanconnect.co.tz");
@@ -39,12 +37,11 @@ $_SESSION['user_mobile'] = $activeMobile;
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-
 // =========================================
 // 1. DATA HARVESTING & PHONE STANDARDIZATION
 // ==========================================
 $phone  = isset($_POST['customer_phone']) ? trim($_POST['customer_phone']) : '';
-$amount = isset($_POST['amount']) ? trim($_POST['amount']) : '1000'; 
+$amount = isset($_POST['amount']) ? trim($_POST['amount']) : ''; 
 
 $amount = str_replace(',', '', $amount);
 
