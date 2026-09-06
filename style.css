@@ -55,6 +55,7 @@
             border: 2px solid #e2e8f0;
             background: #f8fafc;
             border-left: 4px solid #3498db;
+             border-bottom: 2px solid orange;
             border-radius: 8px;
             padding: 16px;
             cursor: pointer;
