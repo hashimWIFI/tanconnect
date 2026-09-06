@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TANConnect - Privacy Policy</title>
-    <style>
+     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; text-align: center; padding: 50px 20px; color: #2c3e50; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 90vh; }
         .receipt-card { background: white; max-width: 450px; width: 100%; margin: 0 auto; padding: 40px 30px 30px 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; position: relative; }
         .sub-title { color: #e74c3c; font-size: 17px; font-weight: bold; margin-top: 10px; text-align: left; }
-         .btn-home { background: #3498db; color: white; border: none; padding: 14px; font-size: 16px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 15px; width: 100%; box-sizing: border-box; font-weight: bold; }
-
+        .btn-portal { display: block; text-decoration: none; padding: 10px; font-size: 14px;  font-weight: bold; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.5px; transition: transform 0.1s ease, filter 0.2s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-align: center; }
+        .btn-portal:active { transform: scale(0.98); }
+        .btn-portal:hover { filter: brightness(0.95); }
+        .btn-home { background: #3498db; color: white; border: 2px solid grey; padding: 13px; font-size: 13px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 2px; max-width: 450px; width: 100%; box-sizing: border-box; font-weight: bold; }
     </style>
 </head>
 <body>
