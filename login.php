@@ -4,16 +4,22 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+/**
+ * GATEKEEPER 1: Ensure they have a valid mobile number in their request or session.
+ * Change 'mobile_number' to match your actual form field or URL parameter name.
+ */
 $mobileFromGet  = isset($_GET['customer_phone']) ? trim($_GET['customer_phone']) : null;
 $mobileFromPost = isset($_POST['customer_phone']) ? trim($_POST['customer_phone']) : null;
 $mobileFromSession = isset($_SESSION['user_mobile']) ? $_SESSION['user_mobile'] : null;
 
+// Combine them to see if a mobile number exists anywhere
 $activeMobile = $mobileFromGet ?? $mobileFromPost ?? $mobileFromSession;
+
 // If NO mobile number is found, block them right here at the gate!
 if (empty($activeMobile)) {
+  
     http_response_code(403);
     die("Access Denied: Mobile number authentication is required to access this portal.");
-    */
 }
 
 /**
@@ -26,9 +32,14 @@ if (!isset($_SERVER['HTTP_REFERER'])) {
     exit();
 }
 
+// Save the validated mobile number to the session for later use across other pages
+$_SESSION['user_mobile'] = $activeMobile;
 
 // --- YOUR ORIGINAL LOGIN.PHP CODE CONTINUES BELOW THIS LINE ---
+?>
 
+
+<?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
