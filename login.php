@@ -85,7 +85,32 @@ $dbResult = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
 if (!$dbResult) {
+    // ---- AUTOMATIC EMAIL ALERT SYSTEM ----
+    $to = "support@tanconnect.co.tz";
+    $subject = "ALERT: WiFi Vouchers Out of Stock ($amount TZS)";
+    
+    // Create a clean email message body
+    $message = "Habari Support Team,\n\n";
+    $message .= "This is an automated system alert.\n";
+    $message .= "A user attempted to purchase a WiFi voucher package, but the tier is OUT OF STOCK.\n\n";
+    $message .= "Details:\n";
+    $message .= "--------------------------------------\n";
+    $message .= "• Out-of-Stock Tier: " . number_format($amount) . " TZS\n";
+    $message .= "• Timestamp: " . date("Y-m-d H:i:s") . "\n";
+    $message .= "--------------------------------------\n\n";
+    $message .= "Action Required: Please log in to your Railway MySQL database and upload new voucher codes for this specific price tier as soon as possible.\n\n";
+    $message .= "Regards,\nTANConnect Automated System";
+
+    // Standard email headers
+    $headers = "From: system-alerts@tanconnect.co.tz\r\n";
+    $headers .= "Reply-To: support@tanconnect.co.tz\r\n";
+    $headers .= "X-Mailer: PHP/" . phpversion();
+
+    // Send the email silently in the background
+    @mail($to, $subject, $message, $headers);
+    // --------------------------------------
     ?>
+
 <!DOCTYPE html>
 <html lang="sw">
 <head>
