@@ -113,7 +113,20 @@ if (!$dbResult) {
     <!-- FIX 1: Aligned the opening and closing tag matching properties character-for-character -->
     <div class="error-color">Uhaba wa Vifurushi Umejitokeza!</div>
 
-    <p style="font-size: 14px; color: black; line-height: 1.5; margin-top: 15px;">Mtambo umeshindwa kuchakata vifurushi vya bei hii. Tafadhali jaribu vifurushi vingine.</p>
+    <p style="font-size: 14px; color: black; line-height: 1.5; margin-top: 15px;">Mtambo umeshindwa kuchakata vifurushi vya 
+    <strong>
+        <?php 
+        if (isset($_SESSION['error_package_price'])) {
+            echo htmlspecialchars($_SESSION['error_package_price']);
+            // Clear it so it doesn't show up again on a fresh page load
+            unset($_SESSION['error_package_price']); 
+        } else {
+            echo "bei hii"; // Fallback text just in case
+        }
+        ?>
+    </strong>. Tafadhali jaribu vifurushi vingine.
+</p>
+
     
     <a href="index.php" class="btn-done" style="background: #e74c3c;">← RUDI NYUMA (BACK HOME)</a>
     <br><br> <footer style="padding: 6px 6px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 10px; color: #555555; background-color: #fafafa;">
