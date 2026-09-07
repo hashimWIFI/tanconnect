@@ -1,8 +1,4 @@
 <?php
-// 1. Start the session to track the user's flow
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 
 /**
  * GATEKEEPER 1: Ensure they have a valid mobile number in their request or session.
@@ -85,31 +81,55 @@ $dbResult = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
 if (!$dbResult) {
-    // ---- AUTOMATIC EMAIL ALERT SYSTEM ----
-    $to = "support@tanconnect.co.tz";
-    $subject = "ALERT: WiFi Vouchers Out of Stock ($amount TZS)";
+    // ---- PHPMailer Zoho Setup Inside the Error Block ----
     
-    // Create a clean email message body
-    $message = "Habari Support Team,\n\n";
-    $message .= "This is an automated system alert.\n";
-    $message .= "A user attempted to purchase a WiFi voucher package, but the tier is OUT OF STOCK.\n\n";
-    $message .= "Details:\n";
-    $message .= "--------------------------------------\n";
-    $message .= "• Out-of-Stock Tier: " . number_format($amount) . " TZS\n";
-    $message .= "• Timestamp: " . date("Y-m-d H:i:s") . "\n";
-    $message .= "--------------------------------------\n\n";
-    $message .= "Action Required: Please log in to your Railway MySQL database and upload new voucher codes for this specific price tier as soon as possible.\n\n";
-    $message .= "Regards,\nTANConnect Automated System";
+    // 1. Core Classes (Must be loaded inside the namespace block execution context)
+    require_once 'PHPMailer/src/Exception.php';
+    require_once 'PHPMailer/src/PHPMailer.php';
+    require_once 'PHPMailer/src/SMTP.php';
 
-    // Standard email headers
-    $headers = "From: system-alerts@tanconnect.co.tz\r\n";
-    $headers .= "Reply-To: support@tanconnect.co.tz\r\n";
-    $headers .= "X-Mailer: PHP/" . phpversion();
+    $mail = new PHPMailer\PHPMailer\PHPMailer(true);
 
-    // Send the email silently in the background
-    @mail($to, $subject, $message, $headers);
-    // --------------------------------------
+    try {
+        // Server configuration
+        $mail->isSMTP();
+        $mail->Host       = '://zoho.com';                   
+        $mail->SMTPAuth   = true;                              
+        $mail->Username   = 'support@tanconnect.co.tz';        
+        
+        // ⚠️ Put your 16-character Zoho App Password inside the single quotes below
+        $mail->Password   = 'mKwtcmYWQyHh'; 
+        
+        $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;    
+        $mail->Port       = 587;                               
+
+        // Recipients
+        $mail->setFrom('support@tanconnect.co.tz', 'TANConnect WiFi Alert');
+        $mail->addAddress('support@tanconnect.co.tz');          
+
+        // Content
+        $mail->isHTML(false);                                  
+        $mail->Subject = "ALERT: WiFi Vouchers Out of Stock ($amount TZS)";
+        
+        $message  = "Habari Support Team,\n\n";
+        $message .= "This is an automated system alert.\n";
+        $message .= "A user attempted to purchase a WiFi voucher package, but the tier is OUT OF STOCK.\n\n";
+        $message .= "Details:\n";
+        $message .= "--------------------------------------\n";
+        $message .= "• Out-of-Stock Tier: " . number_format($amount) . " TZS\n";
+        $message .= "• Timestamp: " . date("Y-m-d H:i:s") . "\n";
+        $message .= "--------------------------------------\n\n";
+        $message .= "Action Required: Please log in to your Railway MySQL database and upload new voucher codes.\n\n";
+        $message .= "Regards,\nTANConnect Automated System";
+        
+        $mail->Body = $message;
+        $mail->send();
+    } catch (Exception $e) {
+        // Keeps user interface running smoothly if mail server drops connection
+    }
+    // ----------------------------------------------------
     ?>
+
 <!DOCTYPE html>
 <html lang="sw">
 <head>
@@ -137,7 +157,8 @@ if (!$dbResult) {
 
     <!-- FIX 1: Aligned the opening and closing tag matching properties character-for-character -->
     <div class="error-color">Uhaba wa Vifurushi Umejitokeza!</div>
-<p style="font-size: 14px; color: black; line-height: 1.5; margin-top: 15px;">Mtambo umeshindwa kuchakata vifurushi vya Tsh. <?php echo htmlspecialchars($amount); ?>. Tafadhali jaribu vifurushi vingine.</p>
+ <p style="font-size: 14px; color: black; line-height: 1.5; margin-top: 15px;">Mtambo umeshindwa kuchakata vifurushi vya <strong><?php echo htmlspecialchars($amount); ?> TZS</strong>. Tafadhali jaribu vifurushi vingine.</p>
+    <a href="index.php" class="btn-portal">← RUDI NYUMA (BACK HOME)</a>
     <footer style="padding: 6px 6px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 10px; color: #555555; background-color: #fafafa;">
   <p><b> © 2026 NIT Africa Solutions Ltd.</b> All Rights Reserved.<b><br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup></b> is a registered trademark of <br> <a href= https://nitafricasolutions-production-2f54.up.railway.app style="color: #0066cc; font-weight: 500;"> NIT Africa Solutions Limited</a></p></div>
 <script>
