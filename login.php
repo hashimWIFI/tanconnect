@@ -267,8 +267,10 @@ $conn->close();
          .transit-color { color: #3498db; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
          .footer { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; font-size: 11px; font-weight: bold; color: #1e3c72;}
         .voucher-box { background: #e8f4fd; border: 2px dashed #3498db; padding: 10px; font-size: 14px; color: #7f8c8d; margin: 10px 0; border-radius: 6px; word-break: break-all; }
-        .btn-done { background: #3498db; color: white; border: none; padding: 14px; font-size: 14px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 2px; width: 100%; box-sizing: border-box; font-weight: bold; }
-   /* Animated Status Spinner Logic */
+       .btn-portal { background: #3498db; color: white; border: none; padding: 14px; font-size: 14px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 2px; width: 100%; box-sizing: border-box; font-weight: bold; }
+     .btn-portal:active { transform: scale(0.98); }
+        .btn-portal:hover { filter: brightness(0.95); }
+        /* Animated Status Spinner Logic */
     </style>
 
  <?php if ($httpStatusCode === 200): ?>
@@ -295,7 +297,7 @@ $conn->close();
             <!-- RIGHT BOX (30%): Holds the copy link trigger button completely hidden until payment clears successfully -->
             <div id="copy-button-container" style="flex: 3; display: none; min-height: 55px; box-sizing: border-box;">
                 <!-- Buttons styles adjusted with relative positioning parameters to frame tightly inside the small box -->
-                <button onclick="copyVoucherToClipboard()" id="copy-btn-trigger" style="width: 100%; height: 55px; background: #3498db; color: white; border: none; font-size: 13px; font-weight: bold; border-radius: 8px; cursor: pointer; text-transform: uppercase; transition: background 0.2s; box-shadow: 0 4px 10px rgba(52,152,219,0.15);">Nakili</button>
+               <button onclick="copyVoucherToClipboard()" id="copy-btn-trigger" style="width: 100%; height: 55px; background: #3498db; color: white;" class="btn-portal">NAKILI</button>
 </div></div> <footer style="padding: 6px 6px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 10px; color: #555555; background-color: #fafafa;">
   <p><b> © 2026 NIT Africa Solutions Ltd.</b> All Rights Reserved.<b><br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup></b> is a registered trademark of <br><a href= https://nitafricasolutions-production-2f54.up.railway.app style="color: #0066cc; font-weight: 500;"> NIT Africa Solutions Limited</a></p>
 </body>
@@ -323,7 +325,8 @@ $conn->close();
         .btn-portal:active { transform: scale(0.98); }
         .btn-portal:hover { filter: brightness(0.95); }
         .btn-portal { border: 2px solid grey; cursor: pointer;  display: inline-block; margin-top: 2px; width: 100%; box-sizing: border-box; font-weight: bold; transition: background 0.2s; font-size: 14px; text-decoration: none; border-radius: 6px; padding: 9px;}
-    </style>
+       
+ </style>
 </head>
 <body>
     <div class="error-color">✕ Hitilafu Ya Mtandao Imejitokeza!</div>
