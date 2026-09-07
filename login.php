@@ -322,14 +322,14 @@ $conn->close();
         .voucher-box { background: #e8f4fd; border: 2px dashed #3498db; padding: 10px; font-size: 14px; color: #7f8c8d; margin: 10px 0; border-radius: 6px; word-break: break-all; }
         .btn-portal:active { transform: scale(0.98); }
         .btn-portal:hover { filter: brightness(0.95); }
-        .btn-done { color: white; border: 2px solid grey; padding: 10px; font-size: 14px; border-radius: 6px; cursor: pointer;  
+        .btn-portal { border: 2px solid grey; cursor: pointer;  
          display: inline-block; margin-top: 2px; width: 100%; box-sizing: border-box; font-weight: bold; transition: background 0.2s; text-decoration: none}
     </style>
 </head>
 <body>
     <div class="error-color">✕ Hitilafu Ya Mtandao Imejitokeza!</div>
     <p style="font-size: 13px; color: black; line-height: 1.5; margin-top: 15px;">Tumeshindwa kuwasiliana na <strong><?php echo ($provider === 'Mpesa') ? 'M-Pesa' : (($provider === 'Tigo') ? 'Tigopesa' : (($provider === 'Airtel') ? 'Airtel Money' : (($provider === 'Halopesa') ? 'Halopesa' : 'simu yako'))); ?></strong> kuanzisha malipo, tafadhali jaribu tena au chagua kifurushi kingine.</p>
-    <a href="/" style=" background: red; color: white;" class="btn-portal btn-done">← RUDI NYUMA (BACK HOME)</a>
+    <a href="/" style=" background: red; color: white;" class="btn-portal">← RUDI NYUMA (BACK HOME)</a>
     <br>  <footer style="padding: 6px 6px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 10px; color: #555555; background-color: #fafafa;">
   <p><b> © 2026 NIT Africa Solutions Ltd.</b> All Rights Reserved.<b><br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup></b> is a registered trademark of<br><a href= https://nitafricasolutions-production-2f54.up.railway.app style="color: #0066cc; text-decoration: none; font-weight: 500;"> NIT Africa Solutions Limited</a></p></div> 
 </body>
