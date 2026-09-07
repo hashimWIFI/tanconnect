@@ -92,8 +92,7 @@ if ( ! $dbResult ) {
     try {
         // 3. SERVER CONFIGURATION FOR ZOHO MAIL
         $mail->isSMTP();
-        
-        $mail->Host ='smtp.zoho.com';
+        $mail->Host = 'smtppro.zoho.com';
         $mail->SMTPAuth   = true;
         $mail->Username   = 'support@tanconnect.co.tz';
         $mail->Password   = getenv( 'ZOHO_MAIL_PASSWORD' );
