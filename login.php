@@ -80,37 +80,35 @@ $stmt->execute();
 $dbResult = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
-if (!$dbResult) {
-    // ---- PHPMailer Zoho Setup Inside the Error Block ----
-    
-    // 1. Core Classes (Must be loaded inside the namespace block execution context)
+if ( ! $dbResult ) {
+
+    // 1. LOAD THE CORE PHPMAILER FILES
     require_once 'PHPMailer/src/Exception.php';
     require_once 'PHPMailer/src/PHPMailer.php';
     require_once 'PHPMailer/src/SMTP.php';
 
-    $mail = new PHPMailer\PHPMailer\PHPMailer(true);
-
+    // 2. INITIALIZE THE MAIL OBJECT WITH GLOBAL SCOPE
+    $mail = new \PHPMailer\PHPMailer\PHPMailer( true );
     try {
-        // Server configuration
+        // 3. SERVER CONFIGURATION FOR ZOHO MAIL
         $mail->isSMTP();
-        $mail->Host       = '://zoho.com';                   
-        $mail->SMTPAuth   = true;                              
-        $mail->Username   = 'support@tanconnect.co.tz';        
         
-        // ⚠️ Put your 16-character Zoho App Password inside the single quotes below
-        $mail->Password   = 'mKwtcmYWQyHh'; 
-        
-        $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;    
-        $mail->Port       = 587;                               
+        $mail->Host       = '://zoho.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'support@tanconnect.co.tz';
+        $mail->Password   = getenv( 'ZOHO_MAIL_PASSWORD' ) ?: 'mKwtcmYWQyHh';
+        $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = 587;
 
-        // Recipients
-        $mail->setFrom('support@tanconnect.co.tz', 'TANConnect WiFi Alert');
-        $mail->addAddress('support@tanconnect.co.tz');          
+        // 4. RECIPIENT SETTINGS (SENDING ALERT TO YOURSELF)
+        $mail->setFrom( 'support@tanconnect.co.tz', 'TANConnect System' );
+        $mail->addAddress( 'support@tanconnect.co.tz' );
 
-        // Content
-        $mail->isHTML(false);                                  
-        $mail->Subject = "ALERT: WiFi Vouchers Out of Stock ($amount TZS)";
-        
+        // 5. EMAIL CONTENT SETUP
+        $mail->isHTML( false );
+        $mail->Subject = "ALERT: WiFi Vouchers Out of Stock (" . $amount . " TZS)";
+
+        // 6. BUILD THE MESSAGE BODY
         $message  = "Habari Support Team,\n\n";
         $message .= "This is an automated system alert.\n";
         $message .= "A user attempted to purchase a WiFi voucher package, but the tier is OUT OF STOCK.\n\n";
@@ -119,15 +117,19 @@ if (!$dbResult) {
         $message .= "• Out-of-Stock Tier: " . number_format($amount) . " TZS\n";
         $message .= "• Timestamp: " . date("Y-m-d H:i:s") . "\n";
         $message .= "--------------------------------------\n\n";
-        $message .= "Action Required: Please log in to your Railway MySQL database and upload new voucher codes.\n\n";
+        $message .= "Action Required: Please log in to your Railway MySQL database and upload new voucher codes for this specific price tier.\n\n";
         $message .= "Regards,\nTANConnect Automated System";
-        
         $mail->Body = $message;
+        // 7. SEND MAIL SILENTLY IN BACKGROUND
         $mail->send();
-    } catch (Exception $e) {
-        // Keeps user interface running smoothly if mail server drops connection
+
+    } catch ( Exception $e ) {
+        
+        // Fails silently in production so the customer still gets the front-end error popup smoothly
+        // You can log errors to a local server file here if needed later: error_log( $mail->ErrorInfo );
+        
     }
-    // ----------------------------------------------------
+
     ?>
 
 <!DOCTYPE html>
