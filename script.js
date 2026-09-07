@@ -42,7 +42,7 @@
                 payBtn.innerHTML = "PAY (TigoPesa)";
             } else if (['78', '79', '68', '69'].includes(prefix)) {
                 payBtn.style.backgroundColor = airtelColor;
-                payBtn.innerHTML = "PAY (Airt Money)";
+                payBtn.innerHTML = "PAY (Airtel Money)";
             } else if (['62', '61'].includes(prefix)) {
                 payBtn.style.backgroundColor = haloloColor;
                 payBtn.innerHTML = "PAY (Halopesa)";
