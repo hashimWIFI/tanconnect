@@ -314,11 +314,24 @@ $conn->close();
 <div class="receipt-card" style="position: relative; overflow: hidden; padding-top: 40px;">
 <img src="logo.png" alt="Water Point Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
 <span class="close-btn" onclick="closeThisWindow()" style="position: absolute; top: 12px; right: 18px; font-size: 26px; cursor: pointer; color: #7f8c8d; font-weight: bold; z-index: 110;">&times;</span>
+ <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; text-align: center; padding: 50px 20px; color: #2c3e50; margin: 0; }
+        .receipt-card { background: white; max-width: 450px; margin: 0 auto; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; }
+        .success-color { color: #2ecc71; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
+        .error-color { color: #e74c3c; font-size: 14px; font-weight: bold; }
+         .transit-color { color: #3498db; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
+         .footer { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; font-size: 11px; font-weight: bold; color: #1e3c72;}
+        .voucher-box { background: #e8f4fd; border: 2px dashed #3498db; padding: 10px; font-size: 14px; color: #7f8c8d; margin: 10px 0; border-radius: 6px; word-break: break-all; }
+        .btn-portal:active { transform: scale(0.98); }
+        .btn-portal:hover { filter: brightness(0.95); }
+        .btn-done { color: white; border: 2px solid grey; padding: 10px; font-size: 14px; border-radius: 6px; cursor: pointer;  
+         display: inline-block; margin-top: 2px; width: 100%; box-sizing: border-box; font-weight: bold; transition: background 0.2s; text-decoration: none}
+    </style>
 </head>
 <body>
     <div class="error-color">✕ Hitilafu Ya Mtandao Imejitokeza!</div>
     <p style="font-size: 13px; color: black; line-height: 1.5; margin-top: 15px;">Tumeshindwa kuwasiliana na <strong><?php echo ($provider === 'Mpesa') ? 'M-Pesa' : (($provider === 'Tigo') ? 'Tigopesa' : (($provider === 'Airtel') ? 'Airtel Money' : (($provider === 'Halopesa') ? 'Halopesa' : 'simu yako'))); ?></strong> kuanzisha malipo, tafadhali jaribu tena au chagua kifurushi kingine.</p>
-    <a href="/" style=" background: green; color: white; border: none;" class="btn-portal btn-done">← RUDI NYUMA (BACK HOME)</a>
+    <a href="/" style=" background: red; color: white;" class="btn-portal btn-done">← RUDI NYUMA (BACK HOME)</a>
     <br>  <footer style="padding: 6px 6px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 10px; color: #555555; background-color: #fafafa;">
   <p><b> © 2026 NIT Africa Solutions Ltd.</b> All Rights Reserved.<b><br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup></b> is a registered trademark of<br><a href= https://nitafricasolutions-production-2f54.up.railway.app style="color: #0066cc; text-decoration: none; font-weight: 500;"> NIT Africa Solutions Limited</a></p></div> 
 </body>
