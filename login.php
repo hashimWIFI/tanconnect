@@ -93,12 +93,12 @@ if ( ! $dbResult ) {
         // 3. SERVER CONFIGURATION FOR ZOHO MAIL
         $mail->isSMTP();
         
-        $mail->Host = 'smtp.zoho.com';
+        $mail->Host = ://zoho.com;
         $mail->SMTPAuth   = true;
         $mail->Username   = 'support@tanconnect.co.tz';
         $mail->Password   = getenv( 'ZOHO_MAIL_PASSWORD' );
-        $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = 587;
+        $mail->SMTPSecure = ssl;
+        $mail->Port       = 465;
 
         // 4. RECIPIENT SETTINGS (SENDING ALERT TO YOURSELF)
         $mail->setFrom( 'support@tanconnect.co.tz', 'TANConnect System' );
