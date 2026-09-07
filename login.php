@@ -262,7 +262,7 @@ $conn->close();
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; text-align: center; padding: 50px 20px; color: #2c3e50; margin: 0; }
         .receipt-card { background: white; max-width: 450px; margin: 0 auto; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; }
-        .success-color { color: #2ecc71; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
+        .success-color { color: darkgreen; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
         .error-color { color: #e74c3c; font-size: 14px; font-weight: bold; }
          .transit-color { color: #3498db; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
          .footer { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; font-size: 11px; font-weight: bold; color: #1e3c72;}
@@ -317,7 +317,7 @@ $conn->close();
  <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; text-align: center; padding: 50px 20px; color: #2c3e50; margin: 0; }
         .receipt-card { background: white; max-width: 450px; margin: 0 auto; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; }
-        .success-color { color: #2ecc71; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
+        .success-color { color: darkgreen; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
         .error-color { color: #e74c3c; font-size: 14px; font-weight: bold; }
          .transit-color { color: #3498db; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
          .footer { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; font-size: 11px; font-weight: bold; color: #1e3c72;}
