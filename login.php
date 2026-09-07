@@ -121,11 +121,9 @@ if (!$dbResult) {
         .receipt-card { background: white; max-width: 450px; width: 100%; margin: 0 auto; padding: 40px 30px 30px 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; position: relative; }
         .error-color { color: #e74c3c; font-size: 16px; font-weight: bold; margin-top: 15px; }
         .footer { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; font-size: 11px; font-weight: bold; color: #1e3c72;}
-        .btn1-portal { display: block; width: flex; font-weight: bold; border-radius: 8px; letter-
-         spacing: 0.5px; transition: transform 0.1s ease, filter 0.2s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-align: center; }
         .btn-portal:active { transform: scale(0.98); }
         .btn-portal:hover { filter: brightness(0.95); }
-        .btn-done { background: #e74c3c; color: white; border: 2px solid grey; padding: 10px; font-size: 14px; border-radius: 6px; cursor: pointer;  
+        .btn-portal { background: #e74c3c; color: white; border: 2px solid grey; padding: 10px; font-size: 14px; border-radius: 6px; cursor: pointer;  
          display: inline-block; margin-top: 2px; width: 100%; box-sizing: border-box; font-weight: bold; transition: background 0.2s; text-decoration: none}
     </style>
 </head>
@@ -140,7 +138,7 @@ if (!$dbResult) {
     <!-- FIX 1: Aligned the opening and closing tag matching properties character-for-character -->
     <div class="error-color">Uhaba wa Vifurushi Umejitokeza!</div>
  <p style="font-size: 14px; color: black; line-height: 1.5; margin-top: 15px;">Mtambo umeshindwa kuchakata vifurushi vya <strong><?php echo htmlspecialchars($amount); ?> TZS</strong>. Tafadhali jaribu vifurushi vingine.</p>
-    <a href="index.php" class="btn-portal btn-done">← RUDI NYUMA (BACK HOME)</a>
+    <a href="index.php" class="btn-portal">← RUDI NYUMA (BACK HOME)</a>
     <footer style="padding: 6px 6px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 10px; color: #555555; background-color: #fafafa;">
   <p><b> © 2026 NIT Africa Solutions Ltd.</b> All Rights Reserved.<b><br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup></b> is a registered trademark of <br> <a href= https://nitafricasolutions-production-2f54.up.railway.app style="color: #0066cc; text-decoration: none; font-weight: 500;"> NIT Africa Solutions Limited</a></p></div>
 <script>
