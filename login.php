@@ -121,13 +121,15 @@ if ( ! $dbResult ) {
         $mail->Body = $message;
         // 7. SEND MAIL SILENTLY IN BACKGROUND
         $mail->send();
-
-    } catch ( Exception $e ) {
         
-        // Fails silently in production so the customer still gets the front-end error popup smoothly
-        // You can log errors to a local server file here if needed later: error_log( $mail->ErrorInfo );
+       } catch ( Exception $e ) {
+        
+        // TEMPORARY: Print the exact error message to the screen
+        echo "SMTP Error Details: " . $mail->ErrorInfo;
+        exit();
         
     }
+
 
     ?>
 
