@@ -3,7 +3,6 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-
 /**
  * GATEKEEPER 1: Ensure they have a valid mobile number in their request or session.
  */
@@ -19,8 +18,6 @@ if (empty($activeMobile)) {
     header("Location: https://www.tanconnect.co.tz"); 
     exit();
 }
-
-
 /**
  * GATEKEEPER 2: Check if they just typed the URL directly.
  * If there is no HTTP_REFERER (meaning they typed it or used a bookmark),
@@ -42,7 +39,6 @@ ini_set('display_errors', 1);
 // ==========================================
 $phone  = isset($_POST['customer_phone']) ? trim($_POST['customer_phone']) : '';
 $amount = isset($_POST['amount']) ? trim($_POST['amount']) : ''; 
-
 $amount = str_replace(',', '', $amount);
 
 if (substr($phone, 0, 1) === '0') {
@@ -88,7 +84,6 @@ if (!$dbResult) {
     ?>
 <!DOCTYPE html>
 <html lang="sw">
-    
    <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -110,7 +105,6 @@ if (!$dbResult) {
 <div class="receipt-card">
     <!-- Top-corner Exit Close Button -->
     <span class="close-btn" onclick="closeThisWindow()" style="position: absolute; top: 12px; right: 18px; font-size: 26px; cursor: pointer; color: #7f8c8d; font-weight: bold; z-index: 110;">&times;</span>
-
    <b> <img src="logo.png" alt="TANConnect&reg;" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;"></b>
 
     <!-- FIX 1: Aligned the opening and closing tag matching properties character-for-character -->
@@ -240,7 +234,7 @@ $conn->close();
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; text-align: center; padding: 50px 20px; color: #2c3e50; margin: 0; }
         .receipt-card { background: white; max-width: 450px; margin: 0 auto; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; }
-        .success-color { color: #006400; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
+        .success-color { color: forestgreen; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
         .error-color { color: #e74c3c; font-size: 14px; font-weight: bold; }
         .transit-color { color: #3498db; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
         .footer { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; font-size: 11px; font-weight: bold; color: #1e3c72;}
