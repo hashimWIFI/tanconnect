@@ -115,6 +115,7 @@ if (!$dbResult) {
     <!-- FIX 1: Aligned the opening and closing tag matching properties character-for-character -->
     <div class="error-color">Uhaba wa Vifurushi Umejitokeza!</div>
 <p style="font-size: 14px; color: black; line-height: 1.5; margin-top: 15px;">Mtambo umeshindwa kuchakata vifurushi vya Tsh. <?php echo htmlspecialchars($amount); ?>. Tafadhali jaribu vifurushi vingine.</p>
+     <a href="/" style=" background: red; color: white;" class="btn-portal">← RUDI NYUMA (BACK HOME)</a>
     <footer style="padding: 6px 6px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 10px; color: #555555; background-color: #fafafa;">
   <p><b> © 2026 NIT Africa Solutions Ltd.</b> All Rights Reserved.<b><br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup></b> is a registered trademark of <br> <a href= https://nitafricasolutions-production-2f54.up.railway.app style="color: #0066cc; font-weight: 500;"> NIT Africa Solutions Limited</a></p></div>
 <script>
