@@ -1,4 +1,8 @@
 <?php
+// 1. Start the session to track the user's flow
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 /**
  * GATEKEEPER 1: Ensure they have a valid mobile number in their request or session.
@@ -80,62 +84,12 @@ $stmt->execute();
 $dbResult = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
-if ( ! $dbResult ) {
-
-    // 1. LOAD THE CORE PHPMAILER FILES
-    require_once 'PHPMailer/src/Exception.php';
-    require_once 'PHPMailer/src/PHPMailer.php';
-    require_once 'PHPMailer/src/SMTP.php';
-
-    // 2. INITIALIZE THE MAIL OBJECT WITH GLOBAL SCOPE
-    $mail = new \PHPMailer\PHPMailer\PHPMailer( true );
-    try {
-        // 3. SERVER CONFIGURATION FOR ZOHO MAIL
-        $mail->isSMTP();
-        $mail->Host = 'smtppro.zoho.com';
-        $mail->SMTPAuth   = true;
-        $mail->Username   = 'support@tanconnect.co.tz';
-        $mail->Password   = getenv( 'ZOHO_MAIL_PASSWORD' );
-        $mail->SMTPSecure = 'tls';
-        $mail->Port = 3025;
-        $mail->Timeout = 5;
-        // 4. RECIPIENT SETTINGS (SENDING ALERT TO YOURSELF)
-        $mail->setFrom( 'support@tanconnect.co.tz', 'TANConnect System' );
-        $mail->addAddress( 'support@tanconnect.co.tz' );
-
-        // 5. EMAIL CONTENT SETUP
-        $mail->isHTML( false );
-        $mail->Subject = "ALERT: WiFi Vouchers Out of Stock (" . $amount . " TZS)";
-
-        // 6. BUILD THE MESSAGE BODY
-        $message  = "Habari Support Team,\n\n";
-        $message .= "This is an automated system alert.\n";
-        $message .= "A user attempted to purchase a WiFi voucher package, but the tier is OUT OF STOCK.\n\n";
-        $message .= "Details:\n";
-        $message .= "--------------------------------------\n";
-        $message .= "• Out-of-Stock Tier: " . number_format($amount) . " TZS\n";
-        $message .= "• Timestamp: " . date("Y-m-d H:i:s") . "\n";
-        $message .= "--------------------------------------\n\n";
-        $message .= "Action Required: Please log in to your Railway MySQL database and upload new voucher codes for this specific price tier.\n\n";
-        $message .= "Regards,\nTANConnect Automated System";
-        $mail->Body = $message;
-        // 7. SEND MAIL SILENTLY IN BACKGROUND
-        $mail->send();
-        
-       } catch ( Exception $e ) {
-        
-        // TEMPORARY: Print the exact error message to the screen
-        echo "SMTP Error Details: " . $mail->ErrorInfo;
-        exit();
-        
-    }
-
-
+if (!$dbResult) {
     ?>
-
 <!DOCTYPE html>
 <html lang="sw">
-<head>
+    
+   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TANConnect - Uhaba wa Vifurushi</title>
@@ -160,8 +114,7 @@ if ( ! $dbResult ) {
 
     <!-- FIX 1: Aligned the opening and closing tag matching properties character-for-character -->
     <div class="error-color">Uhaba wa Vifurushi Umejitokeza!</div>
- <p style="font-size: 14px; color: black; line-height: 1.5; margin-top: 15px;">Mtambo umeshindwa kuchakata vifurushi vya Tsh.<?php echo htmlspecialchars($amount); ?>. Tafadhali jaribu vifurushi vingine.</p>
-    <a href="index.php" class="btn-portal">← RUDI NYUMA (BACK HOME)</a>
+<p style="font-size: 14px; color: black; line-height: 1.5; margin-top: 15px;">Mtambo umeshindwa kuchakata vifurushi vya Tsh. <?php echo htmlspecialchars($amount); ?>. Tafadhali jaribu vifurushi vingine.</p>
     <footer style="padding: 6px 6px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 10px; color: #555555; background-color: #fafafa;">
   <p><b> © 2026 NIT Africa Solutions Ltd.</b> All Rights Reserved.<b><br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup></b> is a registered trademark of <br> <a href= https://nitafricasolutions-production-2f54.up.railway.app style="color: #0066cc; font-weight: 500;"> NIT Africa Solutions Limited</a></p></div>
 <script>
