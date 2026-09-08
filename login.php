@@ -239,13 +239,13 @@ $conn->close();
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; text-align: center; padding: 50px 20px; color: #2c3e50; margin: 0; }
         .receipt-card { background: white; max-width: 450px; margin: 0 auto; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; }
-        .success-color { color: darkgreen; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
+        .success-color { color: #006400; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
         .error-color { color: #e74c3c; font-size: 14px; font-weight: bold; }
-         .transit-color { color: #3498db; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
-         .footer { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; font-size: 11px; font-weight: bold; color: #1e3c72;}
+        .transit-color { color: #3498db; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
+        .footer { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; font-size: 11px; font-weight: bold; color: #1e3c72;}
         .voucher-box { background: #e8f4fd; border: 2px dashed #3498db; padding: 10px; font-size: 14px; color: #7f8c8d; margin: 10px 0; border-radius: 6px; word-break: break-all; }
-       .btn-portal { background: #3498db; color: white;  border: 2px solid darkgreen; padding: 14px; font-size: 14px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 2px; width: 100%; box-sizing: border-box; font-weight: bold; }
-     .btn-portal:active { transform: scale(0.98); }
+        .btn-portal { background: #3498db; color: white;  border: 2px solid darkgreen; padding: 14px; font-size: 14px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 2px; width: 100%; box-sizing: border-box; font-weight: bold; }
+        .btn-portal:active { transform: scale(0.98); }
         .btn-portal:hover { filter: brightness(0.95); }
         /* Animated Status Spinner Logic */
     </style>
@@ -295,10 +295,10 @@ $conn->close();
  <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; text-align: center; padding: 50px 20px; color: #2c3e50; margin: 0; }
         .receipt-card { background: white; max-width: 450px; margin: 0 auto; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; }
-        .success-color { color: darkgreen; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
+        .success-color { color: #006400; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
         .error-color { color: #e74c3c; font-size: 14px; font-weight: bold; }
-         .transit-color { color: #3498db; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
-         .footer { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; font-size: 11px; font-weight: bold; color: #1e3c72;}
+        .transit-color { color: #3498db; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
+        .footer { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; font-size: 11px; font-weight: bold; color: #1e3c72;}
         .voucher-box { background: #e8f4fd; border: 2px dashed #3498db; padding: 10px; font-size: 14px; color: #7f8c8d; margin: 10px 0; border-radius: 6px; word-break: break-all; }
         .btn-portal:active { transform: scale(0.98); }
         .btn-portal:hover { filter: brightness(0.95); }
