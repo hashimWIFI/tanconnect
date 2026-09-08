@@ -82,19 +82,16 @@ $stmt->close();
 
 if (!$dbResult) {
 
-    // ---- FIREWALL-SAFE NTFY ALERT SYSTEM ----
-    
-    // 1. Pick a unique name for your alert topic (Change 'tanconnect_wifi_alerts_secret' to anything you want)
-   $mySecretTopic = 'tanconnect_vouchers_stock_alert_2026';
+    // ---- LIGHTWEIGHT FIREWALL-SAFE NTFY ALERT SYSTEM ----
 
-    // 2. Build your alert text layout
+    // 1. Build your alert text content bundle
     $alertText  = "⚠️ TANConnect WiFi Alert ⚠️\n";
     $alertText .= "Voucher Tier OUT OF STOCK!\n";
     $alertText .= "• Price Tier: " . number_format($amount) . " TZS\n";
     $alertText .= "• Time: " . date("Y-m-d H:i:s");
 
 
-    // 3. Configure the HTTP headers and web stream context
+    // 2. Configure HTTP header streaming contexts
     $streamOptions = [
         "http" => [
             "method"  => "POST",
@@ -105,12 +102,11 @@ if (!$dbResult) {
     ];
 
 
-    // 4. Fire the alert securely over standard web traffic
+    // 3. Fire the stream data packet directly to your exact topic URL string
     $context = stream_context_create($streamOptions);
     
-    @file_get_contents("https://ntfy.sh" . $mySecretTopic, false, $context);
-
-    // ------------------------------------------
+    @file_get_contents("https://ntfy.sh/tanconnect_vouchers_stock_alert_2026", false, $context);
+    // -----------------------------------------------------
     ?>
 
 <!DOCTYPE html>
