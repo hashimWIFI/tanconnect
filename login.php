@@ -96,8 +96,8 @@ if ( ! $dbResult ) {
         $mail->SMTPAuth   = true;
         $mail->Username   = 'support@tanconnect.co.tz';
         $mail->Password   = getenv( 'ZOHO_MAIL_PASSWORD' );
-        $mail->SMTPSecure = 'ssl';
-        $mail->Port       = 465;
+        $mail->SMTPSecure = 'tls';
+        $mail->Port = 3025;
         $mail->Timeout = 5;
         // 4. RECIPIENT SETTINGS (SENDING ALERT TO YOURSELF)
         $mail->setFrom( 'support@tanconnect.co.tz', 'TANConnect System' );
