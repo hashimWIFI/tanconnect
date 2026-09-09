@@ -3,7 +3,6 @@
 date_default_timezone_set('Africa/Dar_es_Salaam');
 
 // 1. DATABASE CONFIGURATION
-
 $db_host = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
 $db_port = getenv('MYSQLPORT') ?: '3306';
 $db_user = getenv('MYSQLUSER') ?: 'root';
@@ -17,15 +16,12 @@ if ($conn->connect_error) {
 }
 
 // 2. HARDCODE YOUR PRICE TIERS (LISTED FROM LOWEST TO HIGHEST)
-// You can add or remove prices from this list anytime you want
 $price_tiers = [500, 1000, 2000, 4000, 5000, 7000, 9000, 10000, 15000];
-
 
 // 3. BUILD THE INVENTORY REPORT TEXT
 $reportText = "📊 **TANConnect 12-Hour Inventory Status Report** 📊\n";
 $reportText .= "Generated at: " . date("Y-m-d H:i:s") . "\n";
-$reportText .= "-----------------------------------------------------------------------\n";
-
+$reportText .= "----------------------------------------------------------------------------------------------\n";
 
 // Loop through each hardcoded price tier and check its stock count individually
 foreach ($price_tiers as $tier) {
@@ -55,12 +51,10 @@ foreach ($price_tiers as $tier) {
     $reportText .= "• " . $warningIcon . number_format($tier) . " TZS Tier: " . $count . " remaining\n";
 }
 
-
-$reportText .= "-----------------------------------------------------------------------\n";
+$reportText .= "------------------------------------------------------------------------------------------------\n";
 $reportText .= "System check status: Fully operational.";
 
 $conn->close();
-
 
 // 4. PREPARE THE HTTP WEB POST FOR NTFY
 $streamOptions = [
@@ -71,7 +65,6 @@ $streamOptions = [
         "timeout" => 5
     ]
 ];
-
 
 // 5. TRANSMIT THE WEB PACKET TO YOUR NTFY CHANNEL PATH
 $context = stream_context_create($streamOptions);
