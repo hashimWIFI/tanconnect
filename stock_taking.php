@@ -1,7 +1,9 @@
 <?php
 // Set your local East Africa Time timezone (GMT+3)
 date_default_timezone_set('Africa/Dar_es_Salaam');
+
 // 1. DATABASE CONFIGURATION
+
 $db_host = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
 $db_port = getenv('MYSQLPORT') ?: '3306';
 $db_user = getenv('MYSQLUSER') ?: 'root';
