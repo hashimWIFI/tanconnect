@@ -1,22 +1,392 @@
 <?php
-error_reporting(0); ini_set('display_errors', 0);?><!DOCTYPE html><html lang="sw"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>TANConnect - Lipia Kifurushi</title><link rel="stylesheet" href="style.css"><script src="script.js"></script></head><body>
-<div class="container"><div class="portal-card"><img src="logo.png" alt="Water Point Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;"><div class="subtitle"><marquee behavior="scroll" direction="left" scrollamount="4" style="color: black; border-bottom: 2px solid #e2e8f0; font-weight: bold; font-size: 13px; margin-bottom: 10px;font-family: 'Segoe UI', Arial, sans-serif;"> Ndugu mteja, karibu kwenye mtandao wa Wi-Fi wa TANConnect || Tunakuletea internet isiyo na ukomo wa kasi kuperuzi mtandaoni || Fuata maelekezo hapa chini kununua Voucher kupitia simu yako ya mkononi || Kwa ufafanuzi, malamiko au maelekezo zaidi, wasiliana nasi kwa nambari 0713 123 974 <br></marquee> <br></div><div style="font-weight: bold; font-size: 13px; color: black; text-align: left;">Bonyeza kifurushi unachohitaji kununua:<br><br><div class="package-grid"><div class="package-card" onclick="selectPackage('500', '500 TZS || Masaa 12 kuperuzi || Unlimited DATA')"><div class="card-price">500<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div><div class="card-time">Saa 12</div><div class="card-data">Unlimited DATA</div></div><div class="package-card" onclick="selectPackage('1000', '1,000 TZS || Siku 1 kuperuzi || Unlimited DATA')"><div class="card-price">1,000<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div><div class="card-time">Siku 1</div><div class="card-data">Unlimited DATA</div></div><div class="package-card" onclick="selectPackage('2000', '2,000 TZS || Siku 2 kuperuzi || Unlimited DATA')"><div class="card-price">2,000<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div><div class="card-time">Siku 2</div><div class="card-data">Unlimited DATA</div></div><div class="package-card" onclick="selectPackage('4000', '4,000 TZS || Siku 5 kuperuzi || Unlimited DATA')"><div class="card-price">4,000<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div><div class="card-time">Siku 5</div><div class="card-data">Unlimited DATA</div></div><div class="package-card" onclick="selectPackage('5000', '5,000 TZS || Siku 7 kuperuzi || Unlimited DATA')"><div class="card-price">5,000<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div><div class="card-time">Siku 7</div><div class="card-data">Unlimited DATA</div></div><div class="package-card" onclick="selectPackage('7000', '7,000 TZS || Siku 10 kuperuzi || Unlimited DATA')"><div class="card-price">7,000<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div><div class="card-time">Siku 10</div><div class="card-data">Unlimited DATA</div></div><div class="package-card" onclick="selectPackage('9000', '9,000 TZS || Siku 13 kuperuzi || Unlimited DATA')"><div class="card-price">9,000<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div><div class="card-time">Siku 13</div><div class="card-data">Unlimited DATA</div></div><div class="package-card" onclick="selectPackage('10000', '10,000 TZS || Siku 15 kuperuzi || Unlimited DATA')"><div class="card-price1">10,000<span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div><div class="card-time">Siku 15</div><div class="card-data">Unlimited DATA</div></div><div class="package-card" onclick="selectPackage('20000', '20,000 TZS || Siku 30 kuperuzi || Unlimited DATA')"><div class="card-price1">20,000<span style= "font-size: font-weight: bold; color: #34495e;"> TZS</span></div><div class="card-time">Siku 30</div><div class="card-data">Unlimited DATA</div></div></div>
-<div id="payment-modal-overlay" class="modal-overlay"><div class="modal-card"><span class="close-btn" onclick="document.getElementById('payment-modal-overlay').style.display='none';">&times;</span><h3 style="margin-top: 0; font-size: 16px; font-weight: 500px; color: #34495e;">Checkout & Pay</h3><div id="modal-plan-summary" class="plan-summary">Umechagua kifurushi:<br> <strong id="summary-bold-text" style="color: #0033a0;">1,000 TZS || Masaa 24 kuperuzi || Unlimited DATA</strong></div><form id="payment-form" action="login.php" method="post"><input type="hidden" id="selected-amount" name="amount" value="1000" /><div class="form-group" style="text-align: left; margin-bottom: 20px;"><label for="phone-number">Ingiza nambari ya simu, kisha bonyeza PAY:</label>
-<div style="display: flex; gap: 10px;"><input class="btn-submit" name="customer_phone" id="phone-number" pattern="[0]{1}[6-7]{1}[0-9]{8}" type="tel" placeholder="0713123974" autocomplete="off" oninput="detectMobileProvider()" class="style-group" required/><button type="button" id="submit-payment-btn" class="btn-portal btn-buy1" onclick="dispatchToRailway(event)">Pay</button>   
-</div></div></form> </div></div><div id="active-spinner-layer" class="loader-overlay"><div class="chasing-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div><div class="loading-text">TUNAWASILIANA NA MTANDAO WAKO <br> TAFADHALI SUBIRI ...</div></div><footer style="margin-top: 10px; padding: 10px 10px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 8px; color: #555555; background-color: #fafafa;">
-<p style="margin: 0 0 10px 0; font-weight: bold;"> © 2026 NIT Africa Solutions Limited. All Rights Reserved. <br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup> is a registered trademark of<a href= https://nitafricasolutions-production-2f54.up.railway.app style="color: #0066cc; text-decoration: none; font-weight: bold;"> NIT Africa Solutions Limited</a></p>
-    <p style="margin: 0 0 15px 0;">
-        <a href="/privacy.php" style="color: #0066cc; text-decoration: none; margin: 0 12px; font-weight: bold;">Privacy Policy</a> | 
-        <a href="/terms.php" style="color: #0066cc; text-decoration: none; margin: 0 12px; font-weight: bold;">Terms & Conditions</a> | 
-        <a href="/refund.php" style="color: #0066cc; text-decoration: none; margin: 0 12px; font-weight: bold;">Refund Policy</a>
-    </p>
+// 1. Start the session to track the user's flow
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+/**
+ * GATEKEEPER 1: Ensure they have a valid mobile number in their request or session.
+ */
+$mobileFromGet  = isset($_GET['customer_phone']) ? trim($_GET['customer_phone']) : null;
+$mobileFromPost = isset($_POST['customer_phone']) ? trim($_POST['customer_phone']) : null;
+$mobileFromSession = isset($_SESSION['user_mobile']) ? $_SESSION['user_mobile'] : null;
 
-    <p style="margin: 0; font-size: 9px; color: #777777; line-height: 1.6;">
-        <strong>Customer Support Desk:</strong><br>
-        📧<b> Email: <a href="mailto:support@tanconnect.co.tz" style="color: #0066cc; text-decoration: none;">support@tanconnect.co.tz</a> &nbsp;&nbsp;|&nbsp;&nbsp; 📞 Phone: <a href="tel:+255713123974" style="color: #0066cc; text-decoration: none;">+255 713 123 974</a>
-    </p></b>
-</footer>
-<!-- END OF AZAMPAY MANDATORY COMPLIANCE FOOTER -->
-    </div></div></div>
+// Combine them to see if a mobile number exists anywhere
+$activeMobile = $mobileFromGet ?? $mobileFromPost ?? $mobileFromSession;
+
+// If NO mobile number is found, block them right here at the gate!
+if (empty($activeMobile)) {
+    header("Location: https://www.tanconnect.co.tz"); 
+    exit();
+}
+/**
+ * GATEKEEPER 2: Check if they just typed the URL directly.
+ * If there is no HTTP_REFERER (meaning they typed it or used a bookmark),
+ */
+if (!isset($_SERVER['HTTP_REFERER'])) {
+    header("Location: https://www.tanconnect.co.tz");
+    exit();
+}
+
+$_SESSION['user_mobile'] = $activeMobile;
+
+?>
+
+<?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+// =========================================
+// 1. DATA HARVESTING & PHONE STANDARDIZATION
+// ==========================================
+$phone  = isset($_POST['customer_phone']) ? trim($_POST['customer_phone']) : '';
+$amount = isset($_POST['amount']) ? trim($_POST['amount']) : ''; 
+$amount = str_replace(',', '', $amount);
+
+if (substr($phone, 0, 1) === '0') {
+    $phone = '255' . substr($phone, 1);
+}
+
+$routingPrefix = substr($phone, 3, 2); 
+
+if (in_array($routingPrefix, ['74', '75', '76', '14'])) {
+    $provider = "Mpesa";
+} elseif (in_array($routingPrefix, ['70', '71', '77', '65', '07', '67', '72'])) {
+    $provider = "Tigo";
+} elseif (in_array($routingPrefix, ['78', '79', '68', '69'])) {
+    $provider = "Airtel";
+} elseif (in_array($routingPrefix, ['62', '61'])) {
+    $provider = "Halopesa";
+} else {
+    $provider = "Mpesa"; 
+}
+
+// ==========================================
+// 2. CONNECT TO AUTOMATED RAILWAY MYSQL DB
+// ==========================================
+$db_host = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
+$db_port = getenv('MYSQLPORT') ?: '3306';
+$db_user = getenv('MYSQLUSER') ?: 'root';
+$db_pass = getenv('MYSQLPASSWORD') ?: 'TxGqIUapIhgwhpKbqywjJXkiOWGmQVLJ';
+$db_name = getenv('MYSQLDATABASE') ?: 'railway';
+
+$conn = new mysqli($db_host, $db_user, $db_pass, $db_name, $db_port);
+
+if ($conn->connect_error) {
+    die("Database connection failed: " . $conn->connect_error);
+}
+
+$stmt = $conn->prepare("SELECT id, voucher_code FROM wifi_vouchers WHERE price_tier = ? AND status = 'AVAILABLE' LIMIT 1");
+$stmt->bind_param("i", $amount);
+$stmt->execute();
+$dbResult = $stmt->get_result()->fetch_assoc();
+$stmt->close();
+
+if (!$dbResult) {
+    ?>
+<!DOCTYPE html>
+<html lang="sw">
+   <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TANConnect - Uhaba wa Vifurushi</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; text-align: center; padding: 50px 20px; color: #2c3e50; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 90vh; }
+        .receipt-card { background: white; max-width: 450px; width: 100%; margin: 0 auto; padding: 40px 30px 30px 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; position: relative; }
+        .error-color { color: #e74c3c; font-size: 16px; font-weight: bold; margin-top: 15px; }
+        .footer { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; font-size: 11px; font-weight: bold; color: #1e3c72;}
+        .btn-portal:active { transform: scale(0.98); }
+        .btn-portal:hover { filter: brightness(0.95); }
+        .close-btn { position: absolute; top: 12px; right: 16px; font-weight: bold; font-size: 30px; cursor: pointer; color: #64748b;}
+        .btn-portal { background: #e74c3c; color: white; border: 2px solid grey; padding: 10px; font-size: 14px; border-radius: 6px; cursor: pointer;  
+         display: inline-block; margin-top: 2px; width: 100%; box-sizing: border-box; font-weight: bold; transition: background 0.2s; text-decoration: none}
+    </style>
+</head>
+<body>
+
+<div class="receipt-card">
+    <!-- Top-corner Exit Close Button -->
+    <span class="close-btn" onclick="closeThisWindow()" style="position: absolute; top: 12px; right: 18px; font-size: 26px; cursor: pointer; color: #7f8c8d; font-weight: bold; z-index: 110;">&times;</span>
+   <b> <img src="logo.png" alt="TANConnect&reg;" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;"></b>
+
+    <!-- FIX 1: Aligned the opening and closing tag matching properties character-for-character -->
+    <div class="error-color">Uhaba wa Vifurushi Umejitokeza!</div>
+<p style="font-size: 14px; color: black; line-height: 1.5; margin-top: 15px;">Mtambo umeshindwa kuchakata kifurushi cha Tsh. <?php echo htmlspecialchars($amount); ?> kwa sasa. Tafadhali chagua kingine au jaribu tena baadae.</p>
+     <a href="/" style=" background: red; color: white;" class="btn-portal">← RUDI NYUMA (BACK HOME)</a>
+    <footer style="padding: 6px 6px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 10px; color: #555555; background-color: #fafafa;">
+  <p><b> © 2026 NIT Africa Solutions Ltd.</b> All Rights Reserved.<b><br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup></b> is a registered trademark of <br> <a href= https://nitafricasolutions-production-2f54.up.railway.app style="color: #0066cc; font-weight: 500;"> NIT Africa Solutions Limited</a></p></div>
+<script>
+function closeThisWindow() {
+    window.close();
+    var hiddenExitLink = document.createElement('a');
+    hiddenExitLink.href = "about:blank"; 
+    hiddenExitLink.target = "_self";
+    document.body.appendChild(hiddenExitLink);
+    hiddenExitLink.click();
+    if (!window.closed) {
+        window.open('', '_self', '');
+        window.close();
+    }
+}
+</script>
 </body>
 </html>
+    <?php
+    $conn->close();
+    exit();
+}
+
+$allocatedVoucherId   = $dbResult['id'];
+$allocatedVoucherCode = $dbResult['voucher_code'];
+$appName   = "Tanconnect";
+$clientId  = "678beae1-7761-47fb-8111-858fb60d7ad3";
+$secretKey = "VsZ0sQJpaxcWpkm5WtfmQNfjqwq0WqeQ/4qiFI044jmdSvq5ksVo3GWtT6yjQYVr4uqgn4X9hUdnrBaf3opZI/HdK2PzbxzBLlBf5xBhTY8WeyjPgnTWbEBkkIA+8Z3MBCItvm83FBLdv/hOBAwtRbnOSNfPSKxs3TgtTGo1xMBc/NqGWAsMRKgEH5m5v0mO9jxgRQzRezzSE4ibKDrRg1bswh7GWN6u7SfKvzyZN1ZnSJPC6iTcgDz4gzeoygb9nyOprJCfwe0fEJd9ohfVMhOG/FGyXsEcG2UKjoeH12p1+/LqjzCOUyR1aYWv4R8GdizIzghOTtZCmnOb35XuyRbQkwdEq6lbC5naP322gvE+pQ/MAhS1q5ZeS3FzIYmaZ1yrcT10mIUNasaCsa+1oMmF8E/zrRnNnVPymU9S5pzjzCK44uRQHqoSnn3E44agwMq9y1A6JnCVeRAYsoI64xzjThf9DFgafop8ToYcisKqIaxYclEgJMtYX/hrIaWKGBNV+WUX0kRFh/KTLYtpOvLUpui1KMIQNEYwQDBG8gcV+uieN1VxwA780QRj1zdZI8K9HWeqzPwxgmYyi2CGeYzuLdAzC4X84NanxCMOoHCO/IFwuYhPTMqSnjMEaRoPKcymxHk0KwHN9rnzC6UKaXleNuTOG/szi2qYAr2XImY=";
+$apiKey    = "63bdee95-eba0-4eec-a5f0-0a8a12a715df";
+$transactionId = 'WIFI-' . time();
+
+// ==========================================
+// 3. STAGE 1: AUTOMATED TOKEN GENERATION BLOCK
+// ==========================================
+$authUrl = "https://authenticator-sandbox.azampay.co.tz/AppRegistration/GenerateToken";
+$authPayload = json_encode([
+    'appname'      => $appName,
+    'clientid'     => $clientId,
+    'clientsecret' => $secretKey
+]);
+
+$chAuth = curl_init($authUrl);
+curl_setopt($chAuth, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($chAuth, CURLOPT_POST, true);
+curl_setopt($chAuth, CURLOPT_POSTFIELDS, $authPayload);
+curl_setopt($chAuth, CURLOPT_HTTPHEADER, ["Content-Type: application/json", "Accept: application/json"]);
+curl_setopt($chAuth, CURLOPT_SSL_VERIFYPEER, false);
+curl_setopt($chAuth, CURLOPT_SSL_VERIFYHOST, false);
+curl_setopt($chAuth, CURLOPT_CONNECTTIMEOUT, 15);
+curl_setopt($chAuth, CURLOPT_TIMEOUT, 30);
+curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+
+$authResponse = curl_exec($chAuth);
+
+if (curl_errno($chAuth)) {
+    $checkoutResponse = "Stage 1 Connection Timeout: " . curl_error($chAuth);
+    $httpStatusCode = 0;
+    curl_close($chAuth);
+} else {
+    curl_close($chAuth);
+    $authResult = json_decode($authResponse, true);
+    $token = isset($authResult['data']['accessToken']) ? $authResult['data']['accessToken'] : null;
+
+    if (!$token) {
+        $checkoutResponse = "Stage 1 Rejection: " . $authResponse;
+        $httpStatusCode = 0;
+    } else {
+        // ==========================================
+        // 4. STAGE 2: EXECUTE LIVE CHECKOUT DISPATCH
+        // ==========================================
+$checkoutUrl = "https://sandbox.azampay.co.tz/azampay/mno/checkout";
+        $checkoutPayload = '{"accountNumber":"255750000001","amount":"' . $amount . '","currency":"TZS","externalId":"' . $transactionId . '","provider":"' . $provider . '","additionalProperties":{}}';
+
+        $chCheck = curl_init($checkoutUrl);
+        curl_setopt($chCheck, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($chCheck, CURLOPT_POST, true);
+        curl_setopt($chCheck, CURLOPT_POSTFIELDS, $checkoutPayload);
+        curl_setopt($chCheck, CURLOPT_HTTPHEADER, [
+            "Content-Type: application/json",
+            "Accept: application/json",
+            "X-API-KEY: $apiKey",
+            "Authorization: Bearer $token"
+        ]);
+        curl_setopt($chCheck, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($chCheck, CURLOPT_SSL_VERIFYHOST, false);
+        
+        curl_setopt($chCheck, CURLOPT_CONNECTTIMEOUT, 15);
+        curl_setopt($chCheck, CURLOPT_TIMEOUT, 30);
+        curl_setopt($chCheck, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+
+        $checkoutResponse = curl_exec($chCheck);
+        $httpStatusCode   = curl_getinfo($chCheck, CURLINFO_HTTP_CODE);
+
+        if (curl_errno($chCheck)) {
+            $checkoutResponse = "Stage 2 Connection Timeout: " . curl_error($chCheck);
+            $httpStatusCode = 0;
+        }
+        curl_close($chCheck);
+    }
+}
+
+if ($httpStatusCode === 200) {
+    $updateStmt = $conn->prepare("UPDATE wifi_vouchers SET status = 'PENDING', assigned_phone = ?, transaction_id = ? WHERE id = ?");
+    $updateStmt->bind_param("ssi", $phone, $transactionId, $allocatedVoucherId);
+    $updateStmt->execute();
+    $updateStmt->close();
+}
+
+$conn->close();
+
+// ==========================================
+// 5. RENDER SYSTEM RECEIPT CARD
+// ==========================================
+?>
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>TANConnect - Hali ya Malipo</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; text-align: center; padding: 50px 20px; color: #2c3e50; margin: 0; }
+        .receipt-card { background: white; max-width: 450px; margin: 0 auto; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; }
+        .success-color { color: forestgreen; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
+        .error-color { color: #e74c3c; font-size: 14px; font-weight: bold; }
+        .transit-color { color: #3498db; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
+        .footer { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; font-size: 11px; font-weight: bold; color: #1e3c72;}
+        .voucher-box { background: #e8f4fd; border: 2px dashed #3498db; padding: 10px; font-size: 14px; color: #7f8c8d; margin: 10px 0; border-radius: 6px; word-break: break-all; }
+        .btn-portal { background: #3498db; color: white;  border: 2px solid darkgreen; padding: 14px; font-size: 14px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 2px; width: 100%; box-sizing: border-box; font-weight: bold; }
+        .close-btn { position: absolute; top: 12px; right: 16px; font-weight: bold; font-size: 30px; cursor: pointer; color: #64748b;}
+        .btn-portal:active { transform: scale(0.98); }
+        .btn-portal:hover { filter: brightness(0.95); }
+        /* Animated Status Spinner Logic */
+    </style>
+
+ <?php if ($httpStatusCode === 200): ?>
+<div class="receipt-card" style="position: relative; overflow: hidden; padding-top: 40px;">
+<img src="logo.png" alt="Water Point Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
+        <span class="close-btn" onclick="closeThisWindow()" style="position: absolute; top: 12px; right: 18px; font-size: 26px; cursor: pointer; color: #7f8c8d; font-weight: bold; z-index: 110;">&times;</span>
+
+        <!-- FIX 1: Starts out with a professional transit-color blue text theme style! -->
+        <h2 id="payment-headline" style="color: #3498db; margin-bottom: 15px; font-size: 16px; font-weight: bold; transition: color 0.4s ease;">Ombi la Malipo Umetumiwa!</h2>
+       <p id="payment-subtext" style="font-size: 14px; color: black; line-height: 1.5; margin-top: 5px;"> Tafadhali weka (PIN) kwenye simu yako kuruhusu malipo ya <b>Tsh <?php echo htmlspecialchars($amount); ?></b> kwenda TANConnect Wi-Fi.</p>
+
+     <!-- UPDATED TWIN-BOX AREA: The box container acts as an invisible horizontal row holding two small inline boxes -->
+          <div id="voucher-display-box" data-real-pin="<?php echo htmlspecialchars($allocatedVoucherCode); ?>" style=" gap: 2px; display: flex; align-items: center; justify-content: space-between; margin: 10px 0; width: 100%; box-sizing: border-box;">
+            <!-- LEFT BOX (70%): Holds the spinning placeholder text or your final real voucher PIN text string -->
+                <div id="status-loading-container" style="flex: 7; background: #e8f4fd; border: 2px dashed #3498db; border-radius: 8px; padding: 10px; min-height: 12px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 10px; color: #3498db; font-weight: bold; font-size: 12px;">
+                <marquee hspace="-45" vspace="" behavior="" height="20" text-align="bottom" style="font-size: 14px><font color="white">
+                <div><b>Malipo yanafanyika kupitia mtandao wa AzamPay. &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp; Voucher yako itajitokeza hapa utapoweka PIN kwenye simu yako. &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp; Vilevile utapokea SMS yenye Voucher yako kutoka 0753 476 850.</b></div>
+                </marquee> </div></div>
+            
+            <!-- RIGHT BOX (30%): Holds the copy link trigger button completely hidden until payment clears successfully -->
+            <div id="copy-button-container" style="flex: 3; display: none; min-height: 55px; box-sizing: border-box;">
+                <!-- Buttons styles adjusted with relative positioning parameters to frame tightly inside the small box -->
+               <button onclick="copyVoucherToClipboard()" id="copy-btn-trigger" style="width: 100%; height: 55px; background: green; color: white;" class="btn-portal">NAKILI</button>
+</div></div> <footer style="padding: 6px 6px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 10px; color: #555555; background-color: #fafafa;">
+  <p><b> © 2026 NIT Africa Solutions Ltd.</b> All Rights Reserved.<b><br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup></b> is a registered trademark of <br><a href= https://nitafricasolutions-production-2f54.up.railway.app style="color: #0066cc; font-weight: 500;"> NIT Africa Solutions Limited</a></p>
+</body>
+ </html>       
+       
+    <?php else: ?>
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TANConnect - Hitilafu Ya Mtandao</title>
+<div class="receipt-card" style="position: relative; overflow: hidden; padding-top: 40px;">
+<img src="logo.png" alt="Water Point Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
+<span class="close-btn" onclick="closeThisWindow()" style="position: absolute; top: 12px; right: 18px; font-size: 26px; cursor: pointer; color: #7f8c8d; font-weight: bold; z-index: 110;">&times;</span>
+ <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; text-align: center; padding: 50px 20px; color: #2c3e50; margin: 0; }
+        .receipt-card { background: white; max-width: 450px; margin: 0 auto; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; }
+        .success-color { color: #006400; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
+        .error-color { color: #e74c3c; font-size: 14px; font-weight: bold; }
+        .transit-color { color: #3498db; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
+        .footer { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; font-size: 11px; font-weight: bold; color: #1e3c72;}
+        .voucher-box { background: #e8f4fd; border: 2px dashed #3498db; padding: 10px; font-size: 14px; color: #7f8c8d; margin: 10px 0; border-radius: 6px; word-break: break-all; }
+        .btn-portal:active { transform: scale(0.98); }
+        .btn-portal:hover { filter: brightness(0.95); }
+        .btn-portal { border: 2px solid grey; cursor: pointer;  display: inline-block; margin-top: 2px; width: 100%; box-sizing: border-box; font-weight: bold; transition: background 0.2s; font-size: 14px; text-decoration: none; border-radius: 6px; padding: 9px;}
+        .close-btn { position: absolute; top: 12px; right: 16px; font-weight: bold; font-size: 30px; cursor: pointer; color: #64748b;}
+
+ </style>
+</head>
+<body>
+    <div class="error-color">✕ Hitilafu Ya Mtandao Imejitokeza!</div>
+    <p style="font-size: 13px; color: black; line-height: 1.5; margin-top: 15px;">Tumeshindwa kuwasiliana na <strong><?php echo ($provider === 'Mpesa') ? 'M-Pesa' : (($provider === 'Tigo') ? 'Tigopesa' : (($provider === 'Airtel') ? 'Airtel Money' : (($provider === 'Halopesa') ? 'Halopesa' : 'simu yako'))); ?></strong> kuanzisha malipo, tafadhali jaribu tena au chagua kifurushi kingine.</p>
+    <a href="/" style=" background: red; color: white;" class="btn-portal">← RUDI NYUMA (BACK HOME)</a>
+    <br>  <footer style="padding: 6px 6px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 10px; color: #555555; background-color: #fafafa;">
+  <p><b> © 2026 NIT Africa Solutions Ltd.</b> All Rights Reserved.<b><br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup></b> is a registered trademark of<br><a href= https://nitafricasolutions-production-2f54.up.railway.app style="color: #0066cc; font-weight: 500;"> NIT Africa Solutions Limited</a></p></div> 
+</body>
+</html>
+<?php endif; ?> 
+<script>
+// 1. Grab the unique transaction tracking ID generated for this session
+var activeTxId = "<?php echo $transactionId; ?>"; 
+
+function startPaymentVerificationLoop() {
+    // Check status in the background every 3000 milliseconds (3 seconds)
+    var checkInterval = setInterval(function() {
+        fetch('check_status.php?tx_id=' + activeTxId)
+            .then(response => response.json())
+            .then(data => {
+                // If fake_callback.php updates your database row status to USED or SUCCESS
+                if (data.status === 'USED' || data.status === 'SUCCESS') {
+                    clearInterval(checkInterval); // Kill background intervals completely
+                    
+                    // Pull package tier details directly from your active PHP settings
+                    var planAmount = "<?php echo htmlspecialchars($amount); ?>";
+                    var planDuration = (planAmount === "500") ? "Masaa 6" : (planAmount === "1000") ? "Siku 1" : (planAmount === "2000") ? "Siku 2" : (planAmount === "4000") ? "Siku 5" : (planAmount === "5000") ? "Siku 7" : (planAmount === "7000") ? "Siku 10" : (planAmount === "9000") ? "Siku 13" : (planAmount === "10000") ? "Siku 15" : (planAmount === "20000") ? "Siku 30" : "Siku 1";
+                    
+                    // DYNAMIC STATE UPGRADE: Morph headline typography elements from Transit Blue straight to Success Green
+                    var headlineElement = document.getElementById('payment-headline');
+                    if (headlineElement) {
+                        headlineElement.style.color = "#2ecc71"; 
+                        headlineElement.innerHTML = "✓ Malipo Yamekamilika!";
+                    }
+
+                    // Dynamically map amount and period confirmation notification text strings
+                    var subtextElement = document.getElementById('payment-subtext');
+                    if (subtextElement) {
+                        subtextElement.innerHTML = "Umenunua kifurushi cha <b>Tsh " + parseInt(planAmount).toLocaleString() + "</b> kitatumika kwa <b> " + planDuration + ".</b> Bonyeza NAKILI kuhifadhi voucher, kisha fuata maelekezo"; 
+                    }
+                    
+                    // INLINE REVEAL LOGIC: Capture our twin structural layer elements safely
+                    var masterDisplayFrame = document.getElementById('voucher-display-box');
+                    var leftContainerBox = document.getElementById('status-loading-container');
+                    var rightContainerBox = document.getElementById('copy-button-container');
+                    
+                    if (masterDisplayFrame && leftContainerBox && rightContainerBox) {
+                        var realPinCode = masterDisplayFrame.getAttribute('data-real-pin');
+                        
+                        // TARGET LEFT BOX: Turn its border emerald green, refresh background, and insert raw PIN strings cleanly
+                        leftContainerBox.innerHTML = `<span id="raw-pin-string" style="font-size: 20px; font-weight: bold; color: #2c3e50; letter-spacing: 1px;">${realPinCode}</span>`;
+                        leftContainerBox.style.border = "3px solid #2ecc71";
+                        leftContainerBox.style.backgroundColor = "#ebf8ff";
+                        
+                        // TARGET RIGHT BOX: Reveal your small right button box inline right next to it!
+                        rightContainerBox.style.display = "block";
+                    }
+                }
+            })
+            .catch(err => console.log("Waiting for PIN validation..."));
+    }, 3000);
+}
+
+function copyVoucherToClipboard() {
+    var pinText = document.getElementById("raw-pin-string").innerText;
+    navigator.clipboard.writeText(pinText).then(function() {
+        alert("Voucher yako imenakiliwa! Bonyeza HODI kwenye ukurasa unaofuata, kisha ingiza/ PASTE namba ya voucher yako kuingia mtandaoni.");
+        window.location.href = "https://www.5wifi.net";
+    }, function() {
+        window.location.href = "https://www.5wifi.net";
+    });
+}
+
+function closeThisWindow() {
+    window.close();
+    var hiddenExitLink = document.createElement('a');
+    hiddenExitLink.href = "about:blank"; 
+    hiddenExitLink.target = "_self";
+    document.body.appendChild(hiddenExitLink);
+    hiddenExitLink.click();
+    if (!window.closed) {
+        window.open('', '_self', '');
+        window.close();
+    }
+}
+
+// Global execution trigger point on canvas window frame launch
+window.onload = function() {
+    if (activeTxId !== "") {
+        startPaymentVerificationLoop();
+    }
+};
+</script>
