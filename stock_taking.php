@@ -18,7 +18,7 @@ if ($conn->connect_error) {
 
 // 2. HARDCODE YOUR PRICE TIERS (LISTED FROM LOWEST TO HIGHEST)
 // You can add or remove prices from this list anytime you want
-$price_tiers = [500, 1000, 2000, 400, 5000, 7000, 9000, 10000, 15000];
+$price_tiers = [500, 1000, 2000, 4000, 5000, 7000, 9000, 10000, 15000];
 
 
 // 3. BUILD THE INVENTORY REPORT TEXT
