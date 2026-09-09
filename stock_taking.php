@@ -7,7 +7,7 @@ date_default_timezone_set('Africa/Dar_es_Salaam');
 $db_host = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
 $db_port = getenv('MYSQLPORT') ?: '3306';
 $db_user = getenv('MYSQLUSER') ?: 'root';
-$db_pass = getenv('MYSQLPASSWORD') ?;
+$db_pass = getenv('MYSQLPASSWORD');
 $db_name = getenv('MYSQLDATABASE') ?: 'railway';
 
 $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
