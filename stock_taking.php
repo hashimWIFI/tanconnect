@@ -1,6 +1,6 @@
 <?php
 // Set your local East Africa Time timezone (GMT+3)
-date_default_timezone_set('Africa/Dar_es_Salaam');
+date_default_timezone_set('Africa/Dar_es_Salaam'); 
 
 // 1. DATABASE CONFIGURATION
 
