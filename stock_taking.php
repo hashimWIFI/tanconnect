@@ -16,10 +16,9 @@ if ($conn->connect_error) {
     die("Database connection failed: " . $conn->connect_error);
 }
 
-// 2. QUERY STOCK COUNT PER TIER
-// Adjust table names ('vouchers') and column names ('price_tier', 'status') to match your schema
+// 2. QUERY STOCK COUNT PER TIER (UPDATED FOR YOUR SCHEMA)
 $query = "SELECT price_tier, COUNT(*) as remaining_stock 
-          FROM vouchers 
+          FROM wifi_vouchers 
           WHERE status = 'available' 
           GROUP BY price_tier";
 
@@ -40,7 +39,7 @@ if ($result && $result->num_rows > 0) {
         $reportText .= "• " . $warningIcon . $tier . " TZS Tier: " . $count . " remaining\n";
     }
 } else {
-    $reportText .= "❌ Warning: No unused vouchers found in the database!\n";
+    $reportText .= "❌ Warning: No available vouchers found in the database!\n";
 }
 
 $reportText .= "------------------------------------------\n";
@@ -62,6 +61,8 @@ $streamOptions = [
 $context = stream_context_create($streamOptions);
 @file_get_contents("https://ntfy.sh/tanconnect_vouchers_stock_alert_2026", false, $context);
 
-// CRITICAL FOR RAILWAY CRON: Exit cleanly when the task concludes
+
+// Exit cleanly for Railway Cron container cycle
 exit(0);
 ?>
+
