@@ -81,7 +81,7 @@ $dbResult = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
 if (!$dbResult) {
-
+    date_default_timezone_set('Africa/Dar_es_Salaam');
     // ---- LIGHTWEIGHT FIREWALL-SAFE NTFY ALERT SYSTEM ----
 
     // 1. Build your alert text content bundle
