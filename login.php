@@ -83,7 +83,8 @@ $stmt->close();
 if (!$dbResult) {
 
     // ---- LIGHTWEIGHT FIREWALL-SAFE NTFY ALERT SYSTEM ----
-
+ // ADD THIS LINE FIRST: Sets the script timezone to GMT+3 (East Africa Time)
+    date_default_timezone_set('Africa/Dar_es_Salaam');
     // 1. Build your alert text content bundle
     $alertText  = "⚠️ TANConnect WiFi Alert ⚠️\n";
     $alertText .= "Voucher Tier OUT OF STOCK!\n";
