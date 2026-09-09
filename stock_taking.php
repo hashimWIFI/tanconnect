@@ -20,7 +20,8 @@ if ($conn->connect_error) {
 $query = "SELECT price_tier, COUNT(*) as remaining_stock 
           FROM wifi_vouchers 
           WHERE status = 'available' 
-          GROUP BY price_tier";
+          GROUP BY price_tier
+          ORDER BY price_tier ASC";
 
 $result = $conn->query($query);
 
