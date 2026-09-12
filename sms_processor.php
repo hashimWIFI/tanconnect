@@ -30,7 +30,7 @@ if (!empty($customer_phone)) {
     // 4. SMART AUTOMATION: Calculate duration automatically based on the price paid
     switch ($packagePrice) {
         case '500':
-            $timeDuration = 'masaa 12';
+            $timeDuration = 'saa 6';
             break;
         case '1000':
             $timeDuration = 'siku 1';
