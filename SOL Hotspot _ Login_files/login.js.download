@@ -1,0 +1,10 @@
+// JavaScript Document
+  
+  function recharge(device_id,mac)
+  {
+        window.top.location.href = 'http://na.solnms.net/SOL/rechargeMobileManage.do?device_id=' + device_id + '&mac_address=' + mac + '&language=en&billType=0&roamingFlag=0&billing_mode=0';
+					
+  }
+  
+
+
