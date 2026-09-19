@@ -30,11 +30,11 @@ if (in_array($routingPrefix, ['74', '75', '76', '14'])) {
 // ==========================================
 // 2. CONNECT TO AUTOMATED RAILWAY MYSQL DB
 // ==========================================
-$db_host = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
-$db_port = getenv('MYSQLPORT') ?: '3306';
-$db_user = getenv('MYSQLUSER') ?: 'root';
-$db_pass = getenv('MYSQLPASSWORD') ?: 'TxGqIUapIhgwhpKbqywjJXkiOWGmQVLJ';
-$db_name = getenv('MYSQLDATABASE') ?: 'railway';
+$db_host = getenv('MYSQLHOST') ?: ' ';
+$db_port = getenv('MYSQLPORT') ?: ' ';
+$db_user = getenv('MYSQLUSER') ?: ' ';
+$db_pass = getenv('MYSQLPASSWORD') ?: ' ';
+$db_name = getenv('MYSQLDATABASE') ?: ' ';
 
 $conn = new mysqli($db_host, $db_user, $db_pass, $db_name, $db_port);
 
