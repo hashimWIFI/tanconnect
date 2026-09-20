@@ -1,37 +1,4 @@
-<?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 
-// Extract the MAC address sent over by the web form post submission bundle
-if (isset($_POST['mac_address']) && $_POST['mac_address'] !== '0') {
-    // Clean up characters to ensure compatibility with GUANRI Netcom cloud schemas
-    $_SESSION['customer_mac'] = preg_replace('/[^a-zA-Z0-9]/', '', $_POST['mac_address']);
-}
-
-$macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0';
-
-
-// ---- TEMPORARY LOG: CONFIRM MAC CAPTURE VIA NTFY ----
-$debugText  = "🔍 MAC Capture Test Log 🔍\n";
-$debugText .= "• Captured MAC: " . $macAddress . "\n";
-$debugText .= "• Phone: " . $_POST['customer_phone'] . "\n";
-$debugText .= "• Amount: " . $_POST['amount'] . " TZS";
-
-$debugOptions = [
-    "http" => [
-        "method"  => "POST",
-        "header"  => "Title: System Debug Log\r\nPriority: min\r\nTags: computer\r\n",
-        "content" => $debugText,
-        "timeout" => 5
-    ]
-];
-$debugContext = stream_context_create($debugOptions);
-// Sends this directly to your private tracking panel stream
-@file_get_contents("https://ntfy.sh/tanconnect_vouchers_stock_alert_2026", false, $debugContext);
-// -----------------------------------------------------
-
-?>
 
 <?php
 error_reporting(0); 
@@ -111,7 +78,7 @@ ini_set('display_errors', 0);
 <div id="modal-plan-summary" class="plan-summary">Umechagua kifurushi:<br> 
 <strong id="summary-bold-text" style="color: #0033a0;">1,000 TZS || Masaa 24 kuperuzi || Unlimited DATA</strong></div>
 
-<form id="payment-form" action="login.php" method="post" onsubmit="return captureRouterData(event)">
+<form id="payment-form" action="login.php" method="post" onsubmit="return dispatchToRailway(event)">
        
       <input type="hidden" name="mac_address" id="hidden_mac_field" value="0">
       <input type="hidden" id="selected-amount" name="amount" value=" " />
@@ -123,6 +90,8 @@ ini_set('display_errors', 0);
        autocomplete="off" oninput="detectMobileProvider()" class="style-group" required/>
       <button type="button" id="submit-payment-btn" class="btn-portal btn-buy1" onclick="dispatchToRailway(event)">Pay</button> 
   
+
+
 </div></div>
 </form> 
 
@@ -151,28 +120,6 @@ ini_set('display_errors', 0);
 
     </div></div></div>
 
-<script>
-function captureRouterData(event) {
-    // 1. Look at the webpage layout and extract the MAC address text value automatically
-    // It targets the table cell containing the MAC string shown in your router template
-    var tableCells = document.getElementsByTagName('td');
-    var detectedMac = "0";
-    
-    for (var i = 0; i < tableCells.length; i++) {
-        if (tableCells[i].innerText.includes("MAC Address:")) {
-            if (tableCells[i+1]) {
-                detectedMac = tableCells[i+1].innerText.trim();
-            }
-        }
-    }
-    
-    // 2. Inject the extracted string into the hidden form field right before transmission
-    document.getElementById('hidden_mac_field').value = detectedMac;
-    
-    // 3. Continue to your standard prefix validation script (dispatchToRailway)
-    return dispatchToRailway(event);
-}
-</script>
 
 </body>
 </html>
