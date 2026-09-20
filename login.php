@@ -313,7 +313,7 @@ function startPaymentVerificationLoop() {
             .then(response => response.json())
             .then(data => {
                 // If fake_callback.php updates your database row status to USED or SUCCESS
-                if (data.status === 'COMPLETED' || data.status === 'SUCCESS') {
+                if (data.status === 'SOLD' || data.status === 'SUCCESS') {
                     clearInterval(checkInterval); // Kill background intervals completely
                     
                     // Pull package tier details directly from your active PHP settings
