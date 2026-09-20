@@ -18,13 +18,13 @@ if ($conn->connect_error) {
 echo "✓ Connected to MySQL Database successfully.\n";
 
 // 2. Search database for the most recent PENDING checkout row
-echo "Searching table rows for the most recent 'PENDING' checkout transaction...\n";
+echo "Searching table rows for the most recent 'ASSIGNED' checkout transaction...\n";
 // Pulling price_tier directly to match your custom billing matrix columns
-$selectQuery = "SELECT id, voucher_code, transaction_id, assigned_phone, price_tier FROM wifi_vouchers WHERE status = 'PENDING' ORDER BY id DESC LIMIT 1";
+$selectQuery = "SELECT id, voucher_code, transaction_id, assigned_phone, price_tier FROM wifi_vouchers WHERE status = 'ASSIGNED' ORDER BY id DESC LIMIT 1";
 $result = $conn->query($selectQuery);
 
 if (!$result || $result->num_rows == 0) {
-    echo "\n❌ NO PENDING VOUCHERS FOUND!\n";
+    echo "\n❌ NO ASSIGNED VOUCHERS FOUND!\n";
     $conn->close();
     exit();
 }
@@ -41,7 +41,7 @@ echo "Target customer phone extracted directly: " . $customer_phone . "\n\n";
 
 // 3. Update database status from PENDING to SUCCESS
 echo "Simulating mock successful wallet PIN validation approval ping from AzamPay network...\n";
-$updateQuery = "UPDATE wifi_vouchers SET status = 'SUCCESS', purchased_at = NOW() WHERE id = $allocatedId";
+$updateQuery = "UPDATE wifi_vouchers SET status = 'SOLD', purchased_at = NOW() WHERE id = $allocatedId";
 $db_update_success = $conn->query($updateQuery);
 
 if ($db_update_success) {
