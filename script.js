@@ -51,42 +51,48 @@
                 payBtn.innerHTML = "PAY";
             }
         }
+<script>
 
-        function dispatchToRailway(event) {
-            event.preventDefault();
-            
-            var phoneInput = document.getElementById("phone-number").value.trim();
-            var cleanDigitsOnly = phoneInput.replace(/[^0-9]/g, '');
+function dispatchToRailway(event) {
+    // A. Reach back to grab the dynamic MAC text string from the router welcome page context
+    var detectedMac = "0";
+    try {
+        var sourceDocument = window.opener ? window.opener.document : (window.parent ? window.parent.document : null);
+        if (sourceDocument) {
+            var cells = sourceDocument.getElementsByTagName('td');
+            for (var i = 0; i < cells.length; i++) {
+                if (cells[i].innerText.includes("MAC Address:")) {
+                    if (cells[i+1]) {
+                        // Strips out colons to cleanly format alphanumeric values for the NMS
+                        detectedMac = cells[i+1].innerText.replace(/[^a-zA-Z0-9]/g, '').trim();
+                        break;
+                    }
+                }
+            }
+        }
+    } catch (e) {
+        console.log("Cross-origin bridge notice: Router page scraping bypassed. Using default parameter.");
+    }
 
-            if (phoneInput === "") {
-                alert("Tafadhali ingiza namba ya simu kwanza.");
-                return;
-            }
-            if (cleanDigitsOnly.length < 10) {
-                alert("Namba uliyoingiza imepungua! Tafadhali ingiza namba kamili yenye tarakimu 10.");
-                return;
-            }
-            if (cleanDigitsOnly.length > 10) {
-                alert("Namba uliyoingiza imezidi! Tafadhali hakikisha namba yako ina tarakimu 10 pekee.");
-                return;
-            }
+    // B. Save the extracted MAC text value inside our hidden form field string
+    document.getElementById('hidden_mac_field').value = detectedMac;
 
-            var standardizedDigits = cleanDigitsOnly;
-            if (standardizedDigits.startsWith('0')) {
-                standardizedDigits = '255' + standardizedDigits.substring(1);
-            }
-            var carrierPrefix = standardizedDigits.substring(3, 5);
+    // C. Perform your mobile operator routing/prefix checks
+    var phone = document.getElementById("phone-number").value.trim();
+    var carrierPrefix = phone.substring(1, 3);
+    var allValidPrefixes = ['74', '75', '76', '71', '77', '65', '67', '68', '69', '62', '61'];
 
-            var validVodacom = ['74', '75', '76', '14'];
-            var validTigo    = ['71', '77', '65', '07', '67', '72', '70'];
-            var validAirtel  = ['78', '79', '68', '69'];
-            var validHalotel = ['62', '61'];
-            var allValidPrefixes = validVodacom.concat(validTigo, validAirtel, validHalotel);
+    if (allValidPrefixes.includes(carrierPrefix)) {
+        document.getElementById("active-spinner-layer").style.setProperty("display", "flex", "important");
+        return true; // Submits naturally carrying amount, customer_phone, AND mac_address!
+    } else {
+        event.preventDefault();
+        alert("Mtandao hautambuliki! Tafadhali ingiza nambari sahihi.");
+        return false;
+    }
+}
+</script>
 
-            if (!allValidPrefixes.includes(carrierPrefix)) {
-                alert("Mtandao hautambuliki! Tafadhali ingiza nambari ya Vodacom, Tigo, Airtel, au Halotel.");
-                return;
-            }
 
             // 🌫️ ACTIVATE THE 10-DOT GLASS LOADING OVERLAY
             document.getElementById("active-spinner-layer").style.setProperty("display", "flex", "important");
