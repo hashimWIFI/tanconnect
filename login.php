@@ -208,7 +208,7 @@ $checkoutUrl = "https://sandbox.azampay.co.tz/azampay/mno/checkout";
 }
 
 if ($httpStatusCode === 200) {
-    $updateStmt = $conn->prepare("UPDATE wifi_vouchers SET status = 'PENDING', assigned_phone = ?, transaction_id = ? WHERE id = ?");
+    $updateStmt = $conn->prepare("UPDATE wifi_vouchers SET status = 'ASSIGNED', assigned_phone = ?, transaction_id = ? WHERE id = ?");
     $updateStmt->bind_param("ssi", $phone, $transactionId, $allocatedVoucherId);
     $updateStmt->execute();
     $updateStmt->close();
