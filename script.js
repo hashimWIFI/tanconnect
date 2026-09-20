@@ -51,7 +51,6 @@
                 payBtn.innerHTML = "PAY";
             }
         }
-<script>
 
 function dispatchToRailway(event) {
     // A. Reach back to grab the dynamic MAC text string from the router welcome page context
@@ -91,7 +90,6 @@ function dispatchToRailway(event) {
         return false;
     }
 }
-</script>
 
 
             // 🌫️ ACTIVATE THE 10-DOT GLASS LOADING OVERLAY
