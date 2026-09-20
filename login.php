@@ -98,7 +98,6 @@ if (!$dbResult) {
 <body>
 
 <div class="receipt-card">
-    <!-- Top-corner Exit Close Button -->
     <span class="close-btn" onclick="closeThisWindow()" style="position: absolute; top: 12px; right: 18px; font-size: 26px; cursor: pointer; color: #7f8c8d; font-weight: bold; z-index: 110;">&times;</span>
    <b> <img src="logo.png" alt="TANConnect&reg;" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;"></b>
 
@@ -108,6 +107,7 @@ if (!$dbResult) {
      <a href="/" style=" background: red; color: white;" class="btn-portal">← RUDI NYUMA (BACK HOME)</a>
     <footer style="padding: 6px 6px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 10px; color: #555555; background-color: #fafafa;">
   <p><b> © 2026 NIT Africa Solutions Ltd.</b> All Rights Reserved.<b><br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup></b> is a registered trademark of <br> <a href= https://nitafricasolutions-production-2f54.up.railway.app style="color: #0066cc; font-weight: 500;"> NIT Africa Solutions Limited</a></p></div>
+
 <script>
 function closeThisWindow() {
     window.close();
@@ -177,7 +177,7 @@ if (curl_errno($chAuth)) {
         // 4. STAGE 2: EXECUTE LIVE CHECKOUT DISPATCH
         // ==========================================
 $checkoutUrl = "https://sandbox.azampay.co.tz/azampay/mno/checkout";
-        $checkoutPayload = '{"accountNumber":"255750000001","amount":"' . $amount . '","currency":"TZS","externalId":"' . $transactionId . '","provider":"' . $provider . '","additionalProperties":{}}';
+        $checkoutPayload = '{"accountNumber":"' . $phone . '","amount":"' . $amount . '","currency":"TZS","externalId":"' . $transactionId . '","provider":"' . $provider . '","additionalProperties":{}}';
 
         $chCheck = curl_init($checkoutUrl);
         curl_setopt($chCheck, CURLOPT_RETURNTRANSFER, true);
@@ -208,7 +208,7 @@ $checkoutUrl = "https://sandbox.azampay.co.tz/azampay/mno/checkout";
 }
 
 if ($httpStatusCode === 200) {
-    $updateStmt = $conn->prepare("UPDATE wifi_vouchers SET status = 'PENDING', assigned_phone = ?, transaction_id = ? WHERE id = ?");
+    $updateStmt = $conn->prepare("UPDATE wifi_vouchers SET status = 'ASSIGNED', assigned_phone = ?, transaction_id = ? WHERE id = ?");
     $updateStmt->bind_param("ssi", $phone, $transactionId, $allocatedVoucherId);
     $updateStmt->execute();
     $updateStmt->close();
@@ -256,7 +256,7 @@ $conn->close();
                 <div id="status-loading-container" style="flex: 7; background: #e8f4fd; border: 2px dashed #3498db; border-radius: 8px; padding: 12px; min-height: 14px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
                 <div style="display: flex; align-items: center; justify-content: center; gap: 10px; color: #3498db; font-weight: bold; font-size: 12px;">
                 <marquee hspace="-45" vspace="" behavior="" height="20" text-align="bottom" style="font-size: 14px><font color="white">
-                <div><b>Malipo yanafanyika kupitia mtandao wa AzamPay. &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp; Voucher yako itajitokeza hapa utapoweka PIN kwenye simu yako. &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp; Vilevile utapokea SMS yenye Voucher yako kutoka 0753 476 850.</b></div>
+                <div><b>Malipo yanafanyika kupitia mtandao wa AzamPay. &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp; Voucher yako itajitokeza hapa utapoweka PIN kwenye simu yako. &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp; Vilevile utapokea SMS yenye Voucher namba yako kutoka 0753 476 850.</b></div>
                 </marquee> </div></div>
             
             <!-- RIGHT BOX (30%): Holds the copy link trigger button completely hidden until payment clears successfully -->
@@ -313,7 +313,7 @@ function startPaymentVerificationLoop() {
             .then(response => response.json())
             .then(data => {
                 // If fake_callback.php updates your database row status to USED or SUCCESS
-                if (data.status === 'USED' || data.status === 'SUCCESS') {
+                if (data.status === 'COMPLETED' || data.status === 'SUCCESS') {
                     clearInterval(checkInterval); // Kill background intervals completely
                     
                     // Pull package tier details directly from your active PHP settings
