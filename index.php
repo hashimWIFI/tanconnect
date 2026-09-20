@@ -1,4 +1,17 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Extract the MAC address sent over by the web form post submission bundle
+if (isset($_POST['mac_address']) && $_POST['mac_address'] !== '0') {
+    // Clean up characters to ensure compatibility with GUANRI Netcom cloud schemas
+    $_SESSION['customer_mac'] = preg_replace('/[^a-zA-Z0-9]/', '', $_POST['mac_address']);
+}
+
+$macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0';
+?>
+<?php
 error_reporting(0); 
 ini_set('display_errors', 0);
 ?><!DOCTYPE html>
