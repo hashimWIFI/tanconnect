@@ -359,7 +359,8 @@ function copyVoucherToClipboard() {
     var pinText = document.getElementById("raw-pin-string").innerText;
     navigator.clipboard.writeText(pinText).then(function() {
         alert("Voucher yako imenakiliwa! Bonyeza HODI kwenye ukurasa unaofuata, kisha ingiza/ PASTE namba ya voucher yako kuingia mtandaoni.");
-        window.location.href = "https://www.5wifi.net";
+        window.location.href = "http://na.solnms.net/SOL/rechargeMobileManage.do?";
+
 
     }, function() {
         window.location.href = "https://www.5wifi.net";
