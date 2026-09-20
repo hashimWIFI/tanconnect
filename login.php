@@ -359,7 +359,7 @@ function copyVoucherToClipboard() {
     var pinText = document.getElementById("raw-pin-string").innerText;
     navigator.clipboard.writeText(pinText).then(function() {
         alert("Voucher yako imenakiliwa! Bonyeza HODI kwenye ukurasa unaofuata, kisha ingiza/ PASTE namba ya voucher yako kuingia mtandaoni.");
-        window.location.href = "http://na.solnms.net/SOL/rechargeMobileManage.do?";
+        window.location.href = "http://na.solnms.net/SOL/rechargeMobileManage.do?device_id=8600081897&mac_address=0&language=en&billType=0&roamingFlag=0&billing_mode=0";
 
 
     }, function() {
