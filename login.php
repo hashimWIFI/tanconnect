@@ -208,7 +208,7 @@ $checkoutUrl = "https://sandbox.azampay.co.tz/azampay/mno/checkout";
 }
 
 if ($httpStatusCode === 200) {
-    $updateStmt = $conn->prepare("UPDATE wifi_vouchers SET status = 'ASSIGNED', assigned_phone = ?, transaction_id = ? WHERE id = ?");
+    $updateStmt = $conn->prepare("UPDATE wifi_vouchers SET status = 'PENDING', assigned_phone = ?, transaction_id = ? WHERE id = ?");
     $updateStmt->bind_param("ssi", $phone, $transactionId, $allocatedVoucherId);
     $updateStmt->execute();
     $updateStmt->close();
@@ -312,8 +312,8 @@ function startPaymentVerificationLoop() {
         fetch('check_status.php?tx_id=' + activeTxId)
             .then(response => response.json())
             .then(data => {
-                // If fake_callback.php updates your database row status to SOLD or SUCCESS
-                if (data.status === 'SOLD' || data.status === 'SUCCESS') {
+                // If fake_callback.php updates your database row status to USED or SUCCESS
+                if (data.status === 'USED' || data.status === 'SUCCESS') {
                     clearInterval(checkInterval); // Kill background intervals completely
                     
                     // Pull package tier details directly from your active PHP settings
