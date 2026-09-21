@@ -305,6 +305,7 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
 <body>
 
 <?php if ($httpStatusCode === 200): ?>
+
     <div class="receipt-card" style="position: relative; overflow: hidden; padding-top: 40px;">
         <img src="logo.png" alt="TANConnect Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
         <span class="close-btn" onclick="closeThisWindow()">&times;</span>
@@ -349,5 +350,5 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
 <?php endif; ?>
 </body>
 </html>
-<?php exit(); ?>
+
 
