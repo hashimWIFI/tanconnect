@@ -55,10 +55,12 @@ $stmt->close();
 if (!$dbResult) {
     date_default_timezone_set('Africa/Dar_es_Salaam');
     // ---- LIGHTWEIGHT FIREWALL-SAFE NTFY ALERT SYSTEM ----
-    $alertText = "⚠️ TANConnect WiFi Alert ⚠️\n";
+   // 1. Build your alert text content bundle
+    $alertText  = "⚠️ TANConnect WiFi Alert ⚠️\n";
     $alertText .= "Voucher Tier OUT OF STOCK!\n";
-    $alertText .= "Price Tier: " . number_format($amount) . " TZS\n";
-    $alertText .= "Time: " . date("Y-m-d H:i:s");
+    $alertText .= "• Price Tier: " . number_format($amount) . " TZS\n";
+    $alertText .= "• Time: " . date("Y-m-d H:i:s");
+
 
     $streamOptions = [
         "http" => [
