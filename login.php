@@ -84,7 +84,8 @@ if (!$dbResult) {
     ];
 
     $context = stream_context_create($streamOptions);
-    @file_get_contents("https://ntfy.sh", false, $context);
+       @file_get_contents("https://ntfy.sh/tanconnect_vouchers_stock_alert_2026", false, $context);
+
     
     $httpStatusCode = 503; // Sets failure flag to load the out-of-stock template later
  
@@ -103,7 +104,7 @@ if (!$dbResult) {
     // =======================================================
     // 4. STAGE 1: AUTOMATED ACCESS TOKEN GENERATION
     // =======================================================
-    $authUrl = "https://azampay.co.tz";
+   $authUrl = "https://authenticator-sandbox.azampay.co.tz/AppRegistration/GenerateToken";
     $authPayload = json_encode([
         'appname'      => $appName,
         'clientid'     => $clientId,
@@ -133,7 +134,7 @@ if (!$dbResult) {
         // =======================================================
         // 5. STAGE 2: EXECUTE LIVE MOBILE CHECKOUT DISPATCH
         // =======================================================
-        $checkoutUrl = "https://azampay.co.tz";
+        $checkoutUrl = "https://sandbox.azampay.co.tz/azampay/mno/checkout";
         $checkoutPayload = json_encode([
             'accountNumber' => $phone,
             'amount'        => $amount,
