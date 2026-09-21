@@ -220,55 +220,143 @@ $conn->close();
 // 5. RENDER SYSTEM RECEIPT CARD
 // ==========================================
 ?>
+
 <!DOCTYPE html>
 <html lang="sw">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>TANConnect - Hali ya Malipo</title>
+    <title>TANConnect - SUCCESS REPORT </title>
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; text-align: center; padding: 50px 20px; color: #2c3e50; margin: 0; }
         .receipt-card { background: white; max-width: 450px; margin: 0 auto; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; }
-        .success-color { color: forestgreen; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
-        .error-color { color: #e74c3c; font-size: 14px; font-weight: bold; }
-        .transit-color { color: #3498db; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
-        .footer { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; font-size: 11px; font-weight: bold; color: #1e3c72;}
+        .success-color { color: forestgreen !important; margin-bottom: 10px; font-size: 16px; font-weight: bold; }
+        .transit-color { color: #3498db; margin-bottom: 10px; font-size: 16px; font-weight: bold; }
         .voucher-box { background: #e8f4fd; border: 2px dashed #3498db; padding: 10px; font-size: 14px; color: #7f8c8d; margin: 10px 0; border-radius: 6px; word-break: break-all; }
         .btn-portal { background: #3498db; color: white;  border: 2px solid darkgreen; padding: 10px; font-size: 14px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 2px; width: 100%; box-sizing: border-box; font-weight: bold; }
         .close-btn { position: absolute; top: 12px; right: 16px; font-weight: bold; font-size: 30px; cursor: pointer; color: #64748b;}
         .btn-portal:active { transform: scale(0.98); }
         .btn-portal:hover { filter: brightness(0.95); }
-        /* Animated Status Spinner Logic */
+        .voucher-success-box { font-size: 22px !important; font-weight: bold !important; color: #2c3e50 !important; letter-spacing: 2px; border: 2px solid green !important; background-color: #f4fbf7 !important; text-align: center; justify-content: center; width: 100%; display: flex; align-items: center; }
     </style>
 
- <?php if ($httpStatusCode === 200): ?>
-<div class="receipt-card" style="position: relative; overflow: hidden; padding-top: 40px;">
-<img src="logo.png" alt="Water Point Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
-        <span class="close-btn" onclick="closeThisWindow()" style="position: absolute; top: 12px; right: 18px; font-size: 26px; cursor: pointer; color: #7f8c8d; font-weight: bold; z-index: 110;">&times;</span>
+    <script type="text/javascript">
+        // 1. The Core Guanri Redirection Function mapping your fixed router ID profile
+        function recharge(device_id, mac) {
+            window.top.location.href = 'http://solnms.net' + device_id + '&mac_address=' + mac + '&language=en&billType=0&roamingFlag=0&billing_mode=0';
+        }
 
-        <!-- FIX 1: Starts out with a professional transit-color blue text theme style! -->
-        <h2 id="payment-headline" style="color: #3498db; margin-bottom: 15px; font-size: 16px; font-weight: bold; transition: color 0.4s ease;">Ombi la Malipo Umetumiwa!</h2>
-       <p id="payment-subtext" style="font-size: 14px; color: black; line-height: 1.5; margin-top: 5px;"> Tafadhali weka (PIN) kwenye simu yako kuruhusu malipo ya <b>Tsh <?php echo htmlspecialchars($amount); ?></b> kwenda TANConnect Wi-Fi.</p>
+        // Capture parameters from the PHP workflow context safely
+        var fixedDeviceId = "8600081897";
+        var clientMac = "<?php echo htmlspecialchars($_POST['mac_address'] ?? $_GET['mac'] ?? ''); ?>";
+        var referenceId = "<?php echo htmlspecialchars($referenceNumber ?? ''); ?>"; // Your unique tracking ID for this transaction
 
-     <!-- UPDATED TWIN-BOX AREA: The box container acts as an invisible horizontal row holding two small inline boxes -->
-          <div id="voucher-display-box" data-real-pin="<?php echo htmlspecialchars($allocatedVoucherCode); ?>" style=" gap: 2px; display: flex; align-items: center; justify-content: space-between; margin: 10px 0; width: 100%; box-sizing: border-box;">
-            <!-- LEFT BOX (70%): Holds the spinning placeholder text or your final real voucher PIN text string -->
-                <div id="status-loading-container" style="flex: 7; background: #e8f4fd; border: 2px dashed #3498db; border-radius: 8px; padding: 12px; min-height: 14px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                <div style="display: flex; align-items: center; justify-content: center; gap: 10px; color: #3498db; font-weight: bold; font-size: 12px;">
-                <marquee hspace="-45" vspace="" behavior="" height="20" text-align="bottom" style="font-size: 14px><font color="white">
-                <div><b>Malipo yanafanyika kupitia mtandao wa AzamPay. &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp; Voucher yako itajitokeza hapa utapoweka PIN kwenye simu yako. &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp; Vilevile utapokea SMS yenye Voucher yako kutoka 0753 476 850.</b></div>
-                </marquee> </div></div>
+        // 2. Background Polling Engine
+        var statusChecker = setInterval(function() {
+            if (!referenceId) return; // Guard clause if missing reference mapping targets
             
-            <!-- RIGHT BOX (30%): Holds the copy link trigger button completely hidden until payment clears successfully -->
+            // Checks your local DB status file silently behind the scenes
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "check_payment_status.php?ref=" + encodeURIComponent(referenceId), true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    
+                    // Trigger automation workflows instantly when payment status switches to complete
+                    if (response.status === "COMPLETED" || response.voucher_code) {
+                        clearInterval(statusChecker); // Stop the polling loops immediately
+                        handleSuccessfulPayment(response.voucher_code);
+                    }
+                }
+            };
+            xhr.send();
+        }, 3000); // Polls database every 3 seconds
+
+        // 3. UI and Network Bridge Execution Routine
+        function handleSuccessfulPayment(voucherCode) {
+            // Update Title Text Styling to Green Success State
+            var headline = document.getElementById('payment-headline');
+            headline.className = "success-color";
+            headline.innerText = "✓ Malipo Yamekamilika!";
+            
+            // Adjust Subtext Instructions
+            document.getElementById('payment-subtext').innerHTML = "Kifurushi chako kimeamilishwa kikamilifu. <b>Tunakuunganisha kwenye Internet sasa hivi...</b>";
+            
+            // Swap out Marquee Scroller area for the functional clear Voucher view
+            var textContainer = document.getElementById('status-loading-container');
+            textContainer.className = "voucher-success-box";
+            textContainer.innerHTML = "<span>" + voucherCode + "</span>";
+            
+            // Reveal the Backup NAKILI manual button framework
+            document.getElementById('copy-button-container').style.display = "block";
+            document.getElementById('copy-btn-trigger').setAttribute('data-voucher', voucherCode);
+
+            // AUTO-LOGIN TRIGGER: Redirects browser window immediately to open access
+            setTimeout(function() {
+                recharge(fixedDeviceId, clientMac);
+            }, 2500); // 2.5 seconds window buffer to allow visibility of generated code
+        }
+
+        // Manual backup fallback mechanism
+        function copyVoucherToClipboard() {
+            var btn = document.getElementById('copy-btn-trigger');
+            var voucherText = btn.getAttribute('data-voucher');
+            if (voucherText) {
+                navigator.clipboard.writeText(voucherText);
+                alert("Voucher imenakiliwa kwa ufanisi: " + voucherText);
+                recharge(fixedDeviceId, clientMac);
+            }
+        }
+
+        function closeThisWindow() {
+            window.close();
+        }
+    </script>
+</head>
+<body>
+
+<?php if ($httpStatusCode === 200): ?>
+    <div class="receipt-card" style="position: relative; overflow: hidden; padding-top: 40px;">
+        <img src="logo.png" alt="TANConnect Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
+        <span class="close-btn" onclick="closeThisWindow()">&times;</span>
+
+        <!-- Starts with structural transit-color blue text theme style -->
+        <h2 id="payment-headline" class="transit-color" style="margin-bottom: 15px; font-size: 16px; font-weight: bold; transition: color 0.4s ease;">Ombi la Malipo Umetumiwa!</h2>
+        <p id="payment-subtext" style="font-size: 14px; color: black; line-height: 1.5; margin-top: 5px;">
+            Tafadhali weka (PIN) kwenye simu yako kuruhusu malipo ya <b>Tsh <?php echo htmlspecialchars($amount); ?></b> kwenda TANConnect Wi-Fi.
+        </p>
+
+        <!-- CONTAINER FOR DYNAMIC DATA POPPING INLINE -->
+        <div id="voucher-display-box" style="gap: 10px; display: flex; align-items: center; justify-content: space-between; margin: 10px 0; width: 100%; box-sizing: border-box;">
+            
+            <!-- LEFT BOX (Dynamic Sizing Contexts) -->
+            <div id="status-loading-container" style="flex: 7; background: #e8f4fd; border: 2px dashed #3498db; border-radius: 8px; padding: 12px; min-height: 55px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div style="display: flex; align-items: center; justify-content: center; color: #3498db; font-weight: bold; font-size: 12px; width: 100%;">
+                    <marquee behavior="scroll" direction="left" scrollamount="4" style="font-size: 13px; font-weight: bold; width: 100%;">
+                        Malipo yanafanyika kupitia mtandao wa AzamPay. &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp; Voucher yako itajitokeza hapa utapoweka PIN kwenye simu yako. &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp; Vilevile utapokea SMS yenye Voucher yako kutoka NIT Africa Solutions.
+                    </marquee>
+                </div>
+            </div>
+            
+            <!-- RIGHT BOX (Holds the copy link trigger button - hidden initially) -->
             <div id="copy-button-container" style="flex: 3; display: none; min-height: 55px; box-sizing: border-box;">
-                <!-- Buttons styles adjusted with relative positioning parameters to frame tightly inside the small box -->
-               <button onclick="copyVoucherToClipboard()" id="copy-btn-trigger" style="width: 100%; height: 55px; background: green; color: white;" class="btn-portal">NAKILI</button>
-</div></div> <footer style="padding: 6px 6px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 10px; color: #555555; background-color: #fafafa;">
-  <p><b> © 2026 NIT Africa Solutions Ltd.</b> All Rights Reserved.<b><br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup></b> is a registered trademark of <br><a href= https://nitafricasolutions-production-2f54.up.railway.app style="color: #0066cc; font-weight: 500;"> NIT Africa Solutions Limited</a></p>
+                <button onclick="copyVoucherToClipboard()" id="copy-btn-trigger" data-voucher="" style="width: 100%; height: 55px; background: green; color: white;" class="btn-portal">NAKILI</button>
+            </div>
+        </div> 
+
+        <footer style="padding: 6px 6px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 10px; color: #555555; background-color: #fafafa; margin-top: 15px;">
+            <p><b>© 2026 NIT Africa Solutions Ltd.</b> All Rights Reserved.<b><br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">®</sup></b> is a registered trademark of <br><a href="https://nitafricasolutions-production-2f54.up.railway.app" target="_blank" style="color: #0066cc; font-weight: 500;">NIT Africa Solutions Limited</a></p>
+        </footer>
+    </div>
+<?php endif; ?>
+
 </body>
- </html>       
+</html>
+
        
     <?php else: ?>
+
+
 <!DOCTYPE html>
 <html lang="sw">
 <head>
@@ -302,6 +390,9 @@ $conn->close();
 </body>
 </html>
 <?php endif; ?> 
+
+
+
 <script>
 // 1. Grab the unique transaction tracking ID generated for this session
 var activeTxId = "<?php echo $transactionId; ?>"; 
