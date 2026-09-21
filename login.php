@@ -297,21 +297,24 @@ if (planAmount === 500) {
                                 containerBox.style.display = "block";
                                 containerBox.style.padding = "0";
 
-                                containerBox.innerHTML = 
-                                    '<div style="font-size: 28px; font-weight: bold; color: #ff6600; letter-spacing: 2px; border: 2px dashed #ff6600; background-color: #fff5eb; text-align: center; width: 100%; padding: 12px; border-radius: 8px; box-sizing: border-box; margin-bottom: 15px;">' + 
-                                        '<span id="raw-pin-string">' + trueVoucherCode + '</span>' +
-                                    '</div>' +
-                                    '<div style="width: 100%; box-sizing: border-box;">' +
-                                        '<button type="button" onclick="executeManualPhoneLoginInline(\'' + clientMac + '\', \'' + trueVoucherCode + '\')" class="btn-portal btn-blue">' +
-                                            '🚀 INGIA MTANDAONI (HAPA HAPA)' +
-                                        '</button>' +
-                                        '<div onclick="copyInlineText(\'' + trueVoucherCode + '\')" class="copy-btn-link">' +
-                                            '📋 Nakili Vocha (Copy)' +
-                                        '</div>' +
-                                        '<button type="button" onclick="alert(\'Salama! Vocha yako haijatumika kwenye simu hii. Unaweza kuandika au kunakili namba hii na kuiweka kwenye Laptop yako kupitia ukurasa wa HODI ili uingie mtandaoni.\');" class="btn-portal btn-outline">' +
-                                            '💻 NITATUMIA KWENYE LAPTOP' +
-                                        '</button>' +
-                                    '</div>';
+                               containerBox.innerHTML = 
+    '<div style="font-size: 28px; font-weight: bold; color: #ff6600; letter-spacing: 2px; border: 2px dashed #ff6600; background-color: #fff5eb; text-align: center; width: 100%; padding: 15px; border-radius: 8px; box-sizing: border-box;">' +
+        '<span id="raw-pin-string">' + trueVoucherCode + '</span>' +
+    '</div>' +
+    '<div style="width: 100%; box-sizing: border-box; margin-top: 15px;">' +
+        
+        // BUTTON 1: GREEN COPY BUTTON
+        '<button type="button" onclick="copyInlineText(\'' + trueVoucherCode + '\')" style="display: block; width: 100%; padding: 14px; background: #27ae60; color: white; font-weight: bold; border: 2px solid darkgreen; border-radius: 8px; cursor: pointer; margin-top: 10px; font-size: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">' +
+            '📋 NAKILI VOCHA (COPY CODE)' +
+        '</button>' +
+        
+        // BUTTON 2: BLUE AUTO-LOGIN CONNECT BUTTON
+        '<button type="button" onclick="executeManualPhoneLoginInline(\'' + clientMac + '\', \'' + trueVoucherCode + '\')" style="display: block; width: 100%; padding: 14px; background: #1e3c72; color: white; font-weight: bold; border: 2px solid #152b52; border-radius: 8px; cursor: pointer; margin-top: 12px; font-size: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">' +
+            '🚀 INGIA MTANDAONI (CONNECT NOW)' +
+        '</button>' +
+
+    '</div>';
+
                             }
                         }
                     })
