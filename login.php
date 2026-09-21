@@ -253,13 +253,15 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
                         if (upperStatus === 'USED' || upperStatus === 'SUCCESS' || upperStatus === 'COMPLETED') {
                             clearInterval(checkInterval);
 
-                            var planAmount = "<?php echo htmlspecialchars($amount); ?>";
-                            var planDuration = (planAmount === "500") ? "Masaa 6" : 
-                                               (planAmount === "1000") ? "Siku 1" : 
-                                               (planAmount === "3000") ? "Siku 4" : 
-                                               (planAmount === "5000") ? "Siku 7" : 
-                                               (planAmount === "10000") ? "Siku 15" : 
-                                               (planAmount === "20000") ? "Siku 30" : "Siku 30";
+                           // Replace your old planDuration lines with this corrected timeline allocation map:
+var planAmount = "<?php echo htmlspecialchars($amount); ?>";
+var planDuration = (planAmount === "500") ? "Masaa 6" : 
+                   (planAmount === "1000") ? "Siku 1" : 
+                   (planAmount === "3000") ? "Siku 4" : 
+                   (planAmount === "5000") ? "Siku 7" : 
+                   (planAmount === "10000") ? "Siku 15" : 
+                   (planAmount === "20000") ? "Siku 30" : "Siku 0";
+
 
                             var headlineElement = document.getElementById('payment-headline');
                             if (headlineElement) {
