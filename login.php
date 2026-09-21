@@ -305,12 +305,12 @@ if (planAmount === 500) {
         
         // BUTTON 1: GREEN COPY BUTTON
         '<button type="button" onclick="copyInlineText(\'' + trueVoucherCode + '\')" style="display: block; width: 100%; padding: 14px; background: #27ae60; color: white; font-weight: bold; border: 2px solid darkgreen; border-radius: 8px; cursor: pointer; margin-top: 10px; font-size: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">' +
-            '📋 NAKILI VOCHA (COPY CODE)' +
+            '📋 NAKILI' +
         '</button>' +
         
         // BUTTON 2: BLUE AUTO-LOGIN CONNECT BUTTON
         '<button type="button" onclick="executeManualPhoneLoginInline(\'' + clientMac + '\', \'' + trueVoucherCode + '\')" style="display: block; width: 100%; padding: 14px; background: #1e3c72; color: white; font-weight: bold; border: 2px solid #152b52; border-radius: 8px; cursor: pointer; margin-top: 12px; font-size: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">' +
-            '🚀 INGIA MTANDAONI (CONNECT NOW)' +
+            '🚀 UNGANISHA' +
         '</button>' +
 
     '</div>';
