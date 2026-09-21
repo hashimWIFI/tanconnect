@@ -57,10 +57,11 @@ if (!$dbResult) {
     // ---- LIGHTWEIGHT FIREWALL-SAFE NTFY ALERT SYSTEM ----
 
     // 1. Build your alert text content bundle
-    $alertText  = "⚠️ TANConnect WiFi Alert ⚠️\n";
-    $alertText .= "Voucher Tier OUT OF STOCK!\n";
-    $alertText .= "• Price Tier: " . number_format($amount) . " TZS\n";
-    $alertText .= "• Time: " . date("Y-m-d H:i:s");
+  $alertText = "⚠️ TANConnect WiFi Alert ⚠️\n";
+$alertText .= "Voucher Tier OUT OF STOCK!\n";
+$alertText .= "• Price Tier: " . number_format((int)$amount) . " TZS\n";
+$alertText .= "• Time: " . date("Y-m-d H:i:s");
+
 
 
     // 2. Configure HTTP header streaming contexts
