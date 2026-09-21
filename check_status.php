@@ -36,7 +36,7 @@ try {
         if ($row['status'] === 'SUCCESS' || $row['status'] === 'USED') {
             echo json_encode([
                 "status" => "SUCCESS",
-                "voucher" => $row['voucher_code'] // Feeds the code perfectly to your JavaScript data.voucher reader!
+                "voucher_code" => $row['voucher_code'] // Feeds the code perfectly to your JavaScript data.voucher reader!
             ]);
         } else {
             echo json_encode(["status" => "Pending"]);
