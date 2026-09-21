@@ -178,20 +178,28 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TANConnect - SUCCESS REPORT</title>
-    <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; text-align: center; padding: 40px 15px; color: #2c3e50; margin: 0; }
-        .receipt-card { background: white; max-width: 450px; margin: 0 auto; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; position: relative; }
-        .success-color { color: forestgreen !important; margin-bottom: 10px; font-size: 20px; font-weight: bold; }
-        .error-color { color: #e74c3c; font-size: 14px; font-weight: bold; }
-        .transit-color { color: #3498db; margin-bottom: 10px; font-size: 16px; font-weight: bold; }
-        .btn-portal { background: #3498db; color: white; border: 2px solid darkgreen; padding: 12px; font-size: 14px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 2px; width: 100%; box-sizing: border-box; font-weight: bold; }
-        .btn-blue { background: #1e3c72 !important; border-color: #152b52 !important; margin-top: 15px; }
-        .btn-outline { background: transparent !important; border: 2px solid #bdc3c7 !important; color: #7f8c8d !important; margin-top: 10px; }
-        .close-btn { position: absolute; top: 12px; right: 16px; font-weight: bold; font-size: 30px; cursor: pointer; color: #64748b; }
-        .btn-portal:hover { filter: brightness(0.95); }
-        .voucher-success-box { font-size: 26px !important; font-weight: bold !important; color: #ff6600 !important; letter-spacing: 2px; border: 2px dashed #ff6600 !important; background-color: #fff5eb !important; text-align: center; justify-content: center; width: 100%; padding: 15px; border-radius: 8px; box-sizing: border-box; }
-        .copy-btn-link { font-size: 13px; color: #ff6600; text-decoration: underline; cursor: pointer; display: inline-block; margin-top: 8px; font-weight: bold; }
-    </style>
+   <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; text-align: center; padding: 40px 15px; color: #2c3e50; margin: 0; }
+    .receipt-card { background: white; max-width: 450px; margin: 0 auto; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; position: relative; }
+    
+    /* SUCCESS & COLOR CODES */
+    .success-color { color: forestgreen !important; margin-bottom: 10px; font-size: 20px; font-weight: bold; }
+    .error-color { color: #e74c3c; font-size: 14px; font-weight: bold; }
+    .transit-color { color: #3498db; margin-bottom: 10px; font-size: 16px; font-weight: bold; }
+    
+    /* VOUCHER ORANGE CONTAINER LAYER */
+    .voucher-success-box { font-size: 28px !important; font-weight: bold !important; color: #ff6600 !important; letter-spacing: 2px; border: 2px dashed #ff6600 !important; background-color: #fff5eb !important; text-align: center; justify-content: center; width: 100%; padding: 15px; border-radius: 8px; box-sizing: border-box; margin: 15px 0; }
+    
+    /* 🚀 BUTTON INTERFACE ELEMENTS (Missing styles restored) */
+    .btn-portal { display: block; width: 100%; box-sizing: border-box; background: #3498db; color: white; border: 2px solid darkgreen; padding: 14px 20px; font-size: 15px; border-radius: 8px; cursor: pointer; text-decoration: none; margin-top: 10px; font-weight: bold; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s ease; }
+    .btn-blue { background: #0033a0 !important; border-color: #002270 !important; margin-top: 15px; }
+    .btn-outline { background: transparent !important; border: 2px solid #bdc3c7 !important; color: #7f8c8d !important; margin-top: 10px; }
+    .btn-portal:hover { filter: brightness(0.9); transform: translateY(-1px); }
+    
+    .copy-btn-link { font-size: 13px; color: #ff6600; text-decoration: underline; cursor: pointer; display: block; margin: 12px auto; font-weight: bold; text-align: center; }
+    .close-btn { position: absolute; top: 12px; right: 16px; font-weight: bold; font-size: 30px; cursor: pointer; color: #64748b; line-height: 1; }
+</style>
+
     <script type="text/javascript">
         var fixedDeviceId = "8600081897";
         var clientMac = "<?php echo htmlspecialchars($macAddress); ?>";
