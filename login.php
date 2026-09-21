@@ -255,13 +255,25 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
 
                            // Replace your old planDuration lines with this corrected timeline allocation map:
                           // Convert the value into a raw math integer immediately to strip out any string formatting characters
-                       var planAmount = "<?php echo htmlspecialchars($amount); ?>";
-                            var planDuration = (planAmount === "500") ? "Masaa 6" : 
-                                               (planAmount === "1000") ? "Siku 1" : 
-                                               (planAmount === "3000") ? "Siku 4" : 
-                                               (planAmount === "5000") ? "Siku 7" : 
-                                               (planAmount === "10000") ? "Siku 15" : 
-                                               (planAmount === "20000") ? "Siku 30" : "Siku 30";
+                      // 1. Force the dynamic amount into a clean mathematical integer (strips spaces/quotes)
+var planAmount = parseInt("<?php echo htmlspecialchars($amount); ?>", 10) || 0;
+
+// 2. Generate the duration strictly from the numeric amount value
+var planDuration = "Siku 0"; // Default fallback value
+
+if (planAmount === 500) {
+    planDuration = "Masaa 6";
+} else if (planAmount === 1000) {
+    planDuration = "Siku 1";
+} else if (planAmount === 3000) {
+    planDuration = "Siku 4";
+} else if (planAmount === 5000) {
+    planDuration = "Siku 7";
+} else if (planAmount === 10000) {
+    planDuration = "Siku 15";
+} else if (planAmount === 20000) {
+    planDuration = "Siku 30";
+}
 
 
                             var headlineElement = document.getElementById('payment-headline');
