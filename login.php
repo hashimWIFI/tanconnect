@@ -26,7 +26,6 @@ if (in_array($routingPrefix, ['74', '75', '76', '14'])) {
 } else {
     $provider = "Mpesa"; 
 }
-
 // ==========================================
 // 2. CONNECT TO AUTOMATED RAILWAY MYSQL DB
 // ==========================================
@@ -50,16 +49,13 @@ $stmt->close();
 
 if (!$dbResult) {
     date_default_timezone_set('Africa/Dar_es_Salaam');
-    // ---- LIGHTWEIGHT FIREWALL-SAFE NTFY ALERT SYSTEM ----
-
+    
     // 1. Build your alert text content bundle
     $alertText  = "⚠️ TANConnect WiFi Alert ⚠️\n";
     $alertText .= "Voucher Tier OUT OF STOCK!\n";
     $alertText .= "• Price Tier: " . number_format($amount) . " TZS\n";
     $alertText .= "• Time: " . date("Y-m-d H:i:s");
 
-
-    // 2. Configure HTTP header streaming contexts
     $streamOptions = [
         "http" => [
             "method"  => "POST",
@@ -69,13 +65,10 @@ if (!$dbResult) {
         ]
     ];
 
-
-    // 3. Fire the stream data packet directly to your unique topic URL channel
     $context = stream_context_create($streamOptions);
-    
     @file_get_contents("https://ntfy.sh/tanconnect_vouchers_stock_alert_2026", false, $context);
-
     // ----------------------------------------------------------------------------------
+   
     ?>
 <!DOCTYPE html>
 <html lang="sw">
@@ -238,9 +231,9 @@ $conn->close();
         .btn-portal:active { transform: scale(0.98); }
         .btn-portal:hover { filter: brightness(0.95); }
         .voucher-success-box { font-size: 22px !important; font-weight: bold !important; color: #2c3e50 !important; letter-spacing: 2px; border: 2px solid green !important; background-color: #f4fbf7 !important; text-align: center; justify-content: center; width: 100%; display: flex; align-items: center; }
+   
     </style>
-
-    <script type="text/javascript">
+        <script type="text/javascript">
         // 1. The Core Guanri Redirection Function mapping your fixed router ID profile
         function recharge(device_id, mac) {
             window.top.location.href = 'http://na.solnms.net/SOL/rechargeMobileManage.do?device_id=8600081897&mac_address=0&language=en&billType=0&roamingFlag=0&billing_mode=0';
@@ -318,8 +311,7 @@ $conn->close();
 
  <?php if ($httpStatusCode === 200): ?>
 
-
-    <div class="receipt-card" style="position: relative; overflow: hidden; padding-top: 40px;">
+        <div class="receipt-card" style="position: relative; overflow: hidden; padding-top: 40px;">
         <img src="logo.png" alt="TANConnect Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
         <span class="close-btn" onclick="closeThisWindow()">&times;</span>
 
@@ -328,7 +320,6 @@ $conn->close();
         <p id="payment-subtext" style="font-size: 14px; color: black; line-height: 1.5; margin-top: 5px;">
             Tafadhali weka (PIN) kwenye simu yako kuruhusu malipo ya <b>Tsh <?php echo htmlspecialchars($amount); ?></b> kwenda TANConnect Wi-Fi.
         </p>
-
         <!-- CONTAINER FOR DYNAMIC DATA POPPING INLINE -->
         <div id="voucher-display-box" style="gap: 10px; display: flex; align-items: center; justify-content: space-between; margin: 10px 0; width: 100%; box-sizing: border-box;">
             
@@ -390,7 +381,6 @@ $conn->close();
 </body>
 </html>
 <?php endif; ?> 
-
 
 <script>
     // =======================================================
