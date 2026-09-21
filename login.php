@@ -36,15 +36,6 @@ $db_user = getenv('MYSQLUSER') ?: ' ';
 $db_pass = getenv('MYSQLPASSWORD') ?: ' ';
 $db_name = getenv('MYSQLDATABASE') ?: ' ';
 
-// =======================================================
-// 2. DATABASE ROUTINE & VOUCHER ALLOCATION
-// =======================================================
-$db_host = getenv('MYSQLHOST') ?: '';
-$db_port = getenv('MYSQLPORT') ?: '';
-$db_user = getenv('MYSQLUSER') ?: '';
-$db_pass = getenv('MYSQLPASSWORD') ?: '';
-$db_name = getenv('MYSQLDATABASE') ?: '';
-
 $conn = new mysqli($db_host, $db_user, $db_pass, $db_name, $db_port);
 
 if ($conn->connect_error) {
