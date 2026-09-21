@@ -215,7 +215,8 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
                 fetch('check_status.php?tx_id=' + encodeURIComponent(activeTxId))
                     .then(response => response.json())
                     .then(data => {
-                        if (data.status === 'USED' || data.status === 'SUCCESS' || data.status === 'COMPLETED') {
+                        
+                           if (data.status === 'USED' || data.status === 'SUCCESS' || data.status === 'COMPLETED') {
                             clearInterval(checkInterval);
 
                             var planAmount = "<?php echo htmlspecialchars($amount); ?>";
@@ -237,6 +238,29 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
                             if (subtextElement) {
                                 subtextElement.innerHTML = "Umenunua kifurushi cha <b>Tsh " + parseInt(planAmount).toLocaleString() + "</b> kitatumika kwa <b>" + planDuration + "</b>.<br>Vocha yako imetengenezwa kikamilifu.";
                             }
+      // 1. Populate the raw voucher code string inside your responsive orange box container
+    var containerBox = document.getElementById('status-loading-container');
+    if (containerBox) {
+        var trueVoucherCode = data.voucher_code || data.code || data.voucher || "KODI-SAHIHI";
+        containerBox.className = "voucher-success-box";
+        containerBox.innerHTML = '<span id="raw-pin-string">' + trueVoucherCode + '</span>';
+        
+        // Pass the live voucher text to the button data attributes
+        document.getElementById('action-button-layer').setAttribute('data-voucher', trueVoucherCode);
+    }
+
+    // 2. UNROLL THE BUTTONS: Force the hidden choice layer to display instantly!
+    var actionBox = document.getElementById('action-button-layer');
+    if (actionBox) {
+        actionBox.style.display = "block";
+    }
+
+    // 3. Hide the progress bar marquee smoothly
+    var marqueeBox = document.getElementById('waiting-marquee-container');
+    if (marqueeBox) {
+        marqueeBox.style.display = "none";
+    }
+}
 
                             // Inject the dynamic voucher string code directly inside the production display card boxes
                             var containerBox = document.getElementById('status-loading-container');
@@ -313,17 +337,25 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
 
 <?php if ($httpStatusCode === 200): ?>
     <div class="receipt-card" style="position: relative; overflow: hidden; padding-top: 40px;">
+        <!-- Company Branding Logo Block -->
         <img src="logo.png" alt="TANConnect Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
         <span class="close-btn" onclick="closeThisWindow()">&times;</span>
 
-        <h2 id="payment-headline" class="transit-color" style="margin-bottom: 15px; font-size: 16px; font-weight: bold; transition: color 0.4s ease;">Ombi la Malipo Umetumiwa!</h2>
+        <!-- Dynamic Status Headings Controlled by the Verification Script Loop -->
+        <h2 id="payment-headline" class="transit-color" style="margin-bottom: 15px; font-size: 16px; font-weight: bold; transition: color 0.4s ease;">
+            Ombi la Malipo Umetumiwa!
+        </h2>
         
         <p id="payment-subtext" style="font-size: 14px; color: black; line-height: 1.5; margin-top: 5px;">
             Tafadhali weka (PIN) kwenye simu yako kuruhusu malipo ya <b>Tsh <?php echo htmlspecialchars(number_format(intval($amount))); ?></b> kwenda TANConnect Wi-Fi.
         </p>
         
+        <!-- ========================================================================= -->
+        <!-- THE DYNAMIC INTERACTIVE INTERFACE LAYER CONTAINER                         -->
+        <!-- ========================================================================= -->
         <div id="voucher-display-box" style="margin: 10px 0; width: 100%; box-sizing: border-box;">
-            <!-- Status box changes dynamically once the transaction loop shifts to green -->
+            
+            <!-- Standard Loading Container that Transforms into the Orange Voucher Box -->
             <div id="status-loading-container" style="background: #e8f4fd; border: 2px dashed #3498db; border-radius: 8px; padding: 12px; min-height: 55px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
                 <div id="waiting-marquee-container" style="display: flex; align-items: center; justify-content: center; color: #3498db; font-weight: bold; font-size: 12px; width: 100%;">
                     <marquee behavior="scroll" direction="left" scrollamount="4" style="font-size: 13px; font-weight: bold; width: 100%;">
@@ -332,31 +364,30 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
                 </div>
             </div>
             
-            <!-- STEP 1 CHOICE BUTTONS: Hidden by default, unrolls smoothly dynamically upon successful verification -->
-            <div id="action-button-layer" data-voucher="" style="display: none; margin-top: 15px; width: 100%;">
-                <div class="copy-btn-link" onclick="copyVoucherToClipboard()">📋 Nakili Vocha (Copy)</div>
-                
-                <button onclick="executeManualPhoneLogin()" class="btn-portal btn-blue">🚀 INGIA MTANDAONI (HAPA HAPA)</button>
-                
-                <button onclick="alert('Salama! Vocha yako haijatumika kwenye simu hii. Unaweza kuandika au kunakili namba hii na kuiweka kwenye Laptop yako kupitia ukurasa wa HODI ili uingie mtandaoni.');" class="btn-portal btn-outline">💻 NITATUMIA KWENYE LAPTOP</button>
+            <!-- CRUCIAL TARGET: The Action Button Layer Container Activated by JavaScript -->
+            <!-- The Javascript populates the buttons inside here and reveals this layer instantly on success -->
+            <div id="action-button-layer" style="display: none; margin-top: 15px; width: 100%;">
+                <!-- Dynamic Interactive Action Buttons inject here programmatically via script -->
             </div>
+            
         </div> 
 
+        <!-- System Identification Footer Block -->
         <footer style="padding: 6px 6px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 10px; color: #555555; background-color: #fafafa; margin-top: 15px;">
             <p><b>© 2026 NIT Africa Solutions Ltd.</b> All Rights Reserved.<b><br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">®</sup></b> is a registered trademark of <br><a href="https://railway.app" style="color: #0066cc; font-weight: 500;"> NIT Africa Solutions Limited</a></p>
         </footer>
     </div>
 <?php else: ?>
+    <!-- Standard Firewall-Safe Error Staging Card -->
     <div class="receipt-card" style="position: relative; overflow: hidden; padding-top: 40px;">
         <h2 class="error-color">Hitilafu Ya Mtandao Imejitokeza!</h2>
         <p style="font-size: 13px; color: black; line-height: 1.5; margin-top: 15px;">
-            Tumeshindwa kuwasiliana na <strong><?php echo htmlspecialchars($provider); ?></strong>. Tutaomba ujaribu tena baada ya muda mfupi.
+            Tumeshindwa kuwasiliana na mtandao wa malipo. Tutaomba ujaribu tena baada ya muda mfupi.
         </p>
-        <a href="javascript:history.back()" class="btn-portal" style="background: #e74c3c; border-color: darkred; color: white;">RUDI NYUMA (BACK HOME)</a>
+        <a href="javascript:history.back()" class="btn-portal" style="background: #e74c3c; border-color: darkred; color: white; padding: 12px; display: block; text-decoration: none; font-weight: bold; border-radius: 6px;">RUDI NYUMA (BACK HOME)</a>
     </div>
 <?php endif; ?>
 </body>
 </html>
 <?php exit(); ?>
-
 
