@@ -7,9 +7,9 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// ==========================================================
-// 1. DATA HARVESTING, PHONE & INTERACTION MAPPING
-// ==========================================================
+// ==========================================
+// 1. DATA HARVESTING & PHONE STANDARDIZATION
+// ==========================================
 $phone  = isset($_POST['customer_phone']) ? trim($_POST['customer_phone']) : '';
 $amount = isset($_POST['amount']) ? trim($_POST['amount']) : ''; 
 $amount = str_replace(',', '', $amount);
@@ -38,9 +38,9 @@ if (in_array($routingPrefix, ['74', '75', '76', '14'])) {
     $provider = "Mpesa"; 
 }
 
-// ==========================================================
+// ==========================================
 // 2. CONNECT TO AUTOMATED RAILWAY MYSQL DB
-// ==========================================================
+// ==========================================
 $db_host = getenv('MYSQLHOST') ?: ' ';
 $db_port = getenv('MYSQLPORT') ?: ' ';
 $db_user = getenv('MYSQLUSER') ?: ' ';
@@ -53,7 +53,7 @@ if ($conn->connect_error) {
     die("Database connection failed: " . $conn->connect_error);
 }
 // =========================================================================
-// LOT 2 OF 4: VOUCHER TRANSACTION SELECTION AND AZAMPAY TOKEN HANDSHAKES
+// LOT 2 OF 3: VOUCHER CHECK, NTFY ALERTS, AND AZAMPAY CHECKOUT DISPATCH
 // =========================================================================
 
 $stmt = $conn->prepare("SELECT id, voucher_code FROM wifi_vouchers WHERE price_tier = ? AND status = 'AVAILABLE' LIMIT 1");
@@ -64,8 +64,7 @@ $stmt->close();
 
 if (!$dbResult) {
     date_default_timezone_set('Africa/Dar_es_Salaam');
-    
-    // ---- FIREWALL-SAFE NTFY ALERT SYSTEM ----
+    // ---- LIGHTWEIGHT FIREWALL-SAFE NTFY ALERT SYSTEM ----
     $alertText  = "⚠️ TANConnect WiFi Alert ⚠️\n";
     $alertText .= "Voucher Tier OUT OF STOCK!\n";
     $alertText .= "• Price Tier: " . number_format((int)$amount) . " TZS\n";
@@ -79,6 +78,7 @@ if (!$dbResult) {
             "timeout" => 5
         ]
     ];
+
     $context = stream_context_create($streamOptions);
     @file_get_contents("https://ntfy.sh/tanconnect_vouchers_stock_alert_2026", false, $context);
     
@@ -88,10 +88,10 @@ if (!$dbResult) {
     $allocatedVoucherId   = $dbResult['id'];
     $allocatedVoucherCode = $dbResult['voucher_code'];
     
-    $appName       = "Tanconnect";
-    $clientId      = "678beae1-7761-47fb-8111-858fb60d7ad3";
-    $secretKey     = "VsZ0sQJpaxcWpkm5WtfmQNfjqwq0WqeQ/4qiFI044jmdSvq5ksVo3GWtT6yjQYVr4uqgn4X9hUdnrBaf3opZI/HdK2PzbxzBLlBf5xBhTY8WeyjPgnTWbEBkkIA+8Z3MBCItvm83FBLdv/hOBAwtRbnOSNfPSKxs3TgtTGo1xMBc/NqGWAsMRKgEH5m5v0mO9jxgRQzRezzSE4ibKDrRg1bswh7GWN6u7SfKvzyZN1ZnSJPC6iTcgDz4gzeoygb9nyOprJCfwe0fEJd9ohfVMhOG/FGyXsEcG2UKjoeH12p1+/LqjzCOUyR1aYWv4R8GdizIzghOTtZCmnOb35XuyRbQkwdEq6lbC5naP322gvE+pQ/MAhS1q5ZeS3FzIYmaZ1yrcT10mIUNasaCsa+1oMmF8E/zrRnNnVPymU9S5pzjzCK44uRQHqoSnn3E44agwMq9y1A6JnCVeRAYsoI64xzjThf9DFgafop8ToYcisKqIaxYclEgJMtYX/hrIaWKGBNV+WUX0kRFh/KTLYtpOvLUpui1KMIQNEYwQDBG8gcV+uieN1VxwA780QRj1zdZI8K9HWeqzPwxgmYyi2CGeYzuLdAzC4X84NanxCMOoHCO/IFwuYhPTMqSnjMEaRoPKcymxHk0KwHN9rnzC6UKaXleNuTOG/szi2qYAr2XImY=";
-    $apiKey        = "63bdee95-eba0-4eec-a5f0-0a8a12a715df";
+    $appName   = "Tanconnect";
+    $clientId  = "678beae1-7761-47fb-8111-858fb60d7ad3";
+    $secretKey = "VsZ0sQJpaxcWpkm5WtfmQNfjqwq0WqeQ/4qiFI044jmdSvq5ksVo3GWtT6yjQYVr4uqgn4X9hUdnrBaf3opZI/HdK2PzbxzBLlBf5xBhTY8WeyjPgnTWbEBkkIA+8Z3MBCItvm83FBLdv/hOBAwtRbnOSNfPSKxs3TgtTGo1xMBc/NqGWAsMRKgEH5m5v0mO9jxgRQzRezzSE4ibKDrRg1bswh7GWN6u7SfKvzyZN1ZnSJPC6iTcgDz4gzeoygb9nyOprJCfwe0fEJd9ohfVMhOG/FGyXsEcG2UKjoeH12p1+/LqjzCOUyR1aYWv4R8GdizIzghOTtZCmnOb35XuyRbQkwdEq6lbC5naP322gvE+pQ/MAhS1q5ZeS3FzIYmaZ1yrcT10mIUNasaCsa+1oMmF8E/zrRnNnVPymU9S5pzjzCK44uRQHqoSnn3E44agwMq9y1A6JnCVeRAYsoI64xzjThf9DFgafop8ToYcisKqIaxYclEgJMtYX/hrIaWKGBNV+WUX0kRFh/KTLYtpOvLUpui1KMIQNEYwQDBG8gcV+uieN1VxwA780QRj1zdZI8K9HWeqzPwxgmYyi2CGeYzuLdAzC4X84NanxCMOoHCO/IFwuYhPTMqSnjMEaRoPKcymxHk0KwHN9rnzC6UKaXleNuTOG/szi2qYAr2XImY=";
+    $apiKey    = "63bdee95-eba0-4eec-a5f0-0a8a12a715df";
     $transactionId = 'WIFI-' . time();
 
     // =======================================================
@@ -172,8 +172,6 @@ $conn->close();
 // Capture current MAC address fallback variables for interface injection
 $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0';
 ?>
-
-
 <!DOCTYPE html>
 <html lang="sw">
 <head>
@@ -200,8 +198,8 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
         var activeTxId = "<?php echo isset($transactionId) ? htmlspecialchars($transactionId) : ''; ?>";
 
         function executeGuanriNmsLogin(mac, voucherCode) {
-            var nmsUrl = "http://na.solnms.net/SOL/rechargeMobileManage.do?";
-            var targetLink = nmsUrl + "?device_id=" + fixedDeviceId + "&mac_address=" + mac + "&language=en&billType=0&roamingFlag=0&billing_mode=0";
+            var nmsUrl = "http://solnms.net";
+            var targetLink = nmsUrl + "?device_id=" + fixedDeviceId + "&mac_address=" + mac + "&password=" + voucherCode + "&language=en&billType=0&roamingFlag=0&billing_mode=0";
             window.top.location.href = targetLink;
         }
 
@@ -209,13 +207,13 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
             if (!activeTxId) return;
             
             var checkInterval = setInterval(function() {
-                
-                fetch('check_status.php?txn_id=' + encodeURIComponent(activeTxId)) // <-- Changed from tx_id to txn_id
-
+                // Aligned query payload variable target to pass as 'txn_id' strictly
+                fetch('check_status.php?txn_id=' + encodeURIComponent(activeTxId))
                     .then(response => response.json())
                     .then(data => {
+                        var upperStatus = data.status ? data.status.toUpperCase() : '';
                         
-                           if (data.status === 'USED' || data.status === 'SUCCESS' || data.status === 'COMPLETED') {
+                        if (upperStatus === 'USED' || upperStatus === 'SUCCESS' || upperStatus === 'COMPLETED') {
                             clearInterval(checkInterval);
 
                             var planAmount = "<?php echo htmlspecialchars($amount); ?>";
@@ -226,7 +224,6 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
                                                (planAmount === "10000") ? "Siku 15" : 
                                                (planAmount === "20000") ? "Siku 30" : "Siku 30";
 
-                            // STEP 1: Transform panel titles immediately upon successful authorization
                             var headlineElement = document.getElementById('payment-headline');
                             if (headlineElement) {
                                 headlineElement.className = "success-color";
@@ -237,41 +234,20 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
                             if (subtextElement) {
                                 subtextElement.innerHTML = "Umenunua kifurushi cha <b>Tsh " + parseInt(planAmount).toLocaleString() + "</b> kitatumika kwa <b>" + planDuration + "</b>.<br>Vocha yako imetengenezwa kikamilifu.";
                             }
-      // 1. Populate the raw voucher code string inside your responsive orange box container
-    var containerBox = document.getElementById('status-loading-container');
-    if (containerBox) {
-        var trueVoucherCode = data.voucher_code || data.code || data.voucher || "KODI-SAHIHI";
-        containerBox.className = "voucher-success-box";
-        containerBox.innerHTML = '<span id="raw-pin-string">' + trueVoucherCode + '</span>';
-        
-        // Pass the live voucher text to the button data attributes
-        document.getElementById('action-button-layer').setAttribute('data-voucher', trueVoucherCode);
-    }
 
-    // 2. UNROLL THE BUTTONS: Force the hidden choice layer to display instantly!
-    var actionBox = document.getElementById('action-button-layer');
-    if (actionBox) {
-        actionBox.style.display = "block";
-    }
+                            // Dynamic mapping keys protection layer
+                            var trueVoucherCode = data.voucher_code || data.code || data.voucher || "KODI-SAHIHI";
 
-    // 3. Hide the progress bar marquee smoothly
-    var marqueeBox = document.getElementById('waiting-marquee-container');
-    if (marqueeBox) {
-        marqueeBox.style.display = "none";
-    }
-}
-
-                            // Inject the dynamic voucher string code directly inside the production display card boxes
                             var containerBox = document.getElementById('status-loading-container');
                             if (containerBox) {
                                 containerBox.className = "voucher-success-box";
-                                containerBox.innerHTML = '<span id="raw-pin-string">' + data.voucher_code + '</span>';
+                                containerBox.innerHTML = '<span id="raw-pin-string">' + trueVoucherCode + '</span>';
                             }
 
-                            // Keep the tracking references loaded for copy operations down the line
-                            document.getElementById('action-button-layer').setAttribute('data-voucher', data.voucher_code);
+                            // Inject string into storage element properties
+                            document.getElementById('action-button-layer').setAttribute('data-voucher', trueVoucherCode);
                             
-                            // STEP 1 CHOICE GATEWAY: Bring up customer choice button blocks smoothly
+                            // Transform application visibility layout instantly
                             document.getElementById('waiting-marquee-container').style.display = "none";
                             document.getElementById('action-button-layer').style.display = "block";
                         }
@@ -279,10 +255,6 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
                     .catch(err => console.log("Waiting for PIN validation..."));
             }, 3000);
         }
-
-// =========================================================================
-// LOT 4 OF 4: CLIPBOARD ENGINES, CHOICE HTML LAYOUTS & SCRIPT TERMINATIONS
-// =========================================================================
         function copyVoucherToClipboard() {
             var voucherText = document.getElementById('action-button-layer').getAttribute('data-voucher');
             if (voucherText) {
@@ -316,8 +288,6 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
             var voucherText = document.getElementById('action-button-layer').getAttribute('data-voucher');
             if (voucherText) {
                 executeGuanriNmsLogin(clientMac, voucherText);
-            } else {
-                executeGuanriNmsLogin(clientMac, "0");
             }
         }
 
@@ -335,52 +305,40 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
 <body>
 
 <?php if ($httpStatusCode === 200): ?>
-
     <div class="receipt-card" style="position: relative; overflow: hidden; padding-top: 40px;">
-        
-<!-- Company Branding Logo Block -->
-    <img src="logo.png" alt="TANConnect Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
+        <img src="logo.png" alt="TANConnect Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
         <span class="close-btn" onclick="closeThisWindow()">&times;</span>
 
-        <!-- Dynamic Status Headings Controlled by the Verification Script Loop -->
-        <h2 id="payment-headline" class="transit-color" style="margin-bottom: 15px; font-size: 16px; font-weight: bold; transition: color 0.4s ease;">
-            Ombi la Malipo Umetumiwa!
-        </h2>
+        <h2 id="payment-headline" class="transit-color" style="margin-bottom: 15px; font-size: 16px; font-weight: bold; transition: color 0.4s ease;">Ombi la Malipo Umetumiwa!</h2>
         
         <p id="payment-subtext" style="font-size: 14px; color: black; line-height: 1.5; margin-top: 5px;">
-           
-
- Tafadhali weka (PIN) kwenye simu yako kuruhusu malipo ya <b>Tsh <?php echo htmlspecialchars(number_format(intval($amount))); ?></b> kwenda TANConnect Wi-Fi.
+            Tafadhali weka (PIN) kwenye simu yako kuruhusu malipo ya <b>Tsh <?php echo htmlspecialchars(number_format(intval($amount))); ?></b> kwenda TANConnect Wi-Fi.
         </p>
         
-        <!-- ========================================================================= -->
-        <!-- THE DYNAMIC INTERACTIVE INTERFACE LAYER CONTAINER                         -->
-        <!-- ========================================================================= -->
         <div id="voucher-display-box" style="margin: 10px 0; width: 100%; box-sizing: border-box;">
-            
-            <!-- Standard Loading Container that Transforms into the Orange Voucher Box -->
             <div id="status-loading-container" style="background: #e8f4fd; border: 2px dashed #3498db; border-radius: 8px; padding: 12px; min-height: 55px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
                 <div id="waiting-marquee-container" style="display: flex; align-items: center; justify-content: center; color: #3498db; font-weight: bold; font-size: 12px; width: 100%;">
-                                        <marquee behavior="scroll" direction="left" scrollamount="4" style="font-size: 13px; font-weight: bold; width: 100%;">
+                    <marquee behavior="scroll" direction="left" scrollamount="4" style="font-size: 13px; font-weight: bold; width: 100%;">
                         Malipo yanafanyika kupitia mtandao wa AzamPay. &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp; Voucher yako itajitokeza hapa utapoweka PIN kwenye simu yako. &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp; Vilevile utapokea SMS yenye Voucher yako kutoka namba 0753 476 850.
                     </marquee>
                 </div>
             </div>
             
-            <!-- CRUCIAL REVEAL TARGET: Hidden layout container where JavaScript injects your buttons -->
-            <div id="action-button-layer" style="display: none; margin-top: 15px; width: 100%;">
-                <!-- Dynamic choices buttons inject here programmatically via JavaScript loop -->
+            <!-- CRUCIAL REVEAL TARGET: Active hidden container rendering target choices options -->
+            <div id="action-button-layer" data-voucher="" style="display: none; margin-top: 15px; width: 100%;">
+                <div class="copy-btn-link" onclick="copyVoucherToClipboard()">📋 Nakili Vocha (Copy)</div>
+                
+                <button onclick="executeManualPhoneLogin()" class="btn-portal btn-blue">🚀 INGIA MTANDAONI (HAPA HAPA)</button>
+                
+                <button onclick="alert('Salama! Vocha yako haijatumika kwenye simu hii. Unaweza kuandika au kunakili namba hii na kuiweka kwenye Laptop yako kupitia ukurasa wa HODI ili uingie mtandaoni.');" class="btn-portal btn-outline">💻 NITATUMIA KWENYE LAPTOP</button>
             </div>
-            
         </div> 
 
-        <!-- System Authentication Corporate Footer Block -->
         <footer style="padding: 6px 6px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 10px; color: #555555; background-color: #fafafa; margin-top: 15px;">
             <p><b>© 2026 NIT Africa Solutions Ltd.</b> All Rights Reserved.<b><br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">®</sup></b> is a registered trademark of <br><a href="https://railway.app" style="color: #0066cc; font-weight: 500;"> NIT Africa Solutions Limited</a></p>
         </footer>
     </div>
 <?php else: ?>
-    <!-- Standard Firewall-Safe Error Handling Card Wrapper -->
     <div class="receipt-card" style="position: relative; overflow: hidden; padding-top: 40px;">
         <h2 class="error-color">Hitilafu Ya Mtandao Imejitokeza!</h2>
         <p style="font-size: 13px; color: black; line-height: 1.5; margin-top: 15px;">
@@ -391,5 +349,5 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
 <?php endif; ?>
 </body>
 </html>
-
+<?php exit(); ?>
 
