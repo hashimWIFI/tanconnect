@@ -284,7 +284,58 @@ $conn->close();
                     </marquee>
                 </div>
             </div>
-            
+            <!-- ======================================================== -->
+<!-- PRODUCTION AUTOMATIC CAPTIVE PORTAL ROUTING ENGINE        -->
+<!-- ======================================================== -->
+<script>
+window.onload = function() {
+    var detectedMac = "0";
+
+    try {
+        // 1. Check deep browser paths to find the local router welcome template tab context
+        var sourceDocument = window.opener ? window.opener.document : (window.parent ? window.parent.document : null);
+        
+        if (sourceDocument) {
+            var cells = sourceDocument.getElementsByTagName('td');
+            for (var i = 0; i < cells.length; i++) {
+                if (cells[i].innerText.includes("MAC Address:")) {
+                    if (cells[i+1]) {
+                        // Strips out punctuation to match clean Netcom formatting guidelines
+                        detectedMac = cells[i+1].innerText.replace(/[^a-zA-Z0-9]/g, '').trim();
+                        break;
+                    }
+                }
+            }
+        }
+    } catch (e) {
+        console.log("Cross-origin navigation security handled smoothly.");
+    }
+
+    // 2. Set up the dynamic query string attributes for the GUANRI Netcom cloud NMS server
+    var nmsUrl = "http://solnms.net";
+    var params = {
+        'device_id': '8600081897',
+        'password': '<?php echo isset($voucherCode) ? $voucherCode : (isset($voucher["voucher_code"]) ? $voucher["voucher_code"] : "0"); ?>',
+        'mac_address': detectedMac, // <-- Captures and attaches the hardware address dynamically
+        'language': 'en',
+        'billType': '0',
+        'roamingFlag': '0',
+        'billing_mode': '0'
+    };
+
+    // Bundle the parameters cleanly into standard URL payload configurations
+    var queryString = Object.keys(params).map(function(key) {
+        return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
+    }).join('&');
+
+    // 3. Keep the PIN instruction visible for 4 seconds, then auto-execute the network login redirect
+    setTimeout(function() {
+        window.location.href = nmsUrl + "?" + queryString;
+    }, 4000);
+};
+</script>
+<!-- ======================================================== -->
+
             <div id="copy-button-container" style="flex: 3; display: none; min-height: 55px; box-sizing: border-box;">
                 <button onclick="copyVoucherToClipboard()" id="copy-btn-trigger" data-voucher="" style="width: 100%; height: 55px; background: green; color: white;" class="btn-portal">NAKILI</button>
             </div>
