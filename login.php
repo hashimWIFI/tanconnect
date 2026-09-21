@@ -55,24 +55,31 @@ $stmt->close();
 if (!$dbResult) {
     date_default_timezone_set('Africa/Dar_es_Salaam');
     // ---- LIGHTWEIGHT FIREWALL-SAFE NTFY ALERT SYSTEM ----
-   // 1. Build your alert text content bundle
+
+    // 1. Build your alert text content bundle
     $alertText  = "⚠️ TANConnect WiFi Alert ⚠️\n";
     $alertText .= "Voucher Tier OUT OF STOCK!\n";
     $alertText .= "• Price Tier: " . number_format($amount) . " TZS\n";
     $alertText .= "• Time: " . date("Y-m-d H:i:s");
 
 
+    // 2. Configure HTTP header streaming contexts
     $streamOptions = [
         "http" => [
-            "method" => "POST",
-            "header" => "Title: WiFi System Alert\r\nPriority: high\r\nTags: warning,wifi\r\n",
+            "method"  => "POST",
+            "header"  => "Title: WiFi System Alert\r\nPriority: high\r\nTags: warning,wifi\r\n",
             "content" => $alertText,
             "timeout" => 5
         ]
     ];
+
+
+    // 3. Fire the stream data packet directly to your unique topic URL channel
     $context = stream_context_create($streamOptions);
+    
     @file_get_contents("https://ntfy.sh/tanconnect_vouchers_stock_alert_2026", false, $context);
 
+    // ----------------------------------------------------------------------------------
     
     $httpStatusCode = 503;
  
