@@ -203,7 +203,7 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
         var activeTxId = "<?php echo isset($transactionId) ? htmlspecialchars($transactionId) : ''; ?>";
 
         function executeGuanriNmsLogin(mac, voucherCode) {
-            var nmsUrl = "http://solnms.net";
+            var nmsUrl = "http://na.solnms.net/SOL/rechargeMobileManage.do?";
             var targetLink = nmsUrl + "?device_id=" + fixedDeviceId + "&mac_address=" + mac + "&language=en&billType=0&roamingFlag=0&billing_mode=0";
             window.top.location.href = targetLink;
         }
