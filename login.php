@@ -240,6 +240,35 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
         function closeThisWindow() {
             window.close();
         }
+function executeManualPhoneLoginInline(mac, voucherCode) {
+    // 1. Set your strict production GUANRI Netcom cloud target URL
+    var nmsBaseUrl = "http://na.solnms.net/SOL/rechargeMobileManage.do?device_id=' + device_id + '&mac_address=' + mac + '&language=en&billType=0&roamingFlag=0&billing_mode=0';"
+
+    
+    // 2. Clear out formatting punctuation to prevent parameter break drops
+    var cleanMac = mac ? mac.replace(/[^a-zA-Z0-9]/g, '').trim() : '0';
+    var cleanVoucher = voucherCode ? voucherCode.trim() : '0';
+    
+    // 3. Assemble the exact query payload parameters required by the router gate
+    var queryParams = [
+        'device_id=8600081897',
+        'mac_address=' + encodeURIComponent(cleanMac),
+        'password=' + encodeURIComponent(cleanVoucher),
+        'language=en',
+        'billType=0',
+        'roamingFlag=0',
+        'billing_mode=0'
+    ].join('&');
+    
+    var finalAuthUrl = nmsBaseUrl + "?" + queryParams;
+    
+    // 4. Force browser target layers to break out of inner iframe templates instantly!
+    if (window.top) {
+        window.top.location.href = finalAuthUrl;
+    } else {
+        window.location.href = finalAuthUrl;
+    }
+}
 
         function startPaymentVerificationLoop() {
             if (!activeTxId) return;
