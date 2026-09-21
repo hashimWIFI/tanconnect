@@ -273,9 +273,7 @@ $conn->close();
 
         <h2 id="payment-headline" class="transit-color" style="margin-bottom: 15px; font-size: 16px; font-weight: bold; transition: color 0.4s ease;">Ombi la Malipo Umetumiwa!</h2>
         <p id="payment-subtext" style="font-size: 14px; color: black; line-height: 1.5; margin-top: 5px;">
-            Tafadhali weka (PIN) kwenye simu yako kuruhusu malipo ya <b>Tsh <?php echo htmlspecialchars(number_format($amount)); ?></b> kwenda TANConnect Wi-Fi.
-        </p>
-
+            Tafadhali weka (PIN) kwenye simu yako kuruhusu malipo ya <b>Tsh <?php echo htmlspecialchars(number_format(intval($amount))); ?></b> kwenda TANConnect Wi-Fi.</p>
         <div id="voucher-display-box" style="gap: 10px; display: flex; align-items: center; justify-content: space-between; margin: 10px 0; width: 100%; box-sizing: border-box;">
             <div id="status-loading-container" style="flex: 7; background: #e8f4fd; border: 2px dashed #3498db; border-radius: 8px; padding: 12px; min-height: 55px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
                 <div style="display: flex; align-items: center; justify-content: center; color: #3498db; font-weight: bold; font-size: 12px; width: 100%;">
