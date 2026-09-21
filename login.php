@@ -185,7 +185,7 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TANConnect - SUCCESS REPORT</title>
-    <style>
+       <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; text-align: center; padding: 40px 15px; color: #2c3e50; margin: 0; }
         .receipt-card { background: white; max-width: 450px; margin: 0 auto; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; position: relative; }
         
@@ -193,14 +193,16 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
         .error-color { color: #e74c3c; font-size: 14px; font-weight: bold; }
         .transit-color { color: #3498db; margin-bottom: 10px; font-size: 16px; font-weight: bold; }
         
-        .btn-portal { display: block; width: 100%; box-sizing: border-box; background: #3498db; color: white; border: 2px solid darkgreen; padding: 14px 20px; font-size: 15px; border-radius: 8px; cursor: pointer; text-decoration: none; margin-top: 10px; font-weight: bold; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s ease; }
-        .btn-blue { background: #1e3c72 !important; border-color: #152b52 !important; margin-top: 15px; }
-        .btn-outline { background: transparent !important; border: 2px solid #bdc3c7 !important; color: #7f8c8d !important; margin-top: 10px; }
+        /* 🚀 THE FIXED CRITICAL ACTION BUTTON CLASSES 🚀 */
+        .btn-portal { display: block !important; width: 100% !important; box-sizing: border-box !important; background: #3498db; color: white !important; border: 2px solid darkgreen !important; padding: 14px 20px !important; font-size: 15px !important; border-radius: 8px !important; cursor: pointer !important; text-decoration: none !important; margin-top: 15px !important; font-weight: bold !important; text-align: center !important; box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important; }
+        .btn-blue { background: #1e3c72 !important; border-color: #152b52 !important; }
+        .btn-outline { background: transparent !important; border: 2px solid #bdc3c7 !important; color: #7f8c8d !important; margin-top: 10px !important; }
         .btn-portal:hover { filter: brightness(0.95); }
         
         .close-btn { position: absolute; top: 12px; right: 16px; font-weight: bold; font-size: 30px; cursor: pointer; color: #64748b; line-height: 1; }
-        .copy-btn-link { font-size: 13px; color: #ff6600; text-decoration: underline; cursor: pointer; display: block; margin: 12px auto; font-weight: bold; text-align: center; }
+        .copy-btn-link { font-size: 13px !important; color: #ff6600 !important; text-decoration: underline !important; cursor: pointer !important; display: block !important; margin: 12px auto !important; font-weight: bold !important; text-align: center !important; }
     </style>
+
     
     <script type="text/javascript">
         var fixedDeviceId = "8600081897";
