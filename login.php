@@ -1,24 +1,19 @@
+
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-
-// =======================================================
-// 1. DATA HARVESTING & SIM CARD STANDARDIZATION
-// =======================================================
-$phone = isset($_POST['mobile_number']) ? trim($_POST['mobile_number']) : '';
-$amount = isset($_POST['price_tier']) ? trim($_POST['price_tier']) : '';
-
-// Clean currency markers if passed (e.g. "1,000 TZS" -> "1000")
-$amount = str_replace([' TZS', ',', ' '], '', $amount);
-
-// Harvest the customer's dynamic hardware MAC signature sent from the landing portal
-$macAddress = isset($_POST['mac_address']) ? trim($_POST['mac_address']) : '';
+// =========================================
+// 1. DATA HARVESTING & PHONE STANDARDIZATION
+// ==========================================
+$phone  = isset($_POST['customer_phone']) ? trim($_POST['customer_phone']) : '';
+$amount = isset($_POST['amount']) ? trim($_POST['amount']) : ''; 
+$amount = str_replace(',', '', $amount);
 
 if (substr($phone, 0, 1) === '0') {
     $phone = '255' . substr($phone, 1);
 }
 
-$routingPrefix = substr($phone, 3, 2);
+$routingPrefix = substr($phone, 3, 2); 
 
 if (in_array($routingPrefix, ['74', '75', '76', '14'])) {
     $provider = "Mpesa";
@@ -29,8 +24,17 @@ if (in_array($routingPrefix, ['74', '75', '76', '14'])) {
 } elseif (in_array($routingPrefix, ['62', '61'])) {
     $provider = "Halopesa";
 } else {
-    $provider = "Mpesa";
+    $provider = "Mpesa"; 
 }
+
+// ==========================================
+// 2. CONNECT TO AUTOMATED RAILWAY MYSQL DB
+// ==========================================
+$db_host = getenv('MYSQLHOST') ?: ' ';
+$db_port = getenv('MYSQLPORT') ?: ' ';
+$db_user = getenv('MYSQLUSER') ?: ' ';
+$db_pass = getenv('MYSQLPASSWORD') ?: ' ';
+$db_name = getenv('MYSQLDATABASE') ?: ' ';
 
 // =======================================================
 // 2. DATABASE ROUTINE & VOUCHER ALLOCATION
