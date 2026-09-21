@@ -316,7 +316,8 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
             Tafadhali weka (PIN) kwenye simu yako kuruhusu malipo ya <b>Tsh <?php echo htmlspecialchars(number_format(intval($amount))); ?></b> kwenda TANConnect Wi-Fi.
         </p>
         
-        <div id="voucher-display-box" style="margin: 10px 0; width: 100%; box-sizing: border-box;">
+       <div id="voucher-display-box" style="margin: 10px 0; width: 100%; box-sizing: border-box;">
+            <!-- Outer containment tracking boundary layout remains clean -->
             <div id="status-loading-container" style="background: #e8f4fd; border: 2px dashed #3498db; border-radius: 8px; padding: 12px; min-height: 55px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
                 <div id="waiting-marquee-container" style="display: flex; align-items: center; justify-content: center; color: #3498db; font-weight: bold; font-size: 12px; width: 100%;">
                     <marquee behavior="scroll" direction="left" scrollamount="4" style="font-size: 13px; font-weight: bold; width: 100%;">
@@ -325,13 +326,23 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
                 </div>
             </div>
             
-            <!-- CRUCIAL REVEAL TARGET: Active hidden container rendering target choices options -->
-            <div id="action-button-layer" data-voucher="" style="display: none; margin-top: 15px; width: 100%;">
-                <div class="copy-btn-link" onclick="copyVoucherToClipboard()">📋 Nakili Vocha (Copy)</div>
+            <!-- FIXED AND ALIGNED ACTION BUTTON TRACKING ENGINE INTERFACE LAYOUT -->
+            <div id="action-button-layer" data-voucher="" style="display: none; margin-top: 15px; width: 100%; box-sizing: border-box;">
                 
-                <button onclick="executeManualPhoneLogin()" class="btn-portal btn-blue">🚀 INGIA MTANDAONI (HAPA HAPA)</button>
+                <!-- BUTTON 1: DYNAMIC MANUAL LOGIN (The primary choice request tool) -->
+                <button type="button" onclick="executeManualPhoneLogin()" class="btn-portal btn-blue">
+                    🚀 INGIA MTANDAONI (HAPA HAPA)
+                </button>
                 
-                <button onclick="alert('Salama! Vocha yako haijatumika kwenye simu hii. Unaweza kuandika au kunakili namba hii na kuiweka kwenye Laptop yako kupitia ukurasa wa HODI ili uingie mtandaoni.');" class="btn-portal btn-outline">💻 NITATUMIA KWENYE LAPTOP</button>
+                <!-- LINK ACTION ELEMENT: Standardized copy-to-clipboard functionality -->
+                <div class="copy-btn-link" onclick="copyVoucherToClipboard()" style="display: block; margin: 12px auto; width: 100%; text-align: center;">
+                    📋 Nakili Vocha (Copy)
+                </div>
+                
+                <!-- BUTTON 2: DISMISSIVE CROSS-DEVICE REDIRECTION TOOL -->
+                <button type="button" onclick="alert('Salama! Vocha yako haijatumika kwenye simu hii. Unaweza kuandika au kunakili namba hii na kuiweka kwenye Laptop yako kupitia ukurasa wa HODI ili uingie mtandaoni.');" class="btn-portal btn-outline">
+                    💻 NITATUMIA KWENYE LAPTOP
+                </button>
             </div>
         </div> 
 
@@ -340,15 +351,17 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
         </footer>
     </div>
 <?php else: ?>
+    <!-- FAIL-SAFE LAYOUT ENGINE TRIPPED IF API PACKET SYSTEM CODE REJECTS TRANSITS -->
     <div class="receipt-card" style="position: relative; overflow: hidden; padding-top: 40px;">
-        <h2 class="error-color">Hitilafu Ya Mtandao Imejitokeza!</h2>
+        <h2 class="error-color" style="color: #e74c3c;">Hitilafu Ya Mtandao Imejitokeza!</h2>
         <p style="font-size: 13px; color: black; line-height: 1.5; margin-top: 15px;">
-            Tumeshindwa kuwasiliana na mtandao wa malipo. Tutaomba ujaribu tena baada ya muda mfupi.
+            Tumeshindwa kuwasiliana na mtandao wa malipo wa AzamPay. Tafadhali hakikisha kuwa simu yako iko hewani na ina salio la kutosha, kisha ujaribu tena.
         </p>
-        <a href="javascript:history.back()" class="btn-portal" style="background: #e74c3c; border-color: darkred; color: white; padding: 12px; display: block; text-decoration: none; font-weight: bold; border-radius: 6px;">RUDI NYUMA (BACK HOME)</a>
+        <a href="javascript:history.back()" class="btn-portal" style="background: #e74c3c; border-color: darkred; color: white; padding: 12px; display: block; text-decoration: none; font-weight: bold; border-radius: 6px; text-align: center; margin-top: 20px;">
+            RUDI NYUMA (BACK HOME)
+        </a>
     </div>
 <?php endif; ?>
 </body>
 </html>
-
 
