@@ -254,13 +254,16 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
                             clearInterval(checkInterval);
 
                            // Replace your old planDuration lines with this corrected timeline allocation map:
-var planAmount = "<?php echo htmlspecialchars($amount); ?>";
-var planDuration = (planAmount === "500") ? "Masaa 6" : 
-                   (planAmount === "1000") ? "Siku 1" : 
-                   (planAmount === "3000") ? "Siku 4" : 
-                   (planAmount === "5000") ? "Siku 7" : 
-                   (planAmount === "10000") ? "Siku 15" : 
-                   (planAmount === "20000") ? "Siku 30" : "Siku 0";
+                          // Convert the value into a raw math integer immediately to strip out any string formatting characters
+                        var numericAmount = parseInt("<?php echo htmlspecialchars($amount); ?>", 10);
+
+                       var planDuration = (numericAmount === 500)   ? "Masaa 6"  : 
+                          (numericAmount === 1000)  ? "Siku 1"   : 
+                          (numericAmount === 3000)  ? "Siku 4"   : 
+                          (numericAmount === 5000)  ? "Siku 7"   : 
+                          (numericAmount === 10000) ? "Siku 15"  : 
+                          (numericAmount === 20000) ? "Siku 30"  : "Siku 30";
+
 
 
                             var headlineElement = document.getElementById('payment-headline');
