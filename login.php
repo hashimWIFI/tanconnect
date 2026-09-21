@@ -173,9 +173,6 @@ $conn->close();
 $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0';
 ?>
 
-// =========================================================================
-// LOT 3 OF 4: INTERACTIVE INTERFACE STYLES & REAL-TIME VERIFICATION LOOPS
-// =========================================================================
 
 <!DOCTYPE html>
 <html lang="sw">
