@@ -392,89 +392,105 @@ $conn->close();
 <?php endif; ?> 
 
 
-
 <script>
-// 1. Grab the unique transaction tracking ID generated for this session
-var activeTxId = "<?php echo $transactionId; ?>"; 
+    // =======================================================
+    // GLOBAL CONSTANTS & VARIABLE HOOKS FROM PHP
+    // =======================================================
+    var activeTxId = "<?php echo htmlspecialchars($transactionId); ?>";
+    var fixedDeviceId = "8600081897";
+    
+    // Dynamically safely capture the user's incoming hardware MAC signature
+    var clientMac = "<?php echo htmlspecialchars($macAddress); ?>"; 
 
-function startPaymentVerificationLoop() {
-    // Check status in the background every 3000 milliseconds (3 seconds)
-    var checkInterval = setInterval(function() {
-        fetch('check_status.php?tx_id=' + activeTxId)
-            .then(response => response.json())
-            .then(data => {
-                // If fake_callback.php updates your database row status to USED or SUCCESS
-                if (data.status === 'USED' || data.status === 'SUCCESS') {
-                    clearInterval(checkInterval); // Kill background intervals completely
-                    
-                    // Pull package tier details directly from your active PHP settings
-                    var planAmount = "<?php echo htmlspecialchars($amount); ?>";
-                    var planDuration = (planAmount === "500") ? "Masaa 6" : (planAmount === "1000") ? "Siku 1" : (planAmount === "2000") ? "Siku 2" : (planAmount === "4000") ? "Siku 5" : (planAmount === "5000") ? "Siku 7" : (planAmount === "7000") ? "Siku 10" : (planAmount === "9000") ? "Siku 13" : (planAmount === "10000") ? "Siku 15" : (planAmount === "20000") ? "Siku 30" : "Siku 1";
-                    
-                    // DYNAMIC STATE UPGRADE: Morph headline typography elements from Transit Blue straight to Success Green
-                    var headlineElement = document.getElementById('payment-headline');
-                    if (headlineElement) {
-                        headlineElement.style.color = "#2ecc71"; 
-                        headlineElement.innerHTML = "✓ Malipo Yamekamilika!";
+    // 1. Core Guanri cloud platform verification redirect function
+    function executeGuanriNmsLogin(deviceId, mac) {
+        window.top.location.href = 'http://solnms.net' + deviceId + '&mac_address=' + mac + '&language=en&billType=0&roamingFlag=0&billing_mode=0';
+    }
+
+    // 2. Automated Polling Engine Workflow
+    function startPaymentVerificationLoop() {
+        var checkInterval = setInterval(function() {
+            // Using the precise endpoint file your code targets
+            fetch('check_status.php?tx_id=' + encodeURIComponent(activeTxId))
+                .then(response => response.json())
+                .then(data => {
+                    // Detect when payment has cleared successfully
+                    if (data.status === 'USED' || data.status === 'SUCCESS' || data.status === 'COMPLETED') {
+                        clearInterval(checkInterval); // Kill background thread
+
+                        var planAmount = "<?php echo htmlspecialchars($amount); ?>";
+                        var planDuration = (planAmount === "500") ? "Masaa 6" : 
+                                           (planAmount === "1000") ? "Siku 1" : 
+                                           (planAmount === "2000") ? "Siku 2" : 
+                                           (planAmount === "5000") ? "Siku 7" : "Siku 30";
+
+                        // 3. Dynamic UI Transformation to Success state
+                        var headlineElement = document.getElementById('payment-headline');
+                        if (headlineElement) {
+                            headlineElement.style.color = "#2ecc71";
+                            headlineElement.innerHTML = "✓ Malipo Yamekamilika!";
+                        }
+
+                        var subtextElement = document.getElementById('payment-subtext');
+                        if (subtextElement) {
+                            subtextElement.innerHTML = "Umenunua kifurushi cha <b>Tsh " + parseInt(planAmount).toLocaleString() + "</b> kitatumika kwa <b>" + planDuration + "</b>.<br><br><span style='color:#3498db; font-weight:bold;'>Tunakuunganisha kwenye Internet sasa hivi, tafadhali subiri...</span>";
+                        }
+
+                        // Pull dynamic voucher code generated from backend payload response data row
+                        var realPinCode = data.voucher_code; 
+
+                        // Update voucher display box values safely
+                        var leftContainerBox = document.getElementById('status-loading-container');
+                        var rightContainerBox = document.getElementById('copy-button-container');
+
+                        if (leftContainerBox && rightContainerBox) {
+                            leftContainerBox.innerHTML = '<span id="raw-pin-string" style="font-size: 20px; font-weight: bold; color: #2c3e50; letter-spacing: 1px;">' + realPinCode + '</span>';
+                            leftContainerBox.style.border = "3px solid #2ecc71";
+                            leftContainerBox.style.backgroundColor = "#ebf8f1";
+                            
+                            // Load voucher into button data property and display the copy button card layout row frame
+                            document.getElementById('copy-btn-trigger').setAttribute('data-voucher', realPinCode);
+                            rightContainerBox.style.display = "block";
+                        }
+
+                        // =======================================================
+                        // FULLY AUTOMATED REDIRECT WORKFLOW
+                        // Wait 3.5 seconds to let the user visually read the pin code box, then login instantly
+                        // =======================================================
+                        setTimeout(function() {
+                            executeGuanriNmsLogin(fixedDeviceId, clientMac);
+                        }, 3500);
                     }
+                })
+                .catch(err => console.log("Waiting for PIN validation..."));
+        }, 3000); // Polling rhythm frequency sequence executed every 3 seconds
+    }
 
-                    // Dynamically map amount and period confirmation notification text strings
-                    var subtextElement = document.getElementById('payment-subtext');
-                    if (subtextElement) {
-                        subtextElement.innerHTML = "Umenunua kifurushi cha <b>Tsh " + parseInt(planAmount).toLocaleString() + "</b> kitatumika kwa <b> " + planDuration + ".</b> Bonyeza NAKILI kuhifadhi voucher, kisha fuata maelekezo"; 
-                    }
-                    
-                    // INLINE REVEAL LOGIC: Capture our twin structural layer elements safely
-                    var masterDisplayFrame = document.getElementById('voucher-display-box');
-                    var leftContainerBox = document.getElementById('status-loading-container');
-                    var rightContainerBox = document.getElementById('copy-button-container');
-                    
-                    if (masterDisplayFrame && leftContainerBox && rightContainerBox) {
-                        var realPinCode = masterDisplayFrame.getAttribute('data-real-pin');
-                        
-                        // TARGET LEFT BOX: Turn its border emerald green, refresh background, and insert raw PIN strings cleanly
-                        leftContainerBox.innerHTML = `<span id="raw-pin-string" style="font-size: 20px; font-weight: bold; color: #2c3e50; letter-spacing: 1px;">${realPinCode}</span>`;
-                        leftContainerBox.style.border = "3px solid #2ecc71";
-                        leftContainerBox.style.backgroundColor = "#ebf8ff";
-                        
-                        // TARGET RIGHT BOX: Reveal your small right button box inline right next to it!
-                        rightContainerBox.style.display = "block";
-                    }
-                }
-            })
-            .catch(err => console.log("Waiting for PIN validation..."));
-    }, 3000);
-}
+    // 4. Manual Fallback Action Function (Copy button click backup layout check)
+    function copyVoucherToClipboard() {
+        var btn = document.getElementById('copy-btn-trigger');
+        var voucherText = btn.getAttribute('data-voucher');
+        
+        if (voucherText) {
+            navigator.clipboard.writeText(voucherText).then(function() {
+                alert("Voucher imenakiliwa kwa ufanisi! Kujaribu kuingia mtandaoni sasa hivi...");
+                executeGuanriNmsLogin(fixedDeviceId, clientMac);
+            });
+        }
+    }
 
-function copyVoucherToClipboard() {
-    var pinText = document.getElementById("raw-pin-string").innerText;
-    navigator.clipboard.writeText(pinText).then(function() {
-        alert("Voucher yako imenakiliwa! Bonyeza HODI kwenye ukurasa unaofuata, kisha ingiza/ PASTE namba ya voucher yako kuingia mtandaoni.");
-        window.location.href = "http://na.solnms.net/SOL/rechargeMobileManage.do?device_id=8600081897&mac_address=0&language=en&billType=0&roamingFlag=0&billing_mode=0";
-
-
-    }, function() {
-        window.location.href = "https://www.5wifi.net";
-    });
-}
-
-function closeThisWindow() {
-    window.close();
-    var hiddenExitLink = document.createElement('a');
-    hiddenExitLink.href = "about:blank"; 
-    hiddenExitLink.target = "_self";
-    document.body.appendChild(hiddenExitLink);
-    hiddenExitLink.click();
-    if (!window.closed) {
-        window.open('', '_self', '');
+    function closeThisWindow() {
         window.close();
+        if (!window.closed) {
+            window.open('', '_self', '');
+            window.close();
+        }
     }
-}
 
-// Global execution trigger point on canvas window frame launch
-window.onload = function() {
-    if (activeTxId !== "") {
-        startPaymentVerificationLoop();
-    }
-};
+    // 5. Global Initialization Trigger Engine Execution Point
+    window.onload = function() {
+        if (activeTxId !== "") {
+            startPaymentVerificationLoop();
+        }
+    };
 </script>
