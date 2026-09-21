@@ -209,7 +209,9 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
             if (!activeTxId) return;
             
             var checkInterval = setInterval(function() {
-                fetch('check_status.php?tx_id=' + encodeURIComponent(activeTxId))
+                
+                fetch('check_status.php?txn_id=' + encodeURIComponent(activeTxId)) // <-- Changed from tx_id to txn_id
+
                     .then(response => response.json())
                     .then(data => {
                         
@@ -333,9 +335,11 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
 <body>
 
 <?php if ($httpStatusCode === 200): ?>
+
     <div class="receipt-card" style="position: relative; overflow: hidden; padding-top: 40px;">
-        <!-- Company Branding Logo Block -->
-        <img src="logo.png" alt="TANConnect Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
+        
+<!-- Company Branding Logo Block -->
+    <img src="logo.png" alt="TANConnect Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
         <span class="close-btn" onclick="closeThisWindow()">&times;</span>
 
         <!-- Dynamic Status Headings Controlled by the Verification Script Loop -->
@@ -344,7 +348,9 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
         </h2>
         
         <p id="payment-subtext" style="font-size: 14px; color: black; line-height: 1.5; margin-top: 5px;">
-            Tafadhali weka (PIN) kwenye simu yako kuruhusu malipo ya <b>Tsh <?php echo htmlspecialchars(number_format(intval($amount))); ?></b> kwenda TANConnect Wi-Fi.
+           
+
+ Tafadhali weka (PIN) kwenye simu yako kuruhusu malipo ya <b>Tsh <?php echo htmlspecialchars(number_format(intval($amount))); ?></b> kwenda TANConnect Wi-Fi.
         </p>
         
         <!-- ========================================================================= -->
@@ -355,27 +361,26 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
             <!-- Standard Loading Container that Transforms into the Orange Voucher Box -->
             <div id="status-loading-container" style="background: #e8f4fd; border: 2px dashed #3498db; border-radius: 8px; padding: 12px; min-height: 55px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
                 <div id="waiting-marquee-container" style="display: flex; align-items: center; justify-content: center; color: #3498db; font-weight: bold; font-size: 12px; width: 100%;">
-                    <marquee behavior="scroll" direction="left" scrollamount="4" style="font-size: 13px; font-weight: bold; width: 100%;">
+                                        <marquee behavior="scroll" direction="left" scrollamount="4" style="font-size: 13px; font-weight: bold; width: 100%;">
                         Malipo yanafanyika kupitia mtandao wa AzamPay. &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp; Voucher yako itajitokeza hapa utapoweka PIN kwenye simu yako. &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp; Vilevile utapokea SMS yenye Voucher yako kutoka namba 0753 476 850.
                     </marquee>
                 </div>
             </div>
             
-            <!-- CRUCIAL TARGET: The Action Button Layer Container Activated by JavaScript -->
-            <!-- The Javascript populates the buttons inside here and reveals this layer instantly on success -->
+            <!-- CRUCIAL REVEAL TARGET: Hidden layout container where JavaScript injects your buttons -->
             <div id="action-button-layer" style="display: none; margin-top: 15px; width: 100%;">
-                <!-- Dynamic Interactive Action Buttons inject here programmatically via script -->
+                <!-- Dynamic choices buttons inject here programmatically via JavaScript loop -->
             </div>
             
         </div> 
 
-        <!-- System Identification Footer Block -->
+        <!-- System Authentication Corporate Footer Block -->
         <footer style="padding: 6px 6px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 10px; color: #555555; background-color: #fafafa; margin-top: 15px;">
             <p><b>© 2026 NIT Africa Solutions Ltd.</b> All Rights Reserved.<b><br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">®</sup></b> is a registered trademark of <br><a href="https://railway.app" style="color: #0066cc; font-weight: 500;"> NIT Africa Solutions Limited</a></p>
         </footer>
     </div>
 <?php else: ?>
-    <!-- Standard Firewall-Safe Error Staging Card -->
+    <!-- Standard Firewall-Safe Error Handling Card Wrapper -->
     <div class="receipt-card" style="position: relative; overflow: hidden; padding-top: 40px;">
         <h2 class="error-color">Hitilafu Ya Mtandao Imejitokeza!</h2>
         <p style="font-size: 13px; color: black; line-height: 1.5; margin-top: 15px;">
@@ -386,5 +391,5 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
 <?php endif; ?>
 </body>
 </html>
-<?php exit(); ?>
+
 
