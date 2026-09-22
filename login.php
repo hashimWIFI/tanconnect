@@ -7,9 +7,9 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// ========================================================
+// ==================================================================================
 // 1. DATA HARVESTING & PHONE STANDARDIZATION ENGINE
-// ========================================================
+// ==================================================================================
 $phone  = isset($_POST['customer_phone']) ? trim($_POST['customer_phone']) : '';
 $amount = isset($_POST['amount']) ? trim($_POST['amount']) : ''; 
 $amount = str_replace(',', '', $amount);
@@ -40,9 +40,9 @@ if (in_array($routingPrefix, ['74', '75', '76', '14'])) {
     $provider = "Mpesa"; 
 }
 
-// ========================================================
+// ================================================================================
 // 2. CONNECT TO DYNAMIC RAILWAY MYSQL INSTANCE
-// ========================================================
+// ================================================================================
 $db_host = getenv('MYSQLHOST')     ?: '127.0.0.1';
 $db_port = getenv('MYSQLPORT')     ?: '3306';
 $db_user = getenv('MYSQLUSER')     ?: 'root';
@@ -185,32 +185,27 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TANConnect - SUCCESS REPORT</title>
-       <style>
+    <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; text-align: center; padding: 40px 15px; color: #2c3e50; margin: 0; }
         .receipt-card { background: white; max-width: 450px; margin: 0 auto; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; position: relative; }
-        
         .success-color { color: forestgreen !important; margin-bottom: 10px; font-size: 20px; font-weight: bold; }
         .error-color { color: #e74c3c; font-size: 14px; font-weight: bold; }
         .transit-color { color: #3498db; margin-bottom: 10px; font-size: 16px; font-weight: bold; }
-        
-        /* 🚀 THE FIXED CRITICAL ACTION BUTTON CLASSES 🚀 */
         .btn-portal { display: block !important; width: 100% !important; box-sizing: border-box !important; background: #3498db; color: white !important; border: 2px solid darkgreen !important; padding: 14px 20px !important; font-size: 15px !important; border-radius: 8px !important; cursor: pointer !important; text-decoration: none !important; margin-top: 15px !important; font-weight: bold !important; text-align: center !important; box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important; }
         .btn-blue { background: #1e3c72 !important; border-color: #152b52 !important; }
         .btn-outline { background: transparent !important; border: 2px solid #bdc3c7 !important; color: #7f8c8d !important; margin-top: 10px !important; }
         .btn-portal:hover { filter: brightness(0.95); }
-        
         .close-btn { position: absolute; top: 12px; right: 16px; font-weight: bold; font-size: 30px; cursor: pointer; color: #64748b; line-height: 1; }
         .copy-btn-link { font-size: 13px !important; color: #ff6600 !important; text-decoration: underline !important; cursor: pointer !important; display: block !important; margin: 12px auto !important; font-weight: bold !important; text-align: center !important; }
     </style>
 
-    
     <script type="text/javascript">
         var fixedDeviceId = "8600081897";
         var clientMac = "<?php echo htmlspecialchars($macAddress); ?>";
         var activeTxId = "<?php echo isset($transactionId) ? htmlspecialchars($transactionId) : ''; ?>";
 
         function executeGuanriNmsLoginInline(mac, voucherCode) {
-            var nmsUrl = "http://solnms.net";
+            var nmsUrl = "http://na.solnms.net/SOL/rechargeMobileManage.do";
             var targetLink = nmsUrl + "?device_id=" + fixedDeviceId + "&mac_address=" + mac + "&password=" + voucherCode + "&language=en&billType=0&roamingFlag=0&billing_mode=0";
             window.top.location.href = targetLink;
         }
@@ -244,7 +239,6 @@ function executeManualPhoneLoginInline(mac, voucherCode) {
     // 1. Set your strict production GUANRI Netcom cloud target URL
     var nmsBaseUrl = "http://na.solnms.net/SOL/rechargeMobileManage.do?device_id=' + device_id + '&mac_address=' + mac + '&language=en&billType=0&roamingFlag=0&billing_mode=0';"
 
-    
     // 2. Clear out formatting punctuation to prevent parameter break drops
     var cleanMac = mac ? mac.replace(/[^a-zA-Z0-9]/g, '').trim() : '0';
     var cleanVoucher = voucherCode ? voucherCode.trim() : '0';
@@ -282,9 +276,7 @@ function executeManualPhoneLoginInline(mac, voucherCode) {
                         if (upperStatus === 'USED' || upperStatus === 'SUCCESS' || upperStatus === 'COMPLETED') {
                             clearInterval(checkInterval);
 
-                           // Replace your old planDuration lines with this corrected timeline allocation map:
-                          // Convert the value into a raw math integer immediately to strip out any string formatting characters
-                      // 1. Force the dynamic amount into a clean mathematical integer (strips spaces/quotes)
+                         
 var planAmount = parseInt("<?php echo htmlspecialchars($amount); ?>", 10) || 0;
 
 // 2. Generate the duration strictly from the numeric amount value
@@ -405,15 +397,15 @@ if (planAmount === 500) {
         <p style="font-size: 14px; line-height: 1.6; color: #34495e; text-align: left; margin-top: 15px;">
             <?php 
             if (isset($httpStatusCode) && $httpStatusCode === 503) {
-                echo "<b>Samahani ndugu mteja, mtambo umeshindwa kutoa vocha kwa sasa kwa sababu vocha za kiwango hiki zimeisha (Out of Stock).</b><br><br>Uongozi wetu umearifiwa kupitia Ntfy Alert na tunaongeza vocha nyingine sasa hivi. Tafadhali jaribu tena baada ya muda mfupi au wasiliana nasi.";
+                echo "<b>Samahani ndugu mteja, mtambo umeshindwa kuchakata kifurushi cha Tsh. ..... kwa sasa (Out of Stock).</b><br><br>. Tafadhali jaribu tena baada ya muda mfupi au wasiliana nasi.";
             } else {
-                echo "<b>Imeshindwa kuanzisha mawasiliano na mtandao wa malipo wa AzamPay.</b><br><br>Tafadhali hakikisha kuwa namba yako ya simu iko hewani, salio linatosha na ujaribu tena. Kama umekatwa pesa hewani bila kuona vocha, piga simu: <b>0713 123 974</b>.";
+                echo "<b>Imeshindwa kuanzisha mawasiliano na mtandao wa malipo wa AzamPay.</b><br><br>Tafadhali hakikisha kuwa namba yako ya simu iko hewani, salio linatosha na ujaribu tena</b>.";
             }
             ?>
         </p>
         
         <a href="javascript:history.back()" class="btn-portal" style="background: #e74c3c; border-color: darkred; color: white; padding: 12px; display: block; text-decoration: none; font-weight: bold; border-radius: 6px; text-align: center; margin-top: 20px;">
-            RUDI NYUMA (BACK HOME)
+            RUDI NYUMA
         </a>
     </div>
 
