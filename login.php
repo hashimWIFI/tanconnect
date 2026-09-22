@@ -294,8 +294,10 @@ if (planAmount === 500) {
     planDuration = "Masaa 6";
 } else if (planAmount === 1000) {
     planDuration = "Siku 1";
-} else if (planAmount === 3000) {
-    planDuration = "Siku 4";
+} else if (planAmount === 2000) {
+    planDuration = "Siku 2";
+} else if (planAmount === 4000) {
+    planDuration = "Siku 5";
 } else if (planAmount === 5000) {
     planDuration = "Siku 7";
 } else if (planAmount === 10000) {
