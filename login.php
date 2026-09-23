@@ -177,12 +177,22 @@ if (!$dbResult) {
     }
 }
 
-// Update database status flags to 'ASSIGNED' if cURL checkout request hit 200 OK successfully
+// If checkout payload hits successfully, bind the parameters right into your matching voucher row
 if ($httpStatusCode === 200 && isset($allocatedVoucherId)) {
-    $updateStmt = $conn->prepare("UPDATE wifi_vouchers SET status = 'ASSIGNED', assigned_phone = ?, transaction_id = ? WHERE id = ?");
-    $updateStmt->bind_param("ssi", $phone, $transactionId, $allocatedVoucherId);
+    // 1. Fetch the sanitized session string we bookmarks upon customer arrival
+    $sessionMac = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0';
+    
+    // 2. UPDATE STATEMENT: Modifies the voucher placeholder row targets
+    $updateStmt = $conn->prepare("UPDATE wifi_vouchers SET status = 'ASSIGNED', assigned_phone = ?, mac_address = ?, transaction_id = ? WHERE id = ?");
+    
+    // Bind all dynamic variables securely to protect against database injections
+    $updateStmt->bind_param("sssi", $phone, $sessionMac, $transactionId, $allocatedVoucherId);
     $updateStmt->execute();
     $updateStmt->close();
+}
+
+
+    
 }
 
 $conn->close();
