@@ -328,25 +328,48 @@ if (planAmount === 500) {
 var trueVoucherCode = data.voucher_code || "KODI-SAHIHI";
 
 // 2. STRIPIED DOWN: Only the large interactive orange dashed button container box remains!
-containerBox.innerHTML = 
-    '<div type="button" onclick="copyAndReturnToRouter(\'' + trueVoucherCode + '\')" style="font-size: 32px; font-weight: bold; color: #ff6600; letter-spacing: 2px; border: 2px dashed #ff6600; background-color: #fff5eb; text-align: center; width: 100%; padding: 22px 15px; border-radius: 8px; box-sizing: border-box; cursor: pointer; transition: background 0.2s; box-shadow: 0 4px 10px rgba(255,102,0,0.05);" onmouseover="this.style.backgroundColor=\'#ffebd6\'" onmouseout="this.style.backgroundColor=\'#fff5eb\'">' +
-        '<span id="raw-pin-string" style="display:block; margin-bottom:6px; font-family: monospace;">' + trueVoucherCode + '</span>' +
-        '<span style="font-size: 11px; color: #d35400; font-weight: bold; letter-spacing: 0px; text-transform: uppercase; display: block; margin-top: 4px;">' +
-            '📋 BONYEZA HAPA KUNAKILI NA KURUDI NYUMA' +
-        '</span>' +
-    '</div>';
 
-// Hide separate alternative buttons layer frameworks completely for absolute layout cleanliness
-var oldButtonsLayer = document.getElementById('action-button-layer');
-if (oldButtonsLayer) {
-    oldButtonsLayer.style.display = "none";
+                    // Clean variable asset extraction to prevent 'undefined' string parameters
+                    var trueVoucherCode = data.voucher_code || data.code || data.voucher || "KODI-SAHIHI";
+
+                    // ====================================================================
+                    // 🚀 FIXED BACKTICK STRING INJECTION: Immune to multi-line syntax crashes!
+                    // ====================================================================
+                    var containerBox = document.getElementById('status-loading-container');
+                    if (containerBox) {
+                        containerBox.className = "voucher-success-box";
+                        containerBox.style.cursor = "pointer";
+                        containerBox.style.padding = "22px 15px";
+                        containerBox.style.display = "block";
+                        
+                        // Explicitly bind the click routing method function handler
+                        containerBox.setAttribute('onclick', "copyAndReturnToRouter('" + trueVoucherCode + "')");
+                        
+                        containerBox.innerHTML = `
+                            <span id="raw-pin-string" style="display:block; font-size:32px; font-weight:bold; color:#ff6600; letter-spacing:2px; margin-bottom:6px; font-family:monospace;">${trueVoucherCode}</span>
+                            <span style="font-size:11px; color:#d35400; font-weight:bold; letter-spacing:0px; text-transform:uppercase; display:block; margin-top:4px;">
+                                📋 BONYEZA HAPA KUNAKILI NA KURUDI NYUMA
+                            </span>
+                        `;
+                    }
+
+                    // Remove the spinning marquee wrapper parameters cleanly
+                    var marqueeBox = document.getElementById('waiting-marquee-container');
+                    if (marqueeBox) {
+                        marqueeBox.style.display = "none";
+                    }
+                    
+                    // Force hide alternative button layers completely for layout cleanliness
+                    var oldButtonsLayer = document.getElementById('action-button-layer');
+                    if (oldButtonsLayer) {
+                        oldButtonsLayer.style.display = "none";
+                    }
+                }
+            })
+            .catch(err => console.log("Waiting for PIN validation..."));
+    }, 3000);
 }
 
-// Remove the waiting marquee spinner components smoothly
-var marqueeBox = document.getElementById('waiting-marquee-container');
-if (marqueeBox) {
-    marqueeBox.style.display = "none";
-}
 
 function copyAndReturnToRouter(voucherCode) {
     // 1. Mobile browser clipboard integration layout logic
