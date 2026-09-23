@@ -270,113 +270,106 @@ function executeManualPhoneLoginInline(mac, voucherCode) {
     }
 }
 
+        function startPaymentVerificationLoop() {
+            if (!activeTxId) return;
+            
+            var checkInterval = setInterval(function() {
+                fetch('check_status.php?txn_id=' + encodeURIComponent(activeTxId))
+                    .then(response => response.json())
+                    .then(data => {
+                        var upperStatus = data.status ? data.status.toUpperCase() : '';
+                        
+                        if (upperStatus === 'USED' || upperStatus === 'SUCCESS' || upperStatus === 'COMPLETED') {
+                            clearInterval(checkInterval);
+
+                          
+var planAmount = parseInt("<?php echo htmlspecialchars($amount); ?>", 10) || 0;
+var planDuration = "Siku 0"; // Default fallback value
+
+if (planAmount === 500) {
+    planDuration = "Masaa 6";
+} else if (planAmount === 1000) {
+    planDuration = "Siku 1";
+} else if (planAmount === 3000) {
+    planDuration = "Siku 4";
+} else if (planAmount === 5000) {
+    planDuration = "Siku 7";
+} else if (planAmount === 10000) {
+    planDuration = "Siku 15";
+} else if (planAmount === 20000) {
+    planDuration = "Siku 30";
+}
+
+
+                            var headlineElement = document.getElementById('payment-headline');
+                            if (headlineElement) {
+                                headlineElement.className = "success-color";
+                                headlineElement.innerHTML = "✓ Malipo Yamekamilika!";
+                            }
+
+                            var subtextElement = document.getElementById('payment-subtext');
+                            if (subtextElement) {
+                                subtextElement.innerHTML = "Umenunua kifurushi cha <b>Tsh " + parseInt(planAmount).toLocaleString() + "</b> kitatumika kwa <b>" + planDuration + "</b>.<br>Vocha yako imetengenezwa kikamilifu.";
+                            }
+
+                            var trueVoucherCode = data.voucher_code || data.code || data.voucher || "KODI-SAHIHI";
+
+                            // INLINE INJECTION ENGINE: Renders box and buttons securely in one step
+                            var containerBox = document.getElementById('status-loading-container');
+                            if (containerBox) {
+                                containerBox.style.border = "none";
+                                containerBox.style.background = "transparent";
+                                containerBox.style.display = "block";
+                                containerBox.style.padding = "0";
+
+                               containerBox.innerHTML = 
+    '<div style="font-size: 28px; font-weight: bold; color: #ff6600; letter-spacing: 2px; border: 2px dashed #ff6600; background-color: #fff5eb; text-align: center; width: 100%; padding: 15px; border-radius: 8px; box-sizing: border-box;">' +
+        '<span id="raw-pin-string">' + trueVoucherCode + '</span>' +
+    '</div>' +
+       // Changed to a flexbox container layout with a 10px structural gap separating them
+    '<div style="width: 100%; display: flex; gap: 10px; box-sizing: border-box; margin-top: 15px;">' +
         
-function startPaymentVerificationLoop() {
-    if (!activeTxId) return;
-    
-    var checkInterval = setInterval(function() {
-        // 1. Hit the backend data check route using the strict unified parameter key name
-        fetch('check_status.php?txn_id=' + encodeURIComponent(activeTxId))
-            .then(response => response.json())
-            .then(data => {
-                var upperStatus = data.status ? data.status.toUpperCase() : '';
-                
-                // 2. Validate against your strict uppercase production table statuses
-                if (upperStatus === 'SUCCESS' || upperStatus === 'USED' || upperStatus === 'COMPLETED') {
-                    clearInterval(checkInterval);
+        // BUTTON 1: GREEN NAKILI BUTTON (Takes exactly 50% width space)
+        '<button type="button" onclick="copyVoucherToClipboard()" style="flex: 1; padding: 14px; background: #27ae60; color: white; font-weight: bold; border: 2px solid darkgreen; border-radius: 8px; cursor: pointer; font-size: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center; gap: 5px;">' +
+            '📋 NAKILI' +
+        '</button>' +
+        
+        // BUTTON 2: BLUE UNGANISHA BUTTON (Takes exactly 50% width space)
+        '<button type="button" onclick="executeManualPhoneLoginInline(\'' + clientMac + '\', \'' + trueVoucherCode + '\')" style="flex: 1; padding: 14px; background: #1e3c72; color: white; font-weight: bold; border: 2px solid #152b52; border-radius: 8px; cursor: pointer; font-size: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center; gap: 5px;">' +
+            '🚀 UNGANISHA' +
+        '</button>' +
 
-                    // 3. Generate the duration strictly from the numeric integer conversion check
-                    var planAmount = parseInt("<?php echo htmlspecialchars($amount); ?>", 10) || 0;
-                    var planDuration = "Siku 1"; // Dynamic logic fallback default tracking
-                    
-                    if (planAmount === 500) { planDuration = "Masaa 6"; }
-                    else if (planAmount === 1000) { planDuration = "Siku 1"; }
-                    else if (planAmount === 2000) { planDuration = "Siku 2"; }
-                    else if (planAmount === 4000) { planDuration = "Siku 5"; }
-                    else if (planAmount === 5000) { planDuration = "Siku 7"; }
-                    else if (planAmount === 7000) { planDuration = "Siku 10"; }
-                    else if (planAmount === 9000) { planDuration = "Siku 13"; }
-                    else if (planAmount === 10000) { planDuration = "Siku 15"; }
-                    else if (planAmount === 20000) { planDuration = "Siku 30"; }
+    '</div>';
 
-                    // 4. Update the structural title templates on screen instantly
-                    var headlineElement = document.getElementById('payment-headline');
-                    if (headlineElement) {
-                        headlineElement.className = "success-color";
-                        headlineElement.innerHTML = "✓ Malipo Yamekamilika!";
-                    }
 
-                    var subtextElement = document.getElementById('payment-subtext');
-                    if (subtextElement) {
-                        subtextElement.innerHTML = "Umenunua kifurushi cha <b>Tsh " + planAmount.toLocaleString() + "</b> kitatumika kwa <b>" + planDuration + "</b>.<br>Vocha yako imetengenezwa kikamilifu.";
-                    }
+                            }
+                        }
+                    })
+                    .catch(err => console.log("Waiting for PIN validation..."));
+            }, 3000);
+        }
 
-                    // 5. Clean variable asset extraction to prevent 'undefined' string parameters
-                    var trueVoucherCode = data.voucher_code || data.code || data.voucher || "KODI-SAHIHI";
+        window.onload = function() {
+            if (activeTxId !== "") {
+                startPaymentVerificationLoop();
+            }
+        };
 
-                    // 6. TRANSFORM THE ORANGE DASHED WINDOW BOX INTO A CLICKABLE INTERACTIVE TRIGGER LINK
-                    var containerBox = document.getElementById('status-loading-container');
-                    if (containerBox) {
-                        containerBox.className = "voucher-success-box";
-                        containerBox.style.cursor = "pointer";
-                        containerBox.style.padding = "18px";
-                        containerBox.style.display = "block";
-                        
-                        // Dynamic trigger event function configurations mapped directly inline
-                        containerBox.setAttribute('onclick', "copyAndReturnToRouter('" + trueVoucherCode + "')");
-                        
-                        containerBox.innerHTML = 
-                            '<span id="raw-pin-string" style="display:block; font-size: 28px; font-weight: bold; color: #ff6600; letter-spacing: 2px; margin-bottom:4px;">' + trueVoucherCode + '</span>' +
-                            '<span style="font-size: 11px; color: #d35400; font-weight: bold; letter-spacing: 0px; text-transform: uppercase; display: block; margin-top: 2px;">' +
-                                '📋 BONYEZA HAPA KUNAKILI NA KURUDI NYUMA' +
-                            '</span>';
-                    }
 
-                    // Remove the spinning marquee wrapper parameters cleanly
-                    var marqueeBox = document.getElementById('waiting-marquee-container');
-                    if (marqueeBox) {
-                        marqueeBox.style.display = "none";
-                    }
-                    
-                    // Hide alternative button layers if any remnants are present
-                    var oldButtons = document.getElementById('action-button-layer');
-                    if (oldButtons) {
-                        oldButtons.style.display = "none";
-                    }
-                }
-            })
-            .catch(err => console.log("Waiting for PIN validation..."));
-    }, 3000);
+
+function copyVoucherToClipboard() {
+    var pinText = document.getElementById("raw-pin-string").innerText;
+    navigator.clipboard.writeText(pinText).then(function() {
+        alert("Voucher yako imenakiliwa! Bonyeza HODI kwenye ukurasa unaofuata, kisha ingiza/ PASTE namba ya voucher yako kuingia mtandaoni.");
+        window.location.href = "https://www.5wifi.net";
+
+
+    }, function() {
+        window.location.href = "https://www.5wifi.net";
+    });
 }
 
-
-
-
-function copyAndReturnToRouter(voucherCode) {
-    // 1. Structural compliance clipboard fallback setup
-    var tempInput = document.createElement("input");
-    tempInput.value = voucherCode;
-    document.body.appendChild(tempInput);
-    tempInput.select();
-    tempInput.setSelectionRange(0, 99999); // Mobile browser compliance layer
-    
-    try {
-        document.execCommand("copy");
-        // 2. Alert the client to guide their next steps smoothly
-        alert("Vocha yako (" + voucherCode + ") imenakiliwa kikamilifu!\n\nMfumo unakurudisha kwenye ukurasa wa HODI ili uingize vocha sasa hivi.");
-    } catch (err) {
-        alert("Tafadhali andika namba hii ya vocha kisha urudi nyuma: " + voucherCode);
-    }
-    
-    document.body.removeChild(tempInput);
-    
-    // 3. Forward the customer directly back onto the router's local gateway wall template
-    window.location.href = "https://5wifi.net";
-}
-
-
-
- </script>
+    </script>
 </head>
 <body>
 <?php if ($httpStatusCode === 200): ?>
