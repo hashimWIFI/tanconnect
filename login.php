@@ -184,7 +184,7 @@ if ($httpStatusCode === 200 && isset($allocatedVoucherId)) {
 }
 
 // Type safety wrapper for connection closure prevents uncaught execution crashes
-if (isset($conn) && $conn instanceof mysqli && $conn->ping()) {
+if (isset($conn) && $conn instanceof mysqli) {
     $conn->close();
 }
 
