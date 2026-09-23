@@ -36,7 +36,7 @@ $stock_result = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE 
 $remaining_stock = $stock_result ? $stock_result->fetch_assoc()['total'] : 0;
 
 // 3. Fetch the Latest 50 Live Hotspot Transactions
-$log_query = "SELECT id, voucher_code, price_tier, status, assigned_phone, mac_address, transaction_id FROM wifi_vouchers WHERE status IN ('SUCCESS', 'ASSIGNED') ORDER BY id DESC LIMIT 50";
+$log_query = "SELECT id, voucher_code, price_tier, status, assigned_phone, mac_address, transaction_id, purchased_at FROM wifi_vouchers WHERE status IN ('SUCCESS', 'ASSIGNED') ORDER BY id DESC LIMIT 50";
 $log_result = $conn->query($log_query);
 ?>
 <!DOCTYPE html>
