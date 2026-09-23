@@ -35,7 +35,7 @@ $vouchers_sold = $count_result ? $count_result->fetch_assoc()['total'] : 0;
 $stock_result = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE status = 'AVAILABLE'");
 $remaining_stock = $stock_result ? $stock_result->fetch_assoc()['total'] : 0;
 
-// 3. Fetch the Latest 50 Live Hotspot Transactions
+// 3. Fetch the Latest 50 Live Hotspot Transactions (Includes purchased_at)
 $log_query = "SELECT id, voucher_code, price_tier, status, assigned_phone, mac_address, transaction_id, purchased_at FROM wifi_vouchers WHERE status IN ('SUCCESS', 'ASSIGNED') ORDER BY id DESC LIMIT 50";
 $log_result = $conn->query($log_query);
 ?>
@@ -45,11 +45,7 @@ $log_result = $conn->query($log_query);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="refresh" content="10">
-    <th>Customer MAC Address</th>
-<th>Muda wa Malipo (Time Purchased)</th> <!-- Added Title Row -->
-<th>Transaction ID</th>
-
- <title>TANConnect - Admin Dashboard</title>
+    <title>TANConnect - Admin Dashboard</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; color: #333; margin: 0; padding: 20px; }
         .wrapper { max-width: 1000px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
@@ -82,7 +78,7 @@ $log_result = $conn->query($log_query);
             <span class="metric-val">Tsh <?php echo number_format($total_earnings); ?></span>
         </div>
         <div class="metric-card card-blue">
-            Vocha Zilizouzwa (Vouchers Sold)
+            Vocha Zilizouuzwa (Vouchers Sold)
             <span class="metric-val"><?php echo number_format($vouchers_sold); ?> pcs</span>
         </div>
         <div class="metric-card card-orange">
@@ -102,6 +98,7 @@ $log_result = $conn->query($log_query);
                     <th>Status</th>
                     <th>Assigned Phone</th>
                     <th>Customer MAC Address</th>
+                    <th>Muda wa Malipo (Time Purchased)</th>
                     <th>Transaction ID</th>
                 </tr>
             </thead>
@@ -109,7 +106,7 @@ $log_result = $conn->query($log_query);
                 <?php if ($log_result && $log_result->num_rows > 0): ?>
                     <?php while ($row = $log_result->fetch_assoc()): ?>
                         <?php 
-                        // Automatically re-apply colons if displaying format in log rows
+                        // Automatically format the captured MAC address with colons
                         $rawMac = preg_replace('/[^a-zA-Z0-9]/', '', $row['mac_address']);
                         $displayMac = $row['mac_address'];
                         if (strlen($rawMac) === 12) {
@@ -127,18 +124,26 @@ $log_result = $conn->query($log_query);
                             </td>
                             <td><?php echo !empty($row['assigned_phone']) ? htmlspecialchars($row['assigned_phone']) : '-'; ?></td>
                             <td class="mac-text"><?php echo !empty($rawMac) ? htmlspecialchars(strtoupper($displayMac)) : '-'; ?></td>
+                            
+                            <!-- DYNAMIC CELL: Displays the true timestamp from your purchased_at column -->
+                            <td style="font-family: monospace; color: #2c3e50; font-weight: 500;">
+                                <?php echo !empty($row['purchased_at']) ? date("d-m-Y H:i:s", strtotime($row['purchased_at'])) : '-'; ?>
+                            </td>
+                            
                             <td style="color:#7f8c8d; font-size:12px;"><?php echo htmlspecialchars($row['transaction_id']); ?></td>
                         </tr>
                     <?php endwhile; ?>
+
                 <?php else: ?>
                     <tr>
-                        <td colspan="7" style="text-align:center; color:#7f8c8d; padding:20px;">Hakuna kumbukumbu za malipo bado.</td>
+                        <td colspan="8" style="text-align:center; color:#7f8c8d; padding:20px;">Hakuna kumbukumbu za malipo bado.</td>
                     </tr>
                 <?php endif; ?>
             </tbody>
         </table>
     </div>
 </div>
+
     <!-- SILENT BACKGROUND DATABASE CLEANUP TRIGGER -->
     <script type="text/javascript">
     window.addEventListener('DOMContentLoaded', function() {
@@ -156,4 +161,8 @@ $log_result = $conn->query($log_query);
 
 </body>
 </html>
-<?php $conn->close(); ?>
+<?php 
+if (isset($conn) && $conn instanceof mysqli && $conn->ping()) {
+    $conn->close(); 
+}
+?>
