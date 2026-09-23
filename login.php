@@ -343,6 +343,27 @@ if (planAmount === 500) {
             }
         };
 
+function copyVoucherToClipboardAndGoHome(voucherCode) {
+    // 1. Mobile compliance clipboard allocation layout engine
+    var tempInput = document.createElement("input");
+    tempInput.value = voucherCode;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    tempInput.setSelectionRange(0, 99999); // Handset touch protection matrix
+    
+    try {
+        document.execCommand("copy");
+        // 2. Clear instructions guiding the subscriber step-by-step
+        alert("Vocha yako (" + voucherCode + ") imenakiliwa kikamilifu!\n\nMfumo unakurudisha kwenye ukurasa wa HODI ili uingize vocha sasa hivi.");
+    } catch (err) {
+        alert("Tafadhali andika au unakili namba hii ya vocha kisha urudi nyuma: " + voucherCode);
+    }
+    
+    document.body.removeChild(tempInput);
+    
+    // 3. Relocate browser session context back onto the local welcome portal track
+    window.location.href = "https://5wifi.net";
+}
 
 
 function copyVoucherToClipboard() {
