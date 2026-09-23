@@ -270,88 +270,86 @@ function executeManualPhoneLoginInline(mac, voucherCode) {
     }
 }
 
-        function startPaymentVerificationLoop() {
-            if (!activeTxId) return;
-            
-            var checkInterval = setInterval(function() {
-                fetch('check_status.php?txn_id=' + encodeURIComponent(activeTxId))
-                    .then(response => response.json())
-                    .then(data => {
-                        var upperStatus = data.status ? data.status.toUpperCase() : '';
-                        
-                        if (upperStatus === 'USED' || upperStatus === 'SUCCESS' || upperStatus === 'COMPLETED') {
-                            clearInterval(checkInterval);
-
-                          
-var planAmount = parseInt("<?php echo htmlspecialchars($amount); ?>", 10) || 0;
-var planDuration = "Siku 0"; // Default fallback value
-
-if (planAmount === 500) {
-    planDuration = "Masaa 6";
-} else if (planAmount === 1000) {
-    planDuration = "Siku 1";
-} else if (planAmount === 3000) {
-    planDuration = "Siku 4";
-} else if (planAmount === 5000) {
-    planDuration = "Siku 7";
-} else if (planAmount === 10000) {
-    planDuration = "Siku 15";
-} else if (planAmount === 20000) {
-    planDuration = "Siku 30";
-}
-
-
-                            var headlineElement = document.getElementById('payment-headline');
-                            if (headlineElement) {
-                                headlineElement.className = "success-color";
-                                headlineElement.innerHTML = "✓ Malipo Yamekamilika!";
-                            }
-
-                            var subtextElement = document.getElementById('payment-subtext');
-                            if (subtextElement) {
-                                subtextElement.innerHTML = "Umenunua kifurushi cha <b>Tsh " + parseInt(planAmount).toLocaleString() + "</b> kitatumika kwa <b>" + planDuration + "</b>.<br>Vocha yako imetengenezwa kikamilifu.";
-                            }
-
-                            var trueVoucherCode = data.voucher_code || data.code || data.voucher || "KODI-SAHIHI";
-
-                            // INLINE INJECTION ENGINE: Renders box and buttons securely in one step
-                            var containerBox = document.getElementById('status-loading-container');
-                            if (containerBox) {
-                                containerBox.style.border = "none";
-                                containerBox.style.background = "transparent";
-                                containerBox.style.display = "block";
-                                containerBox.style.padding = "0";
-
-                              
-        '</button>' +
         
-        // BUTTON 2: BLUE UNGANISHA BUTTON (Takes exactly 50% width space)
-        '<button type="button" onclick="executeManualPhoneLoginInline(\'' + clientMac + '\', \'' + trueVoucherCode + '\')" style="flex: 1; padding: 14px; background: #1e3c72; color: white; font-weight: bold; border: 2px solid #152b52; border-radius: 8px; cursor: pointer; font-size: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center; gap: 5px;">' +
-            '🚀 UNGANISHA' +
-        '</button>' +
-// Dynamic mapping keys fallback shield to protect against 'undefined' values
-var trueVoucherCode = data.voucher_code || data.code || data.voucher || "KODI-SAHIHI";
+function startPaymentVerificationLoop() {
+    if (!activeTxId) return;
+    
+    var checkInterval = setInterval(function() {
+        // 1. Hit the backend data check route using the strict unified parameter key name
+        fetch('check_status.php?txn_id=' + encodeURIComponent(activeTxId))
+            .then(response => response.json())
+            .then(data => {
+                var upperStatus = data.status ? data.status.toUpperCase() : '';
+                
+                // 2. Validate against your strict uppercase production table statuses
+                if (upperStatus === 'SUCCESS' || upperStatus === 'USED' || upperStatus === 'COMPLETED') {
+                    clearInterval(checkInterval);
 
-// TRANSFORM THE ENTIRE ROW INTERFACE TO USE THE SINGLE CLICK RETURNING ROUTE
-containerBox.innerHTML = 
-    '<div type="button" onclick="copyAndReturnToRouter(\'' + trueVoucherCode + '\')" style="font-size: 28px; font-weight: bold; color: #ff6600; letter-spacing: 2px; border: 2px dashed #ff6600; background-color: #fff5eb; text-align: center; width: 100%; padding: 18px; border-radius: 8px; box-sizing: border-box; cursor: pointer; transition: background 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.02);" onmouseover="this.style.backgroundColor=\'#ffebd6\'" onmouseout="this.style.backgroundColor=\'#fff5eb\'">' +
-        '<span id="raw-pin-string" style="display:block; margin-bottom:4px;">' + trueVoucherCode + '</span>' +
-        '<span style="font-size: 11px; color: #d35400; font-weight: bold; letter-spacing: 0px; text-transform: uppercase; display: block; margin-top: 2px;">' +
-            '📋 BONYEZA HAPA KUNAKILI NA KURUDI NYUMA' +
-        '</span>' +
-    '</div>';
+                    // 3. Generate the duration strictly from the numeric integer conversion check
+                    var planAmount = parseInt("<?php echo htmlspecialchars($amount); ?>", 10) || 0;
+                    var planDuration = "Siku 1"; // Dynamic logic fallback default tracking
+                    
+                    if (planAmount === 500) { planDuration = "Masaa 6"; }
+                    else if (planAmount === 1000) { planDuration = "Siku 1"; }
+                    else if (planAmount === 2000) { planDuration = "Siku 2"; }
+                    else if (planAmount === 4000) { planDuration = "Siku 5"; }
+                    else if (planAmount === 5000) { planDuration = "Siku 7"; }
+                    else if (planAmount === 7000) { planDuration = "Siku 10"; }
+                    else if (planAmount === 9000) { planDuration = "Siku 13"; }
+                    else if (planAmount === 10000) { planDuration = "Siku 15"; }
+                    else if (planAmount === 20000) { planDuration = "Siku 30"; }
 
-// Hide the alternative separate button layer rows cleanly since the card handles the interaction!
-var separateButtonsLayer = document.getElementById('action-button-layer');
-if (separateButtonsLayer) {
-    separateButtonsLayer.style.display = "none";
+                    // 4. Update the structural title templates on screen instantly
+                    var headlineElement = document.getElementById('payment-headline');
+                    if (headlineElement) {
+                        headlineElement.className = "success-color";
+                        headlineElement.innerHTML = "✓ Malipo Yamekamilika!";
+                    }
+
+                    var subtextElement = document.getElementById('payment-subtext');
+                    if (subtextElement) {
+                        subtextElement.innerHTML = "Umenunua kifurushi cha <b>Tsh " + planAmount.toLocaleString() + "</b> kitatumika kwa <b>" + planDuration + "</b>.<br>Vocha yako imetengenezwa kikamilifu.";
+                    }
+
+                    // 5. Clean variable asset extraction to prevent 'undefined' string parameters
+                    var trueVoucherCode = data.voucher_code || data.code || data.voucher || "KODI-SAHIHI";
+
+                    // 6. TRANSFORM THE ORANGE DASHED WINDOW BOX INTO A CLICKABLE INTERACTIVE TRIGGER LINK
+                    var containerBox = document.getElementById('status-loading-container');
+                    if (containerBox) {
+                        containerBox.className = "voucher-success-box";
+                        containerBox.style.cursor = "pointer";
+                        containerBox.style.padding = "18px";
+                        containerBox.style.display = "block";
+                        
+                        // Dynamic trigger event function configurations mapped directly inline
+                        containerBox.setAttribute('onclick', "copyAndReturnToRouter('" + trueVoucherCode + "')");
+                        
+                        containerBox.innerHTML = 
+                            '<span id="raw-pin-string" style="display:block; font-size: 28px; font-weight: bold; color: #ff6600; letter-spacing: 2px; margin-bottom:4px;">' + trueVoucherCode + '</span>' +
+                            '<span style="font-size: 11px; color: #d35400; font-weight: bold; letter-spacing: 0px; text-transform: uppercase; display: block; margin-top: 2px;">' +
+                                '📋 BONYEZA HAPA KUNAKILI NA KURUDI NYUMA' +
+                            '</span>';
+                    }
+
+                    // Remove the spinning marquee wrapper parameters cleanly
+                    var marqueeBox = document.getElementById('waiting-marquee-container');
+                    if (marqueeBox) {
+                        marqueeBox.style.display = "none";
+                    }
+                    
+                    // Hide alternative button layers if any remnants are present
+                    var oldButtons = document.getElementById('action-button-layer');
+                    if (oldButtons) {
+                        oldButtons.style.display = "none";
+                    }
+                }
+            })
+            .catch(err => console.log("Waiting for PIN validation..."));
+    }, 3000);
 }
 
-// Remove the waiting marquee spinner string components smoothly
-var marqueeBox = document.getElementById('waiting-marquee-container');
-if (marqueeBox) {
-    marqueeBox.style.display = "none";
-}
+
 
 
 function copyAndReturnToRouter(voucherCode) {
