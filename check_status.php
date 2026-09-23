@@ -27,7 +27,9 @@ try {
 
     // 4. Securely extract data matching your strict alphanumeric parameters
     $safeTxnId = $conn->real_escape_string($txnId);
-    $query = "SELECT status, voucher_code FROM wifi_vouchers WHERE transaction_id = '$safeTxnId' LIMIT 1";
+    
+    // UPDATED SELECT QUERY: Appended mac_address into the table column selection fields
+    $query = "SELECT status, voucher_code, mac_address FROM wifi_vouchers WHERE transaction_id = '$safeTxnId' LIMIT 1";
     $result = $conn->query($query);
 
     if ($result && $result->num_rows > 0) {
@@ -38,9 +40,14 @@ try {
 
         // 5. If the fake callback webhook successfully verified the transaction loop, unlock the parameters!
         if ($currentStatus === 'SUCCESS') {
+            
+            // Clean dynamic structural fallback tracking: outputs baseline '0' string if cell value is empty
+            $dbMacAddress = !empty($row['mac_address']) ? trim($row['mac_address']) : '0';
+
             echo json_encode([
                 "status"       => "SUCCESS",
-                "voucher_code" => $row['voucher_code'] // Delivers the PIN cleanly to your JavaScript container
+                "voucher_code" => $row['voucher_code'],
+                "mac_address"  => $dbMacAddress // <-- FEEDS THE STORED HARDWARE ADDRESS DOWN TO JAVASCRIPT!
             ]);
         } else {
             // Keep the loader active if the status field still reads ASSIGNED or AVAILABLE
