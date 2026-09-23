@@ -2,25 +2,33 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Initialize active browser session context tracking
+// Initialize baseline status flags globally to protect the bottom template layers from crashing
+$httpStatusCode = 0;
+
+// Initialize active browser session context tracking safely
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// ========================================================
+// =========================================================================
 // 1. DATA HARVESTING & PHONE STANDARDIZATION ENGINE
-// ========================================================
+// =========================================================================
 $phone  = isset($_POST['customer_phone']) ? trim($_POST['customer_phone']) : '';
 $amount = isset($_POST['amount']) ? trim($_POST['amount']) : ''; 
 $amount = str_replace(',', '', $amount);
 
 // Intercept incoming hidden form parameter fields sent from index.php
 $capturedMac = isset($_POST['mac_address']) ? trim($_POST['mac_address']) : '0';
-if ($capturedMac !== '0' && !empty($capturedMac)) {
+if ($capturedMac !== '0' && !empty($capturedMac) && $capturedMac !== '$mac') {
+    // Strips colons or symbols to preserve clean database formatting parameters
     $_SESSION['customer_mac'] = preg_replace('/[^a-zA-Z0-9]/', '', $capturedMac);
+} else {
+    if (!isset($_SESSION['customer_mac'])) {
+        $_SESSION['customer_mac'] = '0';
+    }
 }
 
-// Enforce international dialing schema standard formatting rules
+// Enforce international dialing schema standard formatting rules (Tanzania 255)
 if (substr($phone, 0, 1) === '0') {
     $phone = '255' . substr($phone, 1);
 }
@@ -40,9 +48,9 @@ if (in_array($routingPrefix, ['74', '75', '76', '14'])) {
     $provider = "Mpesa"; 
 }
 
-// ========================================================
+// =========================================================================
 // 2. CONNECT TO DYNAMIC RAILWAY MYSQL INSTANCE
-// ========================================================
+// =========================================================================
 $db_host = getenv('MYSQLHOST')     ?: '127.0.0.1';
 $db_port = getenv('MYSQLPORT')     ?: '3306';
 $db_user = getenv('MYSQLUSER')     ?: 'root';
@@ -54,6 +62,7 @@ $conn = new mysqli($db_host, $db_user, $db_pass, $db_name, $db_port);
 if ($conn->connect_error) {
     die("Database connectivity node failed to respond: " . $conn->connect_error);
 }
+
 // =========================================================================
 // 3. VOUCHER SELECTION, STOCK MANAGEMENT, AND AZAMPAY CHECKOUT DISPATCH
 // =========================================================================
@@ -85,7 +94,6 @@ if (!$dbResult) {
 
     $context = stream_context_create($streamOptions);
        @file_get_contents("https://ntfy.sh/tanconnect_vouchers_stock_alert_2026", false, $context);
-
     
     $httpStatusCode = 503; // Sets failure flag to load the out-of-stock template later
  
@@ -101,9 +109,9 @@ if (!$dbResult) {
     $apiKey    = "63bdee95-eba0-4eec-a5f0-0a8a12a715df";
     $transactionId = 'WIFI-' . time();
 
-    // =======================================================
+    // =========================================================================
     // 4. STAGE 1: AUTOMATED ACCESS TOKEN GENERATION
-    // =======================================================
+    // =========================================================================
    $authUrl = "https://authenticator-sandbox.azampay.co.tz/AppRegistration/GenerateToken";
     $authPayload = json_encode([
         'appname'      => $appName,
@@ -127,13 +135,12 @@ if (!$dbResult) {
 
     $authResult = json_decode($authResponse, true);
     $token = isset($authResult['data']['accessToken']) ? $authResult['data']['accessToken'] : null;
-
     if (!$token) {
         $httpStatusCode = 401; // Authentication token dispatch failure
     } else {
-        // =======================================================
+        // =========================================================================
         // 5. STAGE 2: EXECUTE LIVE MOBILE CHECKOUT DISPATCH
-        // =======================================================
+        // =========================================================================
         $checkoutUrl = "https://sandbox.azampay.co.tz/azampay/mno/checkout";
         $checkoutPayload = json_encode([
             'accountNumber' => $phone,
@@ -168,13 +175,18 @@ if (!$dbResult) {
 
 // Update database status flags to 'ASSIGNED' if cURL checkout request hit 200 OK successfully
 if ($httpStatusCode === 200 && isset($allocatedVoucherId)) {
-    $updateStmt = $conn->prepare("UPDATE wifi_vouchers SET status = 'ASSIGNED', assigned_phone = ?, transaction_id = ? WHERE id = ?");
-    $updateStmt->bind_param("ssi", $phone, $transactionId, $allocatedVoucherId);
+    // 🚀 STORES MAC DIRECTLY IN YOUR DB: Saves both attributes side-by-side perfectly
+    $sessionMac = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0';
+    $updateStmt = $conn->prepare("UPDATE wifi_vouchers SET status = 'ASSIGNED', assigned_phone = ?, mac_address = ?, transaction_id = ? WHERE id = ?");
+    $updateStmt->bind_param("sssi", $phone, $sessionMac, $transactionId, $allocatedVoucherId);
     $updateStmt->execute();
     $updateStmt->close();
 }
 
-$conn->close();
+// Type safety wrapper for connection closure prevents uncaught execution crashes
+if (isset($conn) && $conn instanceof mysqli && $conn->ping()) {
+    $conn->close();
+}
 
 // Capture the active session MAC address variable for target template parsing
 $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0';
@@ -185,7 +197,7 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TANConnect - SUCCESS REPORT</title>
-       <style>
+    <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; text-align: center; padding: 40px 15px; color: #2c3e50; margin: 0; }
         .receipt-card { background: white; max-width: 450px; margin: 0 auto; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; position: relative; }
         
@@ -193,82 +205,19 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
         .error-color { color: #e74c3c; font-size: 14px; font-weight: bold; }
         .transit-color { color: #3498db; margin-bottom: 10px; font-size: 16px; font-weight: bold; }
         
-        /* 🚀 THE FIXED CRITICAL ACTION BUTTON CLASSES 🚀 */
         .btn-portal { display: block !important; width: 100% !important; box-sizing: border-box !important; background: #3498db; color: white !important; border: 2px solid darkgreen !important; padding: 14px 20px !important; font-size: 15px !important; border-radius: 8px !important; cursor: pointer !important; text-decoration: none !important; margin-top: 15px !important; font-weight: bold !important; text-align: center !important; box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important; }
-        .btn-blue { background: #1e3c72 !important; border-color: #152b52 !important; }
-        .btn-outline { background: transparent !important; border: 2px solid #bdc3c7 !important; color: #7f8c8d !important; margin-top: 10px !important; }
         .btn-portal:hover { filter: brightness(0.95); }
-        
         .close-btn { position: absolute; top: 12px; right: 16px; font-weight: bold; font-size: 30px; cursor: pointer; color: #64748b; line-height: 1; }
-        .copy-btn-link { font-size: 13px !important; color: #ff6600 !important; text-decoration: underline !important; cursor: pointer !important; display: block !important; margin: 12px auto !important; font-weight: bold !important; text-align: center !important; }
     </style>
 
-    
     <script type="text/javascript">
         var fixedDeviceId = "8600081897";
         var clientMac = "<?php echo htmlspecialchars($macAddress); ?>";
         var activeTxId = "<?php echo isset($transactionId) ? htmlspecialchars($transactionId) : ''; ?>";
 
-        function executeGuanriNmsLoginInline(mac, voucherCode) {
-            var nmsUrl = "http://na.solnms.net/SOL/rechargeMobileManage.do?";
-            var targetLink = nmsUrl + "?device_id=" + fixedDeviceId + "&mac_address=" + mac + "&password=" + voucherCode + "&language=en&billType=0&roamingFlag=0&billing_mode=0";
-            window.top.location.href = targetLink;
-        }
-
-        function copyInlineText(text) {
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(text).then(function() {
-                    alert("Voucher " + text + " imenakiliwa kwa ufanisi!");
-                }).catch(function() {
-                    fallbackCopyInline(text);
-                });
-            } else {
-                fallbackCopyInline(text);
-            }
-        }
-
-        function fallbackCopyInline(text) {
-            var tempInput = document.createElement("input");
-            tempInput.value = text;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand("copy");
-            document.body.removeChild(tempInput);
-            alert("Voucher " + text + " imenakiliwa kwa ufanisi!");
-        }
-
         function closeThisWindow() {
             window.close();
         }
-function executeManualPhoneLoginInline(mac, voucherCode) {
-    // 1. Set your strict production GUANRI Netcom cloud target URL
-    var nmsBaseUrl = "http://na.solnms.net/SOL/rechargeMobileManage.do?device_id=' + device_id + '&mac_address=' + mac + '&language=en&billType=0&roamingFlag=0&billing_mode=0';"
-
-    
-    // 2. Clear out formatting punctuation to prevent parameter break drops
-    var cleanMac = mac ? mac.replace(/[^a-zA-Z0-9]/g, '').trim() : '0';
-    var cleanVoucher = voucherCode ? voucherCode.trim() : '0';
-    
-    // 3. Assemble the exact query payload parameters required by the router gate
-    var queryParams = [
-        'device_id=8600081897',
-        'mac_address=' + encodeURIComponent(cleanMac),
-        'password=' + encodeURIComponent(cleanVoucher),
-        'language=en',
-        'billType=0',
-        'roamingFlag=0',
-        'billing_mode=0'
-    ].join('&');
-    
-    var finalAuthUrl = nmsBaseUrl + "?" + queryParams;
-    
-    // 4. Force browser target layers to break out of inner iframe templates instantly!
-    if (window.top) {
-        window.top.location.href = finalAuthUrl;
-    } else {
-        window.location.href = finalAuthUrl;
-    }
-}
 
         function startPaymentVerificationLoop() {
             if (!activeTxId) return;
@@ -282,24 +231,18 @@ function executeManualPhoneLoginInline(mac, voucherCode) {
                         if (upperStatus === 'USED' || upperStatus === 'SUCCESS' || upperStatus === 'COMPLETED') {
                             clearInterval(checkInterval);
 
-                          
-var planAmount = parseInt("<?php echo htmlspecialchars($amount); ?>", 10) || 0;
-var planDuration = "Siku 0"; // Default fallback value
-
-if (planAmount === 500) {
-    planDuration = "Masaa 6";
-} else if (planAmount === 1000) {
-    planDuration = "Siku 1";
-} else if (planAmount === 3000) {
-    planDuration = "Siku 4";
-} else if (planAmount === 5000) {
-    planDuration = "Siku 7";
-} else if (planAmount === 10000) {
-    planDuration = "Siku 15";
-} else if (planAmount === 20000) {
-    planDuration = "Siku 30";
-}
-
+                            var planAmount = parseInt("<?php echo htmlspecialchars($amount); ?>", 10) || 0;
+                            var planDuration = "Siku 1"; // Fallback tracking
+                            
+                            if (planAmount === 500) { planDuration = "Masaa 6"; }
+                            else if (planAmount === 1000) { planDuration = "Siku 1"; }
+                            else if (planAmount === 2000) { planDuration = "Siku 2"; }
+                            else if (planAmount === 4000) { planDuration = "Siku 5"; }
+                            else if (planAmount === 5000) { planDuration = "Siku 7"; }
+                            else if (planAmount === 7000) { planDuration = "Siku 10"; }
+                            else if (planAmount === 9000) { planDuration = "Siku 13"; }
+                            else if (planAmount === 10000) { planDuration = "Siku 15"; }
+                            else if (planAmount === 20000) { planDuration = "Siku 30"; }
 
                             var headlineElement = document.getElementById('payment-headline');
                             if (headlineElement) {
@@ -309,12 +252,12 @@ if (planAmount === 500) {
 
                             var subtextElement = document.getElementById('payment-subtext');
                             if (subtextElement) {
-                                subtextElement.innerHTML = "Umenunua kifurushi cha <b>Tsh " + parseInt(planAmount).toLocaleString() + "</b> kitatumika kwa <b>" + planDuration + "</b>.<br>Vocha yako imetengenezwa kikamilifu.";
+                                subtextElement.innerHTML = "Umenunua kifurushi cha <b>Tsh " + planAmount.toLocaleString() + "</b> kitatumika kwa <b>" + planDuration + "</b>.<br>Vocha yako imetengenezwa kikamilifu.";
                             }
 
                             var trueVoucherCode = data.voucher_code || data.code || data.voucher || "KODI-SAHIHI";
+                            var trueDatabaseMac = data.mac_address || clientMac || "0";
 
-                            // INLINE INJECTION ENGINE: Renders box and buttons securely in one step
                             var containerBox = document.getElementById('status-loading-container');
                             if (containerBox) {
                                 containerBox.style.border = "none";
@@ -322,15 +265,13 @@ if (planAmount === 500) {
                                 containerBox.style.display = "block";
                                 containerBox.style.padding = "0";
 
-                                                                                             containerBox.innerHTML = 
-    '<div type="button" onclick="copyVoucherToClipboardAndGoHome(\'' + trueVoucherCode + '\')" style="font-size: 32px; font-weight: bold; color: #27ae60; letter-spacing: 2px; border: 2px dashed #27ae60; background-color: #f4fbf7; text-align: center; width: 100%; padding: 22px 15px; border-radius: 8px; box-sizing: border-box; cursor: pointer; transition: background 0.2s; box-shadow: 0 4px 10px rgba(39,174,96,0.04);" onmouseover="this.style.backgroundColor=\'#e8f8f0\'" onmouseout="this.style.backgroundColor=\'#f4fbf7\'">' +
-        '<span id="raw-pin-string" style="display: block; font-family: monospace; margin-bottom: 6px;">' + trueVoucherCode + '</span>' +
-        '<span style="font-size: 11px; color: #219653; font-weight: bold; letter-spacing: 0px; text-transform: uppercase; display: block; margin-top: 4px;">' +
-            '📋 BONYEZA HAPA KUNAKILI NA KURUDI NYUMA' +
-        '</span>' +
-    '</div>';
-
-
+                                containerBox.innerHTML = 
+                                '<div type="button" onclick="copyVoucherToClipboardAndGoHome(\'' + trueVoucherCode + '\', \'' + trueDatabaseMac + '\')" style="font-size: 32px; font-weight: bold; color: #27ae60; letter-spacing: 2px; border: 2px dashed #27ae60; background-color: #f4fbf7; text-align: center; width: 100%; padding: 22px 15px; border-radius: 8px; box-sizing: border-box; cursor: pointer; transition: background 0.2s; box-shadow: 0 4px 10px rgba(39,174,96,0.04);" onmouseover="this.style.backgroundColor=\'#e8f8f0\'" onmouseout="this.style.backgroundColor=\'#f4fbf7\'">' +
+                                    '<span id="raw-pin-string" style="display: block; font-family: monospace; margin-bottom: 6px;">' + trueVoucherCode + '</span>' +
+                                    '<span style="font-size: 11px; color: #219653; font-weight: bold; letter-spacing: 0px; text-transform: uppercase; display: block; margin-top: 4px;">' +
+                                        '📋 BONYEZA HAPA KUNAKILI NA KURUDI NYUMA' +
+                                    '</span>' +
+                                '</div>';
                             }
                         }
                     })
@@ -343,77 +284,64 @@ if (planAmount === 500) {
                 startPaymentVerificationLoop();
             }
         };
+        // PRODUCTION SEAMLESS BRIDGE: Copies PIN to memory, injects formatting colons, and maps all NMS parameters
+        function copyVoucherToClipboardAndGoHome(voucherCode, fallbackMac) {
+            var tempInput = document.createElement("input");
+            tempInput.value = voucherCode;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            tempInput.setSelectionRange(0, 99999); // Mobile browser protection compliance shield
+            
+            try {
+                document.execCommand("copy");
+                alert("Vocha yako (" + voucherCode + ") imenakiliwa kikamilifu!\n\nMfumo unakubadili kuingia kwenye ukurasa wa NMS. Gusa kisanduku cha kuingiza Vocha, chagua PASTE kisha bonyeza ADD WIFI SERVICE TIME.");
+            } catch (err) {
+                alert("Tafadhali unakili au andika namba hii ya vocha: " + voucherCode);
+            }
+            
+            document.body.removeChild(tempInput);
+            
+            // =========================================================================
+            // 🚀 FULLY LOADED NMS REDIRECT GATEWAY ARRAY (All Required Router Parameters)
+            // =========================================================================
+            var fixedDeviceId = "8600081897"; 
+            var currentMacString = (typeof fallbackMac !== 'undefined' && fallbackMac) ? fallbackMac.trim() : ((typeof clientMac !== 'undefined' && clientMac) ? clientMac.trim() : '0');
+            
+            var rawDigits = currentMacString.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+            var finalFormattedMac = currentMacString;
+            
+            if (rawDigits.length === 12) {
+                var groups = [];
+                for (var i = 0; i < 12; i += 2) {
+                    groups.push(rawDigits.substr(i, 2));
+                }
+                finalFormattedMac = groups.join(':'); // Enforces "24:EE:9A:7A:91:12" structure perfectly
+            }
 
-// PRODUCTION SEAMLESS BRIDGE: Copies PIN to memory, strips formatting, and maps all NMS parameters
-function copyVoucherToClipboardAndGoHome(voucherCode) {
-    // 1. Mobile-compliant clipboard structure initialization
-    var tempInput = document.createElement("input");
-    tempInput.value = voucherCode;
-    document.body.appendChild(tempInput);
-    tempInput.select();
-    tempInput.setSelectionRange(0, 99999); // Mobile browser protection matrix
-    
-    try {
-        document.execCommand("copy");
-        // Clear Swahili instructions guiding the customer step-by-step
-        alert("Vocha yako (" + voucherCode + ") imenakiliwa kikamilifu!\n\nMfumo unakubadili kuingia kwenye ukurasa wa NMS. Gusa kisanduku cha kuingiza Vocha, chagua PASTE kisha bonyeza ADD WIFI SERVICE TIME.");
-    } catch (err) {
-        alert("Tafadhali unakili au andika namba hii ya vocha: " + voucherCode);
-    }
-    
-    document.body.removeChild(tempInput);
-    
-    // =========================================================================
-    // 🚀 FULLY LOADED NMS REDIRECT GATEWAY ARRAY (All Required Router Parameters)
-    // =========================================================================
-    
-    // A. Static Equipment / Hardware Signatures Mapped to your Gateway Profile
-    var fixedDeviceId = "8600081897"; // Equipment ID
-    
-    // B. Catch the dynamic device MAC address token running inside your active javascript session context
-    var currentMacString = (typeof clientMac !== 'undefined' && clientMac) ? clientMac.trim() : '0';
-    
-    // C. Clean and format the MAC string to automatically inject colons (Guanri NMS layout requirement)
-    var rawDigits = currentMacString.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-    var finalFormattedMac = currentMacString;
-    
-    if (rawDigits.length === 12) {
-        var groups = [];
-        for (var i = 0; i < 12; i += 2) {
-            groups.push(rawDigits.substr(i, 2));
+            var nmsUrl = "http://na.solnms.net/SOL/rechargeMobileManage.do";
+            var queryParams = [
+                'device_id=' + encodeURIComponent(fixedDeviceId),
+                'mac_address=' + encodeURIComponent(finalFormattedMac),
+                'language=en',
+                'billType=0',
+                'roamingFlag=0',
+                'billing_mode=0'
+            ].join('&');
+            
+            var finalAuthUrl = nmsUrl + "?" + queryParams;
+            
+            if (window.top) {
+                window.top.location.href = finalAuthUrl;
+            } else {
+                window.location.href = finalAuthUrl;
+            }
         }
-        finalFormattedMac = groups.join(':'); // Enforces "24:EE:9A:7A:91:12" structure perfectly
-    }
-    
-    // D. Compile the array holding every network attribute the router firewall expects to receive
-    var nmsUrl = "http://solnms.net";
-    var queryParams = [
-        'device_id=' + encodeURIComponent(fixedDeviceId),
-        'mac_address=' + encodeURIComponent(finalFormattedMac),
-        'language=en',
-        'billType=0',
-        'roamingFlag=0',
-        'billing_mode=0'
-    ].join('&');
-    
-    var finalAuthUrl = nmsUrl + "?" + queryParams;
-    
-    // E. Force browser tab frames to burst free from internal portal sandboxes instantly
-    if (window.top) {
-        window.top.location.href = finalAuthUrl;
-    } else {
-        window.location.href = finalAuthUrl;
-    }
-}
-
-
     </script>
 </head>
 <body>
-<?php if ($httpStatusCode === 200): ?>
+<?php if (isset($httpStatusCode) && intval($httpStatusCode) === 200): ?>
 
     <div class="receipt-card" style="position: relative; overflow: hidden; padding-top: 40px;">
-        
         <div style="font-size: 24px; font-family: Broadway, Helvetica, sans-serif; color: #1e3c72; font-weight: bold; margin-bottom: 2px;">TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 10px; font-weight: normal; vertical-align: super; line-height: 0;">®</sup></div>
         <div style="font-size: 11px; font-style: italic; color: #555; margin-bottom: 20px;">"We bring the world at your finger tips"</div>
         <span class="close-btn" onclick="closeThisWindow()">&times;</span>
@@ -425,7 +353,6 @@ function copyVoucherToClipboardAndGoHome(voucherCode) {
         </p>
         
         <div id="voucher-display-box" style="margin: 10px 0; width: 100%; box-sizing: border-box;">
-            <!-- DYNAMIC REGION: Verified loops rewrite this container entirely on clearance -->
             <div id="status-loading-container" style="background: #e8f4fd; border: 2px dashed #3498db; border-radius: 8px; padding: 12px; min-height: 55px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
                 <div id="waiting-marquee-container" style="display: flex; align-items: center; justify-content: center; color: #3498db; font-weight: bold; font-size: 12px; width: 100%;">
                     <marquee behavior="scroll" direction="left" scrollamount="4" style="font-size: 13px; font-weight: bold; width: 100%;">
@@ -451,10 +378,10 @@ function copyVoucherToClipboardAndGoHome(voucherCode) {
         
         <p style="font-size: 14px; line-height: 1.6; color: #34495e; text-align: left; margin-top: 15px;">
             <?php 
-            if (isset($httpStatusCode) && $httpStatusCode === 503) {
+            if (isset($httpStatusCode) && intval($httpStatusCode) === 503) {
                 echo "<b>Samahani ndugu mteja, mtambo umeshindwa kutoa vocha kwa sasa kwa sababu vocha za kiwango hiki zimeisha (Out of Stock).</b><br><br>Uongozi wetu umearifiwa kupitia Ntfy Alert na tunaongeza vocha nyingine sasa hivi. Tafadhali jaribu tena baada ya muda mfupi au wasiliana nasi.";
             } else {
-                echo "<b>Imeshindwa kuanzisha mawasiliano na mtandao wa malipo wa AzamPay.</b><br><br>Tafadhali hakikisha kuwa namba yako ya simu iko hewani, salio linatosha na ujaribu tena. Kama umekatwa pesa hewani bila kuona vocha, piga simu: <b>0713 123 974</b>.";
+                echo "<b>Imeshindwa kuanzisha mawasiliano na mtandao wa malipo wa AzamPay.</b><br><br>Tafadhali hakikisha kuwa namba yako ya simu iko hewani, salio linatosha na ujaribu tena. Kama umekatwa pesa hewani bila kuona vocha, piga simu: <b>0713 123 974</b>.<br><br>Msimbo wa Hitilafu (Status Code): <b>" . (isset($httpStatusCode) ? htmlspecialchars($httpStatusCode) : '0') . "</b>";
             }
             ?>
         </p>
@@ -465,6 +392,6 @@ function copyVoucherToClipboardAndGoHome(voucherCode) {
     </div>
 
 <?php endif; ?>
-
 </body>
 </html>
+<?php exit(); ?>
