@@ -282,25 +282,20 @@ function executeManualPhoneLoginInline(mac, voucherCode) {
                         if (upperStatus === 'USED' || upperStatus === 'SUCCESS' || upperStatus === 'COMPLETED') {
                             clearInterval(checkInterval);
 
-                          
-var planAmount = parseInt("<?php echo htmlspecialchars($amount); ?>", 10) || 0;
-var planDuration = "Siku 0"; // Default fallback value
+                            var planAmount = parseInt("<?php echo htmlspecialchars(\$amount); ?>", 10) || 0;
+                            var planDuration = "Siku 1"; // Dynamic logic fallback default tracking
+                            
+                            if (planAmount === 500) { planDuration = "Masaa 6"; }
+                            else if (planAmount === 1000) { planDuration = "Siku 1"; }
+                            else if (planAmount === 2000) { planDuration = "Siku 2"; }
+                            else if (planAmount === 4000) { planDuration = "Siku 5"; }
+                            else if (planAmount === 5000) { planDuration = "Siku 7"; }
+                            else if (planAmount === 7000) { planDuration = "Siku 10"; }
+                            else if (planAmount === 9000) { planDuration = "Siku 13"; }
+                            else if (planAmount === 10000) { planDuration = "Siku 15"; }
+                            else if (planAmount === 20000) { planDuration = "Siku 30"; }
 
-if (planAmount === 500) {
-    planDuration = "Masaa 6";
-} else if (planAmount === 1000) {
-    planDuration = "Siku 1";
-} else if (planAmount === 3000) {
-    planDuration = "Siku 4";
-} else if (planAmount === 5000) {
-    planDuration = "Siku 7";
-} else if (planAmount === 10000) {
-    planDuration = "Siku 15";
-} else if (planAmount === 20000) {
-    planDuration = "Siku 30";
-}
-
-
+                            // 1. Update the structural title templates on screen instantly
                             var headlineElement = document.getElementById('payment-headline');
                             if (headlineElement) {
                                 headlineElement.className = "success-color";
@@ -309,41 +304,49 @@ if (planAmount === 500) {
 
                             var subtextElement = document.getElementById('payment-subtext');
                             if (subtextElement) {
-                                subtextElement.innerHTML = "Umenunua kifurushi cha <b>Tsh " + parseInt(planAmount).toLocaleString() + "</b> kitatumika kwa <b>" + planDuration + "</b>.<br>Vocha yako imetengenezwa kikamilifu.";
+                                subtextElement.innerHTML = "Umenunua kifurushi cha <b>Tsh " + planAmount.toLocaleString() + "</b> kitatumika kwa <b>" + planDuration + "</b>.<br>Vocha yako imetengenezwa kikamilifu.";
                             }
 
+                            // 2. Clean variable asset extraction to prevent 'undefined' string parameters
                             var trueVoucherCode = data.voucher_code || data.code || data.voucher || "KODI-SAHIHI";
 
-                            // INLINE INJECTION ENGINE: Renders box and buttons securely in one step
+                            // 3. TRANSFORM THE DISPLAY BOX BLOCK INTO THE SINGLE CLICK RETURNING BUTTON SHORTCUT
                             var containerBox = document.getElementById('status-loading-container');
                             if (containerBox) {
-                                containerBox.style.border = "none";
-                                containerBox.style.background = "transparent";
+                                containerBox.className = "voucher-success-box";
+                                containerBox.style.cursor = "pointer";
+                                containerBox.style.padding = "22px 15px";
                                 containerBox.style.display = "block";
-                                containerBox.style.padding = "0";
+                                containerBox.style.background = "#fff5eb";
+                                containerBox.style.border = "2px dashed #ff6600";
+                                containerBox.style.color = "#ff6600";
+                                containerBox.style.fontSize = "32px";
+                                containerBox.style.fontWeight = "bold";
+                                containerBox.style.letterSpacing = "2px";
+                                containerBox.style.textAlign = "center";
+                                
+                                // Explicitly bind the click routing method function handler string parameters inline
+                                containerBox.setAttribute('onclick', "copyVoucherToClipboardAndReturn('" + trueVoucherCode + "')");
+                                
+                                containerBox.innerHTML = `
+                                    <span id="raw-pin-string" style="display:block; font-family:monospace; margin-bottom:6px;">${trueVoucherCode}</span>
+                                    <span style="font-size: 11px; color: #d35400; font-weight: bold; letter-spacing: 0px; text-transform: uppercase; display: block; margin-top: 4px;">
+                                        📋 BONYEZA HAPA KUNAKILI NA KURUDI NYUMA
+                                    </span>
+                                `;
+                            }
 
-                               containerBox.innerHTML = 
-    '<div style="font-size: 28px; font-weight: bold; color: #ff6600; letter-spacing: 2px; border: 2px dashed #ff6600; background-color: #fff5eb; text-align: center; width: 100%; padding: 15px; border-radius: 8px; box-sizing: border-box;">' +
-        '<span id="raw-pin-string">' + trueVoucherCode + '</span>' +
-    '</div>' +
-       // Changed to a flexbox container layout with a 10px structural gap separating them
-    '<div style="width: 100%; display: flex; gap: 10px; box-sizing: border-box; margin-top: 15px;">' +
-        
-        // BUTTON 1: GREEN NAKILI BUTTON (Takes exactly 50% width space)
-        '<button type="button" onclick="copyVoucherToClipboard()" style="flex: 1; padding: 14px; background: #27ae60; color: white; font-weight: bold; border: 2px solid darkgreen; border-radius: 8px; cursor: pointer; font-size: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center; gap: 5px;">' +
-            '📋 NAKILI' +
-        '</button>' +
-        
-
-    '</div>';
-
-
+                            // 4. Remove the spinning marquee wrapper parameter node cleanly from view
+                            var marqueeBox = document.getElementById('waiting-marquee-container');
+                            if (marqueeBox) {
+                                marqueeBox.style.display = "none";
                             }
                         }
                     })
                     .catch(err => console.log("Waiting for PIN validation..."));
             }, 3000);
         }
+
 
         window.onload = function() {
             if (activeTxId !== "") {
