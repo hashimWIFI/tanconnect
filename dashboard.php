@@ -98,7 +98,7 @@ $log_result = $conn->query($log_query);
                     <th>Status</th>
                     <th>Assigned Phone</th>
                     <th>Customer MAC Address</th>
-                    <th>Muda wa Malipo (Time Purchased)</th>
+                    <th>Time Purchased</th>
                     <th>Transaction ID</th>
                 </tr>
             </thead>
