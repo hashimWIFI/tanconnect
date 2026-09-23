@@ -161,9 +161,4 @@ $log_result = $conn->query($log_query);
 
 </body>
 </html>
-<?php 
-if (isset($conn) && $conn instanceof mysqli) {
-    $conn->close(); 
-}
-?>
 
