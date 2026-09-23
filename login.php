@@ -189,14 +189,12 @@ if ($httpStatusCode === 200 && isset($allocatedVoucherId)) {
     $updateStmt->bind_param("sssi", $phone, $sessionMac, $transactionId, $allocatedVoucherId);
     $updateStmt->execute();
     $updateStmt->close();
+} 
 }
 
-
-    
+if (isset($conn) && $conn instanceof mysqli && $conn->ping()) {
+    $conn->close();
 }
-
-$conn->close();
-
 // Capture the active session MAC address variable for target template parsing
 $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0';
 ?>
