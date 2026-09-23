@@ -1,47 +1,31 @@
 <?php
-// Place this at the very top of login.php to prevent undefined variable crashes
-if (!isset($httpStatusCode)) {
-    $httpStatusCode = 0; 
-}
-
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Initialize active browser session context tracking safely
+// Initialize active browser session context tracking
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// ====================================================================
-// 🚀 1. CLEAN DATA HARVESTING & PHONE STANDARDIZATION ENGINE
-// ====================================================================
-
-// Support both POST form submissions and GET URL string tracks for absolute stability
-$phone  = isset($_REQUEST['customer_phone']) ? trim($_REQUEST['customer_phone']) : '';
-$amount = isset($_REQUEST['amount']) ? trim($_REQUEST['amount']) : ''; 
-
-// Clean amount text fields from accidental comma separation values (e.g. "1,000" -> "1000")
+// ========================================================
+// 1. DATA HARVESTING & PHONE STANDARDIZATION ENGINE
+// ========================================================
+$phone  = isset($_POST['customer_phone']) ? trim($_POST['customer_phone']) : '';
+$amount = isset($_POST['amount']) ? trim($_POST['amount']) : ''; 
 $amount = str_replace(',', '', $amount);
 
-// Intercept incoming hidden form parameter fields sent from index.php (support POST and GET)
-$capturedMac = isset($_REQUEST['mac_address']) ? trim($_REQUEST['mac_address']) : '0';
-
-if ($capturedMac !== '0' && !empty($capturedMac) && $capturedMac !== '$mac') {
-    // Strips colons and formatting to store as a clean alphanumeric string parameter: "24EE9A7A9112"
+// Intercept incoming hidden form parameter fields sent from index.php
+$capturedMac = isset($_POST['mac_address']) ? trim($_POST['mac_address']) : '0';
+if ($capturedMac !== '0' && !empty($capturedMac)) {
     $_SESSION['customer_mac'] = preg_replace('/[^a-zA-Z0-9]/', '', $capturedMac);
-} else {
-    // Initialize session to '0' if it hasn't been captured yet to avoid script errors
-    if (!isset($_SESSION['customer_mac'])) {
-        $_SESSION['customer_mac'] = '0';
-    }
+}
 
-
-// Enforce international dialing schema standard formatting rules (Tanzania 255)
+// Enforce international dialing schema standard formatting rules
 if (substr($phone, 0, 1) === '0') {
     $phone = '255' . substr($phone, 1);
 }
 
-$routingPrefix = substr($phone, 3, 2);
+$routingPrefix = substr($phone, 3, 2); 
 
 // Map network carrier designations by standard Tanzanian operator configurations
 if (in_array($routingPrefix, ['74', '75', '76', '14'])) {
@@ -182,24 +166,16 @@ if (!$dbResult) {
     }
 }
 
-// If checkout payload hits successfully, bind the parameters right into your matching voucher row
+// Update database status flags to 'ASSIGNED' if cURL checkout request hit 200 OK successfully
 if ($httpStatusCode === 200 && isset($allocatedVoucherId)) {
-    // 1. Fetch the sanitized session string we bookmarks upon customer arrival
-    $sessionMac = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0';
-    
-    // 2. UPDATE STATEMENT: Modifies the voucher placeholder row targets
-    $updateStmt = $conn->prepare("UPDATE wifi_vouchers SET status = 'ASSIGNED', assigned_phone = ?, mac_address = ?, transaction_id = ? WHERE id = ?");
-    
-    // Bind all dynamic variables securely to protect against database injections
-    $updateStmt->bind_param("sssi", $phone, $sessionMac, $transactionId, $allocatedVoucherId);
+    $updateStmt = $conn->prepare("UPDATE wifi_vouchers SET status = 'ASSIGNED', assigned_phone = ?, transaction_id = ? WHERE id = ?");
+    $updateStmt->bind_param("ssi", $phone, $transactionId, $allocatedVoucherId);
     $updateStmt->execute();
     $updateStmt->close();
-} 
 }
 
-if (isset($conn) && $conn instanceof mysqli && $conn->ping()) {
-    $conn->close();
-}
+$conn->close();
+
 // Capture the active session MAC address variable for target template parsing
 $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0';
 ?>
@@ -234,7 +210,7 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
         var activeTxId = "<?php echo isset($transactionId) ? htmlspecialchars($transactionId) : ''; ?>";
 
         function executeGuanriNmsLoginInline(mac, voucherCode) {
-            var nmsUrl = "http://na.solnms.net/SOL/rechargeMobileManage.do";
+            var nmsUrl = "http://na.solnms.net/SOL/rechargeMobileManage.do?";
             var targetLink = nmsUrl + "?device_id=" + fixedDeviceId + "&mac_address=" + mac + "&password=" + voucherCode + "&language=en&billType=0&roamingFlag=0&billing_mode=0";
             window.top.location.href = targetLink;
         }
@@ -410,7 +386,7 @@ function copyVoucherToClipboardAndGoHome(voucherCode) {
     }
     
     // D. Compile the array holding every network attribute the router firewall expects to receive
-    var nmsUrl = "http://na.solnms.net/SOL/rechargeMobileManage.do";
+    var nmsUrl = "http://solnms.net";
     var queryParams = [
         'device_id=' + encodeURIComponent(fixedDeviceId),
         'mac_address=' + encodeURIComponent(finalFormattedMac),
