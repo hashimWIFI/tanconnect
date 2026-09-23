@@ -45,6 +45,10 @@ $log_result = $conn->query($log_query);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="refresh" content="10">
+    <th>Customer MAC Address</th>
+<th>Muda wa Malipo (Time Purchased)</th> <!-- Added Title Row -->
+<th>Transaction ID</th>
+
  <title>TANConnect - Admin Dashboard</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; color: #333; margin: 0; padding: 20px; }
