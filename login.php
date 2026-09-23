@@ -344,28 +344,67 @@ if (planAmount === 500) {
             }
         };
 
+// PRODUCTION SEAMLESS BRIDGE: Copies PIN to memory, strips formatting, and maps all NMS parameters
 function copyVoucherToClipboardAndGoHome(voucherCode) {
-    // 1. Mobile compliance clipboard allocation layout engine
+    // 1. Mobile-compliant clipboard structure initialization
     var tempInput = document.createElement("input");
     tempInput.value = voucherCode;
     document.body.appendChild(tempInput);
     tempInput.select();
-    tempInput.setSelectionRange(0, 99999); // Handset touch protection matrix
+    tempInput.setSelectionRange(0, 99999); // Mobile browser protection matrix
     
     try {
         document.execCommand("copy");
-        // 2. Clear instructions guiding the subscriber step-by-step
-        alert("Vocha yako (" + voucherCode + ") imenakiliwa kikamilifu!\n\nMfumo unakurudisha kwenye ukurasa wa HODI ili uingize vocha sasa hivi.");
+        // Clear Swahili instructions guiding the customer step-by-step
+        alert("Vocha yako (" + voucherCode + ") imenakiliwa kikamilifu!\n\nMfumo unakubadili kuingia kwenye ukurasa wa NMS. Gusa kisanduku cha kuingiza Vocha, chagua PASTE kisha bonyeza ADD WIFI SERVICE TIME.");
     } catch (err) {
-        alert("Tafadhali andika au unakili namba hii ya vocha kisha urudi nyuma: " + voucherCode);
+        alert("Tafadhali unakili au andika namba hii ya vocha: " + voucherCode);
     }
     
     document.body.removeChild(tempInput);
     
-    // 3. Relocate browser session context back onto the local welcome portal track
-    window.location.href = "https://5wifi.net";
+    // =========================================================================
+    // 🚀 FULLY LOADED NMS REDIRECT GATEWAY ARRAY (All Required Router Parameters)
+    // =========================================================================
+    
+    // A. Static Equipment / Hardware Signatures Mapped to your Gateway Profile
+    var fixedDeviceId = "8600081897"; // Equipment ID
+    
+    // B. Catch the dynamic device MAC address token running inside your active javascript session context
+    var currentMacString = (typeof clientMac !== 'undefined' && clientMac) ? clientMac.trim() : '0';
+    
+    // C. Clean and format the MAC string to automatically inject colons (Guanri NMS layout requirement)
+    var rawDigits = currentMacString.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    var finalFormattedMac = currentMacString;
+    
+    if (rawDigits.length === 12) {
+        var groups = [];
+        for (var i = 0; i < 12; i += 2) {
+            groups.push(rawDigits.substr(i, 2));
+        }
+        finalFormattedMac = groups.join(':'); // Enforces "24:EE:9A:7A:91:12" structure perfectly
+    }
+    
+    // D. Compile the array holding every network attribute the router firewall expects to receive
+    var nmsUrl = "http://solnms.net";
+    var queryParams = [
+        'device_id=' + encodeURIComponent(fixedDeviceId),
+        'mac_address=' + encodeURIComponent(finalFormattedMac),
+        'language=en',
+        'billType=0',
+        'roamingFlag=0',
+        'billing_mode=0'
+    ].join('&');
+    
+    var finalAuthUrl = nmsUrl + "?" + queryParams;
+    
+    // E. Force browser tab frames to burst free from internal portal sandboxes instantly
+    if (window.top) {
+        window.top.location.href = finalAuthUrl;
+    } else {
+        window.location.href = finalAuthUrl;
+    }
 }
-
 
 
     </script>
