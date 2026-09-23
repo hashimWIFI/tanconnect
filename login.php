@@ -2,30 +2,41 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Initialize active browser session context tracking
+// Initialize active browser session context tracking safely
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// ========================================================
-// 1. DATA HARVESTING & PHONE STANDARDIZATION ENGINE
-// ========================================================
-$phone  = isset($_POST['customer_phone']) ? trim($_POST['customer_phone']) : '';
-$amount = isset($_POST['amount']) ? trim($_POST['amount']) : ''; 
+// ====================================================================
+// 🚀 1. CLEAN DATA HARVESTING & PHONE STANDARDIZATION ENGINE
+// ====================================================================
+
+// Support both POST form submissions and GET URL string tracks for absolute stability
+$phone  = isset($_REQUEST['customer_phone']) ? trim($_REQUEST['customer_phone']) : '';
+$amount = isset($_REQUEST['amount']) ? trim($_REQUEST['amount']) : ''; 
+
+// Clean amount text fields from accidental comma separation values (e.g. "1,000" -> "1000")
 $amount = str_replace(',', '', $amount);
 
-// Intercept incoming hidden form parameter fields sent from index.php
-$capturedMac = isset($_POST['mac_address']) ? trim($_POST['mac_address']) : '0';
-if ($capturedMac !== '0' && !empty($capturedMac)) {
+// Intercept incoming hidden form parameter fields sent from index.php (support POST and GET)
+$capturedMac = isset($_REQUEST['mac_address']) ? trim($_REQUEST['mac_address']) : '0';
+
+if ($capturedMac !== '0' && !empty($capturedMac) && $capturedMac !== '$mac') {
+    // Strips colons and formatting to store as a clean alphanumeric string parameter: "24EE9A7A9112"
     $_SESSION['customer_mac'] = preg_replace('/[^a-zA-Z0-9]/', '', $capturedMac);
+} else {
+    // Initialize session to '0' if it hasn't been captured yet to avoid script errors
+    if (!isset($_SESSION['customer_mac'])) {
+        $_SESSION['customer_mac'] = '0';
+    }
 }
 
-// Enforce international dialing schema standard formatting rules
+// Enforce international dialing schema standard formatting rules (Tanzania 255)
 if (substr($phone, 0, 1) === '0') {
     $phone = '255' . substr($phone, 1);
 }
 
-$routingPrefix = substr($phone, 3, 2); 
+$routingPrefix = substr($phone, 3, 2);
 
 // Map network carrier designations by standard Tanzanian operator configurations
 if (in_array($routingPrefix, ['74', '75', '76', '14'])) {
