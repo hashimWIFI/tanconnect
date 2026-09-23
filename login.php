@@ -322,54 +322,63 @@ if (planAmount === 500) {
                                 containerBox.style.display = "block";
                                 containerBox.style.padding = "0";
 
-                               containerBox.innerHTML = 
-    '<div style="font-size: 28px; font-weight: bold; color: #ff6600; letter-spacing: 2px; border: 2px dashed #ff6600; background-color: #fff5eb; text-align: center; width: 100%; padding: 15px; border-radius: 8px; box-sizing: border-box;">' +
-        '<span id="raw-pin-string">' + trueVoucherCode + '</span>' +
-    '</div>' +
-       // Changed to a flexbox container layout with a 10px structural gap separating them
-    '<div style="width: 100%; display: flex; gap: 10px; box-sizing: border-box; margin-top: 15px;">' +
-        
-        // BUTTON 1: GREEN NAKILI BUTTON (Takes exactly 50% width space)
-        '<button type="button" onclick="copyVoucherToClipboard()" style="flex: 1; padding: 14px; background: #27ae60; color: white; font-weight: bold; border: 2px solid darkgreen; border-radius: 8px; cursor: pointer; font-size: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center; gap: 5px;">' +
-            '📋 NAKILI' +
+                              
         '</button>' +
         
         // BUTTON 2: BLUE UNGANISHA BUTTON (Takes exactly 50% width space)
         '<button type="button" onclick="executeManualPhoneLoginInline(\'' + clientMac + '\', \'' + trueVoucherCode + '\')" style="flex: 1; padding: 14px; background: #1e3c72; color: white; font-weight: bold; border: 2px solid #152b52; border-radius: 8px; cursor: pointer; font-size: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center; gap: 5px;">' +
             '🚀 UNGANISHA' +
         '</button>' +
+// Dynamic mapping keys fallback shield to protect against 'undefined' values
+var trueVoucherCode = data.voucher_code || data.code || data.voucher || "KODI-SAHIHI";
 
+// TRANSFORM THE ENTIRE ROW INTERFACE TO USE THE SINGLE CLICK RETURNING ROUTE
+containerBox.innerHTML = 
+    '<div type="button" onclick="copyAndReturnToRouter(\'' + trueVoucherCode + '\')" style="font-size: 28px; font-weight: bold; color: #ff6600; letter-spacing: 2px; border: 2px dashed #ff6600; background-color: #fff5eb; text-align: center; width: 100%; padding: 18px; border-radius: 8px; box-sizing: border-box; cursor: pointer; transition: background 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.02);" onmouseover="this.style.backgroundColor=\'#ffebd6\'" onmouseout="this.style.backgroundColor=\'#fff5eb\'">' +
+        '<span id="raw-pin-string" style="display:block; margin-bottom:4px;">' + trueVoucherCode + '</span>' +
+        '<span style="font-size: 11px; color: #d35400; font-weight: bold; letter-spacing: 0px; text-transform: uppercase; display: block; margin-top: 2px;">' +
+            '📋 BONYEZA HAPA KUNAKILI NA KURUDI NYUMA' +
+        '</span>' +
     '</div>';
 
-
-                            }
-                        }
-                    })
-                    .catch(err => console.log("Waiting for PIN validation..."));
-            }, 3000);
-        }
-
-        window.onload = function() {
-            if (activeTxId !== "") {
-                startPaymentVerificationLoop();
-            }
-        };
-
-
-
-function copyVoucherToClipboard() {
-    var pinText = document.getElementById("raw-pin-string").innerText;
-    navigator.clipboard.writeText(pinText).then(function() {
-        alert("Voucher yako imenakiliwa! Bonyeza HODI kwenye ukurasa unaofuata, kisha ingiza/ PASTE namba ya voucher yako kuingia mtandaoni.");
-        window.location.href = "https://www.5wifi.net";
-
-
-    }, function() {
-        window.location.href = "https://www.5wifi.net";
-    });
+// Hide the alternative separate button layer rows cleanly since the card handles the interaction!
+var separateButtonsLayer = document.getElementById('action-button-layer');
+if (separateButtonsLayer) {
+    separateButtonsLayer.style.display = "none";
 }
 
-    </script>
+// Remove the waiting marquee spinner string components smoothly
+var marqueeBox = document.getElementById('waiting-marquee-container');
+if (marqueeBox) {
+    marqueeBox.style.display = "none";
+}
+
+
+function copyAndReturnToRouter(voucherCode) {
+    // 1. Structural compliance clipboard fallback setup
+    var tempInput = document.createElement("input");
+    tempInput.value = voucherCode;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    tempInput.setSelectionRange(0, 99999); // Mobile browser compliance layer
+    
+    try {
+        document.execCommand("copy");
+        // 2. Alert the client to guide their next steps smoothly
+        alert("Vocha yako (" + voucherCode + ") imenakiliwa kikamilifu!\n\nMfumo unakurudisha kwenye ukurasa wa HODI ili uingize vocha sasa hivi.");
+    } catch (err) {
+        alert("Tafadhali andika namba hii ya vocha kisha urudi nyuma: " + voucherCode);
+    }
+    
+    document.body.removeChild(tempInput);
+    
+    // 3. Forward the customer directly back onto the router's local gateway wall template
+    window.location.href = "https://5wifi.net";
+}
+
+
+
+ </script>
 </head>
 <body>
 <?php if ($httpStatusCode === 200): ?>
@@ -430,4 +439,3 @@ function copyVoucherToClipboard() {
 
 </body>
 </html>
-
