@@ -44,7 +44,8 @@ $log_result = $conn->query($log_query);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TANConnect - Admin Dashboard</title>
+    <meta http-equiv="refresh" content="10">
+ <title>TANConnect - Admin Dashboard</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; color: #333; margin: 0; padding: 20px; }
         .wrapper { max-width: 1000px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
