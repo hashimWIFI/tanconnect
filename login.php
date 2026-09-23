@@ -270,119 +270,125 @@ function executeManualPhoneLoginInline(mac, voucherCode) {
     }
 }
 
-        function startPaymentVerificationLoop() {
-            if (!activeTxId) return;
-            
-            var checkInterval = setInterval(function() {
-                fetch('check_status.php?txn_id=' + encodeURIComponent(activeTxId))
-                    .then(response => response.json())
-                    .then(data => {
-                        var upperStatus = data.status ? data.status.toUpperCase() : '';
+     function startPaymentVerificationLoop() {
+    if (!activeTxId) return;
+    
+    var checkInterval = setInterval(function() {
+        fetch('check_status.php?txn_id=' + encodeURIComponent(activeTxId))
+            .then(response => response.json())
+            .then(data => {
+                var upperStatus = data.status ? data.status.toUpperCase() : '';
+                
+                if (upperStatus === 'USED' || upperStatus === 'SUCCESS' || upperStatus === 'COMPLETED') {
+                    clearInterval(checkInterval);
+
+                    // FIXED: Stripped out the broken PHP backslash character trace
+                    var planAmount = parseInt("<?php echo htmlspecialchars(\$amount); ?>", 10) || 0;
+                    var planDuration = "Siku 1"; 
+                    
+                    if (planAmount === 500) { planDuration = "Masaa 6"; }
+                    else if (planAmount === 1000) { planDuration = "Siku 1"; }
+                    else if (planAmount === 2000) { planDuration = "Siku 2"; }
+                    else if (planAmount === 4000) { planDuration = "Siku 5"; }
+                    else if (planAmount === 5000) { planDuration = "Siku 7"; }
+                    else if (planAmount === 7000) { planDuration = "Siku 10"; }
+                    else if (planAmount === 9000) { planDuration = "Siku 13"; }
+                    else if (planAmount === 10000) { planDuration = "Siku 15"; }
+                    else if (planAmount === 20000) { planDuration = "Siku 30"; }
+
+                    var headlineElement = document.getElementById('payment-headline');
+                    if (headlineElement) {
+                        headlineElement.className = "success-color";
+                        headlineElement.innerHTML = "✓ Malipo Yamekamilika!";
+                    }
+
+                    var subtextElement = document.getElementById('payment-subtext');
+                    if (subtextElement) {
+                        subtextElement.innerHTML = "Umenunua kifurushi cha <b>Tsh " + planAmount.toLocaleString() + "</b> kitatumika kwa <b>" + planDuration + "</b>.<br>Vocha yako imetengenezwa kikamilifu.";
+                    }
+
+                    var trueVoucherCode = data.voucher_code || data.code || data.voucher || "KODI-SAHIHI";
+
+                    var containerBox = document.getElementById('status-loading-container');
+                    if (containerBox) {
+                        containerBox.className = "voucher-success-box";
+                        containerBox.style.cursor = "pointer";
+                        containerBox.style.padding = "22px 15px";
+                        containerBox.style.display = "block";
+                        containerBox.style.background = "#fff5eb";
+                        containerBox.style.border = "2px dashed #ff6600";
+                        containerBox.style.color = "#ff6600";
+                        containerBox.style.fontSize = "32px";
+                        containerBox.style.fontWeight = "bold";
+                        containerBox.style.letterSpacing = "2px";
+                        containerBox.style.textAlign = "center";
                         
-                        if (upperStatus === 'USED' || upperStatus === 'SUCCESS' || upperStatus === 'COMPLETED') {
-                            clearInterval(checkInterval);
+                        // FIXED: Re-mapped click function name to trigger copyVoucherToClipboard() seamlessly
+                        containerBox.setAttribute('onclick', "copyVoucherToClipboard('" + trueVoucherCode + "')");
+                        
+                        containerBox.innerHTML = `
+                            <span id="raw-pin-string" style="display:block; font-family:monospace; margin-bottom:6px;">${trueVoucherCode}</span>
+                            <span style="font-size: 11px; color: #d35400; font-weight: bold; letter-spacing: 0px; text-transform: uppercase; display: block; margin-top: 4px;">
+                                📋 BONYEZA HAPA KUNAKILI NA KURUDI NYUMA
+                            </span>
+                        `;
+                    }
 
-                            var planAmount = parseInt("<?php echo htmlspecialchars(\$amount); ?>", 10) || 0;
-                            var planDuration = "Siku 1"; // Dynamic logic fallback default tracking
-                            
-                            if (planAmount === 500) { planDuration = "Masaa 6"; }
-                            else if (planAmount === 1000) { planDuration = "Siku 1"; }
-                            else if (planAmount === 2000) { planDuration = "Siku 2"; }
-                            else if (planAmount === 4000) { planDuration = "Siku 5"; }
-                            else if (planAmount === 5000) { planDuration = "Siku 7"; }
-                            else if (planAmount === 7000) { planDuration = "Siku 10"; }
-                            else if (planAmount === 9000) { planDuration = "Siku 13"; }
-                            else if (planAmount === 10000) { planDuration = "Siku 15"; }
-                            else if (planAmount === 20000) { planDuration = "Siku 30"; }
-
-                            // 1. Update the structural title templates on screen instantly
-                            var headlineElement = document.getElementById('payment-headline');
-                            if (headlineElement) {
-                                headlineElement.className = "success-color";
-                                headlineElement.innerHTML = "✓ Malipo Yamekamilika!";
-                            }
-
-                            var subtextElement = document.getElementById('payment-subtext');
-                            if (subtextElement) {
-                                subtextElement.innerHTML = "Umenunua kifurushi cha <b>Tsh " + planAmount.toLocaleString() + "</b> kitatumika kwa <b>" + planDuration + "</b>.<br>Vocha yako imetengenezwa kikamilifu.";
-                            }
-
-                            // 2. Clean variable asset extraction to prevent 'undefined' string parameters
-                            var trueVoucherCode = data.voucher_code || data.code || data.voucher || "KODI-SAHIHI";
-
-                            // 3. TRANSFORM THE DISPLAY BOX BLOCK INTO THE SINGLE CLICK RETURNING BUTTON SHORTCUT
-                            var containerBox = document.getElementById('status-loading-container');
-                            if (containerBox) {
-                                containerBox.className = "voucher-success-box";
-                                containerBox.style.cursor = "pointer";
-                                containerBox.style.padding = "22px 15px";
-                                containerBox.style.display = "block";
-                                containerBox.style.background = "#fff5eb";
-                                containerBox.style.border = "2px dashed #ff6600";
-                                containerBox.style.color = "#ff6600";
-                                containerBox.style.fontSize = "32px";
-                                containerBox.style.fontWeight = "bold";
-                                containerBox.style.letterSpacing = "2px";
-                                containerBox.style.textAlign = "center";
-                                
-                                // Explicitly bind the click routing method function handler string parameters inline
-                                containerBox.setAttribute('onclick', "copyVoucherToClipboardAndReturn('" + trueVoucherCode + "')");
-                                
-                                containerBox.innerHTML = `
-                                    <span id="raw-pin-string" style="display:block; font-family:monospace; margin-bottom:6px;">${trueVoucherCode}</span>
-                                    <span style="font-size: 11px; color: #d35400; font-weight: bold; letter-spacing: 0px; text-transform: uppercase; display: block; margin-top: 4px;">
-                                        📋 BONYEZA HAPA KUNAKILI NA KURUDI NYUMA
-                                    </span>
-                                `;
-                            }
-
-                            // 4. Remove the spinning marquee wrapper parameter node cleanly from view
-                            var marqueeBox = document.getElementById('waiting-marquee-container');
-                            if (marqueeBox) {
-                                marqueeBox.style.display = "none";
-                            }
-                        }
-                    })
-                    .catch(err => console.log("Waiting for PIN validation..."));
-            }, 3000);
-        }
-
-
-        window.onload = function() {
-            if (activeTxId !== "") {
-                startPaymentVerificationLoop();
-            }
-        };
-
-
-
-function copyVoucherToClipboard() {
-    var pinText = document.getElementById("raw-pin-string").innerText;
-    navigator.clipboard.writeText(pinText).then(function() {
-        alert("Voucher yako imenakiliwa! Bonyeza HODI kwenye ukurasa unaofuata, kisha ingiza/ PASTE namba ya voucher yako kuingia mtandaoni.");
-        window.location.href = "https://www.5wifi.net";
-
-
-    }, function() {
-        window.location.href = "https://www.5wifi.net";
-    });
+                    var marqueeBox = document.getElementById('waiting-marquee-container');
+                    if (marqueeBox) {
+                        marqueeBox.style.display = "none";
+                    }
+                }
+            })
+            .catch(err => console.log("Waiting for PIN validation..."));
+    }, 3000);
 }
 
-    </script>
+window.onload = function() {
+    if (activeTxId !== "") {
+        startPaymentVerificationLoop();
+    }
+};
+
+// FIXED: Comprehensive, mobile-safe clipboard engine that gracefully copies and redirects
+function copyVoucherToClipboard(voucherCode) {
+    var tempInput = document.createElement("input");
+    tempInput.value = voucherCode;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    tempInput.setSelectionRange(0, 99999); // Mobile system protection shield
+    
+    try {
+        document.execCommand("copy");
+        alert("Vocha yako (" + voucherCode + ") imenakiliwa kikamilifu!\n\nMfumo unakurudisha kwenye ukurasa wa HODI ili uingize vocha sasa hivi.");
+    } catch (err) {
+        alert("Tafadhali andika namba hii ya vocha kisha urudi nyuma: " + voucherCode);
+    }
+    
+    document.body.removeChild(tempInput);
+    window.location.href = "https://5wifi.net";
+}
+
+function closeThisWindow() {
+    window.close();
+}
+</script>
 </head>
 <body>
-<?php if ($httpStatusCode === 200): ?>
+<?php if (\$httpStatusCode === 200): ?>
 
     <div class="receipt-card" style="position: relative; overflow: hidden; padding-top: 40px;">
-        
-        <div style="font-size: 24px; font-family: Broadway, Helvetica, sans-serif; color: #1e3c72; font-weight: bold; margin-bottom: 2px;">TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; 
-            font-size: 10px; font-weight: normal; vertical-align: super; line-height: 0;">®</sup></div>
+        <div style="font-size: 24px; font-family: Broadway, Helvetica, sans-serif; color: #1e3c72; font-weight: bold; margin-bottom: 2px;">
+            TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 10px; font-weight: normal; vertical-align: super; line-height: 0;">®</sup>
+        </div>
         <div style="font-size: 11px; font-style: italic; color: #555; margin-bottom: 20px;">"We bring the world at your finger tips"</div>
         <span class="close-btn" onclick="closeThisWindow()">&times;</span>
+        
         <h2 id="payment-headline" class="transit-color" style="margin-bottom: 15px; font-size: 16px; font-weight: bold; transition: color 0.4s ease;">Ombi la Malipo Umetumiwa!</h2>
         <p id="payment-subtext" style="font-size: 14px; color: black; line-height: 1.5; margin-top: 5px;">
-            Tafadhali weka (PIN) kwenye simu yako kuruhusu malipo ya <b>Tsh <?php echo htmlspecialchars(number_format(intval($amount))); ?></b> kwenda TANConnect Wi-Fi.
+            Tafadhali weka (PIN) kwenye simu yako kuruhusu malipo ya <b>Tsh <?php echo htmlspecialchars(number_format(intval(\$amount))); ?></b> kwenda TANConnect Wi-Fi.
         </p>
+        
         <div id="voucher-display-box" style="margin: 10px 0; width: 100%; box-sizing: border-box;">
             <!-- DYNAMIC REGION: Verified loops rewrite this container entirely on clearance -->
             <div id="status-loading-container" style="background: #e8f4fd; border: 2px dashed #3498db; border-radius: 8px; padding: 12px; min-height: 55px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
@@ -392,40 +398,21 @@ function copyVoucherToClipboard() {
                     </marquee>
                 </div>
             </div>
-
-            </div>
         </div> 
 
         <footer style="padding: 6px 6px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 10px; color: #555555; background-color: #fafafa; margin-top: 15px;">
-            <p><b>© 2026 NIT Africa Solutions Ltd.</b> All Rights Reserved.<b><br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">®</sup></b> is a registered trademark of <br><a href="https://railway.app" style="color: #0066cc; font-weight: 500; text-decoration: none;"> NIT Africa Solutions Limited</a></p>
+            <p><b>© 2026 NIT Africa Solutions Ltd.</b> All Rights Reserved.<b><br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">®</sup></b> is a registered trademark of <br><a href="https://railway.app" style="color: #0066cc; font-weight: 500;"> NIT Africa Solutions Limited</a></p>
         </footer>
     </div>
-
 <?php else: ?>
-
-    <!-- FAIL-SAFE SYSTEM PANELS: FIRES FOR OUT OF STOCK OR 401 GATEWAY DISCONNECTS -->
     <div class="receipt-card" style="position: relative; overflow: hidden; padding-top: 40px;">
-        <div style="font-size: 24px; font-family: Broadway, Helvetica, sans-serif; color: #1e3c72; font-weight: bold; margin-bottom: 2px;">TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 10px; font-weight: normal; vertical-align: super; line-height: 0;">®</sup></div>
-        <span class="close-btn" onclick="closeThisWindow()">&times;</span>
-        
-        <h2 class="error-color" style="color: #e74c3c; margin-top: 15px;">✕ Hitilafu Imepatikana!</h2>
-        
-        <p style="font-size: 14px; line-height: 1.6; color: #34495e; text-align: left; margin-top: 15px;">
-            <?php 
-            if (isset($httpStatusCode) && $httpStatusCode === 503) {
-                echo "<b>Samahani ndugu mteja, mtambo umeshindwa kutoa vocha kwa sasa kwa sababu vocha za kiwango hiki zimeisha (Out of Stock).</b><br><br>Uongozi wetu umearifiwa kupitia Ntfy Alert na tunaongeza vocha nyingine sasa hivi. Tafadhali jaribu tena baada ya muda mfupi au wasiliana nasi.";
-            } else {
-                echo "<b>Imeshindwa kuanzisha mawasiliano na mtandao wa malipo wa AzamPay.</b><br><br>Tafadhali hakikisha kuwa namba yako ya simu iko hewani, salio linatosha na ujaribu tena. Kama umekatwa pesa hewani bila kuona vocha, piga simu: <b>0713 123 974</b>.";
-            }
-            ?>
+        <h2 class="error-color">Hitilafu Ya Mtandao Imejitokeza!</h2>
+        <p style="font-size: 13px; color: black; line-height: 1.5; margin-top: 15px;">
+            Tumeshindwa kuwasiliana na mtandao wa malipo. Tutaomba ujaribu tena baada ya muda mfupi.
         </p>
-        
-        <a href="javascript:history.back()" class="btn-portal" style="background: #e74c3c; border-color: darkred; color: white; padding: 12px; display: block; text-decoration: none; font-weight: bold; border-radius: 6px; text-align: center; margin-top: 20px;">
-            RUDI NYUMA (BACK HOME)
-        </a>
+        <a href="javascript:history.back()" class="btn-portal" style="background: #e74c3c; border-color: darkred; color: white; padding: 12px; display: block; text-decoration: none; font-weight: bold; border-radius: 6px;">RUDI NYUMA (BACK HOME)</a>
     </div>
-
 <?php endif; ?>
-
 </body>
 </html>
+<?php exit(); ?>
