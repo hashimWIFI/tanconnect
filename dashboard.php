@@ -135,6 +135,20 @@ $log_result = $conn->query($log_query);
         </table>
     </div>
 </div>
+    <!-- SILENT BACKGROUND DATABASE CLEANUP TRIGGER -->
+    <script type="text/javascript">
+    window.addEventListener('DOMContentLoaded', function() {
+        // Quietly pings the cleanup script in the background every time the dashboard reloads
+        fetch('cron_cleanup.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success' && data.vouchers_recovered > 0) {
+                    console.log("TANConnect Optimizer: Cleaned database and recovered " + data.vouchers_recovered + " abandoned vouchers back to active stock!");
+                }
+            })
+            .catch(err => console.log("System optimizer loop active..."));
+    });
+    </script>
 
 </body>
 </html>
