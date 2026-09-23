@@ -1,4 +1,9 @@
 <?php
+// Place this at the very top of login.php to prevent undefined variable crashes
+if (!isset($httpStatusCode)) {
+    $httpStatusCode = 0; 
+}
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
