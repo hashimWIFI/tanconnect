@@ -24,12 +24,15 @@ try {
     // 3. EXECUTE RECOVERY QUERY
     // This updates the status back to AVAILABLE, clears out the phone, transaction ID, and MAC,
     // ensuring no voucher gets permanently locked by an abandoned checkout attempt.
+        // RECOVERY ENGINE: Isolates rows stuck in ASSIGNED state for longer than 2 hours (7200 seconds)
     $cleanupQuery = "UPDATE wifi_vouchers 
                      SET status = 'AVAILABLE', 
                          assigned_phone = NULL, 
                          mac_address = NULL, 
-                         transaction_id = NULL 
+                         transaction_id = NULL,
+                         purchased_at = NULL 
                      WHERE status = 'ASSIGNED' 
+                     AND purchased_at < NOW() - INTERVAL 2 HOUR";
                      ABS(CAST(SUBSTRING(transaction_id, 6) AS UNSIGNED)) < $expirationThreshold 
                      AND transaction_id LIKE 'WIFI-%'";
 
