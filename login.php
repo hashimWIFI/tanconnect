@@ -322,25 +322,13 @@ if (planAmount === 500) {
                                 containerBox.style.display = "block";
                                 containerBox.style.padding = "0";
 
-                               containerBox.innerHTML = 
-    '<div style="font-size: 28px; font-weight: bold; color: #ff6600; letter-spacing: 2px; border: 2px dashed #ff6600; background-color: #fff5eb; text-align: center; width: 100%; padding: 15px; border-radius: 8px; box-sizing: border-box;">' +
-        '<span id="raw-pin-string">' + trueVoucherCode + '</span>' +
-    '</div>' +
-       // Changed to a flexbox container layout with a 10px structural gap separating them
-    '<div style="width: 100%; display: flex; gap: 10px; box-sizing: border-box; margin-top: 15px;">' +
-        
-        // BUTTON 1: GREEN NAKILI BUTTON (Takes exactly 50% width space)
-        '<button type="button" onclick="copyVoucherToClipboard()" style="flex: 1; padding: 14px; background: #27ae60; color: white; font-weight: bold; border: 2px solid darkgreen; border-radius: 8px; cursor: pointer; font-size: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center; gap: 5px;">' +
-            '📋 NAKILI' +
-        '</button>' +
-        
-        // BUTTON 2: BLUE UNGANISHA BUTTON (Takes exactly 50% width space)
-        '<button type="button" onclick="executeManualPhoneLoginInline(\'' + clientMac + '\', \'' + trueVoucherCode + '\')" style="flex: 1; padding: 14px; background: #1e3c72; color: white; font-weight: bold; border: 2px solid #152b52; border-radius: 8px; cursor: pointer; font-size: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center; gap: 5px;">' +
-            '🚀 UNGANISHA' +
-        '</button>' +
-
+                                                              containerBox.innerHTML = 
+    '<div type="button" onclick="copyVoucherToClipboardAndGoHome(\'' + trueVoucherCode + '\')" style="font-size: 32px; font-weight: bold; color: #ff6600; letter-spacing: 2px; border: 2px dashed #ff6600; background-color: #fff5eb; text-align: center; width: 100%; padding: 22px 15px; border-radius: 8px; box-sizing: border-box; cursor: pointer; transition: background 0.2s; box-shadow: 0 4px 10px rgba(255,102,0,0.04);" onmouseover="this.style.backgroundColor=\'#ffebd6\'" onmouseout="this.style.backgroundColor=\'#fff5eb\'">' +
+        '<span id="raw-pin-string" style="display: block; font-family: monospace; margin-bottom: 6px;">' + trueVoucherCode + '</span>' +
+        '<span style="font-size: 11px; color: #d35400; font-weight: bold; letter-spacing: 0px; text-transform: uppercase; display: block; margin-top: 4px;">' +
+            '📋 BONYEZA HAPA KUNAKILI NA KURUDI NYUMA' +
+        '</span>' +
     '</div>';
-
 
                             }
                         }
