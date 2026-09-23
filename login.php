@@ -334,10 +334,6 @@ if (planAmount === 500) {
             '📋 NAKILI' +
         '</button>' +
         
-        // BUTTON 2: BLUE UNGANISHA BUTTON (Takes exactly 50% width space)
-        '<button type="button" onclick="executeManualPhoneLoginInline(\'' + clientMac + '\', \'' + trueVoucherCode + '\')" style="flex: 1; padding: 14px; background: #1e3c72; color: white; font-weight: bold; border: 2px solid #152b52; border-radius: 8px; cursor: pointer; font-size: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center; gap: 5px;">' +
-            '🚀 UNGANISHA' +
-        '</button>' +
 
     '</div>';
 
