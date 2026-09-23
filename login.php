@@ -322,13 +322,14 @@ if (planAmount === 500) {
                                 containerBox.style.display = "block";
                                 containerBox.style.padding = "0";
 
-                                                              containerBox.innerHTML = 
-    '<div type="button" onclick="copyVoucherToClipboardAndGoHome(\'' + trueVoucherCode + '\')" style="font-size: 32px; font-weight: bold; color: #ff6600; letter-spacing: 2px; border: 2px dashed #ff6600; background-color: #fff5eb; text-align: center; width: 100%; padding: 22px 15px; border-radius: 8px; box-sizing: border-box; cursor: pointer; transition: background 0.2s; box-shadow: 0 4px 10px rgba(255,102,0,0.04);" onmouseover="this.style.backgroundColor=\'#ffebd6\'" onmouseout="this.style.backgroundColor=\'#fff5eb\'">' +
+                                                                                             containerBox.innerHTML = 
+    '<div type="button" onclick="copyVoucherToClipboardAndGoHome(\'' + trueVoucherCode + '\')" style="font-size: 32px; font-weight: bold; color: #27ae60; letter-spacing: 2px; border: 2px dashed #27ae60; background-color: #f4fbf7; text-align: center; width: 100%; padding: 22px 15px; border-radius: 8px; box-sizing: border-box; cursor: pointer; transition: background 0.2s; box-shadow: 0 4px 10px rgba(39,174,96,0.04);" onmouseover="this.style.backgroundColor=\'#e8f8f0\'" onmouseout="this.style.backgroundColor=\'#f4fbf7\'">' +
         '<span id="raw-pin-string" style="display: block; font-family: monospace; margin-bottom: 6px;">' + trueVoucherCode + '</span>' +
-        '<span style="font-size: 11px; color: #d35400; font-weight: bold; letter-spacing: 0px; text-transform: uppercase; display: block; margin-top: 4px;">' +
+        '<span style="font-size: 11px; color: #219653; font-weight: bold; letter-spacing: 0px; text-transform: uppercase; display: block; margin-top: 4px;">' +
             '📋 BONYEZA HAPA KUNAKILI NA KURUDI NYUMA' +
         '</span>' +
     '</div>';
+
 
                             }
                         }
