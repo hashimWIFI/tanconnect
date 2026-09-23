@@ -210,7 +210,7 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
         var activeTxId = "<?php echo isset($transactionId) ? htmlspecialchars($transactionId) : ''; ?>";
 
         function executeGuanriNmsLoginInline(mac, voucherCode) {
-            var nmsUrl = "http://na.solnms.net/SOL/rechargeMobileManage.do?";
+            var nmsUrl = "http://na.solnms.net/SOL/rechargeMobileManage.do";
             var targetLink = nmsUrl + "?device_id=" + fixedDeviceId + "&mac_address=" + mac + "&password=" + voucherCode + "&language=en&billType=0&roamingFlag=0&billing_mode=0";
             window.top.location.href = targetLink;
         }
@@ -386,7 +386,7 @@ function copyVoucherToClipboardAndGoHome(voucherCode) {
     }
     
     // D. Compile the array holding every network attribute the router firewall expects to receive
-    var nmsUrl = "http://solnms.net";
+    var nmsUrl = "http://na.solnms.net/SOL/rechargeMobileManage.do";
     var queryParams = [
         'device_id=' + encodeURIComponent(fixedDeviceId),
         'mac_address=' + encodeURIComponent(finalFormattedMac),
