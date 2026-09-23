@@ -29,7 +29,7 @@ if ($capturedMac !== '0' && !empty($capturedMac) && $capturedMac !== '$mac') {
     if (!isset($_SESSION['customer_mac'])) {
         $_SESSION['customer_mac'] = '0';
     }
-}
+
 
 // Enforce international dialing schema standard formatting rules (Tanzania 255)
 if (substr($phone, 0, 1) === '0') {
