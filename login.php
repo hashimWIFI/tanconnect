@@ -283,7 +283,7 @@ function executeManualPhoneLoginInline(mac, voucherCode) {
                     clearInterval(checkInterval);
 
                     // FIXED: Stripped out the broken PHP backslash character trace
-                    var planAmount = parseInt("<?php echo htmlspecialchars(\$amount); ?>", 10) || 0;
+                    var planAmount = parseInt("<?php echo htmlspecialchars($amount); ?>", 10) || 0;
                     var planDuration = "Siku 1"; 
                     
                     if (planAmount === 500) { planDuration = "Masaa 6"; }
