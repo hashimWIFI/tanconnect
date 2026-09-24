@@ -193,8 +193,9 @@ if ($httpStatusCode === 200 && isset($allocatedVoucherId)) {
     $currentDateTime = date("Y-m-d H:i:s");
     
     // PRODUCTION INTEGRATION QUERY: Stores your custom internal tracking key AND the extracted AzamPay ID side-by-side
+      // UPGRADED PRODUCTION QUERY: Perfectly balanced to match 5 strings and 1 integer parameter (6 total)
     $updateStmt = $conn->prepare("UPDATE wifi_vouchers SET status = 'ASSIGNED', assigned_phone = ?, mac_address = ?, transaction_id = ?, azampay_transaction_id = ?, purchased_at = ? WHERE id = ?");
-    $updateStmt->bind_param("ssssssi", $phone, $sessionMac, $transactionId, $allocatedVoucherId, $azamPayTransactionId, $currentDateTime, $allocatedVoucherId);
+    $updateStmt->bind_param("sssssi", $phone, $sessionMac, $transactionId, $azamPayTransactionId, $currentDateTime, $allocatedVoucherId);
     $updateStmt->execute();
     $updateStmt->close();
 }
