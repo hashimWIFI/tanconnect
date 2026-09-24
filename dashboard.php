@@ -85,15 +85,19 @@ $log_result = $conn->query($log_query);
         z-index: 2000;
     }
     .stock-modal-content {
-        background: white;
-        padding: 22px;
-        border-radius: 10px;
-        width: 85%;
-        max-width: 320px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-        position: relative;
-        text-align: left;
-    }
+    background-color: #ffffff !important; /* FORCES SOLID OPAQUE VISUAL BACKFILL LAYER */
+    background: #ffffff !important;       /* BULLETPROOF BACKFILL OVERRIDE SEGMENT */
+    margin: 5% auto;
+    padding: 25px;
+    border: 1px solid #cbd5e1;
+    width: 90%;
+    max-width: 450px;
+    border-radius: 12px;
+    position: relative;
+    box-sizing: border-box;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); /* Drops deep shadow separation layer */
+}
+
     .stock-close {
         position: absolute;
         top: 8px; right: 12px;
