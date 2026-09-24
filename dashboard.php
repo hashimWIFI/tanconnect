@@ -12,7 +12,6 @@ if (!isset($_SERVER['PHP_AUTH_USER']) || $_SERVER['PHP_AUTH_USER'] !== $admin_us
     echo 'Utambuzi unahitajika kufungua ukurasa huu.';
     exit;
 }
-
 // 1. Establish database connection using your dynamic Railway variables
 $db_host = getenv('MYSQLHOST')     ?: '127.0.0.1';
 $db_port = getenv('MYSQLPORT')     ?: '3306';
@@ -34,7 +33,6 @@ if ($tier_stock_result) {
         $tier_stock_data[] = $tier_row;
     }
 }
-
 // 2. Fetch Aggregated Sales Summary Metrics
 $earnings_result = $conn->query("SELECT SUM(price_tier) AS total FROM wifi_vouchers WHERE status = 'SUCCESS'");
 $total_earnings = $earnings_result ? ($earnings_result->fetch_assoc()['total'] ?: 0) : 0;
@@ -97,7 +95,6 @@ $log_result = $conn->query($log_query);
     box-sizing: border-box;
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); /* Drops deep shadow separation layer */
 }
-
     .stock-close {
         position: absolute;
         top: 8px; right: 12px;
@@ -141,6 +138,8 @@ $log_result = $conn->query($log_query);
 </head>
 <body>
 
+<body>
+
 <div class="wrapper">
     <h2>📊 TANConnect Wi-Fi Admin Sales Dashboard</h2>
     
@@ -154,13 +153,14 @@ $log_result = $conn->query($log_query);
             Vocha Zilizouuzwa (Vouchers Sold)
             <span class="metric-val"><?php echo number_format($vouchers_sold); ?> pcs</span>
         </div>
-                <!-- UPDATED CARD: Added cursor pointer and click handler to launch the summary window -->
-        <div class="metric-card card-orange" onclick="openStockSummaryPopup()" style="cursor: pointer; transition: transform 0.1s ease;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1.0)'">
+        
+        <!-- DYNAMIC REMAINING STOCK CARD -->
+        <div class="metric-card card-orange" onclick="openStockSummaryPopup()" style="cursor: pointer; transform: scale(1);" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1.0)'">
             Vocha Zilizobaki (Voucher Stock)
             <span class="metric-val"><?php echo number_format($remaining_stock); ?> pcs</span>
-            <span style="font-size: 9px; display: block; margin-top: 5px; color: #ffe0b2; letter-spacing: 0.5px;">📋 GUSA HAPA KUONA SRECHNDU (VIEW DETAILS)</span>
+            <span style="font-size: 9px; display: block; margin-top: 5px; color: #ffe0b2; letter-spacing: 0.5px;">📋 GUSA HAPA KUONA BATCH DETAILS</span>
         </div>
-    </div> <!-- Closing metrics-grid container -->
+    </div> 
 
     <!-- DYNAMIC BATCH STOCK SUMMARY POPUP MODAL CONTAINER -->
     <div id="stockSummaryModal" class="stock-modal" onclick="closeStockSummaryPopup()">
@@ -177,10 +177,23 @@ $log_result = $conn->query($log_query);
                 </thead>
                 <tbody>
                     <?php if (!empty($tier_stock_data)): ?>
-                        <?php foreach ($tier_stock_data as $tier): ?>
-                            <tr>
-                                <td style="font-weight: bold; color: #1e3c72;">Tsh <?php echo number_format($tier['price_tier']); ?></td>
-                                <td style="font-weight: bold; text-align: right; color: #e67e22;"><?php echo number_format($tier['tier_count']); ?> pcs</td>
+                        <?php foreach ($tier_stock_data as $tier): 
+                            // Inventory warning threshold configuration matrix
+                            $lowStockThreshold = 50; 
+                            $isLowStock = ($tier['tier_count'] < $lowStockThreshold);
+                            
+                            $textStyle = $isLowStock ? 'color: #d9534f; font-weight: 800;' : 'color: #1e3c72; font-weight: bold;';
+                            $badgeMarkup = $isLowStock ? ' <span style="font-size: 8px; background-color: #fde8e8; color: #e53e3e; padding: 2px 6px; border-radius: 4px; margin-left: 5px; border: 1px solid #fed7d7; font-family: sans-serif;">⚠️ LOW STOCK</span>' : '';
+                            $countStyle = $isLowStock ? 'color: #d9534f; font-weight: 800;' : 'color: #e67e22; font-weight: bold;';
+                        ?>
+                            <tr style="<?php echo $isLowStock ? 'background-color: #fffaf0;' : ''; ?>">
+                                <td style="<?php echo $textStyle; ?>">
+                                    Tsh <?php echo number_format($tier['price_tier']); ?>
+                                    <?php echo $badgeMarkup; ?>
+                                </td>
+                                <td style="text-align: right; <?php echo $countStyle; ?>">
+                                    <?php echo number_format($tier['tier_count']); ?> pcs
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
@@ -191,8 +204,6 @@ $log_result = $conn->query($log_query);
                 </tbody>
             </table>
         </div>
-    </div>
-
     </div>
 
     <h3>📝 Live Transaction Audit Logs (Latest 50 Entries)</h3>
@@ -209,38 +220,40 @@ $log_result = $conn->query($log_query);
                     <th>Time Purchased</th>
                     <th>Transaction ID</th>
                 </tr>
-            </thead><tbody>
-    <?php if (!empty($tier_stock_data)): ?>
-        <?php foreach ($tier_stock_data as $tier): 
-            // Define your critical inventory warning threshold limit
-            $lowStockThreshold = 50; 
-            $isLowStock = ($tier['tier_count'] < $lowStockThreshold);
-            
-            // Set alert configurations depending on current numbers left
-            $textStyle = $isLowStock ? 'color: #d9534f; font-weight: 800;' : 'color: #1e3c72; font-weight: bold;';
-            $badgeMarkup = $isLowStock ? ' <span style="font-size: 8px; background-color: #fde8e8; color: #e53e3e; padding: 2px 6px; border-radius: 4px; margin-left: 5px; border: 1px solid #fed7d7; font-family: sans-serif;">⚠️ LOW STOCK</span>' : '';
-            $countStyle = $isLowStock ? 'color: #d9534f; font-weight: 800;' : 'color: #e67e22; font-weight: bold;';
-        ?>
-            <tr style="<?php echo $isLowStock ? 'background-color: #fffaf0;' : ''; ?>">
-                <!-- Price Tier Field Display -->
-                <td style="<?php echo $textStyle; ?>">
-                    Tsh <?php echo number_format($tier['price_tier']); ?>
-                    <?php echo $badgeMarkup; ?>
-                </td>
-                
-                <!-- Stock Count Field Display -->
-                <td style="text-align: right; <?php echo $countStyle; ?>">
-                    <?php echo number_format($tier['tier_count']); ?> pcs
-                </td>
-            </tr>
-        <?php endforeach; ?>
-    <?php else: ?>
-        <tr>
-            <td colspan="2" style="text-align: center; color: #7f8c8d;">Hakuna vocha zilizobaki.</td>
-        </tr>
-    <?php endif; ?>
-</tbody>
-
+            </thead>
+            <tbody>
+                <?php if ($log_result && $log_result->num_rows > 0): ?>
+                    <?php while ($row = $log_result->fetch_assoc()): ?>
+                        <?php 
+                        $rawMac = preg_replace('/[^a-zA-Z0-9]/', '', $row['mac_address']);
+                        $displayMac = $row['mac_address'];
+                        if (strlen($rawMac) === 12) {
+                            $displayMac = implode(':', str_split($rawMac, 2));
+                        }
+                        ?>
+                        <tr>
+                            <td><?php echo $row['id']; ?></td>
+                            <td style="font-weight: bold; font-family: monospace; font-size: 15px;"><?php echo $row['voucher_code']; ?></td>
+                            <td>Tsh <?php echo number_format($row['price_tier']); ?></td>
+                            <td>
+                                <span class="badge <?php echo ($row['status'] === 'SUCCESS') ? 'badge-success' : 'badge-assigned'; ?>">
+                                    <?php echo $row['status']; ?>
+                                </span>
+                            </td>
+                            <td><?php echo !empty($row['assigned_phone']) ? htmlspecialchars($row['assigned_phone']) : '-'; ?></td>
+                            <td class="mac-text"><?php echo !empty($rawMac) ? htmlspecialchars(strtoupper($displayMac)) : '-'; ?></td>
+                            <td style="font-family: monospace; color: #2c3e50; font-weight: 500;">
+                                <?php echo !empty($row['purchased_at']) ? date("d-m-Y H:i:s", strtotime($row['purchased_at'])) : '-'; ?>
+                            </td>
+                            <td style="color: #7f8c8d; font-size: 12px;"><?php echo htmlspecialchars($row['transaction_id']); ?></td>
+                        </tr>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="8" style="text-align: center; color: #7f8c8d; padding: 20px;">Hakuna kumbukumbu za malipo bado.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
         </table>
     </div>
 </div>
@@ -248,7 +261,6 @@ $log_result = $conn->query($log_query);
     <!-- SILENT BACKGROUND DATABASE CLEANUP TRIGGER -->
     <script type="text/javascript">
     window.addEventListener('DOMContentLoaded', function() {
-        // Quietly pings the cleanup script in the background every time the dashboard reloads
         fetch('cron_cleanup.php')
             .then(response => response.json())
             .then(data => {
@@ -262,4 +274,9 @@ $log_result = $conn->query($log_query);
 
 </body>
 </html>
-
+<?php 
+if (isset($conn) && $conn instanceof mysqli) {
+    $conn->close(); 
+}
+exit();
+?>
