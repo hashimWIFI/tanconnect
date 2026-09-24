@@ -1,4 +1,7 @@
 <?php
+// =========================================================================
+// 🚀 TANCONNECT CAPTIVE PORTAL GATEWAY ENGINE (PART 1 OF 3)
+// =========================================================================
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -62,7 +65,6 @@ $conn = new mysqli($db_host, $db_user, $db_pass, $db_name, $db_port);
 if ($conn->connect_error) {
     die("Database connectivity node failed to respond: " . $conn->connect_error);
 }
-
 // =========================================================================
 // 3. VOUCHER SELECTION, STOCK MANAGEMENT, AND AZAMPAY CHECKOUT DISPATCH
 // =========================================================================
@@ -107,12 +109,14 @@ if (!$dbResult) {
     $clientId  = "678beae1-7761-47fb-8111-858fb60d7ad3";
     $secretKey = "VsZ0sQJpaxcWpkm5WtfmQNfjqwq0WqeQ/4qiFI044jmdSvq5ksVo3GWtT6yjQYVr4uqgn4X9hUdnrBaf3opZI/HdK2PzbxzBLlBf5xBhTY8WeyjPgnTWbEBkkIA+8Z3MBCItvm83FBLdv/hOBAwtRbnOSNfPSKxs3TgtTGo1xMBc/NqGWAsMRKgEH5m5v0mO9jxgRQzRezzSE4ibKDrRg1bswh7GWN6u7SfKvzyZN1ZnSJPC6iTcgDz4gzeoygb9nyOprJCfwe0fEJd9ohfVMhOG/FGyXsEcG2UKjoeH12p1+/LqjzCOUyR1aYWv4R8GdizIzghOTtZCmnOb35XuyRbQkwdEq6lbC5naP322gvE+pQ/MAhS1q5ZeS3FzIYmaZ1yrcT10mIUNasaCsa+1oMmF8E/zrRnNnVPymU9S5pzjzCK44uRQHqoSnn3E44agwMq9y1A6JnCVeRAYsoI64xzjThf9DFgafop8ToYcisKqIaxYclEgJMtYX/hrIaWKGBNV+WUX0kRFh/KTLYtpOvLUpui1KMIQNEYwQDBG8gcV+uieN1VxwA780QRj1zdZI8K9HWeqzPwxgmYyi2CGeYzuLdAzC4X84NanxCMOoHCO/IFwuYhPTMqSnjMEaRoPKcymxHk0KwHN9rnzC6UKaXleNuTOG/szi2qYAr2XImY=";
     $apiKey    = "63bdee95-eba0-4eec-a5f0-0a8a12a715df";
-    $transactionId = 'WIFI-' . time();
+    
+    // 🚀 CUSTOM REBRANDING UPGRADE: Shifted the internal prefix tracking key signature layout to NITW
+    $transactionId = 'NITW-' . time();
 
     // =========================================================================
     // 4. STAGE 1: AUTOMATED ACCESS TOKEN GENERATION
     // =========================================================================
-   $authUrl = "https://authenticator-sandbox.azampay.co.tz/AppRegistration/GenerateToken";
+    $authUrl =  "https://authenticator-sandbox.azampay.co.tz/AppRegistration/GenerateToken";
     $authPayload = json_encode([
         'appname'      => $appName,
         'clientid'     => $clientId,
@@ -135,6 +139,7 @@ if (!$dbResult) {
 
     $authResult = json_decode($authResponse, true);
     $token = isset($authResult['data']['accessToken']) ? $authResult['data']['accessToken'] : null;
+    
     if (!$token) {
         $httpStatusCode = 401; // Authentication token dispatch failure
     } else {
@@ -170,15 +175,26 @@ if (!$dbResult) {
         $checkoutResponse = curl_exec($chCheck);
         $httpStatusCode = curl_getinfo($chCheck, CURLINFO_HTTP_CODE);
         curl_close($chCheck);
+
+        // 🚀 RESPONSES ENGINE DECODER: Reads the instant feedback packet text stream from checkout
+        $apiResult = json_decode($checkoutResponse, true);
+
+        // Extracts the official transaction identifier value generated directly by AzamPay's response API
+        $azamPayTransactionId = isset($apiResult['transactionId']) ? trim($apiResult['transactionId']) : (isset($apiResult['id']) ? trim($apiResult['id']) : NULL);
     }
 }
-
 // Update database status flags to 'ASSIGNED' if cURL checkout request hit 200 OK successfully
 if ($httpStatusCode === 200 && isset($allocatedVoucherId)) {
-    // 🚀 STORES MAC DIRECTLY IN YOUR DB: Saves both attributes side-by-side perfectly
+    // STORES MAC DIRECTLY IN YOUR DB: Saves all attributes side-by-side perfectly
     $sessionMac = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0';
-    $updateStmt = $conn->prepare("UPDATE wifi_vouchers SET status = 'ASSIGNED', assigned_phone = ?, mac_address = ?, transaction_id = ? WHERE id = ?");
-    $updateStmt->bind_param("sssi", $phone, $sessionMac, $transactionId, $allocatedVoucherId);
+    
+    // Set local East African Time parameters upon successful database write operations
+    date_default_timezone_set('Africa/Dar_es_Salaam');
+    $currentDateTime = date("Y-m-d H:i:s");
+    
+    // PRODUCTION INTEGRATION QUERY: Stores your custom internal tracking key AND the extracted AzamPay ID side-by-side
+    $updateStmt = $conn->prepare("UPDATE wifi_vouchers SET status = 'ASSIGNED', assigned_phone = ?, mac_address = ?, transaction_id = ?, azampay_transaction_id = ?, purchased_at = ? WHERE id = ?");
+    $updateStmt->bind_param("ssssssi", $phone, $sessionMac, $transactionId, $allocatedVoucherId, $azamPayTransactionId, $currentDateTime, $allocatedVoucherId);
     $updateStmt->execute();
     $updateStmt->close();
 }
@@ -216,7 +232,7 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
         var activeTxId = "<?php echo isset($transactionId) ? htmlspecialchars($transactionId) : ''; ?>";
 
         function closeThisWindow() {
-            window.close();
+            window.history.back();
         }
 
         function startPaymentVerificationLoop() {
@@ -252,7 +268,7 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
 
                             var subtextElement = document.getElementById('payment-subtext');
                             if (subtextElement) {
-                                subtextElement.innerHTML = "Umenunua kifurushi cha <b>Tsh " + planAmount.toLocaleString() + "</b> kitatumika kwa <b>" + planDuration + "</b>.<br>Vocha yako imetengenezwa kikamilifu.";
+                                subtextElement.innerHTML = "Umenunua kifurushi cha <b>Tsh " + planAmount.toLocaleString() + "</b> kitatumika kwa muda wa <b>" + planDuration + "</b>";
                             }
 
                             var trueVoucherCode = data.voucher_code || data.code || data.voucher || "KODI-SAHIHI";
@@ -284,7 +300,7 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
                 startPaymentVerificationLoop();
             }
         };
-        // PRODUCTION SEAMLESS BRIDGE: Copies PIN to memory, injects formatting colons, and maps all NMS parameters
+        // PRODUCTION SEAMLESS BRIDGE: Copies PIN to clipboard and routes straight back to local router home page
         function copyVoucherToClipboardAndGoHome(voucherCode, fallbackMac) {
             var tempInput = document.createElement("input");
             tempInput.value = voucherCode;
@@ -294,47 +310,14 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
             
             try {
                 document.execCommand("copy");
-                alert("Vocha yako (" + voucherCode + ") Voucher yako imenakiliwa imehifadhiwa!\n\n Ingiza voucher yako kwenye ukurasa unaofuata kuingia mtandaoni.");
+                alert("Vocha yako (" + voucherCode + ") imenakiliwa\n\nBonyeza kitufe cha HODI ukurasa unaofuata kuunganishwa kwenye mtandao.");
             } catch (err) {
-                alert("Tafadhali unakili au andika namba hii ya vocha: " + voucherCode);
+                alert("Tafadhali nakili voucher yako: " + voucherCode);
             }
-            
             document.body.removeChild(tempInput);
-            
-            // =========================================================================
-            // 🚀 FULLY LOADED NMS REDIRECT GATEWAY ARRAY (All Required Router Parameters)
-            // =========================================================================
-            var fixedDeviceId = "8600081897"; 
-            var currentMacString = (typeof fallbackMac !== 'undefined' && fallbackMac) ? fallbackMac.trim() : ((typeof clientMac !== 'undefined' && clientMac) ? clientMac.trim() : '0');
-            
-            var rawDigits = currentMacString.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-            var finalFormattedMac = currentMacString;
-            
-            if (rawDigits.length === 12) {
-                var groups = [];
-                for (var i = 0; i < 12; i += 2) {
-                    groups.push(rawDigits.substr(i, 2));
-                }
-                finalFormattedMac = groups.join(':'); // Enforces "24:EE:9A:7A:91:12" structure perfectly
-            }
 
-            var nmsUrl = "http://na.solnms.net/SOL/rechargeMobileManage.do";
-            var queryParams = [
-                'device_id=' + encodeURIComponent(fixedDeviceId),
-                'mac_address=' + encodeURIComponent(finalFormattedMac),
-                'language=en',
-                'billType=0',
-                'roamingFlag=0',
-                'billing_mode=0'
-            ].join('&');
-            
-            var finalAuthUrl = nmsUrl + "?" + queryParams;
-            
-            if (window.top) {
-                window.top.location.href = finalAuthUrl;
-            } else {
-                window.location.href = finalAuthUrl;
-            }
+            // SIMPLIFIED REDIRECT PATHWAY: Direct layout return straight to your local interface gates
+            window.top.location.href = "http://5wifi.net";
         }
     </script>
 </head>
@@ -356,7 +339,7 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
             <div id="status-loading-container" style="background: #e8f4fd; border: 2px dashed #3498db; border-radius: 8px; padding: 12px; min-height: 55px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
                 <div id="waiting-marquee-container" style="display: flex; align-items: center; justify-content: center; color: #3498db; font-weight: bold; font-size: 12px; width: 100%;">
                     <marquee behavior="scroll" direction="left" scrollamount="4" style="font-size: 13px; font-weight: bold; width: 100%;">
-                        Malipo yanafanyika kupitia mtandao wa AzamPay. &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp; Voucher yako itajitokeza hapa utapoweka PIN kwenye simu yako. &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp; Vilevile utapokea SMS yenye Voucher yako kutoka namba 0753 476 850.
+                        Malipo yanafanyika kupitia mtandao wa AzamPay. &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp; Voucher yako itajitokeza hapa utapoweka PIN kwenye simu yako. &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp; Vilevile utapokea SMS yenye Voucher yako kutoka nambari 0753 476 850.
                     </marquee>
                 </div>
             </div>
@@ -369,24 +352,23 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
 
 <?php else: ?>
 
-    <!-- FAIL-SAFE SYSTEM PANELS: FIRES FOR OUT OF STOCK OR 401 GATEWAY DISCONNECTS -->
     <div class="receipt-card" style="position: relative; overflow: hidden; padding-top: 40px;">
         <div style="font-size: 24px; font-family: Broadway, Helvetica, sans-serif; color: #1e3c72; font-weight: bold; margin-bottom: 2px;">TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 10px; font-weight: normal; vertical-align: super; line-height: 0;">®</sup></div>
         <span class="close-btn" onclick="closeThisWindow()">&times;</span>
         
-        <h2 class="error-color" style="color: #e74c3c; margin-top: 15px;">✕ Hitilafu Imepatikana!</h2>
+        <h2 class="error-color" style="color: #e74c3c; margin-top: 15px;">✕ Hitilafu Imejitokeza!</h2>
         
         <p style="font-size: 14px; line-height: 1.6; color: #34495e; text-align: left; margin-top: 15px;">
             <?php 
             if (isset($httpStatusCode) && intval($httpStatusCode) === 503) {
-                echo "<b>Samahani ndugu mteja, mtambo umeshindwa kutoa vocha kwa sasa kwa sababu vocha za kiwango hiki zimeisha (Out of Stock).</b><br><br>Uongozi wetu umearifiwa kupitia Ntfy Alert na tunaongeza vocha nyingine sasa hivi. Tafadhali jaribu tena baada ya muda mfupi au wasiliana nasi.";
+                echo "<b>Samahani ndugu mteja, mtambo umeshindwa kuchakata vifurushi vya bei hii.</b><br><br> Tafadhali jaribu tena baada ya muda mfupi.";
             } else {
-                echo "<b>Imeshindwa kuanzisha mawasiliano na mtandao wa malipo wa AzamPay.</b><br><br>Tafadhali hakikisha kuwa namba yako ya simu iko hewani, salio linatosha na ujaribu tena. Kama umekatwa pesa hewani bila kuona vocha, piga simu: <b>0713 123 974</b>.<br><br>Msimbo wa Hitilafu (Status Code): <b>" . (isset($httpStatusCode) ? htmlspecialchars($httpStatusCode) : '0') . "</b>";
+                echo "<b>Mtambo kuwasiliana na mtandao wako kunzisha malipo.</b><br><br>Tafadhali hakikisha kuwa simu yako iko hewani, salio linatosha na ujaribu tena.</b>.<br><br>Msimbo wa Hitilafu (Status Code): <b>" . (isset($httpStatusCode) ? htmlspecialchars($httpStatusCode) : '0') . "</b>";
             }
             ?>
         </p>
         
-        <a href="javascript:history.back()" class="btn-portal" style="background: #e74c3c; border-color: darkred; color: white; padding: 12px; display: block; text-decoration: none; font-weight: bold; border-radius: 6px; text-align: center; margin-top: 20px;">
+        <a href="javascript:history.back()" class="btn-portal" style="background: #e74c3c; border-color: darkred; color: white; padding: 12px; display: block; text-decoration: none; font-weight: bold; border-radius: 8px; text-align: center; margin-top: 20px;">
             RUDI NYUMA (BACK HOME)
         </a>
     </div>
