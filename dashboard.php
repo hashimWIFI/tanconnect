@@ -251,7 +251,7 @@ Wi-Fi Admin Sales Dashboard</h2>
         <table>
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>S/N</th>
                     <th>Voucher PIN</th>
                     <th>Price Tier</th>
                     <th>Status</th>
