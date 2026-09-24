@@ -294,7 +294,7 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
             
             try {
                 document.execCommand("copy");
-                alert("Vocha yako (" + voucherCode + ") imenakiliwa kikamilifu!\n\nMfumo unakubadili kuingia kwenye ukurasa wa NMS. Gusa kisanduku cha kuingiza Vocha, chagua PASTE kisha bonyeza ADD WIFI SERVICE TIME.");
+                alert("Vocha yako (" + voucherCode + ") Voucher yako imenakiliwa imehifadhiwa!\n\n Ingiza voucher yako kwenye ukurasa unaofuata kuingia mtandaoni.");
             } catch (err) {
                 alert("Tafadhali unakili au andika namba hii ya vocha: " + voucherCode);
             }
