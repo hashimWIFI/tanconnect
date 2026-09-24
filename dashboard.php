@@ -95,6 +95,7 @@ $total_earnings = $earnings_result ? ($earnings_result->fetch_assoc()['total'] ?
 $count_result = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE status = 'SUCCESS'");
 $vouchers_sold = $count_result ? $count_result->fetch_assoc()['total'] : 0;
 
+
 $stock_result = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE status = 'AVAILABLE'");
 $remaining_stock = $stock_result ? $stock_result->fetch_assoc()['total'] : 0;
 
