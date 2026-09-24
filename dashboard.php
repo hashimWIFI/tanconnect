@@ -24,6 +24,16 @@ $conn = new mysqli($db_host, $db_user, $db_pass, $db_name, $db_port);
 if ($conn->connect_error) {
     die("Database connection failed: " . $conn->connect_error);
 }
+// Fetch remaining stock broken down per specific price tier batch
+$tier_stock_query = "SELECT price_tier, COUNT(*) AS tier_count FROM wifi_vouchers WHERE status = 'AVAILABLE' GROUP BY price_tier ORDER BY price_tier ASC";
+$tier_stock_result = $conn->query($tier_stock_query);
+
+$tier_stock_data = [];
+if ($tier_stock_result) {
+    while ($tier_row = $tier_stock_result->fetch_assoc()) {
+        $tier_stock_data[] = $tier_row;
+    }
+}
 
 // 2. Fetch Aggregated Sales Summary Metrics
 $earnings_result = $conn->query("SELECT SUM(price_tier) AS total FROM wifi_vouchers WHERE status = 'SUCCESS'");
@@ -64,6 +74,65 @@ $log_result = $conn->query($log_query);
         .badge-success { background: #e8f8f0; color: #27ae60; border: 1px solid #27ae60; }
         .badge-assigned { background: #eaf2f8; color: #2980b9; border: 1px solid #2980b9; }
         .mac-text { font-family: monospace; letter-spacing: 0.5px; color: #555; }
+    /* Stock Modal Popup Layout Rules */
+    .stock-modal {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+    }
+    .stock-modal-content {
+        background: white;
+        padding: 22px;
+        border-radius: 10px;
+        width: 85%;
+        max-width: 320px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        position: relative;
+        text-align: left;
+    }
+    .stock-close {
+        position: absolute;
+        top: 8px; right: 12px;
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+        color: #aaa;
+    }
+    .stock-close:hover { color: #333; }
+    .stock-table {
+        width: 100%;
+        margin-top: 12px;
+        border-collapse: collapse;
+    }
+    .stock-table th, .stock-table td {
+        padding: 8px 10px;
+        border: 1px solid #e2e8f0;
+        font-family: monospace;
+        font-size: 14px;
+    }
+    .stock-table th { background-color: #f8fafc; font-family: sans-serif; font-size: 12px; }
+</style>
+
+<script type="text/javascript">
+    function openStockSummaryPopup() {
+        document.getElementById('stockSummaryModal').style.display = 'flex';
+    }
+    function closeStockSummaryPopup() {
+        document.getElementById('stockSummaryModal').style.display = 'none';
+    }
+    // Close modal if user clicks outside the white content box area
+    window.onclick = function(event) {
+        var modal = document.getElementById('stockSummaryModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+</script>
+
     </style>
 </head>
 <body>
@@ -81,10 +150,45 @@ $log_result = $conn->query($log_query);
             Vocha Zilizouuzwa (Vouchers Sold)
             <span class="metric-val"><?php echo number_format($vouchers_sold); ?> pcs</span>
         </div>
-        <div class="metric-card card-orange">
+                <!-- UPDATED CARD: Added cursor pointer and click handler to launch the summary window -->
+        <div class="metric-card card-orange" onclick="openStockSummaryPopup()" style="cursor: pointer; transition: transform 0.1s ease;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1.0)'">
             Vocha Zilizobaki (Voucher Stock)
             <span class="metric-val"><?php echo number_format($remaining_stock); ?> pcs</span>
+            <span style="font-size: 9px; display: block; margin-top: 5px; color: #ffe0b2; letter-spacing: 0.5px;">📋 GUSA HAPA KUONA SRECHNDU (VIEW DETAILS)</span>
         </div>
+    </div> <!-- Closing metrics-grid container -->
+
+    <!-- DYNAMIC BATCH STOCK SUMMARY POPUP MODAL CONTAINER -->
+    <div id="stockSummaryModal" class="stock-modal" onclick="closeStockSummaryPopup()">
+        <div class="stock-modal-content" onclick="event.stopPropagation()">
+            <span class="stock-close" onclick="closeStockSummaryPopup()">&times;</span>
+            <h3 style="margin-top: 0; color: #e67e22; font-size: 16px; border-bottom: 2px solid #eee; padding-bottom: 8px;">📊 Muhtasari wa Vocha (Stock Summary)</h3>
+            
+            <table class="stock-table">
+                <thead>
+                    <tr>
+                        <th>Price Tier</th>
+                        <th>Zilizobaki (Stock)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (!empty($tier_stock_data)): ?>
+                        <?php foreach ($tier_stock_data as $tier): ?>
+                            <tr>
+                                <td style="font-weight: bold; color: #1e3c72;">Tsh <?php echo number_format($tier['price_tier']); ?></td>
+                                <td style="font-weight: bold; text-align: right; color: #e67e22;"><?php echo number_format($tier['tier_count']); ?> pcs</td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="2" style="text-align: center; color: #7f8c8d;">Hakuna vocha zilizobaki.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     </div>
 
     <h3>📝 Live Transaction Audit Logs (Latest 50 Entries)</h3>
