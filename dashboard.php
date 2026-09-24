@@ -57,7 +57,7 @@ $log_result = $conn->query($log_query);
     <title>TANConnect - Admin Dashboard</title>  
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; color: #333; margin: 0; padding: 20px; }
-        .wrapper { max-width: 1000px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .wrapper { max-width: 2500px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         h2 { color: #1e3c72; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; margin-top: 20px; }
         .metric-card { padding: 20px; border-radius: 8px; color: white; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
@@ -142,7 +142,8 @@ $log_result = $conn->query($log_query);
 <body>
 
 <div class="wrapper">
-    <h2><img src="logo.png" alt="Water Point Logo" style="max-width: 180px; height: auto;"> Wi-Fi Admin Sales Dashboard</h2>
+    <h2><img src="logo.png" alt="Water Point Logo" style="max-width: 220px; height: auto; object-fit: contain; margin-bottom: 1px;"> <br>
+Wi-Fi Admin Sales Dashboard</h2>
     
     <!-- Summary Cards Layer -->
     <div class="metrics-grid">
