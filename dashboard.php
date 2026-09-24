@@ -205,45 +205,38 @@ $log_result = $conn->query($log_query);
                     <th>Time Purchased</th>
                     <th>Transaction ID</th>
                 </tr>
-            </thead>
-            <tbody>
-                <?php if ($log_result && $log_result->num_rows > 0): ?>
-                    <?php while ($row = $log_result->fetch_assoc()): ?>
-                        <?php 
-                        // Automatically format the captured MAC address with colons
-                        $rawMac = preg_replace('/[^a-zA-Z0-9]/', '', $row['mac_address']);
-                        $displayMac = $row['mac_address'];
-                        if (strlen($rawMac) === 12) {
-                            $displayMac = implode(':', str_split($rawMac, 2));
-                        }
-                        ?>
-                        <tr>
-                            <td><?php echo $row['id']; ?></td>
-                            <td style="font-weight:bold; font-family: monospace; font-size:15px;"><?php echo $row['voucher_code']; ?></td>
-                            <td>Tsh <?php echo number_format($row['price_tier']); ?></td>
-                            <td>
-                                <span class="badge <?php echo ($row['status'] === 'SUCCESS') ? 'badge-success' : 'badge-assigned'; ?>">
-                                    <?php echo $row['status']; ?>
-                                </span>
-                            </td>
-                            <td><?php echo !empty($row['assigned_phone']) ? htmlspecialchars($row['assigned_phone']) : '-'; ?></td>
-                            <td class="mac-text"><?php echo !empty($rawMac) ? htmlspecialchars(strtoupper($displayMac)) : '-'; ?></td>
-                            
-                            <!-- DYNAMIC CELL: Displays the true timestamp from your purchased_at column -->
-                            <td style="font-family: monospace; color: #2c3e50; font-weight: 500;">
-                                <?php echo !empty($row['purchased_at']) ? date("d-m-Y H:i:s", strtotime($row['purchased_at'])) : '-'; ?>
-                            </td>
-                            
-                            <td style="color:#7f8c8d; font-size:12px;"><?php echo htmlspecialchars($row['transaction_id']); ?></td>
-                        </tr>
-                    <?php endwhile; ?>
+            </thead><tbody>
+    <?php if (!empty($tier_stock_data)): ?>
+        <?php foreach ($tier_stock_data as $tier): 
+            // Define your critical inventory warning threshold limit
+            $lowStockThreshold = 50; 
+            $isLowStock = ($tier['tier_count'] < $lowStockThreshold);
+            
+            // Set alert configurations depending on current numbers left
+            $textStyle = $isLowStock ? 'color: #d9534f; font-weight: 800;' : 'color: #1e3c72; font-weight: bold;';
+            $badgeMarkup = $isLowStock ? ' <span style="font-size: 8px; background-color: #fde8e8; color: #e53e3e; padding: 2px 6px; border-radius: 4px; margin-left: 5px; border: 1px solid #fed7d7; font-family: sans-serif;">⚠️ LOW STOCK</span>' : '';
+            $countStyle = $isLowStock ? 'color: #d9534f; font-weight: 800;' : 'color: #e67e22; font-weight: bold;';
+        ?>
+            <tr style="<?php echo $isLowStock ? 'background-color: #fffaf0;' : ''; ?>">
+                <!-- Price Tier Field Display -->
+                <td style="<?php echo $textStyle; ?>">
+                    Tsh <?php echo number_format($tier['price_tier']); ?>
+                    <?php echo $badgeMarkup; ?>
+                </td>
+                
+                <!-- Stock Count Field Display -->
+                <td style="text-align: right; <?php echo $countStyle; ?>">
+                    <?php echo number_format($tier['tier_count']); ?> pcs
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <tr>
+            <td colspan="2" style="text-align: center; color: #7f8c8d;">Hakuna vocha zilizobaki.</td>
+        </tr>
+    <?php endif; ?>
+</tbody>
 
-                <?php else: ?>
-                    <tr>
-                        <td colspan="8" style="text-align:center; color:#7f8c8d; padding:20px;">Hakuna kumbukumbu za malipo bado.</td>
-                    </tr>
-                <?php endif; ?>
-            </tbody>
         </table>
     </div>
 </div>
