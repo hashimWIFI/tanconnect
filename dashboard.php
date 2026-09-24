@@ -142,7 +142,7 @@ $log_result = $conn->query($log_query);
 <body>
 
 <div class="wrapper">
-    <h2><img src="logo.png" alt="Water Point Logo" style="max-width: 120px; height: auto; object-fit: contain; margin-bottom: 1px;"> Wi-Fi Admin Sales Dashboard</h2>
+    <h2><img src="logo.png" alt="Water Point Logo" style="max-width: 180px; height: auto; object-fit: contain; margin-bottom: 1px;"> Wi-Fi Admin Sales Dashboard</h2>
     
     <!-- Summary Cards Layer -->
     <div class="metrics-grid">
