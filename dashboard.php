@@ -53,7 +53,7 @@ $log_result = $conn->query($log_query);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="refresh" content="10">
-    <img src="logo.png" alt="Water Point Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
+    
     <title>TANConnect - Admin Dashboard</title>  
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; color: #333; margin: 0; padding: 20px; }
@@ -142,7 +142,7 @@ $log_result = $conn->query($log_query);
 <body>
 
 <div class="wrapper">
-    <h2>📊 TANConnect Wi-Fi Admin Sales Dashboard</h2>
+    <h2><img src="logo.png" alt="Water Point Logo" style="max-width: 50px; height: auto; object-fit: contain; margin-bottom: 1px;"> Wi-Fi Admin Sales Dashboard</h2>
     
     <!-- Summary Cards Layer -->
     <div class="metrics-grid">
