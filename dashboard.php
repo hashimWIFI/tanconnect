@@ -150,7 +150,7 @@ $log_result = $conn->query($log_query);
             <span class="metric-val">Tsh <?php echo number_format($total_earnings); ?></span>
         </div>
         <div class="metric-card card-blue">
-            Vocha Zilizouuzwa (Vouchers Sold)
+            Vocha Zilizouzwa (Vouchers Sold)
             <span class="metric-val"><?php echo number_format($vouchers_sold); ?> pcs</span>
         </div>
         
