@@ -99,7 +99,7 @@ $stock_result = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE 
 $remaining_stock = $stock_result ? $stock_result->fetch_assoc()['total'] : 0;
 
 // 3. PRODUCTION UPGRADE: Selecting your branded NITW internal IDs alongside your renamed azampesa_transaction_id column cells!
-$log_query = "SELECT id, voucher_code, price_tier, status, assigned_phone, mac_address, transaction_id, azampesa_transaction_id, purchased_at FROM wifi_vouchers WHERE status IN ('SUCCESS', 'ASSIGNED') ORDER BY id DESC LIMIT 50";
+$log_query = "SELECT id, voucher_code, price_tier, status, assigned_phone, mac_address, transaction_id, azampay_transaction_id, purchased_at FROM wifi_vouchers WHERE status IN ('SUCCESS', 'ASSIGNED') ORDER BY id DESC LIMIT 50";
 $log_result = $conn->query($log_query);
 ?>
 <!DOCTYPE html>
