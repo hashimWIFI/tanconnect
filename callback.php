@@ -48,23 +48,23 @@ if (strtolower($transactionStatus) === 'success' && !empty($externalId)) {
         date_default_timezone_set('Africa/Dar_es_Salaam');
         $currentDateTime = date("Y-m-d H:i:s");
         
-        // 3. PRODUCTION RECONCILIATION MATCHING UPDATE QUERY:
-        // Swaps status to SUCCESS, registers the actual purchased_at timestamp metrics, 
-        // and safely overrides your transient WIFI tracking id with AzamPay's real payment transaction reference key!
-        $updateQuery = "UPDATE wifi_vouchers 
-                        SET status = 'SUCCESS', 
-                            purchased_at = ?, 
-                            transaction_id = ? 
-                        WHERE transaction_id = ? 
-                        LIMIT 1";
-                        
-        $stmt = $conn->prepare($updateQuery);
-        if ($stmt) {
-            // Bind the types: 3 string markers ("sss") mapped chronologically
-            $stmt->bind_param("sss", $currentDateTime, $azamPayRef, $externalId);
-            $stmt->execute();
-            $stmt->close();
-        }
+       // 🚀 PRODUCTION MATCHING RECONCILIATION BLOCK:
+// Updates status to SUCCESS, logs purchased_at, and saves the financial key side-by-side!
+$updateQuery = "UPDATE wifi_vouchers 
+                SET status = 'SUCCESS', 
+                    purchased_at = ?, 
+                    azampay_reference = ? 
+                WHERE transaction_id = ? 
+                LIMIT 1";
+                
+$stmt = $conn->prepare($updateQuery);
+if ($stmt) {
+    // Correct tracking arrangement: 3 strings matching sequentially ("sss")
+    $stmt->bind_param("sss", $currentDateTime, $azamPayRef, $externalId);
+    $stmt->execute();
+    $stmt->close();
+}
+
         
         $conn->close();
     }
