@@ -30,7 +30,7 @@ date_default_timezone_set('Africa/Dar_es_Salaam');
 $conn->query("SET time_zone = '+03:00'");
 
 // =========================================================================
-// 🚀 DYNAMIC BULK UPLOADER ENGINE PARSER
+// 2. DYNAMIC BULK UPLOADER ENGINE PARSER
 // =========================================================================
 $upload_message = "";
 $upload_success = false;
@@ -98,8 +98,8 @@ $vouchers_sold = $count_result ? $count_result->fetch_assoc()['total'] : 0;
 $stock_result = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE status = 'AVAILABLE'");
 $remaining_stock = $stock_result ? $stock_result->fetch_assoc()['total'] : 0;
 
-// 3. Fetch Latest Live Hotspot Transactions (Includes azampay_reference and purchased_at)
-$log_query = "SELECT id, voucher_code, price_tier, status, assigned_phone, mac_address, transaction_id, azampay_reference, purchased_at FROM wifi_vouchers WHERE status IN ('SUCCESS', 'ASSIGNED') ORDER BY id DESC LIMIT 50";
+// 3. PRODUCTION UPGRADE: Selecting your branded NITW internal IDs alongside your renamed azampesa_transaction_id column cells!
+$log_query = "SELECT id, voucher_code, price_tier, status, assigned_phone, mac_address, transaction_id, azampesa_transaction_id, purchased_at FROM wifi_vouchers WHERE status IN ('SUCCESS', 'ASSIGNED') ORDER BY id DESC LIMIT 50";
 $log_result = $conn->query($log_query);
 ?>
 <!DOCTYPE html>
@@ -130,6 +130,7 @@ $log_result = $conn->query($log_query);
         .badge-assigned { background: #eaf2f8; color: #2980b9; border: 1px solid #2980b9; }
         .mac-text { font-family: monospace; letter-spacing: 0.5px; color: #555; }
 
+        /* Solid White Opaque Stock Detail Dropdown Rules Window */
         .stock-modal {
             display: none;
             position: fixed;
@@ -141,6 +142,7 @@ $log_result = $conn->query($log_query);
         }
         .stock-modal-content {
             background-color: #ffffff !important;
+            background: #ffffff !important;
             padding: 25px;
             border: 1px solid #cbd5e1;
             width: 90%;
@@ -148,14 +150,15 @@ $log_result = $conn->query($log_query);
             border-radius: 12px;
             position: relative;
             box-sizing: border-box;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15) !important;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15), 0 10px 10px -5px rgba(0,0,0,0.1) !important;
             color: #333 !important;
+            text-align: left;
         }
-        .stock-close { position: absolute; top: 12px; right: 16px; font-size: 24px; font-weight: bold; cursor: pointer; color: #94a3b8; }
+        .stock-close { position: absolute; top: 12px; right: 16px; font-size: 24px; font-weight: bold; cursor: pointer; color: #94a3b8; line-height: 1; }
         .stock-close:hover { color: #334155; }
         .stock-table { width: 100%; margin-top: 15px; border-collapse: collapse; }
-        .stock-table th, .stock-table td { padding: 10px 12px; border: 1px solid #e2e8f0; font-family: monospace; font-size: 14px; }
-        .stock-table th { background-color: #f8fafc; font-family: sans-serif; font-size: 12px; color: #475569; }
+        .stock-table th, .stock-table td { padding: 10px 12px; border: 1px solid #e2e8f0; font-family: monospace; font-size: 14px; text-align: left; }
+        .stock-table th { background-color: #f8fafc; font-family: 'Segoe UI', sans-serif; font-size: 12px; color: #475569; font-weight: bold; }
     </style>
 
     <script type="text/javascript">
@@ -170,12 +173,10 @@ $log_result = $conn->query($log_query);
 <body>
 
 <div class="wrapper">
-    <h2><img src="logo.png" alt="Water Point Logo" style="max-width: 220px; height: auto; object-fit: contain; margin-bottom: 1px;"> <br>
-Wi-Fi Admin Sales Dashboard</h2>
-
+    <h2>📊 TANConnect Wi-Fi Admin Sales Dashboard</h2>
     
     <?php if (!empty($upload_message)): ?>
-        <div style="background-color: <?php echo $upload_success ? '#e8f8f0' : '#fde8e8'; ?>; border: 1px solid <?php echo $upload_success ? '#27ae60' : '#e53e3e'; ?>; color: <?php echo $upload_success ? '#27ae60' : '#e53e3e'; ?>; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; font-weight: bold;">
+        <div style="background-color: <?php echo $upload_success ? '#e8f8f0' : '#fde8e8'; ?>; border: 1px solid <?php echo $upload_success ? '#27ae60' : '#27ae60'; ?>; color: <?php echo $upload_success ? '#27ae60' : '#e53e3e'; ?>; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; font-weight: bold;">
             <?php echo $upload_message; ?>
         </div>
     <?php endif; ?>
@@ -186,7 +187,7 @@ Wi-Fi Admin Sales Dashboard</h2>
             <span class="metric-val">Tsh <?php echo number_format($total_earnings); ?></span>
         </div>
         <div class="metric-card card-blue">
-            Vocha Zilizouzwa (Vouchers Sold)
+            Vocha Zilizouuzwa (Vouchers Sold)
             <span class="metric-val"><?php echo number_format($vouchers_sold); ?> pcs</span>
         </div>
         <div class="metric-card card-orange" onclick="openStockSummaryPopup()" style="cursor: pointer;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1.0)'">
@@ -251,26 +252,31 @@ Wi-Fi Admin Sales Dashboard</h2>
         <table>
             <thead>
                 <tr>
-                    <th>S/N</th>
+                    <th style="text-align: center;">S/N</th>
                     <th>Voucher PIN</th>
                     <th>Price Tier</th>
                     <th>Status</th>
                     <th>Assigned Phone</th>
                     <th>Customer MAC Address</th>
                     <th>Muda wa Malipo (EAT Time)</th>
-                    <th>TANConnect TxID</th>
-                    <th>AzamPay Reference Key</th>
+                    <th>NITW Internal TxID</th>
+                    <th>AzamPay Transaction ID</th> <!-- 🚀 UPDATED HEADER KEY NAME -->
                 </tr>
             </thead>
             <tbody>
                 <?php if ($log_result && $log_result->num_rows > 0): ?>
-                    <?php while ($row = $log_result->fetch_assoc()): ?>
-                        <?php 
+                    <?php 
+                    // Descending Serial Number loop engine initial tracking setting
+                    $sn_counter = $log_result->num_rows; 
+                    
+                    while ($row = $log_result->fetch_assoc()): 
                         $rawMac = preg_replace('/[^a-zA-Z0-9]/', '', $row['mac_address']);
                         $displayMac = strlen($rawMac) === 12 ? implode(':', str_split($rawMac, 2)) : $row['mac_address'];
-                        ?>
+                    ?>
                         <tr>
-                            <td><?php echo $row['id']; ?></td>
+                            <td style="font-weight: bold; color: #475569; font-family: monospace; text-align: center;">
+                                <?php echo $sn_counter--; ?>
+                            </td>
                             <td style="font-weight: bold; font-family: monospace; font-size: 15px;"><?php echo $row['voucher_code']; ?></td>
                             <td>Tsh <?php echo number_format($row['price_tier']); ?></td>
                             <td><span class="badge <?php echo ($row['status'] === 'SUCCESS') ? 'badge-success' : 'badge-assigned'; ?>"><?php echo $row['status']; ?></span></td>
@@ -280,8 +286,10 @@ Wi-Fi Admin Sales Dashboard</h2>
                                 <?php echo !empty($row['purchased_at']) ? date("d-m-Y H:i:s", strtotime($row['purchased_at'])) : '-'; ?>
                             </td>
                             <td style="color: #7f8c8d; font-size: 12px; font-family: monospace;"><?php echo htmlspecialchars($row['transaction_id']); ?></td>
+                            
+                            <!-- 🚀 DYNAMIC AUDIT CELL: Safely displays the custom renamed column values visually live -->
                             <td style="color: #27ae60; font-weight: bold; font-family: monospace; font-size: 13px;">
-                                <?php echo !empty($row['azampay_reference']) ? htmlspecialchars($row['azampay_reference']) : '-'; ?>
+                                <?php echo !empty($row['azampay_transaction_id']) ? htmlspecialchars($row['azampay_transaction_id']) : '-'; ?>
                             </td>
                         </tr>
                     <?php endwhile; ?>
@@ -293,6 +301,7 @@ Wi-Fi Admin Sales Dashboard</h2>
     </div>
 </div>
 
+    <!-- SILENT BACKGROUND DATABASE CLEANUP TRIGGER -->
     <script type="text/javascript">
     window.addEventListener('DOMContentLoaded', function() {
         fetch('cron_cleanup.php')
