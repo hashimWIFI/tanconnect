@@ -250,9 +250,6 @@ $log_result = $conn->query($log_query);
     </div>
 
        <!-- 🔍 LIVE TRANSACTION FILTER SEARCH MATRIX -->
-   <!-- 📊 LIVE TRANSACTION FILTER SEARCH MATRIX WITH INTEGRATED EXCEL EXPORTER -->
-<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-top: 35px; margin-bottom: 10px; gap: 15px;">
-    <h3 style="margin: 0; color: #1e3c72; font-size: 16px;">📑 Live Transaction Audit Logs (Latest 50 Entries)</h3>
     <!-- 📊 LIVE TRANSACTION FILTER SEARCH MATRIX WITH INTEGRATED EXCEL EXPORTER -->
 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-top: 35px; margin-bottom: 10px; gap: 15px;">
     <h3 style="margin: 0; color: #1e3c72; font-size: 16px;">📑 Live Transaction Audit Logs (Latest 50 Entries)</h3>
