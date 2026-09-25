@@ -260,7 +260,60 @@ $log_result = $conn->query($log_query);
             <?php echo $upload_message; ?>
         </div>
     <?php endif; ?>
+    <!-- 📅 DYNAMIC DATE RANGE FILTER CONTROL PANEL -->
+<div style="background: white; padding: 15px 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; box-sizing: border-box;">
+    <div style="color: #1e3c72; font-weight: bold; font-size: 14px; display: inline-flex; align-items: center; gap: 6px;">
+        🔍 Chuja kwa Tarehe (Filter Observation Period)
+    </div>
     
+    <form action="dashboard.php" method="GET" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 0;">
+        <div style="display: flex; align-items: center; gap: 6px;">
+            <label style="font-size: 12px; font-weight: bold; color: #64748b;">Kuanzia (From):</label>
+            <input type="date" name="from_date" value="<?php echo htmlspecialchars($from_date); ?>" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; color: #334155; outline: none; background-color: #f8fafc;">
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: 6px;">
+            <label style="font-size: 12px; font-weight: bold; color: #64748b;">Hadi (To):</label>
+            <input type="date" name="to_date" value="<?php echo htmlspecialchars($to_date); ?>" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; color: #334155; outline: none; background-color: #f8fafc;">
+        </div>
+        
+        <button type="submit" style="background-color: #1e3c72; color: white; border: none; padding: 7px 16px; font-weight: bold; font-size: 13px; border-radius: 6px; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#0d234d'" onmouseout="this.style.backgroundColor='#1e3c72'">
+            Angalia (Apply Filter)
+        </button>
+        
+        <?php if (isset($_GET['from_date']) || isset($_GET['to_date'])): ?>
+            <a href="dashboard.php" style="font-size: 12px; color: #e74c3c; font-weight: bold; text-decoration: none; padding-left: 5px;">Weka Wazi (Reset)</a>
+        <?php endif; ?>
+    </form>
+</div>
+
+<!-- 📊 THE METRICS GRID DISPLAYER -->
+<div class="metrics-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px;">
+    
+    <!-- Card 1: Today's Collection -->
+    <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; border-left: 5px solid #2e7d32; box-sizing: border-box;">
+        <span style="font-size: 11px; font-weight: bold; color: #2e7d32; text-transform: uppercase; display: block; margin-bottom: 5px;">MAPATO YA LEO (TODAY)</span>
+        <h3 style="margin: 0; font-size: 24px; color: #1b5e20;">Tsh <?php echo number_format($today_earnings); ?></h3>
+        <small style="color: #4caf50; font-size: 11px; display: block; margin-top: 5px;">Vocha zilizouzwa: <?php echo number_format($today_vouchers_sold); ?></small>
+    </div>
+
+    <!-- Card 2: Filtered Observation Period Total -->
+    <div style="background: #e3f2fd; padding: 20px; border-radius: 8px; border-left: 5px solid #1565c0; box-sizing: border-box;">
+        <span style="font-size: 11px; font-weight: bold; color: #1565c0; text-transform: uppercase; display: block; margin-bottom: 5px;">JUMLA YA MAPATO (FILTERED)</span>
+        <h3 style="margin: 0; font-size: 24px; color: #0d47a1;">Tsh <?php echo number_format($total_earnings); ?></h3>
+        <small style="color: #1976d2; font-size: 11px; display: block; margin-top: 5px;">
+            Kipindi: <b><?php echo date('d M Y', strtotime($from_date)); ?></b> hadi <b><?php echo date('d M Y', strtotime($to_date)); ?></b> (Vocha: <?php echo number_format($vouchers_sold); ?>)
+        </small>
+    </div>
+
+    <!-- Card 3: Remaining Stock -->
+    <div style="background: #fff3e0; padding: 20px; border-radius: 8px; border-left: 5px solid #ef6c00; box-sizing: border-box;">
+        <span style="font-size: 11px; font-weight: bold; color: #ef6c00; text-transform: uppercase; display: block; margin-bottom: 5px;">VOCHA ZILIZOBAKI (STOCK)</span>
+        <h3 style="margin: 0; font-size: 24px; color: #e65100;"><?php echo number_format($remaining_stock); ?></h3>
+        <small style="color: #f57c00; font-size: 11px; display: block; margin-top: 5px;">Tayari kutumika na wateja</small>
+    </div>
+</div>
+
    <div class="metrics-grid">
     <!-- Card 1: Today's Collection -->
     <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; border-left: 5px solid #2e7d32;">
