@@ -241,12 +241,19 @@ $log_result = $conn->query($log_query);
 
 <!-- DYNAMIC BATCH STOCK SUMMARY POPUP MODAL CONTAINER -->
 
+       <!-- DYNAMIC BATCH STOCK SUMMARY POPUP MODAL CONTAINER -->
     <div id="stockSummaryModal" class="stock-modal" onclick="closeStockSummaryPopup()">
         <div class="stock-modal-content" onclick="event.stopPropagation()">
             <span class="stock-close" onclick="closeStockSummaryPopup()">&times;</span>
             <h3 style="margin-top: 0; color: #e67e22; font-size: 16px; border-bottom: 2px solid #eee; padding-bottom: 8px;">📊 Muhtasari wa Vocha (Stock Summary)</h3>
             <table class="stock-table">
-                <thead><tr><th>Price Tier</th><th>Zilizobaki (Stock)</th></tr></thead>
+                <!-- 🚀 UPDATED HEADER ROW: Forces the stock title text to align perfectly in the center -->
+                <thead>
+                    <tr>
+                        <th style="padding: 10px 12px; border: 1px solid #e2e8f0; font-family: 'Segoe UI', sans-serif; font-size: 12px; color: #475569; font-weight: bold; text-align: left;">Price Tier</th>
+                        <th style="padding: 10px 12px; border: 1px solid #e2e8f0; font-family: 'Segoe UI', sans-serif; font-size: 12px; color: #475569; font-weight: bold; text-align: center;">Zilizobaki (Stock)</th>
+                    </tr>
+                </thead>
                 <tbody>
                     <?php if (!empty($tier_stock_data)): ?>
                         <?php foreach ($tier_stock_data as $tier): 
@@ -255,12 +262,17 @@ $log_result = $conn->query($log_query);
                             $badge = $isLowStock ? ' <span style="font-size: 8px; background-color: #fde8e8; color: #e53e3e; padding: 2px 6px; border-radius: 4px; border: 1px solid #fed7d7;">⚠️ LOW</span>' : '';
                         ?>
                             <tr style="<?php echo $isLowStock ? 'background-color: #fffaf0;' : ''; ?>">
-                                <td style="<?php echo $textStyle; ?>">Tsh <?php echo number_format($tier['price_tier']); ?><?php echo $badge; ?></td>
-                                <td style="text-align: right; font-weight: bold; color: <?php echo $isLowStock ? '#d9534f' : '#333'; ?>;"><?php echo number_format($tier['tier_count']); ?> pcs</td>
+                                <td style="<?php echo $textStyle; ?> padding: 10px 12px; border: 1px solid #e2e8f0; font-family: monospace; font-size: 14px; text-align: left;">
+                                    Tsh <?php echo number_format($tier['price_tier']); ?><?php echo $badge; ?>
+                                </td>
+                                <!-- 🚀 UPDATED DATA CELL: Enforces centered alignment for the pieces balance data column -->
+                                <td style="padding: 10px 12px; border: 1px solid #e2e8f0; font-family: monospace; font-size: 14px; text-align: center; font-weight: bold; color: <?php echo $isLowStock ? '#d9534f' : '#333'; ?>;">
+                                    <?php echo number_format($tier['tier_count']); ?> pcs
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <tr><td colspan="2" style="text-align: center; color: #7f8c8d;">Hakuna vocha zilizobaki.</td></tr>
+                        <tr><td colspan="2" style="text-align: center; color: #7f8c8d; padding: 20px;">Hakuna vocha zilizobaki.</td></tr>
                     <?php endif; ?>
                 </tbody>
             </table>
