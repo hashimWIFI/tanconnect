@@ -144,29 +144,39 @@ if ($tier_stock_result) {
 }
 
 // =========================================================================
-// 3. TIME-BASED REVENUE & METRICS ENGINE
+// 3. CUSTOM DATE RANGE REVENUE CALCULATOR
 // =========================================================================
 
-// 🗓️ TODAY'S METRICS (Resets automatically at midnight East African Time)
-$today_earnings_query = "SELECT SUM(price_tier) AS total FROM wifi_vouchers WHERE status = 'SUCCESS' AND DATE(purchased_at) = CURDATE()";
-$today_earnings_result = $conn->query($today_earnings_query);
-$today_earnings = $today_earnings_result ? ($today_earnings_result->fetch_assoc()['total'] ?: 0) : 0;
+// Fallback to the 1st of the current month if from_date isn't specified yet
+$from_date = isset($_GET['from_date']) && !empty($_GET['from_date']) ? $_GET['from_date'] : date('Y-m-01');
+$to_date   = isset($_GET['to_date'])   && !empty($_GET['to_date'])   ? $_GET['to_date']   : date('Y-m-d');
 
-$today_count_query = "SELECT COUNT(*) AS total FROM wifi_vouchers WHERE status = 'SUCCESS' AND DATE(purchased_at) = CURDATE()";
-$today_count_result = $conn->query($today_count_query);
-$today_vouchers_sold = $today_count_result ? $today_count_result->fetch_assoc()['total'] : 0;
+// Escape values safely to avoid SQL Injection issues
+$safe_from = $conn->real_escape_string($from_date);
+$safe_to   = $conn->real_escape_string($to_date);
 
-// 📊 ALL-TIME HISTORICAL METRICS
-$earnings_result = $conn->query("SELECT SUM(price_tier) AS total FROM wifi_vouchers WHERE status = 'SUCCESS'");
+// Build strict database date-range boundaries (inclusive of selected days)
+$period_condition = "AND DATE(purchased_at) BETWEEN '$safe_from' AND '$safe_to'";
+
+// 🗓️ TODAY'S METRICS (Stays static for instant comparisons)
+$today_earnings_res = $conn->query("SELECT SUM(price_tier) AS total FROM wifi_vouchers WHERE status = 'SUCCESS' AND DATE(purchased_at) = CURDATE()");
+$today_earnings = $today_earnings_res ? ($today_earnings_res->fetch_assoc()['total'] ?: 0) : 0;
+
+$today_count_res = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE status = 'SUCCESS' AND DATE(purchased_at) = CURDATE()");
+$today_vouchers_sold = $today_count_res ? ($today_count_res->fetch_assoc()['total'] ?: 0) : 0;
+
+// 📊 DYNAMIC REVENUE METRICS CALCULATOR BASED ON THE CHOSEN "FROM / TO" RANGE
+$earnings_query = "SELECT SUM(price_tier) AS total FROM wifi_vouchers WHERE status = 'SUCCESS' $period_condition";
+$earnings_result = $conn->query($earnings_query);
 $total_earnings = $earnings_result ? ($earnings_result->fetch_assoc()['total'] ?: 0) : 0;
 
-$count_result = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE status = 'SUCCESS'");
-$vouchers_sold = $count_result ? $count_result->fetch_assoc()['total'] : 0;
+$count_query = "SELECT COUNT(*) AS total FROM wifi_vouchers WHERE status = 'SUCCESS' $period_condition";
+$count_result = $conn->query($count_query);
+$vouchers_sold = $count_result ? ($count_result->fetch_assoc()['total'] ?: 0) : 0;
 
-// 📦 STOCK AVAILABLE
+// 📦 STOCK AVAILABLE (Keeps current live warehouse total balance)
 $stock_result = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE status = 'AVAILABLE'");
-$remaining_stock = $stock_result ? $stock_result->fetch_assoc()['total'] : 0;
-
+$remaining_stock = $stock_result ? ($stock_result->fetch_assoc()['total'] ?: 0) : 0;
 
 // Selecting logs
 $log_query = "SELECT id, voucher_code, price_tier, status, assigned_phone, mac_address, transaction_id, azampay_transaction_id, purchased_at FROM wifi_vouchers WHERE status IN ('SUCCESS', 'ASSIGNED') ORDER BY purchased_at DESC LIMIT 50";
