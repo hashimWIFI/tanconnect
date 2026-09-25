@@ -332,13 +332,13 @@ $log_result = $conn->query($log_query);
             <thead>
                 <tr>
                     <th style="text-align: center;">S/N</th>
-                    <th>Voucher PIN</th>
+                    <th>Voucher Code</th>
                     <th>Price Tier</th>
                     <th>Status</th>
                     <th>Assigned Phone</th>
-                    <th>Customer MAC Address</th>
+                    <th>MAC Address</th>
                     <th>Muda wa Malipo (EAT Time)</th>
-                    <th>TANConnect Transacion ID</th>
+                    <th>NIT Transacion ID</th>
                     <th>AzamPay Transaction ID</th> <!-- 🚀 UPDATED HEADER KEY NAME -->
                 </tr>
             </thead>
