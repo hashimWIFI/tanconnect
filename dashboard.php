@@ -233,10 +233,7 @@ $log_result = $conn->query($log_query);
         </a>
 
         <!-- The Properly Positioned Search Input Box -->
-        <div style="position: relative; max-width: 320px; width: 100%;">
-            <input type="text" id="dashboardSearchBox" onkeyup="filterAdminTransactionTable()" placeholder="Tafuta kwa namba ya simu au PIN..." style="width: 100%; padding: 10px 12px 10px 35px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; box-sizing: border-box; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='#1e3c72'" onblur="this.style.borderColor='#cbd5e1'">
-            <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 14px;">🔍</span>
-        </div>
+    
     </div>
 </div>
 
