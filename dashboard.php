@@ -6,8 +6,8 @@ ini_set('display_errors', 1);
 session_start();
 
 // 🔑 Define your two entry gate passwords here
-$ADMIN_PASSWORD = "nit2026a";  // Full Read/Write Power
-$GUEST_PASSWORD = "nit2026g";  // Read-Only Viewer Power
+$ADMIN_PASSWORD = "nit202a";  // Full Read/Write Power
+$GUEST_PASSWORD = "nit202g";  // Read-Only Viewer Power
 
 // Handle logout action
 if (isset($_GET['action']) && $_GET['action'] === 'logout') {
