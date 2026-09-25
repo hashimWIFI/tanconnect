@@ -2,12 +2,12 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Start session tracking at the absolute beginning
+// 🔐 Start session tracking safely at the absolute beginning
 session_start();
 
-// 🔑 Define your two passwords right here
-$ADMIN_PASSWORD = "nit2026a";  // Full read/write access
-$GUEST_PASSWORD = "nit2026g";  // Read-only access
+// 🔑 Define your two entry gate passwords here
+$ADMIN_PASSWORD = "nit2026a";  // Full Read/Write Power
+$GUEST_PASSWORD = "nit2026g";  // Read-Only Viewer Power
 
 // Handle logout action
 if (isset($_GET['action']) && $_GET['action'] === 'logout') {
@@ -16,7 +16,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
     exit();
 }
 
-// Check if a password was submitted
+// Check if a password was submitted at the main gate
 if (isset($_POST['dashboard_access_password'])) {
     $entered_password = $_POST['dashboard_access_password'];
 
@@ -29,7 +29,7 @@ if (isset($_POST['dashboard_access_password'])) {
     }
 }
 
-// If the user hasn't successfully logged in yet, show the password page and stop execution
+// 🛡️ MAIN GATE KEEPER: Show login form if not authenticated
 if (!isset($_SESSION['dashboard_role'])) {
     ?>
     <!DOCTYPE html>
@@ -58,10 +58,10 @@ if (!isset($_SESSION['dashboard_role'])) {
     </body>
     </html>
     <?php
-    exit(); // Stops the rest of dashboard.php from loading if not logged in
+    exit(); // Stops dashboard loading if password is not entered yet
 }
 
-// 🛡️ STRICT GATEKEEPER SYSTEM: Block any file upload processing if logged in as guest
+// 🛡️ BACKEND SECURITY: Strict block if a guest bypasses frontend fields to attempt an upload
 if (isset($_POST['submit_upload']) && $_SESSION['dashboard_role'] !== 'admin') {
     http_response_code(403);
     die("Kosa: Huna ruhusa ya kupakia vocha. (Access Denied: Read-only guest mode active.)");
@@ -79,7 +79,7 @@ if ($conn->connect_error) {
     die("Database connection failed: " . $conn->connect_error);
 }
 
-// 🌍 TIMEZONE SYNCHRONIZATION: Enforce explicit East African Time schema context baseline
+// 🌍 TIMEZONE SYNCHRONIZATION
 date_default_timezone_set('Africa/Dar_es_Salaam');
 $conn->query("SET time_zone = '+03:00'");
 
@@ -153,10 +153,11 @@ $vouchers_sold = $count_result ? $count_result->fetch_assoc()['total'] : 0;
 $stock_result = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE status = 'AVAILABLE'");
 $remaining_stock = $stock_result ? $stock_result->fetch_assoc()['total'] : 0;
 
-// 3. PRODUCTION UPGRADE: Selecting logs
+// Selecting logs
 $log_query = "SELECT id, voucher_code, price_tier, status, assigned_phone, mac_address, transaction_id, azampay_transaction_id, purchased_at FROM wifi_vouchers WHERE status IN ('SUCCESS', 'ASSIGNED') ORDER BY purchased_at DESC LIMIT 50";
 $log_result = $conn->query($log_query);
 ?>
+
 <!DOCTYPE html>
 <html lang="sw">
 <head>
