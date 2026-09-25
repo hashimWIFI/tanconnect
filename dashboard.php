@@ -187,7 +187,7 @@ $log_result = $conn->query($log_query);
             <span class="metric-val">Tsh <?php echo number_format($total_earnings); ?></span>
         </div>
         <div class="metric-card card-blue">
-            Vocha Zilizouuzwa (Vouchers Sold)
+            Vocha Zilizouzwa (Vouchers Sold)
             <span class="metric-val"><?php echo number_format($vouchers_sold); ?> pcs</span>
         </div>
         <div class="metric-card card-orange" onclick="openStockSummaryPopup()" style="cursor: pointer;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1.0)'">
@@ -208,7 +208,10 @@ $log_result = $conn->query($log_query);
                     <option value="500">Tsh 500</option>
                     <option value="1000">Tsh 1,000</option>
                     <option value="2000">Tsh 2,000</option>
+                    <option value="2000">Tsh 4,000</option>
                     <option value="5000">Tsh 5,000</option>
+                    <option value="2000">Tsh 7,000</option>
+                    <option value="2000">Tsh 9,000</option>
                     <option value="10000">Tsh 10,000</option>
                     <option value="20000">Tsh 20,000</option>
                 </select>
