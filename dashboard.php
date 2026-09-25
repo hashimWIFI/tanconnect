@@ -158,7 +158,7 @@ $log_result = $conn->query($log_query);
         .stock-close { position: absolute; top: 12px; right: 16px; font-size: 24px; font-weight: bold; cursor: pointer; color: #94a3b8; line-height: 1; }
         .stock-close:hover { color: #334155; }
         .stock-table { width: 100%; margin-top: 15px; border-collapse: collapse; }
-        .stock-table th, .stock-table td { padding: 10px 12px; border: 1px solid #e2e8f0; font-family: monospace; font-size: 14px; text-align: left; }
+        .stock-table th, .stock-table td { padding: 10px 12px; border: 1px solid #e2e8f0; font-family: monospace; font-size: 14px; text-align: center; }
         .stock-table th { background-color: #f8fafc; font-family: 'Segoe UI', sans-serif; font-size: 12px; color: #475569; font-weight: bold; }
     </style>
 
