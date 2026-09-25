@@ -197,6 +197,10 @@ $log_result = $conn->query($log_query);
             <span style="font-size: 9px; display: block; margin-top: 5px; color: #ffe0b2; letter-spacing: 0.5px;">📋 GUSA HAPA KUONA BATCH DETAILS</span>
         </div>
     </div>
+
+    <div style="position: relative; max-width: 320px; width: 100%;">
+    <input type="text" id="dashboardSearchBox" ... >
+
     <!-- BULK VOUCHER STOCK IMPORT ENGINE -->
     <div style="background-color: #f8fafc; border: 1px dashed #cbd5e1; padding: 20px; border-radius: 8px; margin-bottom: 25px; box-sizing: border-box;">
         <h3 style="margin-top: 0; color: #1e3c72; font-size: 15px;">📥 Ongeza Vocha kwa Mkupuo (Bulk Voucher Uploader)</h3>
