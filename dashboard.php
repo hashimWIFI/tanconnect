@@ -243,15 +243,7 @@ $log_result = $conn->query($log_query);
         </form>
     </div>
 
-    <!-- 📊 LIVE TRANSACTION FILTER SEARCH MATRIX HEADER BLOCK -->
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-top: 35px; margin-bottom: 10px; gap: 15px;">
-        <h3 style="margin: 0; color: #1e3c72; font-size: 16px;">📑 Live Transaction Audit Logs (Latest 50 Entries)</h3>
-        
-        <div style="position: relative; max-width: 320px; width: 100%;">
-            <input type="text" id="dashboardSearchBox" onkeyup="filterAdminTransactionTable()" placeholder="Tafuta kwa namba ya simu au PIN..." style="width: 100%; padding: 10px 12px 10px 35px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; box-sizing: border-box; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='#1e3c72'" onblur="this.style.borderColor='#cbd5e1'">
-            <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 14px;">🔍</span>
-        </div>
-    </div>
+
 
 
        <!-- DYNAMIC BATCH STOCK SUMMARY POPUP MODAL CONTAINER -->
