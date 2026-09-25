@@ -2,7 +2,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// 🔐 Start session tracking safely at the absolute beginning
+// 🔐 Start session tracking safely at the absolute beginning 
 session_start();
 
 // 🔑 Define your two entry gate passwords here
