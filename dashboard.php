@@ -143,15 +143,30 @@ if ($tier_stock_result) {
     }
 }
 
-// Fetch Aggregated Sales Summary Metrics
+// =========================================================================
+// 3. TIME-BASED REVENUE & METRICS ENGINE
+// =========================================================================
+
+// 🗓️ TODAY'S METRICS (Resets automatically at midnight East African Time)
+$today_earnings_query = "SELECT SUM(price_tier) AS total FROM wifi_vouchers WHERE status = 'SUCCESS' AND DATE(purchased_at) = CURDATE()";
+$today_earnings_result = $conn->query($today_earnings_query);
+$today_earnings = $today_earnings_result ? ($today_earnings_result->fetch_assoc()['total'] ?: 0) : 0;
+
+$today_count_query = "SELECT COUNT(*) AS total FROM wifi_vouchers WHERE status = 'SUCCESS' AND DATE(purchased_at) = CURDATE()";
+$today_count_result = $conn->query($today_count_query);
+$today_vouchers_sold = $today_count_result ? $today_count_result->fetch_assoc()['total'] : 0;
+
+// 📊 ALL-TIME HISTORICAL METRICS
 $earnings_result = $conn->query("SELECT SUM(price_tier) AS total FROM wifi_vouchers WHERE status = 'SUCCESS'");
 $total_earnings = $earnings_result ? ($earnings_result->fetch_assoc()['total'] ?: 0) : 0;
 
 $count_result = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE status = 'SUCCESS'");
 $vouchers_sold = $count_result ? $count_result->fetch_assoc()['total'] : 0;
 
+// 📦 STOCK AVAILABLE
 $stock_result = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE status = 'AVAILABLE'");
 $remaining_stock = $stock_result ? $stock_result->fetch_assoc()['total'] : 0;
+
 
 // Selecting logs
 $log_query = "SELECT id, voucher_code, price_tier, status, assigned_phone, mac_address, transaction_id, azampay_transaction_id, purchased_at FROM wifi_vouchers WHERE status IN ('SUCCESS', 'ASSIGNED') ORDER BY purchased_at DESC LIMIT 50";
