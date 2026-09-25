@@ -260,32 +260,48 @@ $log_result = $conn->query($log_query);
 
     <!-- LIGHTWEIGHT CLIENT-SIDE FILTER SEARCH ENGINE -->
     <script type="text/javascript">
-    function filterAdminTransactionTable() {
+      function filterAdminTransactionTable() {
         var input = document.getElementById("dashboardSearchBox");
-        var filter = input.value.toUpperCase().trim();
-        // Target the rows inside your main log table body section variables
+        var rawInput = input.value.trim();
+        var filter = rawInput.toUpperCase();
+        
+        // 🚀 SMART PREFIX NORMALIZATION: If user types a standard local number starting with 0, 
+        // create a normalized fallback string that replaces the '0' with '255' for matching cells
+        var normalizedFilter = filter;
+        if (rawInput.startsWith('0')) {
+            normalizedFilter = '255' + filter.substring(1);
+        }
+
         var table = document.querySelector("table:not(.stock-table)");
         var tr = table.getElementsByTagName("tr");
 
-        // Loop through all table data rows (skipping the th header row at index 0)
+        // Loop through all data rows skipping your table header columns element row
         for (var i = 1; i < tr.length; i++) {
-            // Read text cells for Voucher PIN (Column index 1) and Assigned Phone (Column index 4)
+            // Target text cells: Voucher PIN (Column 1) and Assigned Phone (Column 4)
             var tdVoucher = tr[i].getElementsByTagName("td")[1];
             var tdPhone   = tr[i].getElementsByTagName("td")[4];
             
             if (tdVoucher || tdPhone) {
-                var voucherText = tdVoucher ? (tdVoucher.textContent || tdVoucher.innerText) : "";
-                var phoneText   = tdPhone ? (tdPhone.textContent || tdPhone.innerText) : "";
+                var voucherText = tdVoucher ? (tdVoucher.textContent || tdVoucher.innerText).trim() : "";
+                var phoneText   = tdPhone ? (tdPhone.textContent || tdPhone.innerText).trim() : "";
                 
-                // If the typed keyword matches either data row parameter, show it; otherwise hide it dynamically
-                if (voucherText.toUpperCase().indexOf(filter) > -1 || phoneText.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
+                var upperVoucher = voucherText.toUpperCase();
+                var upperPhone   = phoneText.toUpperCase();
+                
+                // 🔍 MULTI-MATCH EVALUATION MATRIX: 
+                // Checks raw input against PIN, raw input against Phone, AND normalized 255 string against Phone!
+                if (upperVoucher.indexOf(filter) > -1 || 
+                    upperPhone.indexOf(filter) > -1 || 
+                    upperPhone.indexOf(normalizedFilter) > -1) {
+                    
+                    tr[i].style.display = ""; // Keyword matches, reveal row layout element
                 } else {
-                    tr[i].style.display = "none";
+                    tr[i].style.display = "none"; // No match found, hide row dynamically
                 }
             }       
         }
     }
+
     </script>
 
     <div style="overflow-x: auto;">
