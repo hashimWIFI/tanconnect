@@ -358,17 +358,73 @@ $log_result = $conn->query($log_query);
 </div>
 
     <!-- SILENT BACKGROUND DATABASE CLEANUP TRIGGER -->
-    <script type="text/javascript">
+  <script type="text/javascript">
+    // 🚀 PERSISTENT SEARCH MEMORY FILTER ENGINE
+    function filterAdminTransactionTable() {
+        var input = document.getElementById("dashboardSearchBox");
+        if (!input) return;
+        
+        var rawInput = input.value.trim();
+        var filter = rawInput.toUpperCase();
+        
+        // Save the current input keyword into the browser's temporary session storage memory
+        sessionStorage.setItem("adminSearchKeyword", rawInput);
+        
+        var normalizedFilter = filter;
+        if (rawInput.startsWith('0')) {
+            normalizedFilter = '255' + filter.substring(1);
+        }
+
+        var table = document.querySelector("table:not(.stock-table)");
+        if (!table) return;
+        
+        var tr = table.getElementsByTagName("tr");
+
+        for (var i = 1; i < tr.length; i++) {
+            var tdCells = tr[i].getElementsByTagName("td");
+            if (tdCells.length > 4) {
+                // Column Index 1: Voucher PIN | Column Index 4: Assigned Phone
+                var voucherText = (tdCells[1].textContent || tdCells[1].innerText).trim();
+                var phoneText   = (tdCells[4].textContent || tdCells[4].innerText).trim();
+                
+                var upperVoucher = voucherText.toUpperCase();
+                var upperPhone   = phoneText.toUpperCase();
+                
+                if (upperVoucher.indexOf(filter) > -1 || 
+                    upperPhone.indexOf(filter) > -1 || 
+                    upperPhone.indexOf(normalizedFilter) > -1) {
+                    tr[i].style.display = ""; 
+                } else {
+                    tr[i].style.display = "none"; 
+                }
+            }       
+        }
+    }
+
+    // 🔄 AUTOMATED RESTORATION LAYER: Executes seamlessly immediately upon page reload/sync
     window.addEventListener('DOMContentLoaded', function() {
+        // 1. Pull any stored keyword out of session storage and re-apply the filters
+        var savedKeyword = sessionStorage.getItem("adminSearchKeyword");
+        if (savedKeyword) {
+            var searchBox = document.getElementById("dashboardSearchBox");
+            if (searchBox) {
+                searchBox.value = savedKeyword;
+                filterAdminTransactionTable(); 
+            }
+        }
+
+        // 2. Your background self-healing database cleaner script runs perfectly here
         fetch('cron_cleanup.php')
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success' && data.vouchers_recovered > 0) {
                     console.log("TANConnect Optimizer: Cleaned database and recovered " + data.vouchers_recovered + " abandoned vouchers!");
                 }
-            }).catch(err => console.log("System optimizer running..."));
+            })
+            .catch(err => console.log("System optimizer running..."));
     });
-    </script>
+</script>
+
 </body>
 </html>
 <?php 
