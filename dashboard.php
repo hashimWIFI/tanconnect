@@ -172,9 +172,9 @@ $log_result = $conn->query($log_query);
     </script>
 </head>
 <body>
+<h2><img src="logo.png" alt="Water Point Logo" style="max-width: 220px; height: auto; object-fit: contain; margin-bottom: 1px;"> <br>
 
 <div class="wrapper">
-    <h2><img src="logo.png" alt="Water Point Logo" style="max-width: 220px; height: auto; object-fit: contain; margin-bottom: 1px;"> <br>
     <h2>Admin Sales Dashboard</h2>
     <?php if (!empty($upload_message)): ?>
         <div style="background-color: <?php echo $upload_success ? '#e8f8f0' : '#fde8e8'; ?>; border: 1px solid <?php echo $upload_success ? '#27ae60' : '#27ae60'; ?>; color: <?php echo $upload_success ? '#27ae60' : '#e53e3e'; ?>; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; font-weight: bold;">
