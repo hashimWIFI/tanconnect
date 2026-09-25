@@ -2,10 +2,12 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Basic HTTP Authentication Layer for Administrator Access Protection
+// Start session tracking at the absolute beginning
+session_start();
 
-$ADMIN_PASSWORD = "nit2026a";  // Change this to your real Admin password
-$GUEST_PASSWORD = "nit2026g";  // Change this to your real Guest password
+// 🔑 Define your two passwords right here
+$ADMIN_PASSWORD = "nit2026a";  // Full read/write access
+$GUEST_PASSWORD = "nit2026g";  // Read-only access
 
 // Handle logout action
 if (isset($_GET['action']) && $_GET['action'] === 'logout') {
@@ -59,14 +61,11 @@ if (!isset($_SESSION['dashboard_role'])) {
     exit(); // Stops the rest of dashboard.php from loading if not logged in
 }
 
-// 🛡️ STRICT FORMBACK SYSTEM: Block any file upload processing if logged in as guest
+// 🛡️ STRICT GATEKEEPER SYSTEM: Block any file upload processing if logged in as guest
 if (isset($_POST['submit_upload']) && $_SESSION['dashboard_role'] !== 'admin') {
     http_response_code(403);
     die("Kosa: Huna ruhusa ya kupakia vocha. (Access Denied: Read-only guest mode active.)");
 }
-?>
-
-
 
 // 1. Establish database connection using your dynamic Railway variables
 $db_host = getenv('MYSQLHOST')     ?: '127.0.0.1';
@@ -132,6 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_upload']) && i
         $upload_message = "✕ Hitilafu: Imeshindwa kusoma faili lililopakiwa. Tafadhali jaribu tena.";
     }
 }
+
 // Fetch remaining stock broken down per specific price tier batch
 $tier_stock_query = "SELECT price_tier, COUNT(*) AS tier_count FROM wifi_vouchers WHERE status = 'AVAILABLE' GROUP BY price_tier ORDER BY price_tier ASC";
 $tier_stock_result = $conn->query($tier_stock_query);
@@ -143,18 +143,17 @@ if ($tier_stock_result) {
     }
 }
 
-// 2. Fetch Aggregated Sales Summary Metrics
+// Fetch Aggregated Sales Summary Metrics
 $earnings_result = $conn->query("SELECT SUM(price_tier) AS total FROM wifi_vouchers WHERE status = 'SUCCESS'");
 $total_earnings = $earnings_result ? ($earnings_result->fetch_assoc()['total'] ?: 0) : 0;
 
 $count_result = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE status = 'SUCCESS'");
 $vouchers_sold = $count_result ? $count_result->fetch_assoc()['total'] : 0;
 
-
 $stock_result = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE status = 'AVAILABLE'");
 $remaining_stock = $stock_result ? $stock_result->fetch_assoc()['total'] : 0;
 
-// 3. PRODUCTION UPGRADE: Selecting your branded NITW internal IDs alongside your renamed azampesa_transaction_id column cells!
+// 3. PRODUCTION UPGRADE: Selecting logs
 $log_query = "SELECT id, voucher_code, price_tier, status, assigned_phone, mac_address, transaction_id, azampay_transaction_id, purchased_at FROM wifi_vouchers WHERE status IN ('SUCCESS', 'ASSIGNED') ORDER BY purchased_at DESC LIMIT 50";
 $log_result = $conn->query($log_query);
 ?>
