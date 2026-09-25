@@ -338,7 +338,7 @@ $log_result = $conn->query($log_query);
                     <th>Assigned Phone</th>
                     <th>Customer MAC Address</th>
                     <th>Muda wa Malipo (EAT Time)</th>
-                    <th>NITW Internal TxID</th>
+                    <th>TANConnect Transacion ID</th>
                     <th>AzamPay Transaction ID</th> <!-- 🚀 UPDATED HEADER KEY NAME -->
                 </tr>
             </thead>
