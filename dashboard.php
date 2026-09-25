@@ -248,7 +248,46 @@ $log_result = $conn->query($log_query);
         </div>
     </div>
 
-    <h3>📝 Live Transaction Audit Logs (Latest 50 Entries)</h3>
+       <!-- 🔍 LIVE TRANSACTION FILTER SEARCH MATRIX -->
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-top: 35px; margin-bottom: 10px; gap: 15px;">
+        <h3 style="margin: 0; color: #1e3c72; font-size: 16px;">📝 Live Transaction Audit Logs (Latest 50 Entries)</h3>
+        
+        <div style="position: relative; max-width: 320px; width: 100%;">
+            <input type="text" id="dashboardSearchBox" onkeyup="filterAdminTransactionTable()" placeholder="Tafuta kwa namba ya simu au PIN..." style="width: 100%; padding: 10px 12px 10px 35px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; box-sizing: border-box; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='#1e3c72'" onblur sabotage="this.style.borderColor='#cbd5e1'">
+            <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 14px;">🔍</span>
+        </div>
+    </div>
+
+    <!-- LIGHTWEIGHT CLIENT-SIDE FILTER SEARCH ENGINE -->
+    <script type="text/javascript">
+    function filterAdminTransactionTable() {
+        var input = document.getElementById("dashboardSearchBox");
+        var filter = input.value.toUpperCase().trim();
+        // Target the rows inside your main log table body section variables
+        var table = document.querySelector("table:not(.stock-table)");
+        var tr = table.getElementsByTagName("tr");
+
+        // Loop through all table data rows (skipping the th header row at index 0)
+        for (var i = 1; i < tr.length; i++) {
+            // Read text cells for Voucher PIN (Column index 1) and Assigned Phone (Column index 4)
+            var tdVoucher = tr[i].getElementsByTagName("td")[1];
+            var tdPhone   = tr[i].getElementsByTagName("td")[4];
+            
+            if (tdVoucher || tdPhone) {
+                var voucherText = tdVoucher ? (tdVoucher.textContent || tdVoucher.innerText) : "";
+                var phoneText   = tdPhone ? (tdPhone.textContent || tdPhone.innerText) : "";
+                
+                // If the typed keyword matches either data row parameter, show it; otherwise hide it dynamically
+                if (voucherText.toUpperCase().indexOf(filter) > -1 || phoneText.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }       
+        }
+    }
+    </script>
+
     <div style="overflow-x: auto;">
         <table>
             <thead>
