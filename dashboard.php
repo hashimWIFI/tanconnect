@@ -197,43 +197,62 @@ $log_result = $conn->query($log_query);
         </div>
     </div>
 
-    <!-- BULK VOUCHER STOCK IMPORT ENGINE -->
+    <!-- BULK VOUCHER STOCK IMPORT ENGINE WITH INTEGRATED EXCEL EXPORTER -->
     <div style="background-color: #f8fafc; border: 1px dashed #cbd5e1; padding: 20px; border-radius: 8px; margin-bottom: 25px; box-sizing: border-box;">
         <h3 style="margin-top: 0; color: #1e3c72; font-size: 15px;">📥 Ongeza Vocha kwa Mkupuo (Bulk Voucher Uploader)</h3>
         <p style="font-size: 12px; color: #64748b; margin-bottom: 15px; margin-top: 0;">Faili la maandishi (.txt au .csv) ambalo kila mstari una namba moja ya vocha.</p>
-        <form action="dashboard.php" method="POST" enctype="multipart/form-data" style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center;">
-            <div style="display: flex; flex-direction: column;">
-                <label style="font-size: 11px; font-weight: bold; margin-bottom: 4px; color: #475569;">Kifurushi (Price Tier):</label>
-                <select name="upload_price_tier" style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" required>
-                    <option value="500">Tsh 500</option>
-                    <option value="1000">Tsh 1,000</option>
-                    <option value="2000">Tsh 2,000</option>
-                    <option value="2000">Tsh 4,000</option>
-                    <option value="5000">Tsh 5,000</option>
-                    <option value="2000">Tsh 7,000</option>
-                    <option value="2000">Tsh 9,000</option>
-                    <option value="10000">Tsh 10,000</option>
-                    <option value="20000">Tsh 20,000</option>
-                </select>
-            </div>
-            <div style="display: flex; flex-direction: column;">
-                <label style="font-size: 11px; font-weight: bold; margin-bottom: 4px; color: #475569;">Chagua Faili (.txt / .csv):</label>
-                <input type="file" name="voucher_file" accept=".txt,.csv" style="font-size: 13px;" required>
-            </div>
-            <button type="submit" name="submit_upload" style="background-color: #1e3c72; color: white; border: none; padding: 11px 20px; font-weight: bold; font-size: 13px; border-radius: 6px; cursor: pointer; margin-top: 18px;">🚀 Pakia Vocha (Upload)</button>
+        
+        <form action="dashboard.php" method="POST" enctype="multipart/form-data" style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end; justify-content: space-between; width: 100%;">
+            
+            <!-- Left Side: Input Form Controls Cluster -->
+            <div style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; flex: 1;">
+                <div style="display: flex; flex-direction: column;">
+                    <label style="font-size: 11px; font-weight: bold; margin-bottom: 4px; color: #475569;">Kifurushi (Price Tier):</label>
+                    <select name="upload_price_tier" style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" required>
+                        <option value="500">Tsh 500</option>
+                        <option value="1000">Tsh 1,000</option>
+                        <option value="2000">Tsh 2,000</option>
+                        <option value="4000">Tsh 4,000</option>
+                        <option value="5000">Tsh 5,000</option>
+                        <option value="7000">Tsh 7,000</option>
+                        <option value="9000">Tsh 9,000</option>
+                        <option value="10000">Tsh 10,000</option>
+                        <option value="20000">Tsh 20,000</option>
+                    </select>
+                </div>
+                
+                <div style="display: flex; flex-direction: column;">
+                    <label style="font-size: 11px; font-weight: bold; margin-bottom: 4px; color: #475569;">Chagua Faili (.txt / .csv):</label>
+                    <input type="file" name="voucher_file" accept=".txt,.csv" style="font-size: 13px;" required>
+                </div>
 
+                <!-- 🚀 UPLOAD BUTTON RIGHT NEXT TO INPUTS -->
+                <button type="submit" name="submit_upload" style="background-color: #1e3c72; color: white; border: none; padding: 11px 20px; font-weight: bold; font-size: 13px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;">
+                    🚀 Pakia Vocha (Upload)
+                </button>
+            </div>
+
+            <!-- Right Side: Integrated Download Action Block -->
+            <div style="display: flex; align-items: center; justify-content: flex-end; white-space: nowrap;">
+                <!-- 🟢 DOWNLOAD EXCEL REPORT ACTION LINK BUTTON -->
+                <a href="export_sales.php" style="background-color: #27ae60; color: white; text-decoration: none; padding: 11px 20px; border-radius: 6px; font-size: 13px; font-weight: bold; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#1e7e34'" onmouseout="this.style.backgroundColor='#27ae60'">
+                    📥 Pakua Ripoti (Excel CSV)
+                </a>
+            </div>
+            
         </form>
-</div> <!-- Closes the background bulk uploader container card box cleanly -->
-
-<!-- 📊 LIVE TRANSACTION FILTER SEARCH MATRIX WITH INTEGRATED EXCEL EXPORTER -->
-<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-top: 35px; margin-bottom: 15px; gap: 15px; width: 100%; box-sizing: border-box;">
-    <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
-        <!-- 📥 INTEGRATED ONE-CLICK EXCEL SPREADSHEET DOWNLOAD ENGINE -->
-        <a href="export_sales.php" style="background-color: #27ae60; color: white; text-decoration: none; padding: 10px 16px; border-radius: 6px; font-size: 13px; font-weight: bold; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: background-color 0.2s; border: none;" onmouseover="this.style.backgroundColor='#1e7e34'" onmouseout="this.style.backgroundColor='#27ae60'">
-            📥 Pakua Ripoti (Excel CSV)
-        </a>   
     </div>
-</div>
+
+    <!-- 📊 LIVE TRANSACTION FILTER SEARCH MATRIX HEADER BLOCK -->
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-top: 35px; margin-bottom: 10px; gap: 15px;">
+        <h3 style="margin: 0; color: #1e3c72; font-size: 16px;">📑 Live Transaction Audit Logs (Latest 50 Entries)</h3>
+        
+        <div style="position: relative; max-width: 320px; width: 100%;">
+            <input type="text" id="dashboardSearchBox" onkeyup="filterAdminTransactionTable()" placeholder="Tafuta kwa namba ya simu au PIN..." style="width: 100%; padding: 10px 12px 10px 35px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; box-sizing: border-box; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='#1e3c72'" onblur="this.style.borderColor='#cbd5e1'">
+            <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 14px;">🔍</span>
+        </div>
+    </div>
+
 
        <!-- DYNAMIC BATCH STOCK SUMMARY POPUP MODAL CONTAINER -->
     <div id="stockSummaryModal" class="stock-modal" onclick="closeStockSummaryPopup()">
