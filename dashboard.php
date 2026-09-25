@@ -224,7 +224,7 @@ $log_result = $conn->query($log_query);
 
 <!-- 📊 LIVE TRANSACTION FILTER SEARCH MATRIX WITH INTEGRATED EXCEL EXPORTER -->
 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-top: 35px; margin-bottom: 15px; gap: 15px; width: 100%; box-sizing: border-box;">
-    <h3 style="margin: 0; color: #1e3c72; font-size: 16px;">📑 Live Transaction Audit Logs (Latest 50 Entries)</h3>
+
     
     <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
         <!-- 📥 INTEGRATED ONE-CLICK EXCEL SPREADSHEET DOWNLOAD ENGINE -->
