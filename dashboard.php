@@ -314,27 +314,6 @@ $log_result = $conn->query($log_query);
     </div>
 </div>
 
-   <div class="metrics-grid">
-    <!-- Card 1: Today's Collection -->
-    <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; border-left: 5px solid #2e7d32;">
-        <span style="font-size: 12px; font-weight: bold; color: #2e7d32; text-transform: uppercase;">Mapato ya Leo (Today)</span>
-        <h3 style="margin: 5px 0 0 0; font-size: 24px; color: #1b5e20;">Tsh <?php echo number_format($today_earnings); ?></h3>
-        <small style="color: #4caf50; font-size: 11px;">Vocha zilizouzwa: <?php echo number_format($today_vouchers_sold); ?></small>
-    </div>
-
-    <!-- Card 2: All-Time Collection -->
-    <div style="background: #e3f2fd; padding: 20px; border-radius: 8px; border-left: 5px solid #1565c0;">
-        <span style="font-size: 12px; font-weight: bold; color: #1565c0; text-transform: uppercase;">Jumla Kuu ya Mapato</span>
-        <h3 style="margin: 5px 0 0 0; font-size: 24px; color: #0d47a1;">Tsh <?php echo number_format($total_earnings); ?></h3>
-        <small style="color: #1976d2; font-size: 11px;">Jumla ya vocha zote: <?php echo number_format($vouchers_sold); ?></small>
-    </div>
-
-    <!-- Card 3: Remaining Stock -->
-    <div style="background: #fff3e0; padding: 20px; border-radius: 8px; border-left: 5px solid #ef6c00;">
-        <span style="font-size: 12px; font-weight: bold; color: #ef6c00; text-transform: uppercase;">Vocha Zilizobaki (Stock)</span>
-        <h3 style="margin: 5px 0 0 0; font-size: 24px; color: #e65100;"><?php echo number_format($remaining_stock); ?></h3>
-        <small style="color: #f57c00; font-size: 11px;">Tayari kutumika na wateja</small>
-    </div>
 </div>
 
 
