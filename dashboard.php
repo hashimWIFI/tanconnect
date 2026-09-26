@@ -290,7 +290,7 @@ $log_result = $conn->query($log_query);
         <!-- Card 3: Remaining Stock with Layout-Safe CSS Hover Breakdown Panel Overlay -->
         <div class="hover-stock-card" style="background: #fff3e0; padding: 20px; border-radius: 8px; border-left: 5px solid #ef6c00; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-start;">
             <div>
-                <span style="font-size: 11px; font-weight: bold; color: #ef6c00; text-transform: uppercase; display: block; margin-bottom: 5px;">AVAILALE STOCK</span>
+                <span style="font-size: 11px; font-weight: bold; color: #ef6c00; text-transform: uppercase; display: block; margin-bottom: 5px;">VOUCHER STOCK</span>
                 <h3 style="margin: 0; font-size: 24px; color: #e65100; font-weight: 700;"><?php echo number_format($remaining_stock); ?></h3>
                 <small style="color: #f57c00; font-size: 11px; display: block; margin-top: 5px;">Tayari kutumika na wateja</small>
             </div>
