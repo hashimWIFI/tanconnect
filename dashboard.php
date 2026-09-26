@@ -273,14 +273,14 @@ $log_result = $conn->query($log_query);
         
         <!-- Card 1: Today's Collection -->
         <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; border-left: 5px solid #2e7d32; box-sizing: border-box;">
-            <span style="font-size: 11px; font-weight: bold; color: #2e7d32; text-transform: uppercase; display: block; margin-bottom: 5px;">MAPATO YA LEO (TODAY)</span>
+            <span style="font-size: 11px; font-weight: bold; color: #2e7d32; text-transform: uppercase; display: block; margin-bottom: 5px;">TODAY's COLLECTION</span>
             <h3 style="margin: 0; font-size: 24px; color: #1b5e20;">Tsh <?php echo number_format($today_earnings); ?></h3>
             <small style="color: #4caf50; font-size: 11px; display: block; margin-top: 5px;">Vocha zilizouzwa: <?php echo number_format($today_vouchers_sold); ?></small>
         </div>
 
         <!-- Card 2: Filtered Observation Period Total -->
         <div style="background: #e3f2fd; padding: 20px; border-radius: 8px; border-left: 5px solid #1565c0; box-sizing: border-box;">
-            <span style="font-size: 11px; font-weight: bold; color: #1565c0; text-transform: uppercase; display: block; margin-bottom: 5px;">JUMLA YA MAPATO (FILTERED)</span>
+            <span style="font-size: 11px; font-weight: bold; color: #1565c0; text-transform: uppercase; display: block; margin-bottom: 5px;">TOTAL COLLECTION (FILTERED)</span>
             <h3 style="margin: 0; font-size: 24px; color: #0d47a1;">Tsh <?php echo number_format($total_earnings); ?></h3>
             <small style="color: #1976d2; font-size: 11px; display: block; margin-top: 5px;">
                 Kipindi: <b><?php echo date('d M Y', strtotime($from_date)); ?></b> hadi <b><?php echo date('d M Y', strtotime($to_date)); ?></b> (Vocha: <?php echo number_format($vouchers_sold); ?>)
@@ -290,7 +290,7 @@ $log_result = $conn->query($log_query);
         <!-- Card 3: Remaining Stock with Layout-Safe CSS Hover Breakdown Panel Overlay -->
         <div class="hover-stock-card" style="background: #fff3e0; padding: 20px; border-radius: 8px; border-left: 5px solid #ef6c00; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-start;">
             <div>
-                <span style="font-size: 11px; font-weight: bold; color: #ef6c00; text-transform: uppercase; display: block; margin-bottom: 5px;">VOCHA ZILIZOBAKI (STOCK)</span>
+                <span style="font-size: 11px; font-weight: bold; color: #ef6c00; text-transform: uppercase; display: block; margin-bottom: 5px;">AVAILALE STOCK</span>
                 <h3 style="margin: 0; font-size: 24px; color: #e65100; font-weight: 700;"><?php echo number_format($remaining_stock); ?></h3>
                 <small style="color: #f57c00; font-size: 11px; display: block; margin-top: 5px;">Tayari kutumika na wateja</small>
             </div>
@@ -298,13 +298,13 @@ $log_result = $conn->query($log_query);
             <!-- Toggle/Hover Activation Row -->
             <div style="margin-top: 15px;">
                 <div style="background-color: #ef6c00; color: white; border: none; padding: 6px 12px; font-size: 11px; font-weight: bold; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; cursor: help; transition: background 0.2s;">
-                    ⚙️ Angalia Mchanganuo (Hover for Breakdown)
+                    ⚙️ Hover for Breakdown
                 </div>
             </div>
 
             <!-- CSS Hover Menu Box Popover: Overlaps elements below safely without pushdowns -->
             <div class="hover-menu-panel" style="position: absolute; top: 100%; left: 0; width: 100%; background: white; border: 1px solid #ffd180; box-shadow: 0 4px 15px rgba(0,0,0,0.12); border-radius: 8px; padding: 15px; margin-top: 8px; z-index: 99999; box-sizing: border-box;">
-                <h4 style="margin: 0 0 10px 0; font-size: 12px; color: #ef6c00; border-bottom: 1px dashed #ffd180; padding-bottom: 5px;">Mchanganuo wa Kifurushi (Stock per Tier)</h4>
+                <h4 style="margin: 0 0 10px 0; font-size: 12px; color: #ef6c00; border-bottom: 1px dashed #ffd180; padding-bottom: 5px;">Mchanganuo wa Vifurushi (Stock per Tier)</h4>
                 <?php if (!empty($tier_stock_data)): ?>
                     <div style="display: flex; flex-direction: column; gap: 6px;">
                         <?php foreach ($tier_stock_data as $tier): ?>
