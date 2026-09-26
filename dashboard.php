@@ -355,7 +355,7 @@ $log_result = $conn->query($log_query);
 
                     <!-- 🚀 UPLOAD BUTTON RIGHT NEXT TO INPUTS -->
                     <button type="submit" name="submit_upload" style="background-color: #1e3c72; color: white; border: none; padding: 11px 20px; font-weight: bold; font-size: 13px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;">
-                        🚀 Pakia Vocha (Upload)
+                        🚀 Upload
                     </button>
                 </div>
 
@@ -363,7 +363,7 @@ $log_result = $conn->query($log_query);
                 <div style="display: flex; align-items: center; justify-content: flex-end; white-space: nowrap;">
                     <!-- 🟢 DOWNLOAD EXCEL REPORT ACTION LINK BUTTON -->
                     <a href="export_sales.php" style="background-color: #27ae60; color: white; text-decoration: none; padding: 11px 20px; border-radius: 6px; font-size: 13px; font-weight: bold; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#1e7e34'" onmouseout="this.style.backgroundColor='#27ae60'">
-                        📥 Pakua Ripoti (Excel CSV)
+                        📥 Download
                     </a>
                 </div>
                 
