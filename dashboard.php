@@ -208,7 +208,7 @@ $log_result = $conn->query($log_query);
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     
-    <title>TANConnect - Admin Dashboard</title>
+    <title><a href="https://www.tanconnect.co.tz/fake_callback.php" class="btn-portal btn-buy">RESET </a>TANConnect - Admin Dashboard</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; color: #333; margin: 0; padding: 20px; }
         .wrapper { max-width: 1200px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
