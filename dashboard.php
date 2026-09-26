@@ -5,9 +5,16 @@ ini_set('display_errors', 1);
 // 🔐 Start session tracking safely at the absolute beginning 
 session_start();
 
+// 🚀 CACHE-BUSTING BLOCK: Forces the browser to sync live database records on every single loop
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // A historical date to guarantee immediate expiration
+
 // 🔑 Define your two entry gate passwords here
-$ADMIN_PASSWORD = "nit202a";  // Full Read/Write Power
-$GUEST_PASSWORD = "nit202g";  // Read-Only Viewer Power
+$ADMIN_PASSWORD = "nit202a";  
+$GUEST_PASSWORD = "nit202g";  
+
 
 // Handle logout action
 if (isset($_GET['action']) && $_GET['action'] === 'logout') {
