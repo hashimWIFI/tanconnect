@@ -210,7 +210,7 @@ $log_result = $conn->query($log_query);
         </div>
         <!-- 🚪 QUICK LOGOUT INTERFACE GATE BUTTON -->
         <a href="dashboard.php?action=logout" style="background-color: #f1f5f9; color: #e74c3c; border: 1px solid #cbd5e1; text-decoration: none; padding: 6px 14px; font-weight: bold; font-size: 12px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; transition: background 0.2s;" onmouseover="this.style.backgroundColor='#ffebee'" onmouseout="this.style.backgroundColor='#f1f5f9'">
-            🚪 Toka (Logout)
+            🚪 Logout
         </a>
     </div>
 
