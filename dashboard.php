@@ -193,6 +193,21 @@ $log_result = $conn->query($log_query);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- 🔄 LIVE OVER-THE-AIR REFRESH SYNC CONTROL (Runs every 10 seconds) -->
+    <meta http-equiv="refresh" content="10;url=dashboard.php<?php 
+        // Preserves your calendar selection inputs automatically across refresh cycles
+        $url_params = [];
+        if (isset($_GET['from_date'])) $url_params['from_date'] = $_GET['from_date'];
+        if (isset($_GET['to_date'])) $url_params['to_date'] = $_GET['to_date'];
+        if (!empty($url_params)) echo '?' . http_build_query($url_params);
+    ?>">
+    
+    <!-- Explicit HTML Level Cache Invalidation Matrix -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
     <title>TANConnect - Admin Dashboard</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; color: #333; margin: 0; padding: 20px; }
