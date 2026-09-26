@@ -260,8 +260,7 @@ $log_result = $conn->query($log_query);
                 Kipindi: <b><?php echo date('d M Y', strtotime($from_date)); ?></b> hadi <b><?php echo date('d M Y', strtotime($to_date)); ?></b> (Vocha: <?php echo number_format($vouchers_sold); ?>)
             </small>
         </div>
-
-        <!-- Card 3: Remaining Stock with Clean Floating Popover Panel Dropdown -->
+        <!-- Card 3: Remaining Stock with Layout-Safe Popover Panel Dropdown -->
         <div style="background: #fff3e0; padding: 20px; border-radius: 8px; border-left: 5px solid #ef6c00; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-start; position: relative;">
             <div>
                 <span style="font-size: 11px; font-weight: bold; color: #ef6c00; text-transform: uppercase; display: block; margin-bottom: 5px;">VOCHA ZILIZOBAKI (STOCK)</span>
@@ -270,14 +269,14 @@ $log_result = $conn->query($log_query);
             </div>
             
             <!-- Toggle Trigger Button -->
-            <div style="margin-top: 15px;">
+            <div style="margin-top: 15px; position: relative; z-index: 10;">
                 <button type="button" onclick="toggleStockBreakdown(event)" style="background-color: #ef6c00; color: white; border: none; padding: 6px 12px; font-size: 11px; font-weight: bold; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; outline: none; transition: background 0.2s;" onmouseover="this.style.backgroundColor='#d35400'" onmouseout="this.style.backgroundColor='#ef6c00'">
                     👁️ Angalia Mchanganuo (View Breakdown)
                 </button>
             </div>
 
-            <!-- Hidden Popover Dropdown Panel Overlapping Interface Below Safely -->
-            <div id="stockBreakdownDropdown" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; background: white; border: 1px solid #ffd180; box-shadow: 0 4px 15px rgba(0,0,0,0.12); border-radius: 8px; padding: 15px; margin-top: 8px; z-index: 999; box-sizing: border-box;">
+            <!-- Fixed Dropdown Panel: Positioned cleanly beneath the box margins -->
+            <div id="stockBreakdownDropdown" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; background: white; border: 1px solid #ffd180; box-shadow: 0 4px 15px rgba(0,0,0,0.12); border-radius: 8px; padding: 15px; margin-top: 8px; z-index: 9999; box-sizing: border-box;">
                 <h4 style="margin: 0 0 10px 0; font-size: 12px; color: #ef6c00; border-bottom: 1px dashed #ffd180; padding-bottom: 5px;">Mchanganuo wa Kifurushi (Stock per Tier)</h4>
                 <?php if (!empty($tier_stock_data)): ?>
                     <div style="display: flex; flex-direction: column; gap: 6px;">
@@ -294,7 +293,6 @@ $log_result = $conn->query($log_query);
             </div>
         </div>
 
-    </div> <!-- Close metrics-grid -->
 
     <!-- JavaScript Control Trigger Configuration Logic -->
     <script>
