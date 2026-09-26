@@ -306,15 +306,30 @@ $log_result = $conn->query($log_query);
         </small>
     </div>
 
-    <!-- Card 3: Remaining Stock -->
-    <div style="background: #fff3e0; padding: 20px; border-radius: 8px; border-left: 5px solid #ef6c00; box-sizing: border-box;">
-        <span style="font-size: 11px; font-weight: bold; color: #ef6c00; text-transform: uppercase; display: block; margin-bottom: 5px;">VOCHA ZILIZOBAKI (STOCK)</span>
-        <h3 style="margin: 0; font-size: 24px; color: #e65100;"><?php echo number_format($remaining_stock); ?></h3>
-        <small style="color: #f57c00; font-size: 11px; display: block; margin-top: 5px;">Tayari kutumika na wateja</small>
+       <!-- Card 3: Remaining Stock with Branded Tier Details Summary -->
+    <div style="background: #fff3e0; padding: 20px; border-radius: 8px; border-left: 5px solid #ef6c00; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <span style="font-size: 11px; font-weight: bold; color: #ef6c00; text-transform: uppercase; display: block; margin-bottom: 5px;">VOCHA ZILIZOBAKI (STOCK)</span>
+            <h3 style="margin: 0; font-size: 24px; color: #e65100; font-weight: 700;"><?php echo number_format($remaining_stock); ?></h3>
+        </div>
+        
+        <!-- Detailed Remaining Voucher Tiers Mini-Grid -->
+        <div style="margin-top: 12px; border-top: 1px dashed #ffd180; padding-top: 10px;">
+            <?php if (!empty($tier_stock_data)): ?>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <?php foreach ($tier_stock_data as $tier): ?>
+                        <div style="display: flex; justify-content: space-between; font-size: 11px; color: #e65100;">
+                            <span>Tsh <?php echo number_format($tier['price_tier']); ?>:</span>
+                            <span style="font-weight: bold;"><?php echo number_format($tier['tier_count']); ?> pcs</span>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <span style="color: #b26a00; font-size: 11px; font-style: italic;">Hakuna vocha zilizobaki</span>
+            <?php endif; ?>
+        </div>
     </div>
-</div>
 
-</div>
 
 
     <!-- BULK VOUCHER STOCK IMPORT ENGINE WITH INTEGRATED EXCEL EXPORTER -->
