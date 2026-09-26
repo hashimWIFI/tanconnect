@@ -245,26 +245,26 @@ $log_result = $conn->query($log_query);
     <!-- 📅 DYNAMIC DATE RANGE FILTER CONTROL PANEL -->
     <div style="background: white; padding: 15px 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; box-sizing: border-box;">
         <div style="color: #1e3c72; font-weight: bold; font-size: 14px; display: inline-flex; align-items: center; gap: 6px;">
-            🔍 Kipindi (Observation Period)
+            🔍 Observation Period.
         </div>
         
         <form action="dashboard.php" method="GET" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 0;">
             <div style="display: flex; align-items: center; gap: 6px;">
-                <label style="font-size: 12px; font-weight: bold; color: #64748b;">Kuanzia (From):</label>
+                <label style="font-size: 12px; font-weight: bold; color: #64748b;">From:</label>
                 <input type="date" name="from_date" value="<?php echo htmlspecialchars($from_date); ?>" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; color: #334155; outline: none; background-color: #f8fafc;">
             </div>
             
             <div style="display: flex; align-items: center; gap: 6px;">
-                <label style="font-size: 12px; font-weight: bold; color: #64748b;">Hadi (To):</label>
+                <label style="font-size: 12px; font-weight: bold; color: #64748b;">To:</label>
                 <input type="date" name="to_date" value="<?php echo htmlspecialchars($to_date); ?>" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; color: #334155; outline: none; background-color: #f8fafc;">
             </div>
             
             <button type="submit" style="background-color: #1e3c72; color: white; border: none; padding: 7px 16px; font-weight: bold; font-size: 13px; border-radius: 6px; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#0d234d'" onmouseout="this.style.backgroundColor='#1e3c72'">
-                Angalia (Apply Filter)
+                Apply Filter
             </button>
             
             <?php if (isset($_GET['from_date']) || isset($_GET['to_date'])): ?>
-                <a href="dashboard.php" style="font-size: 12px; color: #e74c3c; font-weight: bold; text-decoration: none; padding-left: 5px;">Weka Wazi (Reset)</a>
+                <a href="dashboard.php" style="font-size: 12px; color: #e74c3c; font-weight: bold; text-decoration: none; padding-left: 5px;">Reset</a>
             <?php endif; ?>
         </form>
     </div>
