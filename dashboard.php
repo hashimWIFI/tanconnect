@@ -296,23 +296,28 @@ $log_result = $conn->query($log_query);
 
     <!-- JavaScript Control Trigger Configuration Logic -->
     <script>
-        function toggleStockBreakdown(event) {
-            event.stopPropagation();
-            var dropdown = document.getElementById('stockBreakdownDropdown');
-            if (dropdown.style.display === 'none' || dropdown.style.display === '') {
-                dropdown.style.display = 'block';
-            } else {
-                dropdown.style.display = 'none';
-            }
-        }
+       function toggleStockBreakdown(event) {
+    // Stops the event from hitting the document body loop layer instantly
+    event.stopPropagation(); 
+    
+    var dropdown = document.getElementById('stockBreakdownDropdown');
+    if (!dropdown) return;
+    
+    if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+        dropdown.style.display = 'block';
+    } else {
+        dropdown.style.display = 'none';
+    }
+}
 
-        // Auto-close dropdown when clicking anywhere else on the screen canvas area
-        document.addEventListener('click', function(event) {
-            var dropdown = document.getElementById('stockBreakdownDropdown');
-            if (dropdown && dropdown.style.display === 'block') {
-                dropdown.style.display = 'none';
-            }
-        });
+// Automatically dismiss the menu popover panel when clicking outside the button parameters
+document.addEventListener('click', function(event) {
+    var dropdown = document.getElementById('stockBreakdownDropdown');
+    if (dropdown && dropdown.style.display === 'block') {
+        dropdown.style.display = 'none';
+    }
+});
+
     <!-- 🛡️ SECURITY LAYER ROLE CHECK: ONLY SHOW UPLOADER MODULE FOR FULL WRITE-ACCESS ADMIN -->
     <?php if (isset($_SESSION['dashboard_role']) && $_SESSION['dashboard_role'] === 'admin'): ?>
 
