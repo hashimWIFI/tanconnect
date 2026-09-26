@@ -233,7 +233,7 @@ border-radius: 6px; cursor: pointer; transition: all 0.3s ease; }
             Umechagua kifurushi:<br> <strong id="summary-bold-text" style="color: #0033a0;">1,000 TZS || Masaa 24 kuperuzi || Unlimited DATA</strong>
         </div>
    
-<form id="payment-form" action="https://indexphp-production.up.railway.app" method="post">
+<form id="payment-form" action="login.php" method="post">
           <input type="hidden" id="selected-amount" name="amount" value=" " >
             <div class="form-group" style="text-align: left; margin-bottom: 20px;">
                 <label for="phone-number">Ingiza nambari ya simu, kisha bonyeza PAY:</label>
