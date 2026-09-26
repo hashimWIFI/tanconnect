@@ -314,15 +314,15 @@ $log_result = $conn->query($log_query);
                     <div style="display: flex; flex-direction: column;">
                         <label style="font-size: 11px; font-weight: bold; margin-bottom: 4px; color: #475569;">Kifurushi (Price Tier):</label>
                         <select name="upload_price_tier" style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" required>
-                            <option value="500">Tsh 500</option>
-                            <option value="1000">Tsh 1,000</option>
-                            <option value="2000">Tsh 2,000</option>
-                            <option value="4000">Tsh 4,000</option>
-                            <option value="5000">Tsh 5,000</option>
-                            <option value="7000">Tsh 7,000</option>
-                            <option value="9000">Tsh 9,000</option>
-                            <option value="10000">Tsh 10,000</option>
-                            <option value="20000">Tsh 20,000</option>
+                            <option value="500">500</option>
+                            <option value="1000">1,000</option>
+                            <option value="2000">2,000</option>
+                            <option value="4000">4,000</option>
+                            <option value="5000">5,000</option>
+                            <option value="7000">7,000</option>
+                            <option value="9000">9,000</option>
+                            <option value="10000">10,000</option>
+                            <option value="20000">20,000</option>
                         </select>
                     </div>
                     
