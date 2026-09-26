@@ -39,7 +39,7 @@ body {font: 100% "Trebuchet MS", "Helvetica Neue", Helvetica, Arial, sans-serif;
         .container { max-width: 380px; margin: 40px auto; background: white; justify-content: center; align-items: center; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         h1 { color: black; margin-bottom: 5px; } <!--#3498db-#7f8c8d>
         p { color:black ; margin-bottom: 25px; }
-        .package-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .package-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-bottom: 25px; }
         .package-card { border: 2px solid #e2e8f0; border-left: 4px solid #3498db; border-bottom: 2px solid red; border-radius: 12px; padding: 15px; cursor: pointer; transition: all 0.2s; background: #f8fafc; }
         .package-card:hover { border-color: #3498db; background-color: #f7fafc; }
         .package-card.selected { border-color: #3498db; background-color: #ebf8ff; }
