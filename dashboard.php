@@ -82,7 +82,6 @@ if ($conn->connect_error) {
 // 🌍 TIMEZONE SYNCHRONIZATION
 date_default_timezone_set('Africa/Dar_es_Salaam');
 $conn->query("SET time_zone = '+03:00'");
-
 // =========================================================================
 // 2. DYNAMIC BULK UPLOADER ENGINE PARSER
 // =========================================================================
@@ -178,7 +177,7 @@ $vouchers_sold = $count_result ? ($count_result->fetch_assoc()['total'] ?: 0) : 
 $stock_result = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE status = 'AVAILABLE'");
 $remaining_stock = $stock_result ? ($stock_result->fetch_assoc()['total'] ?: 0) : 0;
 
-// 📋 LOG ENTRIES FETCH
+// 📋 LOG ENTRIES FETCH FOR LATEST 50 TRANSACTIONS
 $log_query = "SELECT id, voucher_code, price_tier, status, assigned_phone, mac_address, transaction_id, azampay_transaction_id, purchased_at FROM wifi_vouchers WHERE status IN ('SUCCESS', 'ASSIGNED') ORDER BY purchased_at DESC LIMIT 50";
 $log_result = $conn->query($log_query);
 ?>
@@ -199,7 +198,7 @@ $log_result = $conn->query($log_query);
 
 <div class="wrapper">
     <!-- Header Block with Dynamic Status Messaging Alert Row -->
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 10px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 10px;">
         <div style="display: flex; align-items: center; gap: 15px;">
             <img src="logo.png" style="max-width: 160px; height: auto; object-fit: contain; margin-bottom: 1px;">
             <h2 style="margin: 0; border: none; padding: 0;">Admin Sales Dashboard</h2>
@@ -244,7 +243,7 @@ $log_result = $conn->query($log_query);
     </div>
 
     <!-- 📊 THE METRICS GRID DISPLAYER -->
-    <div class="metrics-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px;">
+    <div class="metrics-grid">
         
         <!-- Card 1: Today's Collection -->
         <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; border-left: 5px solid #2e7d32; box-sizing: border-box;">
@@ -316,251 +315,146 @@ $log_result = $conn->query($log_query);
                 dropdown.style.display = 'none';
             }
         });
-    </script>
-        function toggleStockBreakdown(event) {
-            event.stopPropagation();
-            var dropdown = document.getElementById('stockBreakdownDropdown');
-            if (dropdown.style.display === 'none' || dropdown.style.display === '') {
-                dropdown.style.display = 'block';
-            } else {
-                dropdown.style.display = 'none';
-            }
-        }
+    <!-- 🛡️ SECURITY LAYER ROLE CHECK: ONLY SHOW UPLOADER MODULE FOR FULL WRITE-ACCESS ADMIN -->
+    <?php if (isset($_SESSION['dashboard_role']) && $_SESSION['dashboard_role'] === 'admin'): ?>
 
-        // Close the panel automatically if you click anywhere else on the dashboard screen
-        document.addEventListener('click', function(event) {
-            var dropdown = document.getElementById('stockBreakdownDropdown');
-            if (dropdown && dropdown.style.display === 'block') {
-                dropdown.style.display = 'none';
-            }
-        });
-    </script>
-
-        
-        <!-- Detailed Remaining Voucher Tiers Mini-Grid -->
-        <div style="margin-top: 12px; border-top: 1px dashed #ffd180; padding-top: 10px;">
-            <?php if (!empty($tier_stock_data)): ?>
-                <div style="display: flex; flex-direction: column; gap: 4px;">
-                    <?php foreach ($tier_stock_data as $tier): ?>
-                        <div style="display: flex; justify-content: space-between; font-size: 11px; color: #e65100;">
-                            <span>Tsh <?php echo number_format($tier['price_tier']); ?>:</span>
-                            <span style="font-weight: bold;"><?php echo number_format($tier['tier_count']); ?> pcs</span>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php else: ?>
-                <span style="color: #b26a00; font-size: 11px; font-style: italic;">Hakuna vocha zilizobaki</span>
-            <?php endif; ?>
-        </div>
-    </div>
-
-
-
-    <!-- BULK VOUCHER STOCK IMPORT ENGINE WITH INTEGRATED EXCEL EXPORTER -->
-    <div style="background-color: #f8fafc; border: 1px dashed #cbd5e1; padding: 20px; border-radius: 8px; margin-bottom: 25px; box-sizing: border-box;">
-        <h3 style="margin-top: 0; color: #1e3c72; font-size: 15px;">📥 Ongeza Vocha kwa Mkupuo (Bulk Voucher Uploader)</h3>
-        <p style="font-size: 12px; color: #64748b; margin-bottom: 15px; margin-top: 0;">Faili la maandishi (.txt au .csv) ambalo kila mstari una namba moja ya vocha.</p>
-        
-        <form action="dashboard.php" method="POST" enctype="multipart/form-data" style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end; justify-content: space-between; width: 100%;">
+        <!-- BULK VOUCHER STOCK IMPORT ENGINE WITH INTEGRATED EXCEL EXPORTER -->
+        <div style="background-color: #f8fafc; border: 1px dashed #cbd5e1; padding: 20px; border-radius: 8px; margin-bottom: 25px; box-sizing: border-box; margin-top: 10px;">
+            <h3 style="margin-top: 0; color: #1e3c72; font-size: 15px;">📥 Ongeza Vocha kwa Mkupuo (Bulk Voucher Uploader)</h3>
+            <p style="font-size: 12px; color: #64748b; margin-bottom: 15px; margin-top: 0;">Faili la maandishi (.txt au .csv) ambalo kila mstari una namba moja ya vocha.</p>
             
-            <!-- Left Side: Input Form Controls Cluster -->
-            <div style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; flex: 1;">
-                <div style="display: flex; flex-direction: column;">
-                    <label style="font-size: 11px; font-weight: bold; margin-bottom: 4px; color: #475569;">Kifurushi (Price Tier):</label>
-                    <select name="upload_price_tier" style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" required>
-                        <option value="500">Tsh 500</option>
-                        <option value="1000">Tsh 1,000</option>
-                        <option value="2000">Tsh 2,000</option>
-                        <option value="4000">Tsh 4,000</option>
-                        <option value="5000">Tsh 5,000</option>
-                        <option value="7000">Tsh 7,000</option>
-                        <option value="9000">Tsh 9,000</option>
-                        <option value="10000">Tsh 10,000</option>
-                        <option value="20000">Tsh 20,000</option>
-                    </select>
+            <form action="dashboard.php" method="POST" enctype="multipart/form-data" style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end; justify-content: space-between; width: 100%;">
+                
+                <!-- Left Side: Input Form Controls Cluster -->
+                <div style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; flex: 1;">
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 11px; font-weight: bold; margin-bottom: 4px; color: #475569;">Kifurushi (Price Tier):</label>
+                        <select name="upload_price_tier" style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" required>
+                            <option value="500">Tsh 500</option>
+                            <option value="1000">Tsh 1,000</option>
+                            <option value="2000">Tsh 2,000</option>
+                            <option value="4000">Tsh 4,000</option>
+                            <option value="5000">Tsh 5,000</option>
+                            <option value="7000">Tsh 7,000</option>
+                            <option value="9000">Tsh 9,000</option>
+                            <option value="10000">Tsh 10,000</option>
+                            <option value="20000">Tsh 20,000</option>
+                        </select>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="font-size: 11px; font-weight: bold; margin-bottom: 4px; color: #475569;">Chagua Faili (.txt / .csv):</label>
+                        <input type="file" name="voucher_file" accept=".txt,.csv" style="font-size: 13px;" required>
+                    </div>
+
+                    <!-- 🚀 UPLOAD BUTTON RIGHT NEXT TO INPUTS -->
+                    <button type="submit" name="submit_upload" style="background-color: #1e3c72; color: white; border: none; padding: 11px 20px; font-weight: bold; font-size: 13px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;">
+                        🚀 Pakia Vocha (Upload)
+                    </button>
+                </div>
+
+                <!-- Right Side: Integrated Download Action Block -->
+                <div style="display: flex; align-items: center; justify-content: flex-end; white-space: nowrap;">
+                    <!-- 🟢 DOWNLOAD EXCEL REPORT ACTION LINK BUTTON -->
+                    <a href="export_sales.php" style="background-color: #27ae60; color: white; text-decoration: none; padding: 11px 20px; border-radius: 6px; font-size: 13px; font-weight: bold; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#1e7e34'" onmouseout="this.style.backgroundColor='#27ae60'">
+                        📥 Pakua Ripoti (Excel CSV)
+                    </a>
                 </div>
                 
-                <div style="display: flex; flex-direction: column;">
-                    <label style="font-size: 11px; font-weight: bold; margin-bottom: 4px; color: #475569;">Chagua Faili (.txt / .csv):</label>
-                    <input type="file" name="voucher_file" accept=".txt,.csv" style="font-size: 13px;" required>
-                </div>
-
-                <!-- 🚀 UPLOAD BUTTON RIGHT NEXT TO INPUTS -->
-                <button type="submit" name="submit_upload" style="background-color: #1e3c72; color: white; border: none; padding: 11px 20px; font-weight: bold; font-size: 13px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;">
-                    🚀 Pakia Vocha (Upload)
-                </button>
-            </div>
-
-            <!-- Right Side: Integrated Download Action Block -->
-            <div style="display: flex; align-items: center; justify-content: flex-end; white-space: nowrap;">
-                <!-- 🟢 DOWNLOAD EXCEL REPORT ACTION LINK BUTTON -->
-                <a href="export_sales.php" style="background-color: #27ae60; color: white; text-decoration: none; padding: 11px 20px; border-radius: 6px; font-size: 13px; font-weight: bold; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#1e7e34'" onmouseout="this.style.backgroundColor='#27ae60'">
-                    📥 Pakua Ripoti (Excel CSV)
-                </a>
-            </div>
-            
-        </form>
-    </div>
-
-
-
-
-       <!-- DYNAMIC BATCH STOCK SUMMARY POPUP MODAL CONTAINER -->
-    <div id="stockSummaryModal" class="stock-modal" onclick="closeStockSummaryPopup()">
-        <div class="stock-modal-content" onclick="event.stopPropagation()">
-            <span class="stock-close" onclick="closeStockSummaryPopup()">&times;</span>
-            <h3 style="margin-top: 0; color: #e67e22; font-size: 16px; border-bottom: 2px solid #eee; padding-bottom: 8px;">📊 Muhtasari wa Vocha (Stock Summary)</h3>
-            <table class="stock-table">
-                <!-- 🚀 UPDATED HEADER ROW: Forces the stock title text to align perfectly in the center -->
-                <thead>
-                    <tr>
-                        <th style="padding: 10px 12px; border: 1px solid #e2e8f0; font-family: 'Segoe UI', sans-serif; font-size: 12px; color: #475569; font-weight: bold; text-align: left;">Price Tier</th>
-                        <th style="padding: 10px 12px; border: 1px solid #e2e8f0; font-family: 'Segoe UI', sans-serif; font-size: 12px; color: #475569; font-weight: bold; text-align: center;">Zilizobaki (Stock)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (!empty($tier_stock_data)): ?>
-                        <?php foreach ($tier_stock_data as $tier): 
-                            $isLowStock = ($tier['tier_count'] < 50);
-                            $textStyle = $isLowStock ? 'color: #d9534f; font-weight: 800;' : 'color: #1e3c72; font-weight: bold;';
-                            $badge = $isLowStock ? ' <span style="font-size: 8px; background-color: #fde8e8; color: #e53e3e; padding: 2px 6px; border-radius: 4px; border: 1px solid #fed7d7;">⚠️ LOW</span>' : '';
-                        ?>
-                            <tr style="<?php echo $isLowStock ? 'background-color: #fffaf0;' : ''; ?>">
-                                <td style="<?php echo $textStyle; ?> padding: 10px 12px; border: 1px solid #e2e8f0; font-family: monospace; font-size: 14px; text-align: left;">
-                                    Tsh <?php echo number_format($tier['price_tier']); ?><?php echo $badge; ?>
-                                </td>
-                                <!-- 🚀 UPDATED DATA CELL: Enforces centered alignment for the pieces balance data column -->
-                                <td style="padding: 10px 12px; border: 1px solid #e2e8f0; font-family: monospace; font-size: 14px; text-align: center; font-weight: bold; color: <?php echo $isLowStock ? '#d9534f' : '#333'; ?>;">
-                                    <?php echo number_format($tier['tier_count']); ?> pcs
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr><td colspan="2" style="text-align: center; color: #7f8c8d; padding: 20px;">Hakuna vocha zilizobaki.</td></tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+            </form>
         </div>
-    </div>
 
-       <!-- 🔍 LIVE TRANSACTION FILTER SEARCH MATRIX -->
-    <!-- 📊 LIVE TRANSACTION FILTER SEARCH MATRIX WITH INTEGRATED EXCEL EXPORTER -->
-<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-top: 35px; margin-bottom: 10px; gap: 15px;">
-    <h3 style="margin: 0; color: #1e3c72; font-size: 16px;">📑 Live Transaction Audit Logs (Latest 50 Entries)</h3>
+    <?php else: ?>
+        <!-- 🟢 GUEST ONLY ACCESS LINK DISPLAY: Render download row independently since uploader container is hidden -->
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 25px;">
+            <a href="export_sales.php" style="background-color: #27ae60; color: white; text-decoration: none; padding: 11px 20px; border-radius: 6px; font-size: 13px; font-weight: bold; display: inline-flex; align-items: center; gap: 6px;" onmouseover="this.style.backgroundColor='#1e7e34'" onmouseout="this.style.backgroundColor='#27ae60'">
+                📥 Pakua Ripoti (Excel CSV)
+            </a>
+        </div>
+    <?php endif; ?>
 
-        <!-- The Properly Positioned Search Input Box -->
+    <!-- 📊 LIVE TRANSACTION FILTER SEARCH MATRIX HEADER BLOCK -->
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-top: 35px; margin-bottom: 10px; gap: 15px;">
+        <h3 style="margin: 0; color: #1e3c72; font-size: 16px;">📑 Live Transaction Audit Logs (Latest 50 Entries)</h3>
+        
+        <!-- Positioned Real-time Search Input Box -->
         <div style="position: relative; max-width: 320px; width: 100%;">
             <input type="text" id="dashboardSearchBox" onkeyup="filterAdminTransactionTable()" placeholder="Tafuta kwa namba ya simu au PIN..." style="width: 100%; padding: 10px 12px 10px 35px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; box-sizing: border-box; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='#1e3c72'" onblur="this.style.borderColor='#cbd5e1'">
             <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 14px;">🔍</span>
         </div>
     </div>
-</div>
-
-   
-</div>
-
-
-    <!-- LIGHTWEIGHT CLIENT-SIDE FILTER SEARCH ENGINE -->
-    <script type="text/javascript">
-      function filterAdminTransactionTable() {
-        var input = document.getElementById("dashboardSearchBox");
-        var rawInput = input.value.trim();
-        var filter = rawInput.toUpperCase();
-        
-        // 🚀 SMART PREFIX NORMALIZATION: If user types a standard local number starting with 0, 
-        // create a normalized fallback string that replaces the '0' with '255' for matching cells
-        var normalizedFilter = filter;
-        if (rawInput.startsWith('0')) {
-            normalizedFilter = '255' + filter.substring(1);
-        }
-
-        var table = document.querySelector("table:not(.stock-table)");
-        var tr = table.getElementsByTagName("tr");
-
-        // Loop through all data rows skipping your table header columns element row
-        for (var i = 1; i < tr.length; i++) {
-            // Target text cells: Voucher PIN (Column 1) and Assigned Phone (Column 4)
-            var tdVoucher = tr[i].getElementsByTagName("td")[1];
-            var tdPhone   = tr[i].getElementsByTagName("td")[4];
-            
-            if (tdVoucher || tdPhone) {
-                var voucherText = tdVoucher ? (tdVoucher.textContent || tdVoucher.innerText).trim() : "";
-                var phoneText   = tdPhone ? (tdPhone.textContent || tdPhone.innerText).trim() : "";
-                
-                var upperVoucher = voucherText.toUpperCase();
-                var upperPhone   = phoneText.toUpperCase();
-                
-                // 🔍 MULTI-MATCH EVALUATION MATRIX: 
-                // Checks raw input against PIN, raw input against Phone, AND normalized 255 string against Phone!
-                if (upperVoucher.indexOf(filter) > -1 || 
-                    upperPhone.indexOf(filter) > -1 || 
-                    upperPhone.indexOf(normalizedFilter) > -1) {
-                    
-                    tr[i].style.display = ""; // Keyword matches, reveal row layout element
-                } else {
-                    tr[i].style.display = "none"; // No match found, hide row dynamically
-                }
-            }       
-        }
-    }
-
-    </script>
-
-    <div style="overflow-x: auto;">
-        <table>
+    <!-- 📊 THE MAIN TRANSACTIONAL AUDIT DATA DISPLAY TABLE -->
+    <div style="overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 8px; background: white; margin-bottom: 30px;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
             <thead>
-                <tr>
-                    <th style="text-align: center;">S/N</th>
-                    <th>Voucher Code</th>
-                    <th>Price Tier</th>
-                    <th>Status</th>
-                    <th>Assigned Phone</th>
-                    <th>MAC Address</th>
-                    <th>Muda wa Malipo (EAT Time)</th>
-                    <th>NIT Transacion ID</th>
-                    <th>AzamPay Transaction ID</th> <!-- 🚀 UPDATED HEADER KEY NAME -->
+                <tr style="background-color: #f8fafc; border-bottom: 2px solid #e2e8f0; color: #475569;">
+                    <th style="padding: 12px 15px; text-align: center; font-weight: bold;">S/N</th>
+                    <th style="padding: 12px 15px; font-weight: bold;">Voucher Code</th>
+                    <th style="padding: 12px 15px; font-weight: bold;">Price Tier</th>
+                    <th style="padding: 12px 15px; font-weight: bold;">Status</th>
+                    <th style="padding: 12px 15px; font-weight: bold;">Assigned Phone</th>
+                    <th style="padding: 12px 15px; font-weight: bold;">MAC Address</th>
+                    <th style="padding: 12px 15px; font-weight: bold;">Muda wa Malipo (EAT Time)</th>
+                    <th style="padding: 12px 15px; font-weight: bold;">NIT Transaction ID</th>
+                    <th style="padding: 12px 15px; font-weight: bold;">AzamPay Transaction ID</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if ($log_result && $log_result->num_rows > 0): ?>
                     <?php 
-                    // Descending Serial Number loop engine initial tracking setting
                     $sn_counter = $log_result->num_rows; 
-                    
                     while ($row = $log_result->fetch_assoc()): 
                         $rawMac = preg_replace('/[^a-zA-Z0-9]/', '', $row['mac_address']);
                         $displayMac = strlen($rawMac) === 12 ? implode(':', str_split($rawMac, 2)) : $row['mac_address'];
                     ?>
-                        <tr>
-                            <td style="font-weight: bold; color: #475569; font-family: monospace; text-align: center;">
+                        <tr style="border-bottom: 1px solid #e2e8f0;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
+                            <td style="font-weight: bold; color: #475569; font-family: monospace; text-align: center; padding: 12px 15px;">
                                 <?php echo $sn_counter--; ?>
                             </td>
-                            <td style="font-weight: bold; font-family: monospace; font-size: 15px;"><?php echo $row['voucher_code']; ?></td>
-                            <td>Tsh <?php echo number_format($row['price_tier']); ?></td>
-                            <td><span class="badge <?php echo ($row['status'] === 'SUCCESS') ? 'badge-success' : 'badge-assigned'; ?>"><?php echo $row['status']; ?></span></td>
-                            <td><?php echo !empty($row['assigned_phone']) ? htmlspecialchars($row['assigned_phone']) : '-'; ?></td>
-                            <td class="mac-text"><?php echo !empty($rawMac) ? htmlspecialchars(strtoupper($displayMac)) : '-'; ?></td>
-                            <td style="font-family: monospace; color: #2c3e50; font-weight: 500;">
+                            <td style="font-weight: bold; font-family: monospace; font-size: 14px; padding: 12px 15px; color: #1e293b;">
+                                <?php echo htmlspecialchars($row['voucher_code']); ?>
+                            </td>
+                            <td style="padding: 12px 15px; font-weight: 500;">
+                                Tsh <?php echo number_format($row['price_tier']); ?>
+                            </td>
+                            <td style="padding: 12px 15px;">
+                                <?php if ($row['status'] === 'SUCCESS'): ?>
+                                    <span style="background-color: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">SUCCESS</span>
+                                <?php else: ?>
+                                    <span style="background-color: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">ASSIGNED</span>
+                                <?php endif; ?>
+                            </td>
+                            <td style="padding: 12px 15px; font-family: monospace; color: #334155;">
+                                <?php echo !empty($row['assigned_phone']) ? htmlspecialchars($row['assigned_phone']) : '-'; ?>
+                            </td>
+                            <td style="padding: 12px 15px; font-family: monospace; color: #64748b;">
+                                <?php echo !empty($rawMac) ? htmlspecialchars(strtoupper($displayMac)) : '-'; ?>
+                            </td>
+                            <td style="font-family: monospace; color: #2c3e50; font-weight: 500; padding: 12px 15px;">
                                 <?php echo !empty($row['purchased_at']) ? date("d-m-Y H:i:s", strtotime($row['purchased_at'])) : '-'; ?>
                             </td>
-                            <td style="color: #7f8c8d; font-size: 12px; font-family: monospace;"><?php echo htmlspecialchars($row['transaction_id']); ?></td>
-                            
-                            <!-- 🚀 DYNAMIC AUDIT CELL: Safely displays the custom renamed column values visually live -->
-                            <td style="color: #27ae60; font-weight: bold; font-family: monospace; font-size: 13px;">
+                            <td style="color: #7f8c8d; font-size: 12px; font-family: monospace; padding: 12px 15px;">
+                                <?php echo htmlspecialchars($row['transaction_id']); ?>
+                            </td>
+                            <td style="color: #27ae60; font-weight: bold; font-family: monospace; font-size: 13px; padding: 12px 15px;">
                                 <?php echo !empty($row['azampay_transaction_id']) ? htmlspecialchars($row['azampay_transaction_id']) : '-'; ?>
                             </td>
                         </tr>
                     <?php endwhile; ?>
                 <?php else: ?>
-                    <tr><td colspan="9" style="text-align: center; color: #7f8c8d; padding: 20px;">Hakuna kumbukumbu za malipo bado.</td></tr>
+                    <tr>
+                        <td colspan="9" style="text-align: center; color: #7f8c8d; padding: 30px; font-style: italic;">
+                            Hakuna kumbukumbu za malipo bado. (No transaction history logs generated yet.)
+                        </td>
+                    </tr>
                 <?php endif; ?>
             </tbody>
         </table>
     </div>
-</div>
 
-    <!-- SILENT BACKGROUND DATABASE CLEANUP TRIGGER -->
-  <script type="text/javascript">
+</div> <!-- Close wrapper canvas container box -->
+
+<script type="text/javascript">
     // 🚀 PERSISTENT SEARCH MEMORY FILTER ENGINE
     function filterAdminTransactionTable() {
         var input = document.getElementById("dashboardSearchBox");
@@ -569,7 +463,7 @@ $log_result = $conn->query($log_query);
         var rawInput = input.value.trim();
         var filter = rawInput.toUpperCase();
         
-        // Save the current input keyword into the browser's temporary session storage memory
+        // Save current entry to session memory storage to prevent wipeouts during meta refreshes
         sessionStorage.setItem("adminSearchKeyword", rawInput);
         
         var normalizedFilter = filter;
@@ -585,7 +479,7 @@ $log_result = $conn->query($log_query);
         for (var i = 1; i < tr.length; i++) {
             var tdCells = tr[i].getElementsByTagName("td");
             if (tdCells.length > 4) {
-                // Column Index 1: Voucher PIN | Column Index 4: Assigned Phone
+                // Column 1: Voucher PIN | Column 4: Phone Matrix cell
                 var voucherText = (tdCells[1].textContent || tdCells[1].innerText).trim();
                 var phoneText   = (tdCells[4].textContent || tdCells[4].innerText).trim();
                 
@@ -603,9 +497,8 @@ $log_result = $conn->query($log_query);
         }
     }
 
-    // 🔄 AUTOMATED RESTORATION LAYER: Executes seamlessly immediately upon page reload/sync
+    // 🔄 RE-APPLY FILTERS ON LOAD & CALL BACKGROUND OPTIMIZER
     window.addEventListener('DOMContentLoaded', function() {
-        // 1. Pull any stored keyword out of session storage and re-apply the filters
         var savedKeyword = sessionStorage.getItem("adminSearchKeyword");
         if (savedKeyword) {
             var searchBox = document.getElementById("dashboardSearchBox");
@@ -615,7 +508,7 @@ $log_result = $conn->query($log_query);
             }
         }
 
-        // 2. Your background self-healing database cleaner script runs perfectly here
+        // Silent backend engine self-healing script call
         fetch('cron_cleanup.php')
             .then(response => response.json())
             .then(data => {
@@ -630,6 +523,10 @@ $log_result = $conn->query($log_query);
 </body>
 </html>
 <?php 
-if (isset($conn) && $conn instanceof mysqli) { $conn->close(); }
+// 🔒 Close live channel streams safely
+if (isset($conn) && $conn instanceof mysqli) { 
+    $conn->close(); 
+}
 exit();
 ?>
+
