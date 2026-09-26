@@ -374,7 +374,7 @@ $log_result = $conn->query($log_query);
         <!-- 🟢 GUEST ONLY ACCESS LINK DISPLAY: Render download row independently since uploader container is hidden -->
         <div style="display: flex; justify-content: flex-end; margin-bottom: 25px; margin-top: 15px;">
             <a href="export_sales.php" style="background-color: #27ae60; color: white; text-decoration: none; padding: 11px 20px; border-radius: 6px; font-size: 13px; font-weight: bold; display: inline-flex; align-items: center; gap: 6px;" onmouseover="this.style.backgroundColor='#1e7e34'" onmouseout="this.style.backgroundColor='#27ae60'">
-                📥 Pakua Ripoti (Excel CSV)
+                📥 Pakua Ripoti (Excel CSV)                                                             nnnnnnnnnn
             </a>
         </div>
     <?php endif; ?>
