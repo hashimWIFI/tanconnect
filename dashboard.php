@@ -178,80 +178,25 @@ $vouchers_sold = $count_result ? ($count_result->fetch_assoc()['total'] ?: 0) : 
 $stock_result = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE status = 'AVAILABLE'");
 $remaining_stock = $stock_result ? ($stock_result->fetch_assoc()['total'] ?: 0) : 0;
 
-// Selecting logs
+// 📋 LOG ENTRIES FETCH
 $log_query = "SELECT id, voucher_code, price_tier, status, assigned_phone, mac_address, transaction_id, azampay_transaction_id, purchased_at FROM wifi_vouchers WHERE status IN ('SUCCESS', 'ASSIGNED') ORDER BY purchased_at DESC LIMIT 50";
 $log_result = $conn->query($log_query);
 ?>
-
 <!DOCTYPE html>
 <html lang="sw">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="10">
     <title>TANConnect - Admin Dashboard</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; color: #333; margin: 0; padding: 20px; }
         .wrapper { max-width: 1200px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         h2 { color: #1e3c72; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; margin-top: 20px; }
-        .metric-card { padding: 20px; border-radius: 8px; color: white; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.1s ease; }
-        .card-green { background: #27ae60; }
-        .card-blue { background: #2980b9; }
-        .card-orange { background: #e67e22; }
-        .metric-val { font-size: 28px; display: block; margin-top: 5px; font-family: monospace; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
-        th, td { border: 1px solid #e2e8f0; padding: 12px 10px; text-align: left; }
-        th { background-color: #f8fafc; color: #475569; font-weight: bold; }
-        tr:hover { background-color: #f8fafc; }
-        
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
-        .badge-success { background: #e8f8f0; color: #27ae60; border: 1px solid #27ae60; }
-        .badge-assigned { background: #eaf2f8; color: #2980b9; border: 1px solid #2980b9; }
-        .mac-text { font-family: monospace; letter-spacing: 0.5px; color: #555; }
-
-        /* Solid White Opaque Stock Detail Dropdown Rules Window */
-        .stock-modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.5) !important;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999 !important;
-        }
-        .stock-modal-content {
-            background-color: #ffffff !important;
-            background: #ffffff !important;
-            padding: 25px;
-            border: 1px solid #cbd5e1;
-            width: 90%;
-            max-width: 450px;
-            border-radius: 12px;
-            position: relative;
-            box-sizing: border-box;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15), 0 10px 10px -5px rgba(0,0,0,0.1) !important;
-            color: #333 !important;
-            text-align: center;
-        }
-        .stock-close { position: absolute; top: 12px; right: 16px; font-size: 24px; font-weight: bold; cursor: pointer; color: #94a3b8; line-height: 1; }
-        .stock-close:hover { color: #334155; }
-        .stock-table { width: 100%; margin-top: 15px; border-collapse: collapse; }
-        .stock-table th, .stock-table td { padding: 10px 12px; border: 1px solid #e2e8f0; font-family: monospace; font-size: 14px; text-align: left; }
-        .stock-table th { background-color: #f8fafc; font-family: 'Segoe UI', sans-serif; font-size: 12px; color: #475569; font-weight: bold; }
     </style>
-
-    <script type="text/javascript">
-        function openStockSummaryPopup() { document.getElementById('stockSummaryModal').style.display = 'flex'; }
-        function closeStockSummaryPopup() { document.getElementById('stockSummaryModal').style.display = 'none'; }
-        window.onclick = function(event) {
-            var modal = document.getElementById('stockSummaryModal');
-            if (event.target == modal) { modal.style.display = 'none'; }
-        }
-    </script>
 </head>
 <body>
+
 
 <div class="wrapper">
     <img src="logo.png" style="max-width: 160px; height: auto; object-fit: contain; margin-bottom: 1px;"><h2>Admin Sales Dashboard</h2>
