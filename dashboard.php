@@ -245,7 +245,7 @@ $log_result = $conn->query($log_query);
     <!-- 📅 DYNAMIC DATE RANGE FILTER CONTROL PANEL -->
     <div style="background: white; padding: 15px 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; box-sizing: border-box;">
         <div style="color: #1e3c72; font-weight: bold; font-size: 14px; display: inline-flex; align-items: center; gap: 6px;">
-            🔍 Chuja kwa Tarehe (Filter Observation Period)
+            🔍 Kipindi (Observation Period)
         </div>
         
         <form action="dashboard.php" method="GET" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 0;">
