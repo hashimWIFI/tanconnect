@@ -311,7 +311,60 @@ $log_result = $conn->query($log_query);
         <div>
             <span style="font-size: 11px; font-weight: bold; color: #ef6c00; text-transform: uppercase; display: block; margin-bottom: 5px;">VOCHA ZILIZOBAKI (STOCK)</span>
             <h3 style="margin: 0; font-size: 24px; color: #e65100; font-weight: 700;"><?php echo number_format($remaining_stock); ?></h3>
+        </div>    <!-- Card 3: Remaining Stock with Interactive Popover Toggle -->
+    <div style="background: #fff3e0; padding: 20px; border-radius: 8px; border-left: 5px solid #ef6c00; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-start; position: relative;">
+        <div>
+            <span style="font-size: 11px; font-weight: bold; color: #ef6c00; text-transform: uppercase; display: block; margin-bottom: 5px;">VOCHA ZILIZOBAKI (STOCK)</span>
+            <h3 style="margin: 0; font-size: 24px; color: #e65100; font-weight: 700;"><?php echo number_format($remaining_stock); ?></h3>
+            <small style="color: #f57c00; font-size: 11px; display: block; margin-top: 5px;">Tayari kutumika na wateja</small>
         </div>
+        
+        <!-- Toggle Trigger Button -->
+        <div style="margin-top: 15px;">
+            <button type="button" onclick="toggleStockBreakdown(event)" style="background-color: #ef6c00; color: white; border: none; padding: 6px 12px; font-size: 11px; font-weight: bold; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; outline: none;">
+                👁️ Angalia Mchanganuo (View Breakdown)
+            </button>
+        </div>
+
+        <!-- Hidden Popover Dropdown Panel -->
+        <div id="stockBreakdownDropdown" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; background: white; border: 1px solid #ffd180; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 8px; padding: 15px; margin-top: 5px; z-index: 100; box-sizing: border-box;">
+            <h4 style="margin: 0 0 10px 0; font-size: 12px; color: #ef6c00; border-bottom: 1px dashed #ffd180; padding-bottom: 5px;">Mchanganuo wa Kifurushi (Stock per Tier)</h4>
+            <?php if (!empty($tier_stock_data)): ?>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <?php foreach ($tier_stock_data as $tier): ?>
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; color: #475569;">
+                            <span style="font-weight: 600;">Tsh <?php echo number_format($tier['price_tier']); ?>:</span>
+                            <span style="color: #e65100; font-weight: 700;"><?php echo number_format($tier['tier_count']); ?> pcs</span>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <span style="color: #64748b; font-size: 11px; font-style: italic;">Hakuna vocha zilizobaki</span>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- JavaScript Control Logic (Can be placed directly below the card or at the footer) -->
+    <script>
+        function toggleStockBreakdown(event) {
+            event.stopPropagation();
+            var dropdown = document.getElementById('stockBreakdownDropdown');
+            if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+                dropdown.style.display = 'block';
+            } else {
+                dropdown.style.display = 'none';
+            }
+        }
+
+        // Close the panel automatically if you click anywhere else on the dashboard screen
+        document.addEventListener('click', function(event) {
+            var dropdown = document.getElementById('stockBreakdownDropdown');
+            if (dropdown && dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+            }
+        });
+    </script>
+
         
         <!-- Detailed Remaining Voucher Tiers Mini-Grid -->
         <div style="margin-top: 12px; border-top: 1px dashed #ffd180; padding-top: 10px;">
