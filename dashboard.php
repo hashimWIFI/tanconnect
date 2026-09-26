@@ -197,100 +197,126 @@ $log_result = $conn->query($log_query);
 </head>
 <body>
 
-
 <div class="wrapper">
-    <img src="logo.png" style="max-width: 160px; height: auto; object-fit: contain; margin-bottom: 1px;"><h2>Admin Sales Dashboard</h2>
+    <!-- Header Block with Dynamic Status Messaging Alert Row -->
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 10px;">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <img src="logo.png" style="max-width: 160px; height: auto; object-fit: contain; margin-bottom: 1px;">
+            <h2 style="margin: 0; border: none; padding: 0;">Admin Sales Dashboard</h2>
+        </div>
+        <!-- 🚪 QUICK LOGOUT INTERFACE GATE BUTTON -->
+        <a href="dashboard.php?action=logout" style="background-color: #f1f5f9; color: #e74c3c; border: 1px solid #cbd5e1; text-decoration: none; padding: 6px 14px; font-weight: bold; font-size: 12px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; transition: background 0.2s;" onmouseover="this.style.backgroundColor='#ffebee'" onmouseout="this.style.backgroundColor='#f1f5f9'">
+            🚪 Toka (Logout)
+        </a>
+    </div>
+
     <?php if (!empty($upload_message)): ?>
-        <div style="background-color: <?php echo $upload_success ? '#e8f8f0' : '#fde8e8'; ?>; border: 1px solid <?php echo $upload_success ? '#27ae60' : '#27ae60'; ?>; color: <?php echo $upload_success ? '#27ae60' : '#e53e3e'; ?>; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; font-weight: bold;">
+        <div style="background-color: <?php echo $upload_success ? '#e8f8f0' : '#fde8e8'; ?>; border: 1px solid <?php echo $upload_success ? '#27ae60' : '#e53e3e'; ?>; color: <?php echo $upload_success ? '#27ae60' : '#e53e3e'; ?>; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; font-weight: bold;">
             <?php echo $upload_message; ?>
         </div>
     <?php endif; ?>
+
     <!-- 📅 DYNAMIC DATE RANGE FILTER CONTROL PANEL -->
-<div style="background: white; padding: 15px 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; box-sizing: border-box;">
-    <div style="color: #1e3c72; font-weight: bold; font-size: 14px; display: inline-flex; align-items: center; gap: 6px;">
-        🔍 Chuja kwa Tarehe (Filter Observation Period)
-    </div>
-    
-    <form action="dashboard.php" method="GET" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 0;">
-        <div style="display: flex; align-items: center; gap: 6px;">
-            <label style="font-size: 12px; font-weight: bold; color: #64748b;">Kuanzia (From):</label>
-            <input type="date" name="from_date" value="<?php echo htmlspecialchars($from_date); ?>" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; color: #334155; outline: none; background-color: #f8fafc;">
+    <div style="background: white; padding: 15px 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; box-sizing: border-box;">
+        <div style="color: #1e3c72; font-weight: bold; font-size: 14px; display: inline-flex; align-items: center; gap: 6px;">
+            🔍 Chuja kwa Tarehe (Filter Observation Period)
         </div>
         
-        <div style="display: flex; align-items: center; gap: 6px;">
-            <label style="font-size: 12px; font-weight: bold; color: #64748b;">Hadi (To):</label>
-            <input type="date" name="to_date" value="<?php echo htmlspecialchars($to_date); ?>" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; color: #334155; outline: none; background-color: #f8fafc;">
-        </div>
-        
-        <button type="submit" style="background-color: #1e3c72; color: white; border: none; padding: 7px 16px; font-weight: bold; font-size: 13px; border-radius: 6px; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#0d234d'" onmouseout="this.style.backgroundColor='#1e3c72'">
-            Angalia (Apply Filter)
-        </button>
-        
-        <?php if (isset($_GET['from_date']) || isset($_GET['to_date'])): ?>
-            <a href="dashboard.php" style="font-size: 12px; color: #e74c3c; font-weight: bold; text-decoration: none; padding-left: 5px;">Weka Wazi (Reset)</a>
-        <?php endif; ?>
-    </form>
-</div>
-
-<!-- 📊 THE METRICS GRID DISPLAYER -->
-<div class="metrics-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px;">
-    
-    <!-- Card 1: Today's Collection -->
-    <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; border-left: 5px solid #2e7d32; box-sizing: border-box;">
-        <span style="font-size: 11px; font-weight: bold; color: #2e7d32; text-transform: uppercase; display: block; margin-bottom: 5px;">MAPATO YA LEO (TODAY)</span>
-        <h3 style="margin: 0; font-size: 24px; color: #1b5e20;">Tsh <?php echo number_format($today_earnings); ?></h3>
-        <small style="color: #4caf50; font-size: 11px; display: block; margin-top: 5px;">Vocha zilizouzwa: <?php echo number_format($today_vouchers_sold); ?></small>
-    </div>
-
-    <!-- Card 2: Filtered Observation Period Total -->
-    <div style="background: #e3f2fd; padding: 20px; border-radius: 8px; border-left: 5px solid #1565c0; box-sizing: border-box;">
-        <span style="font-size: 11px; font-weight: bold; color: #1565c0; text-transform: uppercase; display: block; margin-bottom: 5px;">JUMLA YA MAPATO (FILTERED)</span>
-        <h3 style="margin: 0; font-size: 24px; color: #0d47a1;">Tsh <?php echo number_format($total_earnings); ?></h3>
-        <small style="color: #1976d2; font-size: 11px; display: block; margin-top: 5px;">
-            Kipindi: <b><?php echo date('d M Y', strtotime($from_date)); ?></b> hadi <b><?php echo date('d M Y', strtotime($to_date)); ?></b> (Vocha: <?php echo number_format($vouchers_sold); ?>)
-        </small>
-    </div>
-
-       <!-- Card 3: Remaining Stock with Branded Tier Details Summary -->
-    <div style="background: #fff3e0; padding: 20px; border-radius: 8px; border-left: 5px solid #ef6c00; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;">
-        <div>
-            <span style="font-size: 11px; font-weight: bold; color: #ef6c00; text-transform: uppercase; display: block; margin-bottom: 5px;">VOCHA ZILIZOBAKI (STOCK)</span>
-            <h3 style="margin: 0; font-size: 24px; color: #e65100; font-weight: 700;"><?php echo number_format($remaining_stock); ?></h3>
-        </div>    <!-- Card 3: Remaining Stock with Interactive Popover Toggle -->
-    <div style="background: #fff3e0; padding: 20px; border-radius: 8px; border-left: 5px solid #ef6c00; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-start; position: relative;">
-        <div>
-            <span style="font-size: 11px; font-weight: bold; color: #ef6c00; text-transform: uppercase; display: block; margin-bottom: 5px;">VOCHA ZILIZOBAKI (STOCK)</span>
-            <h3 style="margin: 0; font-size: 24px; color: #e65100; font-weight: 700;"><?php echo number_format($remaining_stock); ?></h3>
-            <small style="color: #f57c00; font-size: 11px; display: block; margin-top: 5px;">Tayari kutumika na wateja</small>
-        </div>
-        
-        <!-- Toggle Trigger Button -->
-        <div style="margin-top: 15px;">
-            <button type="button" onclick="toggleStockBreakdown(event)" style="background-color: #ef6c00; color: white; border: none; padding: 6px 12px; font-size: 11px; font-weight: bold; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; outline: none;">
-                👁️ Angalia Mchanganuo (View Breakdown)
+        <form action="dashboard.php" method="GET" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 0;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <label style="font-size: 12px; font-weight: bold; color: #64748b;">Kuanzia (From):</label>
+                <input type="date" name="from_date" value="<?php echo htmlspecialchars($from_date); ?>" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; color: #334155; outline: none; background-color: #f8fafc;">
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <label style="font-size: 12px; font-weight: bold; color: #64748b;">Hadi (To):</label>
+                <input type="date" name="to_date" value="<?php echo htmlspecialchars($to_date); ?>" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; color: #334155; outline: none; background-color: #f8fafc;">
+            </div>
+            
+            <button type="submit" style="background-color: #1e3c72; color: white; border: none; padding: 7px 16px; font-weight: bold; font-size: 13px; border-radius: 6px; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#0d234d'" onmouseout="this.style.backgroundColor='#1e3c72'">
+                Angalia (Apply Filter)
             </button>
-        </div>
-
-        <!-- Hidden Popover Dropdown Panel -->
-        <div id="stockBreakdownDropdown" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; background: white; border: 1px solid #ffd180; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 8px; padding: 15px; margin-top: 5px; z-index: 100; box-sizing: border-box;">
-            <h4 style="margin: 0 0 10px 0; font-size: 12px; color: #ef6c00; border-bottom: 1px dashed #ffd180; padding-bottom: 5px;">Mchanganuo wa Kifurushi (Stock per Tier)</h4>
-            <?php if (!empty($tier_stock_data)): ?>
-                <div style="display: flex; flex-direction: column; gap: 6px;">
-                    <?php foreach ($tier_stock_data as $tier): ?>
-                        <div style="display: flex; justify-content: space-between; font-size: 12px; color: #475569;">
-                            <span style="font-weight: 600;">Tsh <?php echo number_format($tier['price_tier']); ?>:</span>
-                            <span style="color: #e65100; font-weight: 700;"><?php echo number_format($tier['tier_count']); ?> pcs</span>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php else: ?>
-                <span style="color: #64748b; font-size: 11px; font-style: italic;">Hakuna vocha zilizobaki</span>
+            
+            <?php if (isset($_GET['from_date']) || isset($_GET['to_date'])): ?>
+                <a href="dashboard.php" style="font-size: 12px; color: #e74c3c; font-weight: bold; text-decoration: none; padding-left: 5px;">Weka Wazi (Reset)</a>
             <?php endif; ?>
-        </div>
+        </form>
     </div>
 
-    <!-- JavaScript Control Logic (Can be placed directly below the card or at the footer) -->
+    <!-- 📊 THE METRICS GRID DISPLAYER -->
+    <div class="metrics-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px;">
+        
+        <!-- Card 1: Today's Collection -->
+        <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; border-left: 5px solid #2e7d32; box-sizing: border-box;">
+            <span style="font-size: 11px; font-weight: bold; color: #2e7d32; text-transform: uppercase; display: block; margin-bottom: 5px;">MAPATO YA LEO (TODAY)</span>
+            <h3 style="margin: 0; font-size: 24px; color: #1b5e20;">Tsh <?php echo number_format($today_earnings); ?></h3>
+            <small style="color: #4caf50; font-size: 11px; display: block; margin-top: 5px;">Vocha zilizouzwa: <?php echo number_format($today_vouchers_sold); ?></small>
+        </div>
+
+        <!-- Card 2: Filtered Observation Period Total -->
+        <div style="background: #e3f2fd; padding: 20px; border-radius: 8px; border-left: 5px solid #1565c0; box-sizing: border-box;">
+            <span style="font-size: 11px; font-weight: bold; color: #1565c0; text-transform: uppercase; display: block; margin-bottom: 5px;">JUMLA YA MAPATO (FILTERED)</span>
+            <h3 style="margin: 0; font-size: 24px; color: #0d47a1;">Tsh <?php echo number_format($total_earnings); ?></h3>
+            <small style="color: #1976d2; font-size: 11px; display: block; margin-top: 5px;">
+                Kipindi: <b><?php echo date('d M Y', strtotime($from_date)); ?></b> hadi <b><?php echo date('d M Y', strtotime($to_date)); ?></b> (Vocha: <?php echo number_format($vouchers_sold); ?>)
+            </small>
+        </div>
+
+        <!-- Card 3: Remaining Stock with Clean Floating Popover Panel Dropdown -->
+        <div style="background: #fff3e0; padding: 20px; border-radius: 8px; border-left: 5px solid #ef6c00; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-start; position: relative;">
+            <div>
+                <span style="font-size: 11px; font-weight: bold; color: #ef6c00; text-transform: uppercase; display: block; margin-bottom: 5px;">VOCHA ZILIZOBAKI (STOCK)</span>
+                <h3 style="margin: 0; font-size: 24px; color: #e65100; font-weight: 700;"><?php echo number_format($remaining_stock); ?></h3>
+                <small style="color: #f57c00; font-size: 11px; display: block; margin-top: 5px;">Tayari kutumika na wateja</small>
+            </div>
+            
+            <!-- Toggle Trigger Button -->
+            <div style="margin-top: 15px;">
+                <button type="button" onclick="toggleStockBreakdown(event)" style="background-color: #ef6c00; color: white; border: none; padding: 6px 12px; font-size: 11px; font-weight: bold; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; outline: none; transition: background 0.2s;" onmouseover="this.style.backgroundColor='#d35400'" onmouseout="this.style.backgroundColor='#ef6c00'">
+                    👁️ Angalia Mchanganuo (View Breakdown)
+                </button>
+            </div>
+
+            <!-- Hidden Popover Dropdown Panel Overlapping Interface Below Safely -->
+            <div id="stockBreakdownDropdown" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; background: white; border: 1px solid #ffd180; box-shadow: 0 4px 15px rgba(0,0,0,0.12); border-radius: 8px; padding: 15px; margin-top: 8px; z-index: 999; box-sizing: border-box;">
+                <h4 style="margin: 0 0 10px 0; font-size: 12px; color: #ef6c00; border-bottom: 1px dashed #ffd180; padding-bottom: 5px;">Mchanganuo wa Kifurushi (Stock per Tier)</h4>
+                <?php if (!empty($tier_stock_data)): ?>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <?php foreach ($tier_stock_data as $tier): ?>
+                            <div style="display: flex; justify-content: space-between; font-size: 12px; color: #475569;">
+                                <span style="font-weight: 600;">Tsh <?php echo number_format($tier['price_tier']); ?>:</span>
+                                <span style="color: #e65100; font-weight: 700;"><?php echo number_format($tier['tier_count']); ?> pcs</span>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <span style="color: #64748b; font-size: 11px; font-style: italic;">Hakuna vocha zilizobaki</span>
+                <?php endif; ?>
+            </div>
+        </div>
+
+    </div> <!-- Close metrics-grid -->
+
+    <!-- JavaScript Control Trigger Configuration Logic -->
     <script>
+        function toggleStockBreakdown(event) {
+            event.stopPropagation();
+            var dropdown = document.getElementById('stockBreakdownDropdown');
+            if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+                dropdown.style.display = 'block';
+            } else {
+                dropdown.style.display = 'none';
+            }
+        }
+
+        // Auto-close dropdown when clicking anywhere else on the screen canvas area
+        document.addEventListener('click', function(event) {
+            var dropdown = document.getElementById('stockBreakdownDropdown');
+            if (dropdown && dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+            }
+        });
+    </script>
         function toggleStockBreakdown(event) {
             event.stopPropagation();
             var dropdown = document.getElementById('stockBreakdownDropdown');
