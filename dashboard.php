@@ -296,7 +296,7 @@ $log_result = $conn->query($log_query);
 
     <!-- JavaScript Control Trigger Configuration Logic -->
     <script>
-       function toggleStockBreakdown(event) {
+function toggleStockBreakdown(event) {
     // Stops the event from hitting the document body loop layer instantly
     event.stopPropagation(); 
     
@@ -309,6 +309,15 @@ $log_result = $conn->query($log_query);
         dropdown.style.display = 'none';
     }
 }
+
+// Automatically dismiss the menu popover panel when clicking outside the button parameters
+document.addEventListener('click', function(event) {
+    var dropdown = document.getElementById('stockBreakdownDropdown');
+    if (dropdown && dropdown.style.display === 'block') {
+        dropdown.style.display = 'none';
+    }
+});
+
 
 // Automatically dismiss the menu popover panel when clicking outside the button parameters
 document.addEventListener('click', function(event) {
