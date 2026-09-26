@@ -192,6 +192,11 @@ $log_result = $conn->query($log_query);
         .wrapper { max-width: 1200px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         h2 { color: #1e3c72; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; margin-top: 20px; }
+        
+        /* 🚀 BULLETPROOF LAYOUT FIX RULES FOR STOCK HOVER OVERLAY OVERRIDE */
+        .hover-stock-card { overflow: visible !important; position: relative; }
+        .hover-menu-panel { display: none; }
+        .hover-stock-card:hover .hover-menu-panel { display: block !important; }
     </style>
 </head>
 <body>
@@ -241,7 +246,6 @@ $log_result = $conn->query($log_query);
             <?php endif; ?>
         </form>
     </div>
-
     <!-- 📊 THE METRICS GRID DISPLAYER -->
     <div class="metrics-grid">
         
@@ -260,23 +264,24 @@ $log_result = $conn->query($log_query);
                 Kipindi: <b><?php echo date('d M Y', strtotime($from_date)); ?></b> hadi <b><?php echo date('d M Y', strtotime($to_date)); ?></b> (Vocha: <?php echo number_format($vouchers_sold); ?>)
             </small>
         </div>
-        <!-- Card 3: Remaining Stock with Layout-Safe Popover Panel Dropdown -->
-        <div style="background: #fff3e0; padding: 20px; border-radius: 8px; border-left: 5px solid #ef6c00; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-start; position: relative;">
+
+        <!-- Card 3: Remaining Stock with Layout-Safe CSS Hover Breakdown Panel Overlay -->
+        <div class="hover-stock-card" style="background: #fff3e0; padding: 20px; border-radius: 8px; border-left: 5px solid #ef6c00; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-start;">
             <div>
                 <span style="font-size: 11px; font-weight: bold; color: #ef6c00; text-transform: uppercase; display: block; margin-bottom: 5px;">VOCHA ZILIZOBAKI (STOCK)</span>
                 <h3 style="margin: 0; font-size: 24px; color: #e65100; font-weight: 700;"><?php echo number_format($remaining_stock); ?></h3>
                 <small style="color: #f57c00; font-size: 11px; display: block; margin-top: 5px;">Tayari kutumika na wateja</small>
             </div>
             
-            <!-- Toggle Trigger Button -->
-            <div style="margin-top: 15px; position: relative; z-index: 10;">
-                <button type="button" onclick="toggleStockBreakdown(event)" style="background-color: #ef6c00; color: white; border: none; padding: 6px 12px; font-size: 11px; font-weight: bold; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; outline: none; transition: background 0.2s;" onmouseover="this.style.backgroundColor='#d35400'" onmouseout="this.style.backgroundColor='#ef6c00'">
-                    👁️ Angalia Mchanganuo (View Breakdown)
-                </button>
+            <!-- Toggle/Hover Activation Row -->
+            <div style="margin-top: 15px;">
+                <div style="background-color: #ef6c00; color: white; border: none; padding: 6px 12px; font-size: 11px; font-weight: bold; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; cursor: help; transition: background 0.2s;">
+                    ⚙️ Angalia Mchanganuo (Hover for Breakdown)
+                </div>
             </div>
 
-            <!-- Fixed Dropdown Panel: Positioned cleanly beneath the box margins -->
-            <div id="stockBreakdownDropdown" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; background: white; border: 1px solid #ffd180; box-shadow: 0 4px 15px rgba(0,0,0,0.12); border-radius: 8px; padding: 15px; margin-top: 8px; z-index: 9999; box-sizing: border-box;">
+            <!-- CSS Hover Menu Box Popover: Overlaps elements below safely without pushdowns -->
+            <div class="hover-menu-panel" style="position: absolute; top: 100%; left: 0; width: 100%; background: white; border: 1px solid #ffd180; box-shadow: 0 4px 15px rgba(0,0,0,0.12); border-radius: 8px; padding: 15px; margin-top: 8px; z-index: 99999; box-sizing: border-box;">
                 <h4 style="margin: 0 0 10px 0; font-size: 12px; color: #ef6c00; border-bottom: 1px dashed #ffd180; padding-bottom: 5px;">Mchanganuo wa Kifurushi (Stock per Tier)</h4>
                 <?php if (!empty($tier_stock_data)): ?>
                     <div style="display: flex; flex-direction: column; gap: 6px;">
@@ -293,45 +298,12 @@ $log_result = $conn->query($log_query);
             </div>
         </div>
 
-
-    <!-- JavaScript Control Trigger Configuration Logic -->
-    <script>
-function toggleStockBreakdown(event) {
-    // Stops the event from hitting the document body loop layer instantly
-    event.stopPropagation(); 
-    
-    var dropdown = document.getElementById('stockBreakdownDropdown');
-    if (!dropdown) return;
-    
-    if (dropdown.style.display === 'none' || dropdown.style.display === '') {
-        dropdown.style.display = 'block';
-    } else {
-        dropdown.style.display = 'none';
-    }
-}
-
-// Automatically dismiss the menu popover panel when clicking outside the button parameters
-document.addEventListener('click', function(event) {
-    var dropdown = document.getElementById('stockBreakdownDropdown');
-    if (dropdown && dropdown.style.display === 'block') {
-        dropdown.style.display = 'none';
-    }
-});
-
-
-// Automatically dismiss the menu popover panel when clicking outside the button parameters
-document.addEventListener('click', function(event) {
-    var dropdown = document.getElementById('stockBreakdownDropdown');
-    if (dropdown && dropdown.style.display === 'block') {
-        dropdown.style.display = 'none';
-    }
-});
-
+    </div> <!-- Close metrics-grid -->
     <!-- 🛡️ SECURITY LAYER ROLE CHECK: ONLY SHOW UPLOADER MODULE FOR FULL WRITE-ACCESS ADMIN -->
     <?php if (isset($_SESSION['dashboard_role']) && $_SESSION['dashboard_role'] === 'admin'): ?>
 
         <!-- BULK VOUCHER STOCK IMPORT ENGINE WITH INTEGRATED EXCEL EXPORTER -->
-        <div style="background-color: #f8fafc; border: 1px dashed #cbd5e1; padding: 20px; border-radius: 8px; margin-bottom: 25px; box-sizing: border-box; margin-top: 10px;">
+        <div style="background-color: #f8fafc; border: 1px dashed #cbd5e1; padding: 20px; border-radius: 8px; margin-bottom: 25px; box-sizing: border-box; margin-top: 25px;">
             <h3 style="margin-top: 0; color: #1e3c72; font-size: 15px;">📥 Ongeza Vocha kwa Mkupuo (Bulk Voucher Uploader)</h3>
             <p style="font-size: 12px; color: #64748b; margin-bottom: 15px; margin-top: 0;">Faili la maandishi (.txt au .csv) ambalo kila mstari una namba moja ya vocha.</p>
             
@@ -378,7 +350,7 @@ document.addEventListener('click', function(event) {
 
     <?php else: ?>
         <!-- 🟢 GUEST ONLY ACCESS LINK DISPLAY: Render download row independently since uploader container is hidden -->
-        <div style="display: flex; justify-content: flex-end; margin-bottom: 25px;">
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 25px; margin-top: 15px;">
             <a href="export_sales.php" style="background-color: #27ae60; color: white; text-decoration: none; padding: 11px 20px; border-radius: 6px; font-size: 13px; font-weight: bold; display: inline-flex; align-items: center; gap: 6px;" onmouseover="this.style.backgroundColor='#1e7e34'" onmouseout="this.style.backgroundColor='#27ae60'">
                 📥 Pakua Ripoti (Excel CSV)
             </a>
@@ -395,6 +367,7 @@ document.addEventListener('click', function(event) {
             <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 14px;">🔍</span>
         </div>
     </div>
+
     <!-- 📊 THE MAIN TRANSACTIONAL AUDIT DATA DISPLAY TABLE -->
     <div style="overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 8px; background: white; margin-bottom: 30px;">
         <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
@@ -491,7 +464,6 @@ document.addEventListener('click', function(event) {
         for (var i = 1; i < tr.length; i++) {
             var tdCells = tr[i].getElementsByTagName("td");
             if (tdCells.length > 4) {
-                // Column 1: Voucher PIN | Column 4: Phone Matrix cell
                 var voucherText = (tdCells[1].textContent || tdCells[1].innerText).trim();
                 var phoneText   = (tdCells[4].textContent || tdCells[4].innerText).trim();
                 
@@ -541,4 +513,3 @@ if (isset($conn) && $conn instanceof mysqli) {
 }
 exit();
 ?>
-
