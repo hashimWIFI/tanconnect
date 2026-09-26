@@ -32,7 +32,7 @@ if (isset($_POST['dashboard_access_password'])) {
     } elseif ($entered_password === $GUEST_PASSWORD) {
         $_SESSION['dashboard_role'] = 'guest';
     } else {
-        $login_error = "Nywila sio sahihi! (Incorrect password!)";
+        $login_error = "Incorrect password!";
     }
 }
 
@@ -48,8 +48,8 @@ if (!isset($_SESSION['dashboard_role'])) {
     </head>
     <body style="background-color: #f1f5f9; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
         <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 360px; text-align: center;">
-            <h2 style="color: #1e3c72; margin-top: 0; font-size: 20px;">Ingiza Nywila (Enter Password)</h2>
-            <p style="color: #64748b; font-size: 13px; margin-bottom: 20px;">Tafadhali ingiza nywila ili kufikia mfumo.</p>
+            <h2 style="color: #1e3c72; margin-top: 0; font-size: 20px;">Enter Password</h2>
+            <p style="color: #64748b; font-size: 13px; margin-bottom: 20px;">Tafadhali ingiza password ili kufikia mfumo.</p>
             
             <?php if (isset($login_error)): ?>
                 <div style="color: #e74c3c; font-size: 13px; font-weight: bold; margin-bottom: 15px;"><?php echo $login_error; ?></div>
@@ -58,7 +58,7 @@ if (!isset($_SESSION['dashboard_role'])) {
             <form action="dashboard.php" method="POST">
                 <input type="password" name="dashboard_access_password" placeholder="Nywila..." style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 14px; margin-bottom: 15px; text-align: center;" required autocomplete="off">
                 <button type="submit" style="background-color: #1e3c72; color: white; border: none; padding: 12px; width: 100%; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 14px;">
-                    Fungua Mfumo (Unlock)
+                    Unlock
                 </button>
             </form>
         </div>
