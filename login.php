@@ -286,7 +286,7 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
                                 '<div type="button" onclick="copyVoucherToClipboardAndGoHome(\'' + trueVoucherCode + '\', \'' + trueDatabaseMac + '\')" style="font-size: 32px; font-weight: bold; color: #27ae60; letter-spacing: 2px; border: 2px dashed #27ae60; background-color: #f4fbf7; text-align: center; width: 100%; padding: 22px 15px; border-radius: 8px; box-sizing: border-box; cursor: pointer; transition: background 0.2s; box-shadow: 0 4px 10px rgba(39,174,96,0.04);" onmouseover="this.style.backgroundColor=\'#e8f8f0\'" onmouseout="this.style.backgroundColor=\'#f4fbf7\'">' +
                                     '<span id="raw-pin-string" style="display: block; font-family: monospace; margin-bottom: 6px;">' + trueVoucherCode + '</span>' +
                                     '<span style="font-size: 11px; color: #219653; font-weight: bold; letter-spacing: 0px; text-transform: uppercase; display: block; margin-top: 4px;">' +
-                                        '📋 BONYEZA HAPA KUNAKILI' +
+                                        '' +
                                     '</span>' +
                                 '</div>';
                             }
