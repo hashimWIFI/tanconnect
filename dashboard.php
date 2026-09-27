@@ -276,12 +276,12 @@ $log_result = $conn->query($log_query);
             <span style="font-size: 11px; font-weight: bold; color: #2e7d32; text-transform: uppercase; display: block; margin-bottom: 5px;">TODAY's COLLECTION</span>
             <h3 style="margin: 0; font-size: 24px; color: #1b5e20;">Tsh <?php echo number_format($today_earnings); ?></h3>
             <small style="color: #4caf50; font-size: 11px; display: block; margin-top: 5px;">Vocha zilizouzwa: <?php echo number_format($today_vouchers_sold); ?></small>
-        </div>
+        
 <div style="margin-top: 15px;">
                 <div style="background-color: #ef6c00; color: white; border: none; padding: 6px 12px; font-size: 11px; font-weight: bold; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; cursor: help; transition: background 0.2s;">
                     ⚙️ Hover for Breakdown
                 </div>
-            </div>
+            </div></div>
         <!-- Card 2: Filtered Observation Period Total -->
         <div style="background: #e3f2fd; padding: 20px; border-radius: 8px; border-left: 5px solid #1565c0; box-sizing: border-box;">
             <span style="font-size: 11px; font-weight: bold; color: #1565c0; text-transform: uppercase; display: block; margin-bottom: 5px;">TOTAL COLLECTION (FILTERED)</span>
