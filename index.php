@@ -250,7 +250,7 @@ border-radius: 6px; cursor: pointer; transition: all 0.3s ease; }
         
         <!-- THE SINGLE DOT ORBIT: The outer ring spins, carrying 1 dot while 'SUBIRI' stays firm -->
         <div class="single-dot-orbit">
-            <span class="spinner-text-center"><b>SUBIRI tunawasiana na mtandao wako</b></span>
+            <span class="spinner-text-center"><b>SUBIRI....</b></span>
             <div class="the-revolving-dot"></div> <!-- Only 1 single dot item row remains! -->
         </div>
         
