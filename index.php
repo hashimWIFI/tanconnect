@@ -162,7 +162,7 @@ border-radius: 6px; cursor: pointer; transition: all 0.3s ease; }
 
 <hr width="100%" align="center"></div>
 
-    <div class="subtitle">1. Bonyeza kifurushi unachohitaji;</div>
+    <div class="subtitle">Bonyeza kifurushi unachohitaji;</div>
     <div class="package-grid">
 
         <div class="package-card" onclick="document.getElementById('selected-amount').value='500'; document.getElementById('summary-bold-text').innerHTML='500 TZS || Masaa 6 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
