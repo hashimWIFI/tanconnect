@@ -330,7 +330,7 @@ $log_result = $conn->query($log_query);
 
         <!-- BULK VOUCHER STOCK IMPORT ENGINE WITH INTEGRATED EXCEL EXPORTER -->
         <div style="background-color: #f8fafc; border: 1px dashed #cbd5e1; padding: 20px; border-radius: 8px; margin-bottom: 25px; box-sizing: border-box; margin-top: 25px;">
-            <h3 style="margin-top: 0; color: #1e3c72; font-size: 15px; text-align: center;">📥 Ongeza Vocha kwa Mkupuo (Bulk Voucher Upload/ Download)</h3>
+            <h3 style="margin-top: 0; color: #1e3c72; font-size: 15px; text-align: center;">📥 Vocha kwa Mkupuo (Bulk Voucher Upload/ Download)</h3>
             <p style="font-size: 12px; color: #64748b; margin-bottom: 15px; margin-top: 0;">Faili la maandishi (.txt au .csv) ambalo kila mstari una namba moja ya vocha.</p>
             
             <form action="dashboard.php" method="POST" enctype="multipart/form-data" style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end; justify-content: space-between; width: 100%;">
