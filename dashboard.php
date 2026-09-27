@@ -362,7 +362,12 @@ $log_result = $conn->query($log_query);
                         🚀 Upload
                     </button>
                 </div>
-
+ <div style="display: flex; align-items: center; justify-content: flex-end; white-space: nowrap;">
+                    <!-- 🟢 DOWNLOAD EXCEL REPORT ACTION LINK BUTTON -->
+                    <a href="export_sales.php" style="background-color: #27ae60; color: white; text-decoration: none; padding: 11px 20px; border-radius: 6px; font-size: 13px; font-weight: bold; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#1e7e34'" onmouseout="this.style.backgroundColor='#27ae60'">
+                        📥 Download
+                    </a>
+                </div>
                 <!-- Right Side: Integrated Download Action Block -->
                 <div style="display: flex; align-items: center; justify-content: flex-end; white-space: nowrap;">
                     <!-- 🟢 DOWNLOAD EXCEL REPORT ACTION LINK BUTTON -->
