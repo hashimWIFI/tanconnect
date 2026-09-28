@@ -169,13 +169,13 @@ border-radius: 6px; cursor: pointer; transition: all 0.3s ease; }
         <div class="package-card" onclick="document.getElementById('selected-amount').value='500'; document.getElementById('summary-bold-text').innerHTML='500 TZS || Masaa 6 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">500 <span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
             <div class="card-time">Masaa 6</div>
-            <div class="card-data">DATA Unlimit</div>
+            <div class="card-data">Unlimit DATA</div>
 
         </div>
         <div class="package-card" onclick="document.getElementById('selected-amount').value='1000'; document.getElementById('summary-bold-text').innerHTML='1,000 TZS || Siku 1 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">1,000 <span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
             <div class="card-time">Siku 1</div>
-            <div class="card-data">DATA Unlimit</div>
+            <div class="card-data">Unlimit DATA</div>
 
         </div>
 <div class="package-card" onclick="document.getElementById('selected-amount').value='2000'; document.getElementById('summary-bold-text').innerHTML='2,000 TZS || Siku 3 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
@@ -187,37 +187,37 @@ border-radius: 6px; cursor: pointer; transition: all 0.3s ease; }
         <div class="package-card" onclick="document.getElementById('selected-amount').value='4000'; document.getElementById('summary-bold-text').innerHTML='4,000 TZS || Siku 5 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">4,000 <span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
             <div class="card-time">Siku 5</div>
-            <div class="card-data">Unlimited DATA</div>
+            <div class="card-data">Unlimit DATA</div>
 
         </div>
 <div class="package-card" onclick="document.getElementById('selected-amount').value='5000'; document.getElementById('summary-bold-text').innerHTML='5,000 TZS || Siku 7 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">5,000 <span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
             <div class="card-time">Siku 7</div>
-            <div class="card-data">Unlimited DATA</div>
+            <div class="card-data">Unlimit DATA</div>
 
        </div>
 <div class="package-card" onclick="document.getElementById('selected-amount').value='7000'; document.getElementById('summary-bold-text').innerHTML='7,000 TZS || Siku 9 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">7,000 <span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
             <div class="card-time">Siku 9</div>
-            <div class="card-data">Unlimited DATA</div>
+            <div class="card-data">Unlimit DATA</div>
 
         </div>
  <div class="package-card" onclick="document.getElementById('selected-amount').value='9000'; document.getElementById('summary-bold-text').innerHTML='9,000 TZS || Siku 13 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">9,000 <span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
             <div class="card-time">Siku 13</div>
-            <div class="card-data">Unlimited DATA</div>
+            <div class="card-data">Unlimit DATA</div>
 
         </div>
 <div class="package-card" onclick="document.getElementById('selected-amount').value='10000'; document.getElementById('summary-bold-text').innerHTML='10,000 TZS || Siku 15 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">10,000 <span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
             <div class="card-time">Siku 15</div>
-            <div class="card-data">Unlimited DATA</div>
+            <div class="card-data">Unlimit DATA</div>
 
        </div>
 <div class="package-card" onclick="document.getElementById('selected-amount').value='20000'; document.getElementById('summary-bold-text').innerHTML='20,000 TZS || Mwezi 1 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">20,000 <span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
             <div class="card-time">Mwezi 1</div>
-            <div class="card-data">Unlimited DATA</div>
+            <div class="card-data">Unlimit DATA</div>
 
 </div>
 
