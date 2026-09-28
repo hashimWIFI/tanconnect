@@ -169,19 +169,19 @@ border-radius: 6px; cursor: pointer; transition: all 0.3s ease; }
         <div class="package-card" onclick="document.getElementById('selected-amount').value='500'; document.getElementById('summary-bold-text').innerHTML='500 TZS || Masaa 6 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">500 <span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
             <div class="card-time">Masaa 6</div>
-            <div class="card-data">Unlimited DATA</div>
+            <div class="card-data">DATA Unlimit</div>
 
         </div>
         <div class="package-card" onclick="document.getElementById('selected-amount').value='1000'; document.getElementById('summary-bold-text').innerHTML='1,000 TZS || Siku 1 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">1,000 <span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
             <div class="card-time">Siku 1</div>
-            <div class="card-data">Unlimited DATA</div>
+            <div class="card-data">DATA Unlimit</div>
 
         </div>
 <div class="package-card" onclick="document.getElementById('selected-amount').value='2000'; document.getElementById('summary-bold-text').innerHTML='2,000 TZS || Siku 3 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
             <div class="card-price">2,000 <span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
             <div class="card-time">Siku 3</div>
-            <div class="card-data">Unlimited DATA</div>
+            <div class="card-data">DATA Unlimit</div>
 
         </div>
         <div class="package-card" onclick="document.getElementById('selected-amount').value='4000'; document.getElementById('summary-bold-text').innerHTML='4,000 TZS || Siku 5 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
