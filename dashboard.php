@@ -369,7 +369,7 @@ $log_result = $conn->query($log_query);
                         📥 Pakua Ripoti (Excel CSV)
 
                    </a>
-                </div>
+                </div></div>
                 
             </form>
         </div>
