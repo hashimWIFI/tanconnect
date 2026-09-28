@@ -274,7 +274,7 @@ $log_result = $conn->query($log_query);
         <!-- Card 1: Today's Collection -->
         <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; border-left: 5px solid #2e7d32; box-sizing: border-box;">
             <span style="font-size: 11px; font-weight: bold; color: #2e7d32; text-transform: uppercase; display: block; margin-bottom: 5px;">TODAY's COLLECTION</span>
-            <h3 style="margin: 0; font-size: 24px; color: #1b5e20;">Tsh <?php echo number_format($today_earnings); ?></h3>
+            <h3 style="margin: 0; font-size: 24px; color: #1b5e20;">Tsh <?php echo number_format($today_earnings); ?>.00</h3>
             <small style="color: #4caf50; font-size: 11px; display: block; margin-top: 5px;">Vocha zilizouzwa: <?php echo number_format($today_vouchers_sold); ?></small>
         
 <div style="margin-top: 15px;">
@@ -285,7 +285,7 @@ $log_result = $conn->query($log_query);
         <!-- Card 2: Filtered Observation Period Total -->
         <div style="background: #e3f2fd; padding: 20px; border-radius: 8px; border-left: 5px solid #1565c0; box-sizing: border-box;">
             <span style="font-size: 11px; font-weight: bold; color: #1565c0; text-transform: uppercase; display: block; margin-bottom: 5px;">TOTAL COLLECTION (FILTERED)</span>
-            <h3 style="margin: 0; font-size: 24px; color: #0d47a1;">Tsh <?php echo number_format($total_earnings); ?></h3>
+            <h3 style="margin: 0; font-size: 24px; color: #0d47a1;">Tsh <?php echo number_format($total_earnings); ?>.00</h3>
             <small style="color: #1976d2; font-size: 11px; display: block; margin-top: 5px;">
                 Kipindi: <b><?php echo date('d M Y', strtotime($from_date)); ?></b> hadi <b><?php echo date('d M Y', strtotime($to_date)); ?></b> (Vocha: <?php echo number_format($vouchers_sold); ?>)
             </small>
