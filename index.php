@@ -1,6 +1,6 @@
 <?php
 // ===================================================================
-// 🏆 TANCONNECT WATER POINT & WIFI HOTSPOT CONTROL SYSTEM (PRODUCTION)
+// 🏆 TANCONNECT WIFI HOTSPOT CONTROL SYSTEM (PRODUCTION)
 // ===================================================================
 error_reporting(0);
 ini_set('display_errors', 0);
@@ -62,9 +62,12 @@ border-radius: 6px; cursor: pointer; transition: all 0.3s ease; }
         .subtitle2 { color: black; font-size: 14px; margin-bottom: 25px; text-align: left; font-weight: bold;}
         .subtitle { color: black; font-size: 14px; margin-bottom: 15px; text-align: left; font-weight: bold;}
         .plan-summary { background: #ebf3fc; border: 1px solid #d0e2fa; border-left: 5px solid #3498db; padding: 14px; border-radius: 4px; margin-bottom: 22px; color: #002e6e; font-size: 13px; }
-.btn-submit { background: #2ecc71; color: white; border: 2px solid grey; width: 53%; padding: 14px; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: all 0.3s ease; }
-        .btn-submit:hover { filter: brightness(0.9); }        
-        .btn-submit:active { transform: scale(0.98); }
+
+
+ .btn-submit { display: block; text-decoration: none; padding: 10px; font-size: 14px; width: flex; font-weight: bold; border-radius: 8px; letter-spacing: 0.5px; transition: transform 0.1s ease, filter 0.2s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-align: center; }
+        .btn-submit:active { transform: scale(0.91); }
+        .btn-submit:hover { filter: brightness(0.91); }
+        .btn-pay { margin: 0; padding: 0 30px; background: #3498db; border-radius: 6px; font-size: 13px; color: white; font-weight: bold; min-width: 180px;}
 
 /* 1. MASTER CONTAINER (PUSHED DOWN BY TWO LINES) */
 .tight-spinner-wrapper {
@@ -145,8 +148,6 @@ border-radius: 6px; cursor: pointer; transition: all 0.3s ease; }
 }
 
 
-
-
 </style>
 
 </head>
@@ -162,7 +163,7 @@ border-radius: 6px; cursor: pointer; transition: all 0.3s ease; }
 
 <hr width="100%" align="center"></div>
 
-    <div class="subtitle">Bonyeza kifurushi unachohitaji;</div>
+    <div class="subtitle">1. Bonyeza kifurushi unachohitaji;</div>
     <div class="package-grid">
 
         <div class="package-card" onclick="document.getElementById('selected-amount').value='500'; document.getElementById('summary-bold-text').innerHTML='500 TZS || Masaa 6 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
@@ -241,7 +242,7 @@ border-radius: 6px; cursor: pointer; transition: all 0.3s ease; }
 
 <input class="button" name="customer_phone" id="phone-number" pattern="[0]{1}[6-7]{1}[0-9]{8}" type="tel" placeholder="0713123974" autocomplete="off" oninput="detectMobileProvider()" style="flex: 1; padding: 12px; border: 2px solid #ccc; border-radius: 6px; font-size: 15px; color: black; text-align: center;" required/>
 
-<button type="button" id="submit-payment-btn" class="btn-submit" style="margin: 0; padding: 0 30px; background: #3498db; border-radius: 6px; font-size: 13px; color: white; font-weight: bold; min-width: 180px;" onclick="dispatchToRailway(event)">Pay</button></div></div></form>
+<button type="button" id="submit-payment-btn" class="btn-submit btn-pay" onclick="dispatchToRailway(event)">Pay</button></div></div></form>
 
 <!-- Centered Processing Overlay Mask (Fully transparent background layout) -->
 <div id="active-spinner-layer" style="display: none !important; position: absolute; top: 0; left: 0; width: 90%; height: 90%; background: transparent; z-index: 100; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box; padding: 20px;">
@@ -250,7 +251,7 @@ border-radius: 6px; cursor: pointer; transition: all 0.3s ease; }
         
         <!-- THE SINGLE DOT ORBIT: The outer ring spins, carrying 1 dot while 'SUBIRI' stays firm -->
         <div class="single-dot-orbit">
-            <span class="spinner-text-center"><b>SUBIRI....</b></span>
+            <span class="spinner-text-center"><b>SUBIRI</b></span>
             <div class="the-revolving-dot"></div> <!-- Only 1 single dot item row remains! -->
         </div>
         
@@ -323,9 +324,6 @@ function detectMobileProvider() {
     }
 }
 
-
-
-
 function resetButtonState() {
     var payBtn = document.getElementById("submit-payment-btn");
     payBtn.style.backgroundColor = "#f15a24"; // Default emerald green
@@ -380,6 +378,12 @@ function dispatchToRailway(event) {
     document.getElementById("payment-form").submit();
 }
 
+  
+  function recharge(device_id,mac)
+  {
+        window.top.location.href = 'http://na.solnms.net/SOL/rechargeMobileManage.do?device_id=' + device_id + '&mac_address=' + mac + '&language=en&billType=0&roamingFlag=0&billing_mode=0';
+					
+  }
 
 
 </script>
