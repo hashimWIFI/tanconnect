@@ -279,7 +279,7 @@ $log_result = $conn->query($log_query);
         
 <div style="margin-top: 15px;">
                 <div style="background-color: green; color: white; border: none; padding: 6px 12px; font-size: 11px; font-weight: bold; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; cursor: help; transition: background 0.2s;">
-                    ⚙️ Hover for Breakdown
+                    ⚙️ Hover for Breakdown (Mchanganuo)
                 </div>
             </div></div>
         <!-- Card 2: Filtered Observation Period Total -->
