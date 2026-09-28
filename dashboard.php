@@ -380,7 +380,7 @@ $log_result = $conn->query($log_query);
             <a href="export_sales.php" style="background-color: #27ae60; color: white; text-decoration: none; padding: 11px 20px; border-radius: 6px; font-size: 13px; font-weight: bold; display: inline-flex; align-items: center; gap: 6px;" onmouseover="this.style.backgroundColor='#1e7e34'" onmouseout="this.style.backgroundColor='#27ae60'">
                 📥 Pakua Ripoti (Excel CSV)                                                            
             </a>
-        </div>
+        </div> </div>
     <?php endif; ?>
 
     <!-- 📊 LIVE TRANSACTION FILTER SEARCH MATRIX HEADER BLOCK -->
