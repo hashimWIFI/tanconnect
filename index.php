@@ -44,7 +44,7 @@ body {font: 100% "Trebuchet MS", "Helvetica Neue", Helvetica, Arial, sans-serif;
         .package-card:hover { border-color: #3498db; background-color: #f7fafc; }
         .package-card.selected { border-color: #3498db; background-color: #ebf8ff; }
         .card-price { font-size: 14px; font-weight: bold; color: #0056b3; margin-bottom: 4px;text-align: left; font-family: toledo heavy; }
-        .card-data { font-size: 11px;  color: #334155; text-align: left; }
+        .card-data { font-size: 8px;  color: #334155; text-align: left; }
         .card-time { font-size: 12px; color: #64748b; margin-top: 2px;font-weight: bold; text-align: left; }
 
         
