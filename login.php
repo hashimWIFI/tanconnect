@@ -1,6 +1,6 @@
 <?php
 // =========================================================================
-// 🚀 TANCONNECT CAPTIVE PORTAL GATEWAY ENGINE (PART 1 OF 3)
+// 🚀 TANCONNECT CAPTIVE PORTAL GATEWAY ENGINE (PART 1 OF 4)
 // =========================================================================
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -104,23 +104,25 @@ if (!$dbResult) {
     $allocatedVoucherId   = $dbResult['id'];
     $allocatedVoucherCode = $dbResult['voucher_code'];
     
-    // Set AzamPay Secure Sandbox credentials
-    $appName   = "Tanconnect";
-    $clientId  = "01a0ec31-f4b8-7380-8abd-61eb895de07a";
+    // 🔑 Set AzamPay Live Production Credentials (Swapped cleanly)
+    $appName   = "Tanconnect"; 
+    $clientId  = "01a0ec31-f4b8-7380-8abd-61eb895de07a"; 
     $secretKey = "VzBpaTRYTjBRMWE4QVJxa3FGRDhVZlNwc2U2UXdwS1VzdW1XczhzckQ3SEdzSVpDOUMrZGsxcHoyYzlnaDg4N1NEaWdRalhiNWJaWUtYTEI0ZzdTem1JT20wc0U5TlE2WXZYb3NDN2VGUHpZZGlVMHdOQmh0bUFxVkxuQ20raU9aZy84NFZTSWwzMlF6RDJpMTJ0MVZ1NWR3OEFWQ044RThNTDNmSHpoT1RHZ004dGJOQUJuNE53dWw0S3BuZC9kcGs2R3g4cnE3SjE4aHhKYnN5dkJheWJJNHRWZVc1c1VMVlgzaDUvSnBOa2g3OXZ3ZjRBdHJVU3NzM01EdUtqbEZnVy9qcXU2OVg2cHltSnVqZFRpcVVrdWdLOU5FSy82d1dTc3B6SWZhUDZoOHNPbkhRQzJpU2kvRWp0Y3JBOW5vcUx1eWZuaUpxWXpnTUE0Y2lHSjVlQW90NXI3UmdiZS9wOU9zVW93NUoySzVTK29KeDd4TlExalFVK2haNDZjdFZyS25ZTVpqc0tkaW1WZGVOcUo5b3FtTVhwNmRIcUM5eUhRN01pcVRJdFErU3FINkRFSCtiNzZleSt2RXd2UU9XSTZJbnVld0FSbmo1aTNJTFAwRVM5TTF5L1RpWTVGNWFSSDJhQXNmSFJma0JSdUtnVE9qUlJDQmh6d0YvbG9JSzhEczJ3SzdOSkVWMGdFTzJ0d2IyMTd2QTZPWVlnNXR1dHh4Y3JYTjlBTzZoRWF6Tlh1eTNxM0ozSGc3ZXdpZXAza0hhclZJWnBVWGViWWRuMTVZZUZERTFpOGYxQVU2aE94OEs4Qm9hRGwrRUoraWdMNm90eE9nS2FKRTR5L3A5cDZ0V0UvOWZlSG9jQ1Y4L0RxWWluKzZGUXJ6d1R3VjRtY1FtOGExT009";
-    $apiKey    = "VzBpaTRYTjBRMWE4QVJxa3FGRDhVZlNwc2U2UXdwS1VzdW1XczhzckQ3SEdzSVpDOUMrZGsxcHoyYzlnaDg4N1NEaWdRalhiNWJaWUtYTEI0ZzdTem1JT20wc0U5TlE2WXZYb3NDN2VGUHpZZGlVMHdOQmh0bUFxVkxuQ20raU9aZy84NFZTSWwzMlF6RDJpMTJ0MVZ1NWR3OEFWQ044RThNTDNmSHpoT1RHZ004dGJOQUJuNE53dWw0S3BuZC9kcGs2R3g4cnE3SjE4aHhKYnN5dkJheWJJNHRWZVc1c1VMVlgzaDUvSnBOa2g3OXZ3ZjRBdHJVU3NzM01EdUtqbEZnVy9qcXU2OVg2cHltSnVqZFRpcVVrdWdLOU5FSy82d1dTc3B6SWZhUDZoOHNPbkhRQzJpU2kvRWp0Y3JBOW5vcUx1eWZuaUpxWXpnTUE0Y2lHSjVlQW90NXI3UmdiZS9wOU9zVW93NUoySzVTK29KeDd4TlExalFVK2haNDZjdFZyS25ZTVpqc0tkaW1WZGVOcUo5b3FtTVhwNmRIcUM5eUhRN01pcVRJdFErU3FINkRFSCtiNzZleSt2RXd2UU9XSTZJbnVld0FSbmo1aTNJTFAwRVM5TTF5L1RpWTVGNWFSSDJhQXNmSFJma0JSdUtnVE9qUlJDQmh6d0YvbG9JSzhEczJ3SzdOSkVWMGdFTzJ0d2IyMTd2QTZPWVlnNXR1dHh4Y3JYTjlBTzZoRWF6Tlh1eTNxM0ozSGc3ZXdpZXAza0hhclZJWnBVWGViWWRuMTVZZUZERTFpOGYxQVU2aE94OEs4Qm9hRGwrRUoraWdMNm90eE9nS2FKRTR5L3A5cDZ0V0UvOWZlSG9jQ1Y4L0RxWWluKzZGUXJ6d1R3VjRtY1FtOGExT009";
     
     // 🚀 CUSTOM REBRANDING UPGRADE: Shifted the internal prefix tracking key signature layout to NITW
     $transactionId = 'NITW-' . time();
 
     // =========================================================================
-    // 4. STAGE 1: AUTOMATED ACCESS TOKEN GENERATION
+    // 4. STAGE 1: AUTOMATED LIVE ACCESS TOKEN GENERATION
     // =========================================================================
-    $authUrl =  "https://authenticator.azampay.co.tz/AppRegistration/GenerateToken";
+    // 🚀 THE FIX: Shift endpoint URL pathway from Sandbox to Production Operations Hub
+    $authUrl = "https://authenticator.azampay.co.tz/AppRegistration/GenerateToken";
+    
+    // 🚀 THE FIX: Remap payload arrays to use the exact production key labels expected by AzamPay
     $authPayload = json_encode([
-        'appname'      => $appName,
-        'clientid'     => $clientId,
-        'clientsecret' => $secretKey
+        'appName'   => $appName,
+        'clientId'  => $clientId,
+        'secretKey' => $secretKey
     ]);
 
     $chAuth = curl_init($authUrl);
@@ -138,7 +140,9 @@ if (!$dbResult) {
     curl_close($chAuth);
 
     $authResult = json_decode($authResponse, true);
-    $token = isset($authResult['data']['accessToken']) ? $authResult['data']['accessToken'] : null;
+    
+    // 🚀 THE FIX: Extract bearer token from the correct live production response data layer context array
+    $token = isset($authResult['data']['accessToken']) ? $authResult['data']['accessToken'] : (isset($authResult['token']) ? $authResult['token'] : null);
     
     if (!$token) {
         $httpStatusCode = 401; // Authentication token dispatch failure
@@ -160,12 +164,15 @@ if (!$dbResult) {
         curl_setopt($chCheck, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($chCheck, CURLOPT_POST, true);
         curl_setopt($chCheck, CURLOPT_POSTFIELDS, $checkoutPayload);
+        
+        // 🚀 THE PRODUCTION FIX: Remove the invalid 'X-API-KEY' header parameter and apply official API versions context
         curl_setopt($chCheck, CURLOPT_HTTPHEADER, [
             "Content-Type: application/json",
             "Accept: application/json",
-            "X-API-KEY: $apiKey",
+            "X-Api-Version: v1",
             "Authorization: Bearer $token"
         ]);
+        
         curl_setopt($chCheck, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($chCheck, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($chCheck, CURLOPT_CONNECTTIMEOUT, 15);
@@ -180,9 +187,11 @@ if (!$dbResult) {
         $apiResult = json_decode($checkoutResponse, true);
 
         // Extracts the official transaction identifier value generated directly by AzamPay's response API
-        $azamPayTransactionId = isset($apiResult['transactionId']) ? trim($apiResult['transactionId']) : (isset($apiResult['id']) ? trim($apiResult['id']) : NULL);
+        // 🚀 THE PRODUCTION FIX: Added comprehensive object path fallbacks to catch the production JSON keys
+        $azamPayTransactionId = isset($apiResult['data']['transactionId']) ? trim($apiResult['data']['transactionId']) : (isset($apiResult['transactionId']) ? trim($apiResult['transactionId']) : (isset($apiResult['id']) ? trim($apiResult['id']) : NULL));
     }
 }
+
 // Update database status flags to 'ASSIGNED' if cURL checkout request hit 200 OK successfully
 if ($httpStatusCode === 200 && isset($allocatedVoucherId)) {
     // STORES MAC DIRECTLY IN YOUR DB: Saves all attributes side-by-side perfectly
@@ -192,8 +201,7 @@ if ($httpStatusCode === 200 && isset($allocatedVoucherId)) {
     date_default_timezone_set('Africa/Dar_es_Salaam');
     $currentDateTime = date("Y-m-d H:i:s");
     
-    // PRODUCTION INTEGRATION QUERY: Stores your custom internal tracking key AND the extracted AzamPay ID side-by-side
-      // UPGRADED PRODUCTION QUERY: Perfectly balanced to match 5 strings and 1 integer parameter (6 total)
+    // PRODUCTION INTEGRATION QUERY: Stores your custom internal tracking key AND the extracted AzamPay ID side-by-side perfectly
     $updateStmt = $conn->prepare("UPDATE wifi_vouchers SET status = 'ASSIGNED', assigned_phone = ?, mac_address = ?, transaction_id = ?, azampay_transaction_id = ?, purchased_at = ? WHERE id = ?");
     $updateStmt->bind_param("sssssi", $phone, $sessionMac, $transactionId, $azamPayTransactionId, $currentDateTime, $allocatedVoucherId);
     $updateStmt->execute();
@@ -285,9 +293,6 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
                                 containerBox.innerHTML = 
                                 '<div type="button" onclick="copyVoucherToClipboardAndGoHome(\'' + trueVoucherCode + '\', \'' + trueDatabaseMac + '\')" style="font-size: 32px; font-weight: bold; color: #27ae60; letter-spacing: 2px; border: 2px dashed #27ae60; background-color: #f4fbf7; text-align: center; width: 100%; padding: 22px 15px; border-radius: 8px; box-sizing: border-box; cursor: pointer; transition: background 0.2s; box-shadow: 0 4px 10px rgba(39,174,96,0.04);" onmouseover="this.style.backgroundColor=\'#e8f8f0\'" onmouseout="this.style.backgroundColor=\'#f4fbf7\'">' +
                                     '<span id="raw-pin-string" style="display: block; font-family: monospace; margin-bottom: 6px;">' + trueVoucherCode + '</span>' +
-                                    '<span style="font-size: 11px; color: #219653; font-weight: bold; letter-spacing: 0px; text-transform: uppercase; display: block; margin-top: 4px;">' +
-                                        '' +
-                                    '</span>' +
                                 '</div>';
                             }
                         }
@@ -364,7 +369,7 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
             if (isset($httpStatusCode) && intval($httpStatusCode) === 503) {
                 echo "<b>Samahani ndugu mteja, mtambo umeshindwa kuchakata vifurushi vya bei hii.</b><br><br> Tafadhali jaribu tena baada ya muda mfupi.";
             } else {
-                echo "<b>Tumeshindwa kuwasiliana na mtandao wako kunzisha malipo.</b><br><br>Tafadhali hakikisha kuwa simu yako iko hewani, salio linatosha na ujaribu tena.</b>.<br><br>Msimbo wa Hitilafu (Status Code): <b>" . (isset($httpStatusCode) ? htmlspecialchars($httpStatusCode) : '0') . "</b>";
+                echo "<b>Tumeshindwa kuwasiliana na mtandao wako kuanzisha malipo.</b><br><br>Tafadhali hakikisha kuwa simu yako iko hewani, salio linatosha na ujaribu tena.<br><br>Msimbo wa Hitilafu (Status Code): <b>" . (isset($httpStatusCode) ? htmlspecialchars($httpStatusCode) : '0') . "</b>";
             }
             ?>
         </p>
