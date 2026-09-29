@@ -123,11 +123,12 @@ if (!$dbResult) {
 
     // Route A: Primary Live Production Endpoint
     $authUrl = "https://authenticator.azampay.co.tz/AppRegistration/GenerateToken";
+
+        // 🚀 THE PERMANENT FIX: Send only the exact keys verified by your command prompt test
     $authPayload = json_encode([
         'appName'      => $appName,
         'clientId'     => $clientId,
-        'secretKey'    => $secretKey, // Backwards compliance fallback
-        'clientSecret' => $secretKey  // Corporate profile match validation
+        'clientSecret' => $secretKey // <-- Only use clientSecret, remove all duplicate attributes
     ]);
 
     $chAuth = curl_init($authUrl);
