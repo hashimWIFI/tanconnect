@@ -410,13 +410,16 @@ $log_result = $conn->query($log_query);
                     <th style="padding: 12px 15px; font-weight: bold;">AzamPay Transaction ID</th>
                 </tr>
             </thead>
-            <tbody>
+                       <tbody>
                 <?php if ($log_result && $log_result->num_rows > 0): ?>
                     <?php 
                     $sn_counter = $log_result->num_rows; 
                     while ($row = $log_result->fetch_assoc()): 
                         $rawMac = preg_replace('/[^a-zA-Z0-9]/', '', $row['mac_address']);
                         $displayMac = strlen($rawMac) === 12 ? implode(':', str_split($rawMac, 2)) : $row['mac_address'];
+                        
+                        // 🚀 THE FIX: Standardize database status strings to uppercase to eliminate visual rendering locks
+                        $checkStatus = strtoupper(trim($row['status']));
                     ?>
                         <tr style="border-bottom: 1px solid #e2e8f0;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
                             <td style="font-weight: bold; color: #475569; font-family: monospace; text-align: center; padding: 12px 15px;">
@@ -429,7 +432,7 @@ $log_result = $conn->query($log_query);
                                 Tsh <?php echo number_format($row['price_tier']); ?>
                             </td>
                             <td style="padding: 12px 15px;">
-                                <?php if ($row['status'] === 'SUCCESS'): ?>
+                                <?php if ($checkStatus === 'SUCCESS'): ?>
                                     <span style="background-color: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">SUCCESS</span>
                                 <?php else: ?>
                                     <span style="background-color: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">ASSIGNED</span>
@@ -460,7 +463,7 @@ $log_result = $conn->query($log_query);
                     </tr>
                 <?php endif; ?>
             </tbody>
-        </table>
+
     </div>
 
 </div> <!-- Close wrapper canvas container box -->
