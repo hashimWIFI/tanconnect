@@ -364,7 +364,7 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
             if (isset($httpStatusCode) && intval($httpStatusCode) === 503) {
                 echo "<b>Samahani ndugu mteja, mtambo umeshindwa kuchakata vifurushi vya bei hii.</b><br><br> Tafadhali jaribu tena baada ya muda mfupi.";
             } else {
-                echo "<b>Mtambo kuwasiliana na mtandao wako kunzisha malipo.</b><br><br>Tafadhali hakikisha kuwa simu yako iko hewani, salio linatosha na ujaribu tena.</b>.<br><br>Msimbo wa Hitilafu (Status Code): <b>" . (isset($httpStatusCode) ? htmlspecialchars($httpStatusCode) : '0') . "</b>";
+                echo "<b>Tumeshindwa kuwasiliana na mtandao wako kunzisha malipo.</b><br><br>Tafadhali hakikisha kuwa simu yako iko hewani, salio linatosha na ujaribu tena.</b>.<br><br>Msimbo wa Hitilafu (Status Code): <b>" . (isset($httpStatusCode) ? htmlspecialchars($httpStatusCode) : '0') . "</b>";
             }
             ?>
         </p>
