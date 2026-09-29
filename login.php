@@ -1,6 +1,6 @@
 <?php
 // =========================================================================
-// 🚀 TANCONNECT CAPTIVE PORTAL GATEWAY ENGINE (PART 1 OF 4)
+// 🚀 TANCONNECT CAPTIVE PORTAL GATEWAY ENGINE (PART 1 OF 3)
 // =========================================================================
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -40,7 +40,7 @@ $routingPrefix = substr($phone, 3, 2);
 
 // Map network carrier designations by standard Tanzanian operator configurations
 if (in_array($routingPrefix, ['74', '75', '76', '14'])) {
-    $provider = "M-PESA";
+    $provider = "MPESA";
 } elseif (in_array($routingPrefix, ['70', '71', '77', '65', '07', '67', '72'])) {
     $provider = "Tigo";
 } elseif (in_array($routingPrefix, ['78', '79', '68', '69'])) {
@@ -48,7 +48,7 @@ if (in_array($routingPrefix, ['74', '75', '76', '14'])) {
 } elseif (in_array($routingPrefix, ['62', '61'])) {
     $provider = "Halopesa";
 } else {
-    $provider = "Mpesa"; 
+    $provider = "MPESA"; 
 }
 
 // =========================================================================
@@ -65,17 +65,21 @@ $conn = new mysqli($db_host, $db_user, $db_pass, $db_name, $db_port);
 if ($conn->connect_error) {
     die("Database connectivity node failed to respond: " . $conn->connect_error);
 }
+
 // =========================================================================
 // 3. VOUCHER SELECTION, STOCK MANAGEMENT, AND AZAMPAY CHECKOUT DISPATCH
 // =========================================================================
 
 // Query the database to find one available voucher matching the selected price tier
 $stmt = $conn->prepare("SELECT id, voucher_code FROM wifi_vouchers WHERE price_tier = ? AND status = 'AVAILABLE' LIMIT 1");
-$stmt->bind_param("i", $amount);
+
+// 🚀 THE CRITICAL FIX: Explicitly enforce mathematical integer validation type conversion metrics
+$cleanAmount = intval($amount);
+$stmt->bind_param("i", $cleanAmount);
+
 $stmt->execute();
 $dbResult = $stmt->get_result()->fetch_assoc();
 $stmt->close();
-
 if (!$dbResult) {
     date_default_timezone_set('Africa/Dar_es_Salaam');
     
@@ -95,7 +99,7 @@ if (!$dbResult) {
     ];
 
     $context = stream_context_create($streamOptions);
-       @file_get_contents("https://ntfy.sh/tanconnect_vouchers_stock_alert_2026", false, $context);
+@file_get_contents("https://ntfy.sh/tanconnect_vouchers_stock_alert_2026", false, $context);
     
     $httpStatusCode = 503; // Sets failure flag to load the out-of-stock template later
  
@@ -107,7 +111,7 @@ if (!$dbResult) {
     // 🔑 Set AzamPay Live Production Credentials (Swapped cleanly)
     $appName   = "Tanconnect"; 
     $clientId  = "01a0ec31-f4b8-7380-8abd-61eb895de07a"; 
-    $secretKey = "VzBpaTRYTjBRMWE4QVJxa3FGRDhVZlNwc2U2UXdwS1VzdW1XczhzckQ3SEdzSVpDOUMrZGsxcHoyYzlnaDg4N1NEaWdRalhiNWJaWUtYTEI0ZzdTem1JT20wc0U5TlE2WXZYb3NDN2VGUHpZZGlVMHdOQmh0bUFxVkxuQ20raU9aZy84NFZTSWwzMlF6RDJpMTJ0MVZ1NWR3OEFWQ044RThNTDNmSHpoT1RHZ004dGJOQUJuNE53dWw0S3BuZC9kcGs2R3g4cnE3SjE4aHhKYnN5dkJheWJJNHRWZVc1c1VMVlgzaDUvSnBOa2g3OXZ3ZjRBdHJVU3NzM01EdUtqbEZnVy9qcXU2OVg2cHltSnVqZFRpcVVrdWdLOU5FSy82d1dTc3B6SWZhUDZoOHNPbkhRQzJpU2kvRWp0Y3JBOW5vcUx1eWZuaUpxWXpnTUE0Y2lHSjVlQW90NXI3UmdiZS9wOU9zVW93NUoySzVTK29KeDd4TlExalFVK2haNDZjdFZyS25ZTVpqc0tkaW1WZGVOcUo5b3FtTVhwNmRIcUM5eUhRN01pcVRJdFErU3FINkRFSCtiNzZleSt2RXd2UU9XSTZJbnVld0FSbmo1aTNJTFAwRVM5TTF5L1RpWTVGNWFSSDJhQXNmSFJma0JSdUtnVE9qUlJDQmh6d0YvbG9JSzhEczJ3SzdOSkVWMGdFTzJ0d2IyMTd2QTZPWVlnNXR1dHh4Y3JYTjlBTzZoRWF6Tlh1eTNxM0ozSGc3ZXdpZXAza0hhclZJWnBVWGViWWRuMTVZZUZERTFpOGYxQVU2aE94OEs4Qm9hRGwrRUoraWdMNm90eE9nS2FKRTR5L3A5cDZ0V0UvOWZlSG9jQ1Y4L0RxWWluKzZGUXJ6d1R3VjRtY1FtOGExT009";
+    $secretKey = "VzBpaTRYTjBRMWE4QVJxa3FGRDhVZlNwc2U2UXdwS1VzdW1XczhzckQ3SEdzSVpDOUMrZGsxcHoyYzlnaDg4N1NEaWdRalhiNWJaWUtYTEI0ZzdTem1JT20wc0U5TlE2WXZYb3NDN2VGUHpZZGlVMHdOQmh0bUFxVkxuQ20raU9aZy84NFZTSWwzMlF6RDJpMTJ0MVZ1NWR3OEFWQ044RThNTDNmSHpoT1RHZ004dGJOQUJuNE53dWw0S3BuZC9kcGs2R3g4cnE3SjE4aHhKYnN5dkJheWJJNHRWZVc1c1VMVlgzaDUvSnBOa2g3OXZ3ZjRBdHJVU3NzM01EdUtqbEZnVy9qcXU2OVg2cHltSnVqZFRpcVVrdWdLOU5FSy82d1dTc3B6SWZhUDZoOHNPbkhRQzJpU2kvRWp0Y3JBOW5vcUx1eWZuaUpxWXpnTUE0Y2lHSjVlQW90NXI3UmdiZS9wOU9zVW93NUoySzVTK29KeDd4TlExalFVK2haNDZjdFZyS25ZTVpqc0tkaW1WZGVOcUo5b3FtTVhwNmRIcUM5eUhRN01pcVRJdFErU3FINkRFSCtiNzZleSt2RXd2UU9XSTZJbnVld0FSbmo1aTNJTFAwRVM5TTF5L1RpWTVGNWFSSDJhQXNmSFJma0JSdUtnVE9qUlJDQmh6d0YvbG9JSzhEczJ3SzdOSkVWMGdFTzJ0d2IyMTd2QTZPWVlnNXR1dHh4Y3JYTjlBTzZoRWF6Tlh1eTNxM0ozSGc3ZXdpZXAza0hhclZJWnBVWGViWWRuMTVZZUZERTFpOGYxQVU2aE94OEs4Qm9hRGwrRUoraWdMNm90eE9nS2FKRTR5L3A5cARO";
     
     // 🚀 CUSTOM REBRANDING UPGRADE: Shifted the internal prefix tracking key signature layout to NITW
     $transactionId = 'NITW-' . time();
@@ -122,7 +126,7 @@ if (!$dbResult) {
     $authPayload = json_encode([
         'appName'      => $appName,
         'clientId'     => $clientId,
-        'clientSecret' => $secretKey // <-- Must be 'clientSecret', matching your command prompt success!
+        'clientSecret' => $secretKey // <-- Must be 'clientSecret', matching your corporate success!
     ]);
 
     $chAuth = curl_init($authUrl);
@@ -153,11 +157,11 @@ if (!$dbResult) {
         // =========================================================================
         $checkoutUrl = "https://checkout.azampay.co.tz/azampay/mno/checkout";
         $checkoutPayload = json_encode([
-            'accountNumber' => $phone,
-            'amount'        => $amount,
-            'currency'      => 'TZS',
-            'externalId'    => $transactionId,
-            'provider'      => $provider,
+            'accountNumber'        => $phone,
+            'amount'               => $amount,
+            'currency'             => 'TZS',
+            'externalid'           => $transactionId, // All-lowercase production requirement
+            'provider'             => $provider,
             'additionalProperties' => new stdClass()
         ]);
 
@@ -180,32 +184,27 @@ if (!$dbResult) {
         curl_setopt($chCheck, CURLOPT_TIMEOUT, 30);
         curl_setopt($chCheck, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 
-               $checkoutResponse = curl_exec($chCheck);
+        $checkoutResponse = curl_exec($chCheck);
         $httpStatusCode = curl_getinfo($chCheck, CURLINFO_HTTP_CODE);
         curl_close($chCheck);
 
         // 🚀 RESPONSES ENGINE DECODER: Reads the instant feedback packet text stream from checkout
         $apiResult = json_decode($checkoutResponse, true);
 
-      // 🚀 FORCE-PRINT GATEWAY PACKETS: Intercepts the response body before it hits the database loops
-echo "<h3>🔍 AzamPay Live Checkout Feedback Tracker</h3>";
-echo "<p>Server Connection HTTP Code: <b>" . $httpStatusCode . "</b></p>";
-echo "<pre>Raw JSON Payload Data: " . htmlspecialchars($checkoutResponse) . "</pre>";
-exit(); // Freezes the execution timeline here so you can read their message directly
-
-
-        // Extracts the official transaction identifier value generated directly by AzamPay's response API
-        $azamPayTransactionId = isset($apiResult['data']['transactionId']) ? trim($apiResult['data']['transactionId']) : (isset($apiResult['transactionId']) ? trim($apiResult['transactionId']) : (isset($apiResult['id']) ? trim($apiResult['id']) : NULL));
-
-
-        // Extracts the official transaction identifier value generated directly by AzamPay's response API
-        // 🚀 THE PRODUCTION FIX: Added comprehensive object path fallbacks to catch the production JSON keys
-        $azamPayTransactionId = isset($apiResult['data']['transactionId']) ? trim($apiResult['data']['transactionId']) : (isset($apiResult['transactionId']) ? trim($apiResult['transactionId']) : (isset($apiResult['id']) ? trim($apiResult['id']) : NULL));
+        // 🚀 THE MATRIX QUERY FIX: Harvesting clean core transactional indices straight from root key paths
+        $azamPayTransactionId = null;
+        if (isset($apiResult['transactionId']) && !empty($apiResult['transactionId'])) {
+            $azamPayTransactionId = trim($apiResult['transactionId']);
+        } elseif (isset($apiResult['data']['transactionId'])) {
+            $azamPayTransactionId = trim($apiResult['data']['transactionId']);
+        } elseif (isset($apiResult['id'])) {
+            $azamPayTransactionId = trim($apiResult['id']);
+        }
     }
 }
 
 // Update database status flags to 'ASSIGNED' if cURL checkout request hit 200 OK successfully
-if ($httpStatusCode === 200 && isset($allocatedVoucherId)) {
+if ($httpStatusCode === 200 && isset($allocatedVoucherId) && !empty($azamPayTransactionId)) {
     // STORES MAC DIRECTLY IN YOUR DB: Saves all attributes side-by-side perfectly
     $sessionMac = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0';
     
@@ -213,11 +212,22 @@ if ($httpStatusCode === 200 && isset($allocatedVoucherId)) {
     date_default_timezone_set('Africa/Dar_es_Salaam');
     $currentDateTime = date("Y-m-d H:i:s");
     
-    // PRODUCTION INTEGRATION QUERY: Stores your custom internal tracking key AND the extracted AzamPay ID side-by-side perfectly
-    $updateStmt = $conn->prepare("UPDATE wifi_vouchers SET status = 'ASSIGNED', assigned_phone = ?, mac_address = ?, transaction_id = ?, azampay_transaction_id = ?, purchased_at = ? WHERE id = ?");
-    $updateStmt->bind_param("sssssi", $phone, $sessionMac, $transactionId, $azamPayTransactionId, $currentDateTime, $allocatedVoucherId);
-    $updateStmt->execute();
-    $updateStmt->close();
+    // PRODUCTION INTEGRATION QUERY: Securely records the active reference string right into your voucher rows
+    $updateQuery = "UPDATE wifi_vouchers 
+                    SET status = 'ASSIGNED', 
+                        assigned_phone = ?, 
+                        mac_address = ?, 
+                        transaction_id = ?, 
+                        azampay_transaction_id = ?, 
+                        purchased_at = ? 
+                    WHERE id = ?";
+                    
+    $updateStmt = $conn->prepare($updateQuery);
+    if ($updateStmt) {
+        $updateStmt->bind_param("sssssi", $phone, $sessionMac, $transactionId, $azamPayTransactionId, $currentDateTime, $allocatedVoucherId);
+        $updateStmt->execute();
+        $updateStmt->close();
+    }
 }
 
 // Type safety wrapper for connection closure prevents uncaught execution crashes
