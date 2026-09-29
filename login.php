@@ -129,7 +129,7 @@ if (!$dbResult) {
         'appName'      => $appName,
         'clientId'     => $clientId,
         'secretKey'    => $secretKey, // Backwards compliance fallback
-        'clientSecret' => $secretKey  // Corporate profile match validation
+        'clientSecret' => $secretKey,  // Corporate profile match validation
     
     ]);
 
