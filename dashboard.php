@@ -489,7 +489,9 @@ $log_result = $conn->query($log_query);
 
         for (var i = 1; i < tr.length; i++) {
             var tdCells = tr[i].getElementsByTagName("td");
+            // 🚀 THE FIX: Enforce minimum cell counts and target exact column index numbers cleanly
             if (tdCells.length > 4) {
+                // Column 1: Voucher Code | Column 4: Assigned Phone number cell
                 var voucherText = (tdCells[1].textContent || tdCells[1].innerText).trim();
                 var phoneText   = (tdCells[4].textContent || tdCells[4].innerText).trim();
                 
@@ -499,13 +501,14 @@ $log_result = $conn->query($log_query);
                 if (upperVoucher.indexOf(filter) > -1 || 
                     upperPhone.indexOf(filter) > -1 || 
                     upperPhone.indexOf(normalizedFilter) > -1) {
-                    tr[i].style.display = ""; 
+                    tr[i].style.display = ""; // Keyword matches, reveal row
                 } else {
-                    tr[i].style.display = "none"; 
+                    tr[i].style.display = "none"; // No match, hide row safely
                 }
             }       
         }
     }
+
 
     // 🔄 RE-APPLY FILTERS ON LOAD & CALL BACKGROUND OPTIMIZER
     window.addEventListener('DOMContentLoaded', function() {
