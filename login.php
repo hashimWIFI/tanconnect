@@ -113,39 +113,73 @@ if (!$dbResult) {
     $transactionId = 'NITW-' . time();
 
     // =========================================================================
-    // 4. STAGE 1: AUTOMATED LIVE ACCESS TOKEN GENERATION
+    // 4. STAGE 1: AUTOMATED LIVE ACCESS TOKEN GENERATION WITH FAIL-SAFE FALLBACK
     // =========================================================================
-    // 🚀 THE FIX: Shift endpoint URL pathway from Sandbox to Production Operations Hub
-    $authUrl = "https://authenticator.azampay.co.tz/AppRegistration/GenerateToken";
-    
-    // 🚀 THE FIX: Remap payload arrays to use the exact production key labels expected by AzamPay
-    $authPayload = json_encode([
+    $token = null;
+
+    // Route A: Primary Live Production Endpoint
+    $authUrlA = "https://authenticator.azampay.co.tz/AppRegistration/GenerateToken";
+    $authPayloadA = json_encode([
         'appName'   => $appName,
         'clientId'  => $clientId,
         'secretKey' => $secretKey
     ]);
 
-    $chAuth = curl_init($authUrl);
-    curl_setopt($chAuth, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($chAuth, CURLOPT_POST, true);
-    curl_setopt($chAuth, CURLOPT_POSTFIELDS, $authPayload);
-    curl_setopt($chAuth, CURLOPT_HTTPHEADER, ["Content-Type: application/json", "Accept: application/json"]);
-    curl_setopt($chAuth, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($chAuth, CURLOPT_SSL_VERIFYHOST, false);
-    curl_setopt($chAuth, CURLOPT_CONNECTTIMEOUT, 15);
-    curl_setopt($chAuth, CURLOPT_TIMEOUT, 30);
-    curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-
-    $authResponse = curl_exec($chAuth);
-    curl_close($chAuth);
-
-    $authResult = json_decode($authResponse, true);
+    $chA = curl_init($authUrlA);
+    curl_setopt($chA, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($chA, CURLOPT_POST, true);
+    curl_setopt($chA, CURLOPT_POSTFIELDS, $authPayloadA);
+    curl_setopt($chA, CURLOPT_HTTPHEADER, ["Content-Type: application/json", "Accept: application/json"]);
+    curl_setopt($chA, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($chA, CURLOPT_SSL_VERIFYHOST, false);
+    curl_setopt($chA, CURLOPT_CONNECTTIMEOUT, 10);
+    curl_setopt($chA, CURLOPT_TIMEOUT, 15);
+    curl_setopt($chA, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
     
-    // 🚀 THE FIX: Extract bearer token from the correct live production response data layer context array
-    $token = isset($authResult['data']['accessToken']) ? $authResult['data']['accessToken'] : (isset($authResult['token']) ? $authResult['token'] : null);
-    
+    $responseA = curl_exec($chA);
+    $statusCodeA = curl_getinfo($chA, CURLINFO_HTTP_CODE);
+    curl_close($chA);
+
+    if ($statusCodeA === 200) {
+        $resultA = json_decode($responseA, true);
+        if (isset($resultA['data']['accessToken'])) $token = $resultA['data']['accessToken'];
+        elseif (isset($resultA['token'])) $token = $resultA['token'];
+    }
+
+    // Route B Fallback: If Route A fails with a 401 error, try the alternative App Registration Gateway
     if (!$token) {
-        $httpStatusCode = 401; // Authentication token dispatch failure
+        $authUrlB = "https://azampay.co.tz";
+        $authPayloadB = json_encode([
+            'appname'      => $appName,
+            'clientid'     => $clientId,
+            'clientsecret' => $secretKey // Some profiles require 'clientsecret' key mapping on this path
+        ]);
+
+        $chB = curl_init($authUrlB);
+        curl_setopt($chB, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($chB, CURLOPT_POST, true);
+        curl_setopt($chB, CURLOPT_POSTFIELDS, $authPayloadB);
+        curl_setopt($chB, CURLOPT_HTTPHEADER, ["Content-Type: application/json", "Accept: application/json"]);
+        curl_setopt($chB, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($chB, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($chB, CURLOPT_CONNECTTIMEOUT, 10);
+        curl_setopt($chB, CURLOPT_TIMEOUT, 15);
+        curl_setopt($chB, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+
+        $responseB = curl_exec($chB);
+        $statusCodeB = curl_getinfo($chB, CURLINFO_HTTP_CODE);
+        curl_close($chB);
+
+        if ($statusCodeB === 200) {
+            $resultB = json_decode($responseB, true);
+            if (isset($resultB['data']['accessToken'])) $token = $resultB['data']['accessToken'];
+            elseif (isset($resultB['token'])) $token = $resultB['token'];
+        }
+    }
+
+    // Proceed based on token status
+    if (!$token) {
+        $httpStatusCode = 401; // Flag remains 401 to display the error screen if both fail
     } else {
         // =========================================================================
         // 5. STAGE 2: EXECUTE LIVE MOBILE CHECKOUT DISPATCH
