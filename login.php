@@ -116,7 +116,7 @@ if (!$dbResult) {
     // =========================================================================
     // 4. STAGE 1: AUTOMATED ACCESS TOKEN GENERATION
     // =========================================================================
-    $authUrl =  "https://authenticator-sandbox.azampay.co.tz/AppRegistration/GenerateToken";
+    $authUrl =  "https://authenticator.azampay.co.tz/AppRegistration/GenerateToken";
     $authPayload = json_encode([
         'appname'      => $appName,
         'clientid'     => $clientId,
@@ -146,7 +146,7 @@ if (!$dbResult) {
         // =========================================================================
         // 5. STAGE 2: EXECUTE LIVE MOBILE CHECKOUT DISPATCH
         // =========================================================================
-        $checkoutUrl = "https://sandbox.azampay.co.tz/azampay/mno/checkout";
+        $checkoutUrl = "https://checkout.azampay.co.tz/azampay/mno/checkout";
         $checkoutPayload = json_encode([
             'accountNumber' => $phone,
             'amount'        => $amount,
