@@ -40,7 +40,7 @@ $routingPrefix = substr($phone, 3, 2);
 
 // Map network carrier designations by standard Tanzanian operator configurations
 if (in_array($routingPrefix, ['74', '75', '76', '14'])) {
-    $provider = "Mpesa";
+    $provider = "mpesa";
 } elseif (in_array($routingPrefix, ['70', '71', '77', '65', '07', '67', '72'])) {
     $provider = "Tigo";
 } elseif (in_array($routingPrefix, ['78', '79', '68', '69'])) {
