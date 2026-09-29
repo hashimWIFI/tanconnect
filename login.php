@@ -124,9 +124,13 @@ if (!$dbResult) {
     // Route A: Primary Live Production Endpoint
     $authUrl = "https://authenticator.azampay.co.tz/AppRegistration/GenerateToken";
     $authPayload = json_encode([
+       // 🚀 THE FIX: Enforce comprehensive robust property names to clear both standard and corporate profiles
+    $authPayload = json_encode([
         'appName'      => $appName,
         'clientId'     => $clientId,
-        'clientSecret' => $secretKey // <-- Must be 'clientSecret', matching your corporate success!
+        'secretKey'    => $secretKey, // Backwards compliance fallback
+        'clientSecret' => $secretKey  // Corporate profile match validation
+    
     ]);
 
     $chAuth = curl_init($authUrl);
