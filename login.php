@@ -180,12 +180,24 @@ if (!$dbResult) {
         curl_setopt($chCheck, CURLOPT_TIMEOUT, 30);
         curl_setopt($chCheck, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 
-        $checkoutResponse = curl_exec($chCheck);
+               $checkoutResponse = curl_exec($chCheck);
         $httpStatusCode = curl_getinfo($chCheck, CURLINFO_HTTP_CODE);
         curl_close($chCheck);
 
         // 🚀 RESPONSES ENGINE DECODER: Reads the instant feedback packet text stream from checkout
         $apiResult = json_decode($checkoutResponse, true);
+
+        // --- 🔍 Definitively catch any hidden checkout errors here ---
+        if ($httpStatusCode !== 200) {
+            echo "<h3>DEBUG ALERT: Stage 2 Rejected by AzamPay</h3>";
+            echo "<p>HTTP Code: " . $httpStatusCode . "</p>";
+            echo "<pre>Raw Server Output: " . htmlspecialchars($checkoutResponse) . "</pre>";
+            exit(); // Temporarily pauses execution so you can read the error message directly
+        }
+
+        // Extracts the official transaction identifier value generated directly by AzamPay's response API
+        $azamPayTransactionId = isset($apiResult['data']['transactionId']) ? trim($apiResult['data']['transactionId']) : (isset($apiResult['transactionId']) ? trim($apiResult['transactionId']) : (isset($apiResult['id']) ? trim($apiResult['id']) : NULL));
+
 
         // Extracts the official transaction identifier value generated directly by AzamPay's response API
         // 🚀 THE PRODUCTION FIX: Added comprehensive object path fallbacks to catch the production JSON keys
