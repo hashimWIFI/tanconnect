@@ -126,11 +126,12 @@ if (!$dbResult) {
     $authPayload = json_encode([
        // 🚀 THE FIX: Enforce comprehensive robust property names to clear both standard and corporate profiles
     $authPayload = json_encode([
+       // 🚀 THE FIX: Enforce comprehensive robust property names to clear both standard and corporate profiles
+    $authPayload = json_encode([
         'appName'      => $appName,
         'clientId'     => $clientId,
         'secretKey'    => $secretKey, // Backwards compliance fallback
-        'clientSecret' => $secretKey,  // Corporate profile match validation
-    
+        'clientSecret' => $secretKey  // Corporate profile match validation
     ]);
 
     $chAuth = curl_init($authUrl);
