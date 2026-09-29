@@ -118,7 +118,7 @@ if (!$dbResult) {
     $token = null;
 
     // Route A: Primary Live Production Endpoint
-    $authUrlA = "https://authenticator.azampay.co.tz/AppRegistration/GenerateToken";
+    $authUrl = "https://authenticator.azampay.co.tz/AppRegistration/GenerateToken";
     $authPayload = json_encode([
         'appName'      => $appName,
         'clientId'     => $clientId,
