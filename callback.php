@@ -11,14 +11,35 @@ if (!$paymentData) {
 }
 
 // Harvest variables sent asynchronously from AzamPay's system notification payload
-$transactionStatus = isset($paymentData['transactionstatus']) ? trim($paymentData['transactionstatus']) : ''; 
-$externalId        = isset($paymentData['externalId']) ? trim($paymentData['externalId']) : ''; // Our NITW-XXXXX tracking ID
-$azamPayRef        = isset($paymentData['submerchantAcc']) ? trim($paymentData['submerchantAcc']) : (isset($paymentData['utilityref']) ? trim($paymentData['utilityref']) : ''); 
+// 🚀 FIX 1: Robust fallback case parameters array mapping for status string
+$transactionStatus = isset($paymentData['transactionstatus']) ? trim($paymentData['transactionstatus']) : (isset($paymentData['transactionStatus']) ? trim($paymentData['transactionStatus']) : ''); 
+
+// 🚀 FIX 2: Check for both standard all-lowercase 'externalid' and camelCase 'externalId'
+$externalId = '';
+if (isset($paymentData['externalid'])) {
+    $externalId = trim($paymentData['externalid']);
+} elseif (isset($paymentData['externalId'])) {
+    $externalId = trim($paymentData['externalId']);
+}
+
+// 🚀 FIX 3: Check AzamPay's official webhook key names for the transaction ID token
+$azamPayRef = '';
+if (isset($paymentData['azampayTransactionId']) && !empty($paymentData['azampayTransactionId'])) {
+    $azamPayRef = trim($paymentData['azampayTransactionId']);
+} elseif (isset($paymentData['transactionId']) && !empty($paymentData['transactionId'])) {
+    $azamPayRef = trim($paymentData['transactionId']);
+} elseif (isset($paymentData['id']) && !empty($paymentData['id'])) {
+    $azamPayRef = trim($paymentData['id']);
+} else {
+    // Keep your historical submerchant references as a clean fallback layer
+    $azamPayRef = isset($paymentData['submerchantAcc']) ? trim($paymentData['submerchantAcc']) : (isset($paymentData['utilityref']) ? trim($paymentData['utilityref']) : '');
+}
 
 // Log raw result text patterns into your cloud storage folder for permanent auditing audits
 file_put_contents('payment_logs.txt', "ID: " . $externalId . " | Status: " . $transactionStatus . " | AzamPayID: " . $azamPayRef . " | Time: " . date('Y-m-d H:i:s') . "\n", FILE_APPEND);
 
-if (strtolower($transactionStatus) === 'success' && !empty($externalId)) {
+// Evaluate code response matches safely
+if (strtolower($transactionStatus) === 'success' && !empty($externalId) && !empty($azamPayRef)) {
     
     $db_host = getenv('MYSQLHOST')     ?: '127.0.0.1';
     $db_port = getenv('MYSQLPORT')     ?: '3306';
@@ -50,6 +71,7 @@ if (strtolower($transactionStatus) === 'success' && !empty($externalId)) {
     }
 }
 
+// Always respond with an acknowledgement so AzamPay knows your webhook received the row
 http_response_code(200);
 echo json_encode(["status" => "acknowledged", "reference" => $externalId]);
 exit();
