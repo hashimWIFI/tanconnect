@@ -1,32 +1,59 @@
 <?php
 // =========================================================================
-// 🚀 TANCONNECT CAPTIVE PORTAL GATEWAY ENGINE (PART 1 OF 2)
+// 🚀 TANCONNECT CAPTIVE PORTAL GATEWAY ENGINE (PART 1 OF 4)
 // =========================================================================
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-session_start();
 
-// 1. HARVEST FORM METRICS FROM USER INPUTS
-$amount         = isset($_POST['amount']) ? trim($_POST['amount']) : ''; 
-$duration       = isset($_POST['duration']) ? trim($_POST['duration']) : '';
-$device_id      = isset($_POST['device_id']) ? trim($_POST['device_id']) : '';
-$customer_phone = isset($_POST['customer_phone']) ? trim($_POST['customer_phone']) : '';
-$capturedMac    = isset($_POST['mac_address']) ? trim($_POST['mac_address']) : '0';
+// Initialize baseline status flags globally to protect the bottom template layers from crashing
+$httpStatusCode = 0;
 
-// Fallback protection shield for running local browser tests on a PC
-if ($capturedMac === '$mac' || empty($capturedMac) || $capturedMac === '0') {
-    $_SESSION['customer_mac'] = "24EE9A7A9112"; 
-} else {
-    $_SESSION['customer_mac'] = preg_replace('/[^a-zA-Z0-9]/', '', $capturedMac);
+// Initialize active browser session context tracking safely
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
-// Format telephone input into uniform country prefix code
-$phone = preg_replace('/[^0-9]/', '', $customer_phone);
-if (strlen($phone) === 10 && substr($phone, 0, 1) === '0') {
+// =========================================================================
+// 1. DATA HARVESTING & PHONE STANDARDIZATION ENGINE
+// =========================================================================
+$phone  = isset($_POST['customer_phone']) ? trim($_POST['customer_phone']) : '';
+$amount = isset($_POST['amount']) ? trim($_POST['amount']) : ''; 
+$amount = str_replace(',', '', $amount);
+
+// Intercept incoming hidden form parameter fields sent from index.php
+$capturedMac = isset($_POST['mac_address']) ? trim($_POST['mac_address']) : '0';
+if ($capturedMac !== '0' && !empty($capturedMac) && $capturedMac !== '$mac') {
+    // Strips colons or symbols to preserve clean database formatting parameters
+    $_SESSION['customer_mac'] = preg_replace('/[^a-zA-Z0-9]/', '', $capturedMac);
+} else {
+    if (!isset($_SESSION['customer_mac'])) {
+        $_SESSION['customer_mac'] = '0';
+    }
+}
+
+// Enforce international dialing schema standard formatting rules (Tanzania 255)
+if (substr($phone, 0, 1) === '0') {
     $phone = '255' . substr($phone, 1);
 }
 
-// 2. ESTABLISH DATABASE GATEWAY
+$routingPrefix = substr($phone, 3, 2); 
+
+// Map network carrier designations by standard Tanzanian operator configurations
+if (in_array($routingPrefix, ['74', '75', '76', '14'])) {
+    $provider = "M-PESA";
+} elseif (in_array($routingPrefix, ['70', '71', '77', '65', '07', '67', '72'])) {
+    $provider = "Tigo";
+} elseif (in_array($routingPrefix, ['78', '79', '68', '69'])) {
+    $provider = "Airtel";
+} elseif (in_array($routingPrefix, ['62', '61'])) {
+    $provider = "Halopesa";
+} else {
+    $provider = "Mpesa"; 
+}
+
+// =========================================================================
+// 2. CONNECT TO DYNAMIC RAILWAY MYSQL INSTANCE
+// =========================================================================
 $db_host = getenv('MYSQLHOST')     ?: '127.0.0.1';
 $db_port = getenv('MYSQLPORT')     ?: '3306';
 $db_user = getenv('MYSQLUSER')     ?: 'root';
@@ -34,11 +61,15 @@ $db_pass = getenv('MYSQLPASSWORD') ?: '';
 $db_name = getenv('MYSQLDATABASE') ?: 'railway';
 
 $conn = new mysqli($db_host, $db_user, $db_pass, $db_name, $db_port);
-if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
-}
 
-// 3. RUN LOW-STOCK SANITATION SCANNER
+if ($conn->connect_error) {
+    die("Database connectivity node failed to respond: " . $conn->connect_error);
+}
+// =========================================================================
+// 3. VOUCHER SELECTION, STOCK MANAGEMENT, AND AZAMPAY CHECKOUT DISPATCH
+// =========================================================================
+
+// Query the database to find one available voucher matching the selected price tier
 $stmt = $conn->prepare("SELECT id, voucher_code FROM wifi_vouchers WHERE price_tier = ? AND status = 'AVAILABLE' LIMIT 1");
 $stmt->bind_param("i", $amount);
 $stmt->execute();
@@ -46,67 +77,81 @@ $dbResult = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
 if (!$dbResult) {
-    // Fire stock drop alert webhook notification straight to your Ntfy app channel
-   @file_get_contents("https://ntfy.sh/tanconnect_vouchers_stock_alert_2026", false, $context);
-    $payloadText = "🚨 STOCK ZERO WARNING: Kifurushi cha Tsh " . number_format(intval($amount)) . " kimeisha kabisa! Wateja hawawezi kununua kwa sasa.";
+    date_default_timezone_set('Africa/Dar_es_Salaam');
     
-    $chNtfy = curl_init($ntfyUrl);
-    curl_setopt($chNtfy, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($chNtfy, CURLOPT_POST, true);
-    curl_setopt($chNtfy, CURLOPT_POSTFIELDS, $payloadText);
-    curl_setopt($chNtfy, CURLOPT_HTTPHEADER, ["Title: Voucher Stock Alert", "Priority: urgent", "Tags: warning,no_entry"]);
-    curl_setopt($chNtfy, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($chNtfy, CURLOPT_TIMEOUT, 5);
-    curl_exec($chNtfy);
-    curl_close($chNtfy);
+    // ---- FIREWALL-SAFE OUT OF STOCK SYSTEM ALERTS VIA NTFY ----
+    $alertText  = "⚠️ TANConnect WiFi Alert ⚠️\n";
+    $alertText .= "Voucher Tier OUT OF STOCK!\n";
+    $alertText .= "• Price Tier: " . number_format((int)$amount) . " TZS\n";
+    $alertText .= "• Time: " . date("Y-m-d H:i:s");
 
-    $httpStatusCode = 503; 
+    $streamOptions = [
+        "http" => [
+            "method"  => "POST",
+            "header"  => "Title: WiFi System Alert\r\nPriority: high\r\nTags: warning,wifi\r\n",
+            "content" => $alertText,
+            "timeout" => 5
+        ]
+    ];
+
+    $context = stream_context_create($streamOptions);
+       @file_get_contents("https://ntfy.sh/tanconnect_vouchers_stock_alert_2026", false, $context);
+    
+    $httpStatusCode = 503; // Sets failure flag to load the out-of-stock template later
+ 
 } else {
+    // Voucher is available, isolate variables for tracking
     $allocatedVoucherId   = $dbResult['id'];
     $allocatedVoucherCode = $dbResult['voucher_code'];
-
-    // 🚀 REBRANDING UPGRADE: Generate your custom branded tracking index number string
+    
+    // 🔑 Set AzamPay Live Production Credentials (Swapped cleanly)
+    $appName   = "Tanconnect"; 
+    $clientId  = "01a0ec31-f4b8-7380-8abd-61eb895de07a"; 
+    $secretKey = "VzBpaTRYTjBRMWE4QVJxa3FGRDhVZlNwc2U2UXdwS1VzdW1XczhzckQ3SEdzSVpDOUMrZGsxcHoyYzlnaDg4N1NEaWdRalhiNWJaWUtYTEI0ZzdTem1JT20wc0U5TlE2WXZYb3NDN2VGUHpZZGlVMHdOQmh0bUFxVkxuQ20raU9aZy84NFZTSWwzMlF6RDJpMTJ0MVZ1NWR3OEFWQ044RThNTDNmSHpoT1RHZ004dGJOQUJuNE53dWw0S3BuZC9kcGs2R3g4cnE3SjE4aHhKYnN5dkJheWJJNHRWZVc1c1VMVlgzaDUvSnBOa2g3OXZ3ZjRBdHJVU3NzM01EdUtqbEZnVy9qcXU2OVg2cHltSnVqZFRpcVVrdWdLOU5FSy82d1dTc3B6SWZhUDZoOHNPbkhRQzJpU2kvRWp0Y3JBOW5vcUx1eWZuaUpxWXpnTUE0Y2lHSjVlQW90NXI3UmdiZS9wOU9zVW93NUoySzVTK29KeDd4TlExalFVK2haNDZjdFZyS25ZTVpqc0tkaW1WZGVOcUo5b3FtTVhwNmRIcUM5eUhRN01pcVRJdFErU3FINkRFSCtiNzZleSt2RXd2UU9XSTZJbnVld0FSbmo1aTNJTFAwRVM5TTF5L1RpWTVGNWFSSDJhQXNmSFJma0JSdUtnVE9qUlJDQmh6d0YvbG9JSzhEczJ3SzdOSkVWMGdFTzJ0d2IyMTd2QTZPWVlnNXR1dHh4Y3JYTjlBTzZoRWF6Tlh1eTNxM0ozSGc3ZXdpZXAza0hhclZJWnBVWGViWWRuMTVZZUZERTFpOGYxQVU2aE94OEs4Qm9hRGwrRUoraWdMNm90eE9nS2FKRTR5L3A5cDZ0V0UvOWZlSG9jQ1Y4L0RxWWluKzZGUXJ6d1R3VjRtY1FtOGExT009";
+    
+    // 🚀 CUSTOM REBRANDING UPGRADE: Shifted the internal prefix tracking key signature layout to NITW
     $transactionId = 'NITW-' . time();
 
-    // Dynamically sort carrier codes by phone number prefix strings
-    $prefix = substr($phone, 0, 6);
-    $airtelPrefixes = ['25568', '25578', '25569'];
-    $tigoPrefixes   = ['25565', '25567', '25571'];
-    $halotelPrefixe = ['25562', '25561'];
+    // =========================================================================
+    // 4. STAGE 1: AUTOMATED LIVE ACCESS TOKEN GENERATION WITH FAIL-SAFE FALLBACK
+    // =========================================================================
+    $token = null;
 
-    $provider = 'Mpesa'; 
-    foreach ($airtelPrefixes as $ap) { if (strpos($prefix, $ap) === 0) { $provider = 'Airtel'; break; } }
-    foreach ($tigoPrefixes as $tp)   { if (strpos($prefix, $tp) === 0) { $provider = 'Tigo';   break; } }
-    foreach ($halotelPrefixe as $hp) { if (strpos($prefix, $hp) === 0) { $provider = 'Halopesa'; break; } }
+    // Route A: Primary Live Production Endpoint
+    $authUrl = "https://authenticator.azampay.co.tz/AppRegistration/GenerateToken";
+    $authPayload = json_encode([
+        'appName'      => $appName,
+        'clientId'     => $clientId,
+        'clientSecret' => $secretKey // <-- Must be 'clientSecret', matching your command prompt success!
+    ]);
 
-    // 4. FETCH AZAMPAY ACCESS TOKEN BLOCK
-    $tokenUrl = "https://authenticator.azampay.co.tz/AppRegistration/GenerateToken";
-    
-    $tokenPayload = json_encode([
-        'appName'      => 'Tanconnect';
-        'clientId'     => "01a0ec31-f4b8-7380-8abd-61eb895de07a";
-        'clientSecret' => "VzBpaTRYTjBRMWE4QVJxa3FGRDhVZlNwc2U2UXdwS1VzdW1XczhzckQ3SEdzSVpDOUMrZGsxcHoyYzlnaDg4N1NEaWdRalhiNWJaWUtYTEI0ZzdTem1JT20wc0U5TlE2WXZYb3NDN2VGUHpZZGlVMHdOQmh0bUFxVkxuQ20raU9aZy84NFZTSWwzMlF6RDJpMTJ0MVZ1NWR3OEFWQ044RThNTDNmSHpoT1RHZ004dGJOQUJuNE53dWw0S3BuZC9kcGs2R3g4cnE3SjE4aHhKYnN5dkJheWJJNHRWZVc1c1VMVlgzaDUvSnBOa2g3OXZ3ZjRBdHJVU3NzM01EdUtqbEZnVy9qcXU2OVg2cHltSnVqZFRpcVVrdWdLOU5FSy82d1dTc3B6SWZhUDZoOHNPbkhRQzJpU2kvRWp0Y3JBOW5vcUx1eWZuaUpxWXpnTUE0Y2lHSjVlQW90NXI3UmdiZS9wOU9zVW93NUoySzVTK29KeDd4TlExalFVK2haNDZjdFZyS25ZTVpqc0tkaW1WZGVOcUo5b3FtTVhwNmRIcUM5eUhRN01pcVRJdFErU3FINkRFSCtiNzZleSt2RXd2UU9XSTZJbnVld0FSbmo1aTNJTFAwRVM5TTF5L1RpWTVGNWFSSDJhQXNmSFJma0JSdUtnVE9qUlJDQmh6d0YvbG9JSzhEczJ3SzdOSkVWMGdFTzJ0d2IyMTd2QTZPWVlnNXR1dHh4Y3JYTjlBTzZoRWF6Tlh1eTNxM0ozSGc3ZXdpZXAza0hhclZJWnBVWGViWWRuMTVZZUZERTFpOGYxQVU2aE94OEs4Qm9hRGwrRUoraWdMNm90eE9nS2FKRTR5L3A5cDZ0V0UvOWZlSG9jQ1Y4L0RxWWluKzZGUXJ6d1R3VjRtY1FtOGExT009";
-   
-
-    $chAuth = curl_init($tokenUrl);
+    $chAuth = curl_init($authUrl);
     curl_setopt($chAuth, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($chAuth, CURLOPT_POST, true);
-    curl_setopt($chAuth, CURLOPT_POSTFIELDS, $tokenPayload);
+    curl_setopt($chAuth, CURLOPT_POSTFIELDS, $authPayload);
     curl_setopt($chAuth, CURLOPT_HTTPHEADER, ["Content-Type: application/json", "Accept: application/json"]);
     curl_setopt($chAuth, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($chAuth, CURLOPT_TIMEOUT, 15);
+    curl_setopt($chAuth, CURLOPT_SSL_VERIFYHOST, false);
+    curl_setopt($chAuth, CURLOPT_CONNECTTIMEOUT, 15);
+    curl_setopt($chAuth, CURLOPT_TIMEOUT, 30);
+    curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+
     $authResponse = curl_exec($chAuth);
-    $authJson = json_decode($authResponse, true);
+    $httpStatusCode = curl_getinfo($chAuth, CURLINFO_HTTP_CODE);
     curl_close($chAuth);
 
-    $token = isset($authJson['data']['accessToken']) ? $authJson['data']['accessToken'] : '';
-
-    if (empty($token)) {
-        $httpStatusCode = 401;
+    $authResult = json_decode($authResponse, true);
+    
+    // Extract token cleanly from your profile's data object response parameters layer
+    $token = isset($authResult['data']['accessToken']) ? $authResult['data']['accessToken'] : (isset($authResult['token']) ? $authResult['token'] : null);
+    
+    if (!$token) {
+        $httpStatusCode = 401; // Flag failure state if something slips
     } else {
-        // 5. STAGE 2: DISPATCH LIVE MOBILE MOBILE CHECKOUT QUERY
-        $checkoutUrl =  "https://checkout.azampay.co.tz/azampay/mno/checkout";
-
+        // =========================================================================
+        // 5. STAGE 2: EXECUTE LIVE MOBILE CHECKOUT DISPATCH
+        // =========================================================================
+        $checkoutUrl = "https://checkout.azampay.co.tz/azampay/mno/checkout";
         $checkoutPayload = json_encode([
             'accountNumber' => $phone,
             'amount'        => $amount,
@@ -120,88 +165,160 @@ if (!$dbResult) {
         curl_setopt($chCheck, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($chCheck, CURLOPT_POST, true);
         curl_setopt($chCheck, CURLOPT_POSTFIELDS, $checkoutPayload);
+        
+        // 🚀 THE PRODUCTION FIX: Remove the invalid 'X-API-KEY' header parameter and apply official API versions context
         curl_setopt($chCheck, CURLOPT_HTTPHEADER, [
             "Content-Type: application/json",
             "Accept: application/json",
+            "X-Api-Version: v1",
             "Authorization: Bearer $token"
         ]);
+        
         curl_setopt($chCheck, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($chCheck, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($chCheck, CURLOPT_CONNECTTIMEOUT, 15);
         curl_setopt($chCheck, CURLOPT_TIMEOUT, 30);
-        $checkoutResponse = curl_exec($chCheck);
+        curl_setopt($chCheck, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+
+               $checkoutResponse = curl_exec($chCheck);
         $httpStatusCode = curl_getinfo($chCheck, CURLINFO_HTTP_CODE);
         curl_close($chCheck);
 
+        // 🚀 RESPONSES ENGINE DECODER: Reads the instant feedback packet text stream from checkout
         $apiResult = json_decode($checkoutResponse, true);
 
-        // 🚀 LIVE API EXTRACTION LAYER: Pulls the true transaction ID right out of the text response
-        $azamPayTransactionId = isset($apiResult['transactionId']) ? trim($apiResult['transactionId']) : (isset($apiResult['id']) ? trim($apiResult['id']) : NULL);
+      // 🚀 FORCE-PRINT GATEWAY PACKETS: Intercepts the response body before it hits the database loops
+echo "<h3>🔍 AzamPay Live Checkout Feedback Tracker</h3>";
+echo "<p>Server Connection HTTP Code: <b>" . $httpStatusCode . "</b></p>";
+echo "<pre>Raw JSON Payload Data: " . htmlspecialchars($checkoutResponse) . "</pre>";
+exit(); // Freezes the execution timeline here so you can read their message directly
+
+
+        // Extracts the official transaction identifier value generated directly by AzamPay's response API
+        $azamPayTransactionId = isset($apiResult['data']['transactionId']) ? trim($apiResult['data']['transactionId']) : (isset($apiResult['transactionId']) ? trim($apiResult['transactionId']) : (isset($apiResult['id']) ? trim($apiResult['id']) : NULL));
+
+
+        // Extracts the official transaction identifier value generated directly by AzamPay's response API
+        // 🚀 THE PRODUCTION FIX: Added comprehensive object path fallbacks to catch the production JSON keys
+        $azamPayTransactionId = isset($apiResult['data']['transactionId']) ? trim($apiResult['data']['transactionId']) : (isset($apiResult['transactionId']) ? trim($apiResult['transactionId']) : (isset($apiResult['id']) ? trim($apiResult['id']) : NULL));
     }
 }
+
 // Update database status flags to 'ASSIGNED' if cURL checkout request hit 200 OK successfully
 if ($httpStatusCode === 200 && isset($allocatedVoucherId)) {
+    // STORES MAC DIRECTLY IN YOUR DB: Saves all attributes side-by-side perfectly
     $sessionMac = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0';
     
-    // Set local East African Time parameters upon successful insertion
+    // Set local East African Time parameters upon successful database write operations
     date_default_timezone_set('Africa/Dar_es_Salaam');
     $currentDateTime = date("Y-m-d H:i:s");
     
-    // PRODUCTION QUERY: Stores your custom internal tracking key AND the AzamPay API response ID side-by-side
+    // PRODUCTION INTEGRATION QUERY: Stores your custom internal tracking key AND the extracted AzamPay ID side-by-side perfectly
     $updateStmt = $conn->prepare("UPDATE wifi_vouchers SET status = 'ASSIGNED', assigned_phone = ?, mac_address = ?, transaction_id = ?, azampay_transaction_id = ?, purchased_at = ? WHERE id = ?");
-    
-    // Bind parameters safely: 5 string values followed by 1 integer ("sssssi")
     $updateStmt->bind_param("sssssi", $phone, $sessionMac, $transactionId, $azamPayTransactionId, $currentDateTime, $allocatedVoucherId);
     $updateStmt->execute();
     $updateStmt->close();
 }
+
+// Type safety wrapper for connection closure prevents uncaught execution crashes
+if (isset($conn) && $conn instanceof mysqli) {
+    $conn->close();
+}
+
+// Capture the active session MAC address variable for target template parsing
+$macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0';
 ?>
 <!DOCTYPE html>
 <html lang="sw">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TANConnect - Hali ya Malipo</title>
-    <link rel="stylesheet" href="style2026.css">
-    <script type="text/javascript">
-        // Keep tracking context indicators active in global script memory
-        var activeTxId = "<?php echo isset($transactionId) ? $transactionId : ''; ?>";
-        var clientMac  = "<?php echo isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'; ?>";
-        var intervalId = null;
+    <title>TANConnect - SUCCESS REPORT</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; text-align: center; padding: 40px 15px; color: #2c3e50; margin: 0; }
+        .receipt-card { background: white; max-width: 450px; margin: 0 auto; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; position: relative; }
+        
+        .success-color { color: forestgreen !important; margin-bottom: 10px; font-size: 20px; font-weight: bold; }
+        .error-color { color: #e74c3c; font-size: 14px; font-weight: bold; }
+        .transit-color { color: #3498db; margin-bottom: 10px; font-size: 16px; font-weight: bold; }
+        
+        .btn-portal { display: block !important; width: 100% !important; box-sizing: border-box !important; background: #3498db; color: white !important; border: 2px solid darkgreen !important; padding: 14px 20px !important; font-size: 15px !important; border-radius: 8px !important; cursor: pointer !important; text-decoration: none !important; margin-top: 15px !important; font-weight: bold !important; text-align: center !important; box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important; }
+        .btn-portal:hover { filter: brightness(0.95); }
+        .close-btn { position: absolute; top: 12px; right: 16px; font-weight: bold; font-size: 30px; cursor: pointer; color: #64748b; line-height: 1; }
+    </style>
 
-        window.addEventListener('DOMContentLoaded', function() {
-            if (activeTxId !== '') {
-                // Initialize background status tracking loops every 2.5 seconds
-                intervalId = setInterval(startPaymentVerificationLoop, 2500);
-            }
-        });
+    <script type="text/javascript">
+        var fixedDeviceId = "8600081897";
+        var clientMac = "<?php echo htmlspecialchars($macAddress); ?>";
+        var activeTxId = "<?php echo isset($transactionId) ? htmlspecialchars($transactionId) : ''; ?>";
+
+        function closeThisWindow() {
+            window.history.back();
+        }
 
         function startPaymentVerificationLoop() {
-            fetch('check_status.php?txn_id=' + encodeURIComponent(activeTxId))
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'SUCCESS') {
-                        clearInterval(intervalId);
+            if (!activeTxId) return;
+            
+            var checkInterval = setInterval(function() {
+                fetch('check_status.php?txn_id=' + encodeURIComponent(activeTxId))
+                    .then(response => response.json())
+                    .then(data => {
+                        var upperStatus = data.status ? data.status.toUpperCase() : '';
                         
-                        // Switch headline typography styles smoothly
-                        var headline = document.getElementById('payment-headline');
-                        headline.innerHTML = "✓ Malipo Yamekamilika!";
-                        headline.className = "success-color";
-                        
-                        document.getElementById('payment-subtext').innerHTML = 
-                            "Bonyeza sanduku la kijani hapa chini kupata internet sasa hivi.";
-                        
-                        // Generate the interactive modern success card button view layer
-                        var successCardHtml = 
-                            '<div onclick="copyVoucherToClipboardAndGoHome(\'' + data.voucher_code + '\', \'' + clientMac + '\')" class="voucher-success-box" style="cursor:pointer; background:#e8f8f0; border:2px dashed #27ae60; padding:15px; border-radius:8px; text-align:center; box-sizing:border-box;">' +
-                            '  <span style="display:block; font-size:11px; color:#27ae60; font-weight:bold; text-transform:uppercase; margin-bottom:5px;">✓ VOCHA YAKO TAYARI (CLICK TO ACTIVATE)</span>' +
-                            '  <span style="display:block; font-size:26px; font-weight:bold; letter-spacing:1px; color:#2c3e50; font-family:monospace; margin-bottom:5px;">' + data.voucher_code + '</span>' +
-                            '  <span style="display:block; font-size:12px; color:#7f8c8d;">Kuingia mtandaoni moja kwa moja gusa hapa.</span>' +
-                            '</div>';
-                        
-                        document.getElementById('voucher-display-box').innerHTML = successCardHtml;
-                    }
-                })
-                .catch(err => console.log("Checking status..."));
+                        if (upperStatus === 'USED' || upperStatus === 'SUCCESS' || upperStatus === 'COMPLETED') {
+                            clearInterval(checkInterval);
+
+                            var planAmount = parseInt("<?php echo htmlspecialchars($amount); ?>", 10) || 0;
+                            var planDuration = "Siku 1"; // Fallback tracking
+                            
+                            if (planAmount === 500) { planDuration = "Masaa 6"; }
+                            else if (planAmount === 1000) { planDuration = "Siku 1"; }
+                            else if (planAmount === 2000) { planDuration = "Siku 2"; }
+                            else if (planAmount === 4000) { planDuration = "Siku 5"; }
+                            else if (planAmount === 5000) { planDuration = "Siku 7"; }
+                            else if (planAmount === 7000) { planDuration = "Siku 10"; }
+                            else if (planAmount === 9000) { planDuration = "Siku 13"; }
+                            else if (planAmount === 10000) { planDuration = "Siku 15"; }
+                            else if (planAmount === 20000) { planDuration = "Siku 30"; }
+
+                            var headlineElement = document.getElementById('payment-headline');
+                            if (headlineElement) {
+                                headlineElement.className = "success-color";
+                                headlineElement.innerHTML = "✓ Malipo Yamekamilika!";
+                            }
+
+                            var subtextElement = document.getElementById('payment-subtext');
+                            if (subtextElement) {
+                                subtextElement.innerHTML = "Umenunua kifurushi cha <b>Tsh " + planAmount.toLocaleString() + "</b> kitatumika kwa muda wa <b>" + planDuration + "</b>. Gusa ndani ya kisanduku kunakili vocha yako";
+                            }
+
+                            var trueVoucherCode = data.voucher_code || data.code || data.voucher || "KODI-SAHIHI";
+                            var trueDatabaseMac = data.mac_address || clientMac || "0";
+
+                            var containerBox = document.getElementById('status-loading-container');
+                            if (containerBox) {
+                                containerBox.style.border = "none";
+                                containerBox.style.background = "transparent";
+                                containerBox.style.display = "block";
+                                containerBox.style.padding = "0";
+
+                                containerBox.innerHTML = 
+                                '<div type="button" onclick="copyVoucherToClipboardAndGoHome(\'' + trueVoucherCode + '\', \'' + trueDatabaseMac + '\')" style="font-size: 32px; font-weight: bold; color: #27ae60; letter-spacing: 2px; border: 2px dashed #27ae60; background-color: #f4fbf7; text-align: center; width: 100%; padding: 22px 15px; border-radius: 8px; box-sizing: border-box; cursor: pointer; transition: background 0.2s; box-shadow: 0 4px 10px rgba(39,174,96,0.04);" onmouseover="this.style.backgroundColor=\'#e8f8f0\'" onmouseout="this.style.backgroundColor=\'#f4fbf7\'">' +
+                                    '<span id="raw-pin-string" style="display: block; font-family: monospace; margin-bottom: 6px;">' + trueVoucherCode + '</span>' +
+                                '</div>';
+                            }
+                        }
+                    })
+                    .catch(err => console.log("Waiting for PIN validation..."));
+            }, 3000);
         }
+
+        window.onload = function() {
+            if (activeTxId !== "") {
+                startPaymentVerificationLoop();
+            }
+        };
+        // PRODUCTION SEAMLESS BRIDGE: Copies PIN to clipboard and routes straight back to local router home page
         function copyVoucherToClipboardAndGoHome(voucherCode, fallbackMac) {
             var tempInput = document.createElement("input");
             tempInput.value = voucherCode;
@@ -211,38 +328,14 @@ if ($httpStatusCode === 200 && isset($allocatedVoucherId)) {
             
             try {
                 document.execCommand("copy");
-                alert("Vocha yako (" + voucherCode + ") imenakiliwa!\n\nGusa HODI kweye ukurasa unaofuata kisha fuata maelekezo kuingia mtandaoni.");
+                alert("Vocha yako (" + voucherCode + ") imenakiliwa\n\nBonyeza kitufe cha HODI ukurasa unaofuata kuunganishwa kwenye mtandao.");
             } catch (err) {
-                alert("Tafadhali Nakili namba ya vocha yako: " + voucherCode);
+                alert("Tafadhali nakili voucher yako: " + voucherCode);
             }
             document.body.removeChild(tempInput);
-            
-            var fixedDeviceId = "8600081897"; 
-            var currentMacString = fallbackMac ? fallbackMac.trim() : '0';
-            var rawDigits = currentMacString.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-            var finalFormattedMac = currentMacString;
-            
-            if (rawDigits.length === 12) {
-                var groups = [];
-                for (var i = 0; i < 12; i += 2) { groups.push(rawDigits.substr(i, 2)); }
-                finalFormattedMac = groups.join(':'); // Enforces target "24:EE:9A:7A:91:12" structure
-            }
-            
-            var nmsUrl = "http://na.solnms.net/SOL/rechargeMobileManage.do";
-            var queryParams = [
-                'device_id=' + encodeURIComponent(fixedDeviceId),
-                'mac_address=' + encodeURIComponent(finalFormattedMac),
-                'language=en',
-                'billType=0',
-                'roamingFlag=0',
-                'billing_mode=0'
-            ].join('&');
-            
-            window.top.location.href = nmsUrl + "?" + queryParams;
-        }
 
-        function closeThisWindow() {
-            window.history.back();
+            // SIMPLIFIED REDIRECT PATHWAY: Direct layout return straight to your local interface gates
+            window.top.location.href = "http://5wifi.net";
         }
     </script>
 </head>
@@ -254,7 +347,7 @@ if ($httpStatusCode === 200 && isset($allocatedVoucherId)) {
         <div style="font-size: 11px; font-style: italic; color: #555; margin-bottom: 20px;">"We bring the world at your finger tips"</div>
         <span class="close-btn" onclick="closeThisWindow()">&times;</span>
 
-        <h2 id="payment-headline" class="transit-color" style="margin-bottom: 15px; font-size: 16px; font-weight: bold;">Ombi la Malipo Umetumiwa!</h2>
+        <h2 id="payment-headline" class="transit-color" style="margin-bottom: 15px; font-size: 16px; font-weight: bold; transition: color 0.4s ease;">Ombi la Malipo Umetumiwa!</h2>
         
         <p id="payment-subtext" style="font-size: 14px; color: black; line-height: 1.5; margin-top: 5px;">
             Tafadhali weka (PIN) kwenye simu yako kuruhusu malipo ya <b>Tsh <?php echo htmlspecialchars(number_format(intval($amount))); ?></b> kwenda TANConnect Wi-Fi.
@@ -271,7 +364,7 @@ if ($httpStatusCode === 200 && isset($allocatedVoucherId)) {
         </div> 
 
         <footer style="padding: 6px 6px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 8px; font-size: 10px; color: #555555; background-color: #fafafa; margin-top: 15px;">
-            <p><b>© 2026 NIT Africa Solutions Ltd.</b> All Rights Reserved.<br><b>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">®</sup></b> is a registered trademark.</p>
+            <p><b>© 2026 NIT Africa Solutions Ltd.</b> All Rights Reserved.<b><br>TANConnect<sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">®</sup></b> is a registered trademark of <br><a href="https://railway.app" style="color: #0066cc; font-weight: 500; text-decoration: none;"> NIT Africa Solutions Limited</a></p>
         </footer>
     </div>
 
@@ -286,19 +379,19 @@ if ($httpStatusCode === 200 && isset($allocatedVoucherId)) {
         <p style="font-size: 14px; line-height: 1.6; color: #34495e; text-align: left; margin-top: 15px;">
             <?php 
             if (isset($httpStatusCode) && intval($httpStatusCode) === 503) {
-                echo "<b>Samahani ndugu mteja, mtambo umeshindwa kuchakata vifurushi vya bei hii.</b>";
+                echo "<b>Samahani ndugu mteja, mtambo umeshindwa kuchakata vifurushi vya bei hii.</b><br><br> Tafadhali jaribu tena baada ya muda mfupi.";
             } else {
-                echo "<b>Tumeshindwa kuanzisha malipo.</b><br><br>Tafadhali hakikisha namba yako ya simu iko hewani na ina salio la kutosha.";
+                echo "<b>Tumeshindwa kuwasiliana na mtandao wako kuanzisha malipo.</b><br><br>Tafadhali hakikisha kuwa simu yako iko hewani, salio linatosha na ujaribu tena.<br><br>Msimbo wa Hitilafu (Status Code): <b>" . (isset($httpStatusCode) ? htmlspecialchars($httpStatusCode) : '0') . "</b>";
             }
             ?>
         </p>
-        <a href="javascript:history.back()" class="btn-portal" style="background: #e74c3c; border-color: darkred; color: white; padding: 12px; display: block; text-decoration: none; font-weight: bold; border-radius: 6px; text-align: center; margin-top: 20px;">RUDI NYUMA</a>
+        
+        <a href="javascript:history.back()" class="btn-portal" style="background: #e74c3c; border-color: darkred; color: white; padding: 12px; display: block; text-decoration: none; font-weight: bold; border-radius: 8px; text-align: center; margin-top: 20px;">
+            RUDI NYUMA (BACK HOME)
+        </a>
     </div>
 
 <?php endif; ?>
 </body>
 </html>
-<?php 
-if (isset($conn) && $conn instanceof mysqli) { $conn->close(); }
-exit();
-?>
+<?php exit(); ?>
