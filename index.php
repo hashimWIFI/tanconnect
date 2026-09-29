@@ -359,13 +359,13 @@ function dispatchToRailway(event) {
     var carrierPrefix = standardizedDigits.substring(3, 5);
     
     // 3. Define valid Tanzanian MNO network code buckets
-    var validVodacom  = ['74', '75', '76', '14'];
+    var validMpesa  = ['74', '75', '76', '14'];
     var validTigo     = ['70', '71', '77', '65', '07', '67', '72'];
     var validAirtel   = ['78', '79', '68', '69'];
     var validHalotel  = ['62', '61'];
     
     // Combine all recognized buckets into a single master validation dictionary array
-    var allValidPrefixes = validVodacom.concat(validTigo, validAirtel, validHalotel);
+    var allValidPrefixes = validMpesa.concat(validTigo, validAirtel, validHalotel);
 
     // 4. THE PREFIX GATE: If the extracted prefix is completely unknown, freeze submission instantly!
     if (!allValidPrefixes.includes(carrierPrefix)) {
