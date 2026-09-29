@@ -187,13 +187,12 @@ if (!$dbResult) {
         // 🚀 RESPONSES ENGINE DECODER: Reads the instant feedback packet text stream from checkout
         $apiResult = json_decode($checkoutResponse, true);
 
-        // --- 🔍 Definitively catch any hidden checkout errors here ---
-        if ($httpStatusCode !== 200) {
-            echo "<h3>DEBUG ALERT: Stage 2 Rejected by AzamPay</h3>";
-            echo "<p>HTTP Code: " . $httpStatusCode . "</p>";
-            echo "<pre>Raw Server Output: " . htmlspecialchars($checkoutResponse) . "</pre>";
-            exit(); // Temporarily pauses execution so you can read the error message directly
-        }
+      // 🚀 FORCE-PRINT GATEWAY PACKETS: Intercepts the response body before it hits the database loops
+echo "<h3>🔍 AzamPay Live Checkout Feedback Tracker</h3>";
+echo "<p>Server Connection HTTP Code: <b>" . $httpStatusCode . "</b></p>";
+echo "<pre>Raw JSON Payload Data: " . htmlspecialchars($checkoutResponse) . "</pre>";
+exit(); // Freezes the execution timeline here so you can read their message directly
+
 
         // Extracts the official transaction identifier value generated directly by AzamPay's response API
         $azamPayTransactionId = isset($apiResult['data']['transactionId']) ? trim($apiResult['data']['transactionId']) : (isset($apiResult['transactionId']) ? trim($apiResult['transactionId']) : (isset($apiResult['id']) ? trim($apiResult['id']) : NULL));
