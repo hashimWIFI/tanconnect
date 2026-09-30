@@ -43,7 +43,7 @@ $cleanAmount = intval($amount);
 
         <div class="instructions-box" style="border: 1px solid #f5c6cb; background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; text-align: left;">
             <b>Ndugu Mteja (Dear Customer):</b><br><br>
-            Mifumo yetu ya malipo ya TANConnect bado haijaunganishwa na huduma ya M-Pesa. Wakati juhudi zinachukuliwa kuunganisha mifumo, tafadhali tumia namba ya <b>Tigo, Airtel, au Halotel</b> ili kukamilisha malipo.<br><br> Tupigie kwa nambari 0713 123 974 tukufikishie voucher yako
+            Mifumo yetu ya malipo ya TANConnect bado haijaunganishwa na huduma ya M-Pesa kwa sasa. Wakati juhudi zinachukuliwa kuunganisha mifumo, tafadhali tumia namba ya <b>Tigo, Airtel, au Halotel</b> ili kukamilisha muamala na kupata voucher yako.<br><br> Tupigie kwa nambari 0713 123 974 tukufahamishe utaratibu mwingine kupata voucher yako
            
         </div>
 
