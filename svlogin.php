@@ -43,12 +43,6 @@ $voucherCode = $voucherRow['voucher_code'];
 // 🛡️ Lock and reserve the voucher instantly inside MySQL
 mysqli_query($conn, "UPDATE wifi_vouchers SET status = 'ASSIGNED', assigned_phone = '$customerPhone' WHERE id = '$voucherId'");
 
-// 📝 Insert the PENDING record into your transactions table immediately
-$logQuery = "INSERT INTO transactions (transaction_ref, phone, amount, network, status, voucher_id, created_at) 
-             VALUES ('$transactionRef', '$customerPhone', '$packageAmount', 'Vodacom', 'PENDING', '$voucherId', NOW())";
-mysqli_query($conn, $logQuery);
-
-
 // ====================================================================
 // STEP 2: RUN VODACOM SANDBOX AUTHENTICATION HANDSHAKE
 // ====================================================================
