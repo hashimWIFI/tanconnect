@@ -56,6 +56,7 @@ $publicKeyBase64 = "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEArv9yxA69XQKBo24B
 $sessionUrl = "https://openapi.m-pesa.com/sandbox/ipg/v2/vodacomTZN/getSession/";
 $c2bUrl     = "https://openapi.m-pesa.com/sandbox/ipg/v2/vodacomTZN/c2bPayment/singleStage/";
 
+
 $pemKey = "-----BEGIN PUBLIC KEY-----\n" . chunk_split($publicKeyBase64, 64, "\n") . "-----END PUBLIC KEY-----";
 $publicKeyResource = openssl_pkey_get_public($pemKey);
 
@@ -63,24 +64,20 @@ if (!$publicKeyResource) {
     die("Authentication Engine Failure: OpenSSL cannot parse the Public Key string.");
 }
 
-// Encrypt the API key using RSA encryption rules
 $encrypted = "";
 openssl_public_encrypt($apiKey, $encrypted, $publicKeyResource, OPENSSL_PKCS1_PADDING);
 $sessionContextToken = base64_encode($encrypted);
 
-// Execute the token handshake request
-$ch = curl_init($c2bUrl);
+// 1. Fetch Session token via cURL handshake
+$ch = curl_init($sessionUrl);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); 
 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    "X-Session-ID: " . base64_encode($sessionID), // ⚡ UPDATED: Passing the encoded key context using Vodacom custom platform key header rules
+    "Authorization: Bearer " . $sessionContextToken, // 🛡️ Step 2 Handshake requires standard Bearer token format
     "Content-Type: application/json",
     "Origin: *"
 ]);
-
 $sessionResponse = curl_exec($ch);
 $httpHandshakeCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
@@ -88,7 +85,7 @@ curl_close($ch);
 $sessionData = json_decode($sessionResponse, true);
 $sessionID = isset($sessionData['output_SessionID']) ? $sessionData['output_SessionID'] : false;
 
-// If we cannot get the token, stop here and show the explicit diagnostic report
+// If the token handshake fails, stop here and show the explicit debug window
 if (!$sessionID) {
     ?>
     <div style="text-align:center; margin-top:50px; font-family:Arial; color:#e74c3c; padding: 20px;">
@@ -106,8 +103,9 @@ if (!$sessionID) {
 }
 
 // ====================================================================
-// STEP 3: EXECUTE STK PUSH USING GENERATED TOKEN
+// STEP 3: EXECUTE STK PUSH USING GENERATED TOKEN (SECOND!)
 // ====================================================================
+// Payload configuration variables map correctly now
 $payload = [
     "input_Amount" => (string)$packageAmount,
     "input_Country" => "TZN",
@@ -126,7 +124,7 @@ curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    "Authorization: Bearer " . $sessionID, // Token passed cleanly as raw string context parameters
+    "Authorization: Bearer " . base64_encode($sessionID), // 🛡️ Reverting back to original Bearer parameter rules now that token generation logic is correctly placed above this block
     "Content-Type: application/json",
     "Origin: *"
 ]);
@@ -145,13 +143,13 @@ $paymentResult = json_decode($paymentResponse, true);
 $responseCode = isset($paymentResult['output_ResponseCode']) ? $paymentResult['output_ResponseCode'] : 'FAIL';
 $responseDesc = isset($paymentResult['output_ResponseDesc']) ? $paymentResult['output_ResponseDesc'] : 'No description returned';
 
-// Final user interface layout checks
+// User presentation layer layouts
 if ($httpStatusCode === 200 && $responseCode === 'INS-0') {
     ?>
     <div style="text-align:center; margin-top:50px; font-family:Arial;">
         <h2>Weka PIN Yako / Enter PIN</h2>
-        <p>Tumetuma ombi la malipo kwenye simu yako ya Vodacom. Tafadhali weka namba ya siri kukamilisha.</p>
-        <p><b>Reference:</b> <?php echo htmlspecialchars($transactionRef); ?></p>
+        <p>Tumetuma ombi la malipo kwenye simu yako ya Vodacom. Tafadhali weka namba ya siri kuthibitisha muamala.</p>
+        <p><b>Reference ID:</b> <?php echo htmlspecialchars($transactionRef); ?></p>
     </div>
     <?php
 } else {
