@@ -36,13 +36,13 @@ $cleanAmount = intval($amount);
         <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
         
         
-                <p style="font-size: 15px; color: #e74c3c; font-weight: bold;">
+                <p style="font-size: 14px; color: #e74c3c; font-weight: bold;">
             ⚠️ MWONGOZO WA MALIPO KWA WATEJA WA M-PESA
         </p>
 
         <div class="instructions-box" style="border: 1px solid #f5c6cb; background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; text-align: left;">
-            <b>Ndugu Mteja (Dear Customer):</b><br><br>
-            Mifumo yetu ya malipo ya TANConnect bado haijaunganishwa na huduma ya M-Pesa kwa sasa. Wakati juhudi zinachukuliwa kuunganisha mifumo, tafadhali tumia namba ya <b>Tigo, Airtel, au Halotel</b> ili kukamilisha muamala na kupata voucher yako.<br><br> Tupigie kwa nambari 0713 123 974 tukufahamishe utaratibu mwingine kupata voucher yako
+            <b>Ndugu Mteja:</b><br><br>
+            Mifumo yetu ya malipo ya TANConnect bado haijaunganishwa na huduma ya <b>M-Pesa</b> kwa sasa. Wakati juhudi zinachukuliwa kuunganisha mifumo, tafadhali tumia namba ya <b>Tigo, Airtel, au Halotel</b> ili kukamilisha muamala na kupata voucher yako.<br><br> Tupigie kwa nambari 0713 123 974 tukufahamishe utaratibu mwingine kupata voucher yako
            
         </div>
 
