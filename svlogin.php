@@ -128,7 +128,7 @@ curl_close($ch);
             <p><b>Reference:</b> <?php echo $transactionRef; ?></p>
         </div>
         <?php
-    }
+    
 } else {
     echo "M-Pesa Gateway Error: " . (isset($paymentResult['output_ResponseDesc']) ? $paymentResult['output_ResponseDesc'] : 'Connection failed');
 }
