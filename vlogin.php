@@ -6,15 +6,16 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 // Initialize baseline flags safely
-\$httpStatusCode = 200; 
+$httpStatusCode = 200;
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// \$phone, amount, and capturedMac are already inherited perfectly from gate.php!
-cleanAmount = intval(amount);
+// $phone, $amount, and $capturedMac are already inherited perfectly from gate.php!
+$cleanAmount = intval($amount);
 ?>
+
 <!DOCTYPE html>
 <html lang="sw">
 <head>
