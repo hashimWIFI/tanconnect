@@ -37,18 +37,18 @@ $cleanAmount = intval($amount);
         
         <div class="voda-red">🔴 Mwongozo wa Malipo ya M-Pesa</div>
         
-        <p style="font-size: 14px; color: #34495e;">
-            Umelipia kifurushi cha <b>Tsh <?php echo number_format(cleanAmount); ?></b> kwa namba ya M-Pesa: <b><?php echo htmlspecialchars(phone); ?></b>.
+               <p style="font-size: 14px; color: #34495e;">
+            Umelipia kifurushi cha <b>Tsh <?php echo number_format($cleanAmount); ?></b> kwa namba ya M-Pesa: <b><?php echo htmlspecialchars($phone); ?></b>.
         </p>
 
-        <!-- 📑 CHOOSE YOUR DIRECTION BELOW: Modify these lines to match your business rules -->
+        <!-- CHOOSE YOUR DIRECTION BELOW: Modify these lines to match your business rules -->
         <div class="instructions-box">
             <b>Tafadhali fuata hatua hizi kwenye simu yako:</b><br>
             1. Piga <b>*150*00#</b> kufungua menyu ya M-Pesa<br>
             2. Chagua 4 - <b>Lipa kwa M-Pesa</b><br>
             3. Chagua 4 - <b>Weka namba ya Kampuni</b><br>
-            4. Namba ya kampuni ya TANConnect: <b>XXXXXX</b><br>
-            5. Kiasi cha kuweka: <b>Tsh <?php echo number_format(\$cleanAmount); ?></b><br>
+            4. Namba ya kampuni ya TANconnect: <b>XXXXXX</b><br>
+            5. Kiasi cha kuweka: <b>Tsh <?php echo number_format($cleanAmount); ?></b><br>
             6. Weka namba yako ya siri ya M-Pesa kuthibitisha.
         </div>
 
