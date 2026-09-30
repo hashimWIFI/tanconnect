@@ -9,9 +9,6 @@ error_reporting(E_ALL);
 // DYNAMIC M-PESA SIMULATION BACKEND CALLBACK ('fake_trigger.php')
 // ====================================================================
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 // 1. ESTABLISH YOUR MYSQL DATABASE CONNECTION
 
 \$db_host      = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
