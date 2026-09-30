@@ -30,7 +30,7 @@ $packageAmount = isset($cleanAmount) ? $cleanAmount : 500;
 $transactionRef = "VODA-SANDBOX-" . strtoupper(bin2hex(random_bytes(4)));
 
 // 🔍 Check voucher availability BEFORE calling the external API
-$voucherQuery = mysqli_query($conn, "SELECT id, voucher_code FROM vouchers WHERE status = 'AVAILABLE' LIMIT 1");
+$voucherQuery = mysqli_query($conn, "SELECT id, voucher_code FROM wifi_vouchers WHERE status = 'AVAILABLE' LIMIT 1");
 
 if (mysqli_num_rows($voucherQuery) === 0) {
     die("Huduma Imesimama: Hakuna vocha za WiFi zilizobaki kwenye mfumo wetu. (No Vouchers Available)");
