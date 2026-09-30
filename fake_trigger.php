@@ -17,16 +17,16 @@ $db_user     = getenv('MYSQLUSER') ?: 'root';
 $db_password = getenv('MYSQLPASSWORD') ?: 'TxGqIUapIhgwhpKbqywjJXkiOWGmQVLJ';
 $db_name = getenv('MYSQLDATABASE') ?: 'railway';
 
-$conn = mysqli_connect(\(db_host,\)db_user, \(db_password,\)db_name);
-if (!\$conn) {
+$conn = mysqli_connect((db_host,)db_user, (db_password,)db_name);
+if (!$conn) {
     die("Database Connection Failure: " . mysqli_connect_error());
 }
 
 // 2. CATCH THE TARGET PHONE NUMBER DYNAMICALLY FROM THE URL
 // Example: fake_trigger.php?phone=255753476850
-\$targetPhone = isset(\(_GET['phone']) ? trim(\)_GET['phone']) : '';
+\$targetPhone = isset((_GET['phone']) ? trim()_GET['phone']) : '';
 
-if (empty(\$targetPhone)) {
+if (empty($targetPhone)) {
     die("<h3>Simulation Error:</h3> Tafadhali weka namba ya simu kwenye URL.<br>
          Mfano: <code>https://tanconnect.co.tz</code>");
 }
@@ -39,7 +39,7 @@ if (mysqli_num_rows($searchQuery) === 0) {
          Hakikisha umeanzisha muamala kwenye tovuti kwanza kabla ya kufungua ukurasa huu.");
 }
 
-voucherRow = mysqli_fetch_assoc(\)searchQuery;
+voucherRow = mysqli_fetch_assoc()searchQuery;
 voucherId = voucherRow['id'];
 voucherCode = voucherRow['voucher_code'];
 
@@ -51,13 +51,13 @@ try {
     \$updateQuery = "UPDATE wifi_vouchers 
                     SET status = 'SUCCESS', 
                         `Muda wa Malipo (EAT Time)` = NOW() 
-                    WHERE id = '\$voucherId'";
+                    WHERE id = '$voucherId'";
                     
     mysqli_query(conn, updateQuery);
-    mysqli_commit(\$conn);
+    mysqli_commit($conn);
     
     echo "<h3>=== MOCK M-PESA PAYMENT SUCCESSFUL ===</h3>";
-    echo "Target Number: <b>\$targetPhone</b><br>";
+    echo "Target Number: <b>$targetPhone</b><br>";
     echo "Voucher Found: <b>voucherCode</b> (ID: voucherId)<br>";
     echo "Status changed from <b>ASSIGNED</b> to <b>SUCCESS</b> inside your table successfully!<br><br>";
     echo "🚀 <b>Next Steps:</b> Your dashboard log screen will now show this voucher as completed.";
