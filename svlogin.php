@@ -6,8 +6,22 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// 1. INHERIT DATABASE CONNECTIVITY
-require_once('db.php'); 
+// ==========================================
+// 2. CONNECT TO AUTOMATED RAILWAY MYSQL DB
+// ==========================================
+$db_host      = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
+$db_port     = getenv('MYSQLPORT') ?: '3306';
+$db_user     = getenv('MYSQLUSER') ?: 'root';
+$db_password = getenv('MYSQLPASSWORD') ?: 'TxGqIUapIhgwhpKbqywjJXkiOWGmQVLJ';
+$db_name = getenv('MYSQLDATABASE') ?: 'railway';
+
+// Establish the connection matrix
+$conn = mysqli_connect($db_host, $db_user, $db_password, $db_name);
+
+// Check if connection was successful
+if (!$conn) {
+    die("Database Connection Failure: " . mysqli_connect_error());
+}
 
 // Inherited from gate.php rules
 $customerPhone = isset($phone) ? $phone : '255753476850';
