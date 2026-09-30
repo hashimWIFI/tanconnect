@@ -136,9 +136,10 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); 
 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4); // Keep IPv4 patch enabled here too
 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    "Authorization: Bearer " . $sessionID, // ⚡ FIXED: Kept the Bearer prefix with trailing space, passing raw session token
+    "Authorization: Bearer " . $sessionID, // ⚡ FIXED: Removed base64_encode to send the token raw
     "Content-Type: application/json",
     "Origin: *"
 ]);
