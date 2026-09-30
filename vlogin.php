@@ -37,28 +37,24 @@ $cleanAmount = intval($amount);
         
         <div class="voda-red">🔴 Mwongozo wa Malipo ya M-Pesa</div>
         
-               <p style="font-size: 14px; color: #34495e;">
-            Umelipia kifurushi cha <b>Tsh <?php echo number_format($cleanAmount); ?></b> kwa namba ya M-Pesa: <b><?php echo htmlspecialchars($phone); ?></b>.
+                <p style="font-size: 15px; color: #e74c3c; font-weight: bold;">
+            ⚠️ Huduma ya M-Pesa Inaboreshwa / M-Pesa Service is Under Maintenance
         </p>
 
-        <!-- CHOOSE YOUR DIRECTION BELOW: Modify these lines to match your business rules -->
-        <div class="instructions-box">
-            <b>Tafadhali fuata hatua hizi kwenye simu yako:</b><br>
-            1. Piga <b>*150*00#</b> kufungua menyu ya M-Pesa<br>
-            2. Chagua 4 - <b>Lipa kwa M-Pesa</b><br>
-            3. Chagua 4 - <b>Weka namba ya Kampuni</b><br>
-            4. Namba ya kampuni ya TANconnect: <b>XXXXXX</b><br>
-            5. Kiasi cha kuweka: <b>Tsh <?php echo number_format($cleanAmount); ?></b><br>
-            6. Weka namba yako ya siri ya M-Pesa kuthibitisha.
+        <div class="instructions-box" style="border: 1px solid #f5c6cb; background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; text-align: left;">
+            <b>Ndugu Mteja (Dear Customer):</b><br><br>
+            Mifumo yetu ya malipo ya Vodacom (M-Pesa) kwa sasa inapitia matengenezo ya kiufundi ili kukuletea huduma ya haraka zaidi.<br><br>
+            Tafadhali <b>rudi nyuma</b> na utumie namba ya <b>Tigo, Airtel, au Halotel</b> ili kukamilisha malipo yako na kupokea vocha yako ya WiFi papo hapo kwa njia ya SMS.<br><br>
+            ---<br><br>
+            Our Vodacom (M-Pesa) channels are currently undergoing technical upgrades to serve you better. <br><br>
+            Please <b>go back</b> and checkout using a <b>Tigo, Airtel, or Halotel</b> number to receive your WiFi voucher instantly via SMS.
         </div>
 
-        <p style="font-size: 12px; color: #7f8c8d; font-style: italic;">
-            Ukishatuma malipo, mfumo utatuma Vocha yako ya WiFi kwa njia ya SMS kwenye namba yako ndani ya dakika 1.
-        </p>
-
-        <a href="javascript:history.back()" class="btn-portal">
-            RUDI NYUMA (BACK HOME)
-        </a>
+        <div style="margin-top: 25px;">
+            <a href="javascript:history.back()" class="btn-portal" style="background-color: #34495e; padding: 12px 25px; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">
+                ⬅️ RUDI NYUMA (GO BACK)
+            </a>
+        </div>
     </div>
 </body>
 </html>
