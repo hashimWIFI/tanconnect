@@ -43,11 +43,8 @@ $cleanAmount = intval($amount);
 
         <div class="instructions-box" style="border: 1px solid #f5c6cb; background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; text-align: left;">
             <b>Ndugu Mteja (Dear Customer):</b><br><br>
-            Mifumo yetu ya malipo ya Vodacom (M-Pesa) kwa sasa inapitia matengenezo ya kiufundi ili kukuletea huduma ya haraka zaidi.<br><br>
-            Tafadhali <b>rudi nyuma</b> na utumie namba ya <b>Tigo, Airtel, au Halotel</b> ili kukamilisha malipo yako na kupokea vocha yako ya WiFi papo hapo kwa njia ya SMS.<br><br>
-            ---<br><br>
-            Our Vodacom (M-Pesa) channels are currently undergoing technical upgrades to serve you better. <br><br>
-            Please <b>go back</b> and checkout using a <b>Tigo, Airtel, or Halotel</b> number to receive your WiFi voucher instantly via SMS.
+            Mifumo yetu ya malipo ya TANConnect bado haijaunganishwa na huduma ya M-Pesa. Wakati juhudi zinachukuliwa kuunganisha mifumo, tafadhali tumia namba ya <b>Tigo, Airtel, au Halotel</b> ili kukamilisha malipo.<br><br> Tupigie kwa nambari 0713 123 974 tukufikishie voucher yako
+           
         </div>
 
         <div style="margin-top: 25px;">
