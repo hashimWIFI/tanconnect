@@ -107,15 +107,18 @@ if (!$sessionID) {
 // ====================================================================
 // Payload configuration variables map correctly now
 $payload = [
-    "input_Amount" => (string)$packageAmount,
-    "input_Country" => "TZN",
-    "input_Currency" => "TZS",
-    "input_CustomerMSISDN" => (string)$customerPhone,
-    "input_ServiceProviderCode" => "000000", 
-    "input_ThirdPartyConversationID" => (string)$transactionRef,
-    "input_TransactionReference" => (string)$transactionRef,
-    "input_PurchasedItemsDesc" => "WiFi Voucher Package"
-];
+   $ch = curl_init($c2bUrl);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); 
+curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    "Authorization: " . $sessionID, // ⚡ FIXED: Removed 'Bearer ' prefix and 'base64_encode' to pass the token raw as expected by the payment gateway
+    "Content-Type: application/json",
+    "Origin: *"
+]);
+
 
 $ch = curl_init($c2bUrl);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
