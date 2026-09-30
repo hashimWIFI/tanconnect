@@ -108,15 +108,15 @@ $payload = [
     "input_Currency" => "TZS",
     "input_CustomerMSISDN" => (string)$customerPhone,
     "input_ServiceProviderCode" => "000000", 
-    "input_ThirdPartyConversationID" => $transactionRef,
-    "input_TransactionReference" => $transactionRef,
+    "input_ThirdPartyConversationID" => (string)$transactionRef,
+    "input_TransactionReference" => (string)$transactionRef,
     "input_PurchasedItemsDesc" => "WiFi Voucher Package"
 ];
 
 $ch = curl_init($c2bUrl);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Bypasses SSL blocks for sandbox responses
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); 
 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
@@ -124,13 +124,21 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, [
     "Content-Type: application/json",
     "Origin: *"
 ]);
+
 $paymentResponse = curl_exec($ch);
-$httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE); // Mapped correctly with $ sign
+$httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+// Catch any system infrastructure or network delivery level failures instantly
+if (curl_errno($ch)) {
+    $curlErrorText = curl_error($ch);
+    curl_close($ch);
+    die("<h3>=== CRITICAL SERVER NETWORK FAILURE ===</h3>cURL Transport Error: <b>" . htmlspecialchars($curlErrorText) . "</b>");
+}
 curl_close($ch);
 
 $paymentResult = json_decode($paymentResponse, true);
 $responseCode = isset($paymentResult['output_ResponseCode']) ? $paymentResult['output_ResponseCode'] : 'FAIL';
-$responseDesc = isset($paymentResult['output_ResponseDesc']) ? $paymentResult['output_ResponseDesc'] : 'Connection failed';
+$responseDesc = isset($paymentResult['output_ResponseDesc']) ? $paymentResult['output_ResponseDesc'] : 'No description returned';
 
 // Clean execution logic structure
 if ($httpStatusCode === 200 && $responseCode === 'INS-0') {
@@ -143,9 +151,14 @@ if ($httpStatusCode === 200 && $responseCode === 'INS-0') {
     <?php
 } else {
     ?>
-    <div style="text-align:center; margin-top:50px; font-family:Arial; color:#e74c3c;">
+    <div style="text-align:center; margin-top:50px; font-family:Arial; color:#e74c3c; padding: 20px;">
         <h2>Muamala Umeshindwa / Transaction Failed</h2>
-        <p>M-Pesa Gateway Error: <?php echo htmlspecialchars($responseDesc); ?></p>
+        <p>M-Pesa Gateway Error: <b><?php echo htmlspecialchars($responseDesc); ?></b></p>
+        <hr style="max-width:400px; border:1px solid #f5c6cb;">
+        <p>HTTP Code: <b><?php echo $httpStatusCode; ?></b> | Response Code: <b><?php echo htmlspecialchars($responseCode); ?></b></p>
+        <p style="font-size:12px; color:#7f8c8d; background:#f8d7da; padding:10px; display:inline-block; border-radius:4px;">
+            Raw JSON Response: <?php echo htmlspecialchars($paymentResponse); ?>
+        </p>
         <p><a href="javascript:history.back()">Bonyeza hapa kurudi nyuma na kujaribu tena</a></p>
     </div>
     <?php
