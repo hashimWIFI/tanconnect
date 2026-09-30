@@ -10,11 +10,11 @@ ini_set('display_errors', 1);
 // ==========================================
 // 2. CONNECT TO AUTOMATED RAILWAY MYSQL DB
 // ==========================================
-$db_host      = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
+$db_host     = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
 $db_port     = getenv('MYSQLPORT') ?: '3306';
 $db_user     = getenv('MYSQLUSER') ?: 'root';
 $db_password = getenv('MYSQLPASSWORD') ?: 'TxGqIUapIhgwhpKbqywjJXkiOWGmQVLJ';
-$db_name = getenv('MYSQLDATABASE') ?: 'railway';
+$db_name     = getenv('MYSQLDATABASE') ?: 'railway';
 
 // Establish the connection matrix
 $conn = mysqli_connect($db_host, $db_user, $db_password, $db_name);
@@ -53,6 +53,7 @@ $publicKeyBase64 = "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEArv9yxA69XQKBo24B
 $sessionUrl = "https://openapi.m-pesa.com/sandbox/ipg/v2/vodacomTZN/getSession/";
 $c2bUrl     = "https://openapi.m-pesa.com/sandbox/ipg/v2/vodacomTZN/c2bPayment/singleStage/";
 
+// Format the key to clean PEM structure context rules
 $pemKey = "-----BEGIN PUBLIC KEY-----\n" . chunk_split($publicKeyBase64, 64, "\n") . "-----END PUBLIC KEY-----";
 $publicKeyResource = openssl_pkey_get_public($pemKey);
 
@@ -60,16 +61,18 @@ if (!$publicKeyResource) {
     die("Authentication Engine Failure: Invalid Public Key Configuration.");
 }
 
+// Encrypt the plain text API key safely
 $encrypted = "";
 openssl_public_encrypt($apiKey, $encrypted, $publicKeyResource, OPENSSL_PKCS1_PADDING);
 $sessionContextToken = base64_encode($encrypted);
 
+// ⚡ EXECUTE HANDSHAKE WITH VERIFIED AUTHENTICATION HEADERS
 $ch = curl_init($sessionUrl);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); 
 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    "ApiKey: " . $sessionContextToken,
+    "Authorization: Bearer " . $sessionContextToken, // Fixed syntax parameter formatting
     "Content-Type: application/json",
     "Origin: *"
 ]);
@@ -82,7 +85,7 @@ $sessionID = isset($sessionData['output_SessionID']) ? $sessionData['output_Sess
 
 if (!$sessionID) {
     echo "<h3>=== STEP 1 SUCCESSFUL: VOUCHER RESERVED IN DATABASE ===</h3>";
-    echo "Reference created: <b>" . $transactionRef . "</b> (Check your MySQL table right now!)<br><br>";
+    echo "Reference created: <b>" . $transactionRef . "</b><br><br>";
     echo "<h3>=== STEP 2 API DEBUG: AUTHENTICATION FAILED ===</h3>";
     echo "HTTP Status Code: <b>" . $httpCode . "</b><br>";
     echo "Raw Response: <pre>" . htmlspecialchars($sessionResponse) . "</pre><br>";
@@ -159,4 +162,3 @@ if ($httpStatusCode === 200 && $responseCode === 'INS-0') {
     echo "M-Pesa Gateway Error: " . (isset($paymentResult['output_ResponseDesc']) ? $paymentResult['output_ResponseDesc'] : 'Connection failed');
 }
 ?>
-
