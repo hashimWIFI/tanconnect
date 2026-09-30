@@ -367,7 +367,7 @@ $log_result = $conn->query($log_query);
                     <!-- 🟢 DOWNLOAD EXCEL REPORT ACTION LINK BUTTON -->
                    <!-- 🟢 UPGRADED PRODUCTION EXPORT BUTTON: Automatically passes calendar input filter memory strings -->
 <a href="export_sales.php?from_date=<?php echo isset($_GET['from_date']) ? urlencode($_GET['from_date']) : ''; ?>&to_date=<?php echo isset($_GET['to_date']) ? urlencode($_GET['to_date']) : ''; ?>" 
-   style="background-color: #10b981; color: white; padding: 10px 16px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 4px rgba(16,185,129,0.1); transition: background-color 0.2s;" 
+   style="background-color: #10b981; color: white; padding: 10px 16px; margin-left: 230px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 4px rgba(16,185,129,0.1); transition: background-color 0.2s;" 
    onmouseover="this.style.backgroundColor='#059669'" 
    onmouseout="this.style.backgroundColor='#10b981'">
    📊 Pakua Ripoti (Excel)
