@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 if (\$_SERVER['REQUEST_METHOD'] === 'POST') {
-    phone = isset(_POST['customer_phone']) ? trim(\(_POST['customer_phone']) : '';\)amount = isset(\(_POST['amount']) ? trim(\)_POST['amount']) : '';
+    phone = isset(_POST['customer_phone']) ? trim(\(_POST['customer_phone']) : '';\)amount = isset(\(_POST['amount']) ? trim(\)_POST['amount']) : ''; 
     \(amount = str_replace(',', '',\)amount);
 
     // Normalize phone formatting rules safely
