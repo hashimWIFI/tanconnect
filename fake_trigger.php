@@ -1,4 +1,10 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Rest of your fake_trigger.php code starts below...
+
 // ====================================================================
 // DYNAMIC M-PESA SIMULATION BACKEND CALLBACK ('fake_trigger.php')
 // ====================================================================
