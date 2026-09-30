@@ -26,8 +26,20 @@ if (!$conn) {
 // Inherited variables from gate.php
 $customerPhone = isset($phone) ? $phone : '255753476850';
 $packageAmount = isset($cleanAmount) ? $cleanAmount : 500;
-$transactionRef = "9" . time() . rand(10, 99); 
-// 🛡️ Lock and reserve the voucher instantly inside MySQL by tagging the phone and tracking reference number
+$transactionRef = "9" . time() . rand(10, 99);
+
+// 🔍 Check voucher availability BEFORE calling the external API
+$voucherQuery = mysqli_query($conn, "SELECT id, voucher_code FROM wifi_vouchers WHERE status = 'AVAILABLE' LIMIT 1");
+
+if (mysqli_num_rows($voucherQuery) === 0) {
+    die("Huduma Imesimama: Hakuna vocha za WiFi zilizobaki kwenye mfumo wetu. (No Vouchers Available)");
+}
+
+$voucherRow = mysqli_fetch_assoc($voucherQuery);
+$voucherId   = $voucherRow['id'];
+$voucherCode = $voucherRow['voucher_code'];
+
+// 🛡️ Lock, reserve the voucher, and save the transaction_id inside MySQL
 $updateSql = "UPDATE wifi_vouchers 
               SET status = 'ASSIGNED', 
                   assigned_phone = '$customerPhone', 
@@ -35,6 +47,7 @@ $updateSql = "UPDATE wifi_vouchers
               WHERE id = '$voucherId'";
               
 mysqli_query($conn, $updateSql);
+
 
 
 // ====================================================================
