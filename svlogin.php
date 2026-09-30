@@ -74,15 +74,18 @@ openssl_public_encrypt($apiKey, $encrypted, $publicKeyResource, OPENSSL_PKCS1_PA
 $sessionContextToken = base64_encode($encrypted);
 
 // ⚡ EXECUTE HANDSHAKE WITH VERIFIED AUTHENTICATION HEADERS
-$ch = curl_init($sessionUrl);
+$ch = curl_init($c2bUrl);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); 
 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    "Authorization: Bearer " . $sessionContextToken, // Fixed syntax parameter formatting
+    "Authorization: Bearer " . $sessionID, // ⚡ FIXED: Removed base64_encode to send the token raw
     "Content-Type: application/json",
     "Origin: *"
 ]);
+
 $sessionResponse = curl_exec($ch);
 $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
