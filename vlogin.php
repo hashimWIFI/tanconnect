@@ -35,10 +35,9 @@ $cleanAmount = intval($amount);
         <div style="font-size: 24px; font-family: Broadway, Helvetica, sans-serif; color: #1e3c72; font-weight: bold; margin-bottom: 2px;">TANConnect<sup style="font-size: 10px;">®</sup></div>
         <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
         
-        <div class="voda-red">🔴 Mwongozo wa Malipo ya M-Pesa</div>
         
                 <p style="font-size: 15px; color: #e74c3c; font-weight: bold;">
-            ⚠️ Huduma ya M-Pesa Inaboreshwa / M-Pesa Service is Under Maintenance
+            ⚠️ MWONGOZO WA MALIPO KWA WATEJA WA M-PESA
         </p>
 
         <div class="instructions-box" style="border: 1px solid #f5c6cb; background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; text-align: left;">
@@ -52,6 +51,6 @@ $cleanAmount = intval($amount);
                 ⬅️ RUDI NYUMA (GO BACK)
             </a>
         </div>
-    </div>
+    
 </body>
 </html>
