@@ -6,9 +6,8 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-
 // ==========================================
-// 2. CONNECT TO AUTOMATED RAILWAY MYSQL DB
+// STEP1. CONNECT TO AUTOMATED RAILWAY MYSQL DB
 // ==========================================
 $db_host     = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
 $db_port     = getenv('MYSQLPORT') ?: '3306';
@@ -27,21 +26,16 @@ if (!$conn) {
 // Inherited variables from gate.php
 $customerPhone = isset($phone) ? $phone : '255753476850';
 $packageAmount = isset($cleanAmount) ? $cleanAmount : 500;
-$transactionRef = "VODA-SANDBOX-" . strtoupper(bin2hex(random_bytes(4)));
+$transactionRef = "9" . time() . rand(10, 99); 
+// 🛡️ Lock and reserve the voucher instantly inside MySQL by tagging the phone and tracking reference number
+$updateSql = "UPDATE wifi_vouchers 
+              SET status = 'ASSIGNED', 
+                  assigned_phone = '$customerPhone', 
+                  transaction_id = '$transactionRef' 
+              WHERE id = '$voucherId'";
+              
+mysqli_query($conn, $updateSql);
 
-// 🔍 Check voucher availability BEFORE calling the external API
-$voucherQuery = mysqli_query($conn, "SELECT id, voucher_code FROM wifi_vouchers WHERE status = 'AVAILABLE' LIMIT 1");
-
-if (mysqli_num_rows($voucherQuery) === 0) {
-    die("Huduma Imesimama: Hakuna vocha za WiFi zilizobaki kwenye mfumo wetu. (No Vouchers Available)");
-}
-
-$voucherRow = mysqli_fetch_assoc($voucherQuery);
-$voucherId   = $voucherRow['id'];
-$voucherCode = $voucherRow['voucher_code'];
-
-// 🛡️ Lock and reserve the voucher instantly inside MySQL
-mysqli_query($conn, "UPDATE wifi_vouchers SET status = 'ASSIGNED', assigned_phone = '$customerPhone' WHERE id = '$voucherId'");
 
 // ====================================================================
 // STEP 2: RUN VODACOM SANDBOX AUTHENTICATION HANDSHAKE
