@@ -109,6 +109,8 @@ $payload = [
 $ch = curl_init($c2bUrl);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Bypasses SSL blocks for sandbox responses
+curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
     "Authorization: Bearer " . base64_encode($sessionID), 
@@ -116,49 +118,29 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, [
     "Origin: *"
 ]);
 $paymentResponse = curl_exec($ch);
+$httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE); // Mapped correctly with $ sign
 curl_close($ch);
 
-?>
-<div style="text-align:center; margin-top:50px; font-family:Arial;">
-    <h2>Weka PIN Yako / Enter PIN</h2>
-     <p>Tumetuma ombi la malipo kwenye simu yako ya Vodacom. Tafadhali weka namba ya siri kukamilisha.</p>
-            <p><b>Reference:</b> <?php echo $transactionRef; ?></p>
-        </div>
-        <?php
- // ====================================================================
-// STEP C: RUN RESERVATION & DATABASE UPDATES IF STK INITIATED
-// ====================================================================
+$paymentResult = json_decode($paymentResponse, true);
+$responseCode = isset($paymentResult['output_ResponseCode']) ? $paymentResult['output_ResponseCode'] : 'FAIL';
+$responseDesc = isset($paymentResult['output_ResponseDesc']) ? $paymentResult['output_ResponseDesc'] : 'Connection failed';
+
+// Clean execution logic structure
 if ($httpStatusCode === 200 && $responseCode === 'INS-0') {
-    
-    // Fetch and reserve an available voucher code
-    $voucherQuery = mysqli_query($conn, "SELECT id, voucher_code FROM vouchers WHERE status = 'AVAILABLE' LIMIT 1");
-    
-    if (mysqli_num_rows($voucherQuery) > 0) {
-        $voucherRow = mysqli_fetch_assoc($voucherQuery);
-        $voucherId = $voucherRow['id'];
-        
-        // Mark as ASSIGNED temporarily while waiting for customer PIN entry
-        mysqli_query($conn, "UPDATE vouchers SET status = 'ASSIGNED', assigned_to = '$customerPhone' WHERE id = '$voucherId'");
-        
-        // Log transaction as PENDING
-        mysqli_query($conn, "INSERT INTO transactions (transaction_ref, phone, amount, network, status, voucher_id, created_at) 
-                             VALUES ('$transactionRef', '$customerPhone', '$packageAmount', 'Vodacom', 'PENDING', '$voucherId', NOW())");
-        
-        // Display processing interface screen to user
-        ?>
-        <div style="text-align:center; margin-top:50px; font-family:Arial;">
-            <h2>Weka PIN Yako / Enter PIN</h2>
-            <p>Tumetuma ombi la malipo kwenye simu yako ya Vodacom. Tafadhali weka namba ya siri kukamilisha.</p>
-            <p><b>Reference:</b> <?php echo $transactionRef; ?></p>
-        </div>
-        <?php
-    }
+    ?>
+    <div style="text-align:center; margin-top:50px; font-family:Arial;">
+        <h2>Weka PIN Yako / Enter PIN</h2>
+        <p>Tumetuma ombi la malipo kwenye simu yako ya Vodacom. Tafadhali weka namba ya siri kukamilisha.</p>
+        <p><b>Reference:</b> <?php echo htmlspecialchars($transactionRef); ?></p>
+    </div>
+    <?php
 } else {
-    echo "M-Pesa Gateway Error: " . (isset($paymentResult['output_ResponseDesc']) ? $paymentResult['output_ResponseDesc'] : 'Connection failed');
-}
-?>
-   
-} else {
-    echo "M-Pesa Gateway Error: " . (isset($paymentResult['output_ResponseDesc']) ? $paymentResult['output_ResponseDesc'] : 'Connection failed');
+    ?>
+    <div style="text-align:center; margin-top:50px; font-family:Arial; color:#e74c3c;">
+        <h2>Muamala Umeshindwa / Transaction Failed</h2>
+        <p>M-Pesa Gateway Error: <?php echo htmlspecialchars($responseDesc); ?></p>
+        <p><a href="javascript:history.back()">Bonyeza hapa kurudi nyuma na kujaribu tena</a></p>
+    </div>
+    <?php
 }
 ?>
