@@ -11,13 +11,13 @@ error_reporting(E_ALL);
 
 // 1. ESTABLISH YOUR MYSQL DATABASE CONNECTION
 
-\$db_host      = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
-\$db_port     = getenv('MYSQLPORT') ?: '3306';
-\$db_user     = getenv('MYSQLUSER') ?: 'root';
-\$db_password = getenv('MYSQLPASSWORD') ?: 'TxGqIUapIhgwhpKbqywjJXkiOWGmQVLJ';
-\$db_name = getenv('MYSQLDATABASE') ?: 'railway';
+$db_host      = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
+$db_port     = getenv('MYSQLPORT') ?: '3306';
+$db_user     = getenv('MYSQLUSER') ?: 'root';
+$db_password = getenv('MYSQLPASSWORD') ?: 'TxGqIUapIhgwhpKbqywjJXkiOWGmQVLJ';
+$db_name = getenv('MYSQLDATABASE') ?: 'railway';
 
-\$conn = mysqli_connect(\(db_host,\)db_user, \(db_password,\)db_name);
+$conn = mysqli_connect(\(db_host,\)db_user, \(db_password,\)db_name);
 if (!\$conn) {
     die("Database Connection Failure: " . mysqli_connect_error());
 }
@@ -32,14 +32,14 @@ if (empty(\$targetPhone)) {
 }
 
 // 3. LOOKUP THE LATEST 'ASSIGNED' VOUCHER FOR THIS SPECIFIC NUMBER
-\(searchQuery = mysqli_query(\)conn, "SELECT id, voucher_code FROM wifi_vouchers WHERE assigned_phone = '\$targetPhone' AND status = 'ASSIGNED' ORDER BY id DESC LIMIT 1");
+(searchQuery = mysqli_query(\)conn, "SELECT id, voucher_code FROM wifi_vouchers WHERE assigned_phone = '$targetPhone' AND status = 'ASSIGNED' ORDER BY id DESC LIMIT 1");
 
-if (mysqli_num_rows(\$searchQuery) === 0) {
-    die("<h3>Simulation Info:</h3> Hakuna vocha iliyopo kwenye hali ya 'ASSIGNED' kwa namba <b>\$targetPhone</b> right now.<br>
+if (mysqli_num_rows($searchQuery) === 0) {
+    die("<h3>Simulation Info:</h3> Hakuna vocha iliyopo kwenye hali ya 'ASSIGNED' kwa namba <b>$targetPhone</b> right now.<br>
          Hakikisha umeanzisha muamala kwenye tovuti kwanza kabla ya kufungua ukurasa huu.");
 }
 
-\(voucherRow = mysqli_fetch_assoc(\)searchQuery);
+voucherRow = mysqli_fetch_assoc(\)searchQuery;
 voucherId = voucherRow['id'];
 voucherCode = voucherRow['voucher_code'];
 
