@@ -128,7 +128,39 @@ curl_close($ch);
             <p><b>Reference:</b> <?php echo $transactionRef; ?></p>
         </div>
         <?php
+ // ====================================================================
+// STEP C: RUN RESERVATION & DATABASE UPDATES IF STK INITIATED
+// ====================================================================
+if ($httpStatusCode === 200 && $responseCode === 'INS-0') {
     
+    // Fetch and reserve an available voucher code
+    $voucherQuery = mysqli_query($conn, "SELECT id, voucher_code FROM vouchers WHERE status = 'AVAILABLE' LIMIT 1");
+    
+    if (mysqli_num_rows($voucherQuery) > 0) {
+        $voucherRow = mysqli_fetch_assoc($voucherQuery);
+        $voucherId = $voucherRow['id'];
+        
+        // Mark as ASSIGNED temporarily while waiting for customer PIN entry
+        mysqli_query($conn, "UPDATE vouchers SET status = 'ASSIGNED', assigned_to = '$customerPhone' WHERE id = '$voucherId'");
+        
+        // Log transaction as PENDING
+        mysqli_query($conn, "INSERT INTO transactions (transaction_ref, phone, amount, network, status, voucher_id, created_at) 
+                             VALUES ('$transactionRef', '$customerPhone', '$packageAmount', 'Vodacom', 'PENDING', '$voucherId', NOW())");
+        
+        // Display processing interface screen to user
+        ?>
+        <div style="text-align:center; margin-top:50px; font-family:Arial;">
+            <h2>Weka PIN Yako / Enter PIN</h2>
+            <p>Tumetuma ombi la malipo kwenye simu yako ya Vodacom. Tafadhali weka namba ya siri kukamilisha.</p>
+            <p><b>Reference:</b> <?php echo $transactionRef; ?></p>
+        </div>
+        <?php
+    }
+} else {
+    echo "M-Pesa Gateway Error: " . (isset($paymentResult['output_ResponseDesc']) ? $paymentResult['output_ResponseDesc'] : 'Connection failed');
+}
+?>
+   
 } else {
     echo "M-Pesa Gateway Error: " . (isset($paymentResult['output_ResponseDesc']) ? $paymentResult['output_ResponseDesc'] : 'Connection failed');
 }
