@@ -73,14 +73,29 @@ $ch = curl_init($sessionUrl);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); 
 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+
+// ⚡ NETWORK ARCHITECTURE PATCH: Force IPv4 to prevent 30-second hang drops
+curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4); 
+curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 8); // Abort if server takes more than 8 seconds to reply
+curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    "Authorization: Bearer " . $sessionContextToken, // 🛡️ Step 2 Handshake requires standard Bearer token format
+    "Authorization: Bearer " . $sessionContextToken,
     "Content-Type: application/json",
     "Origin: *"
 ]);
 $sessionResponse = curl_exec($ch);
 $httpHandshakeCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+if (curl_errno($ch)) {
+    $handshakeError = curl_error($ch);
+    curl_close($ch);
+    die("<h3>=== VODACOM SANDBOX CONNECTION TIMEOUT ===</h3>
+         <p>Network Error: <b>" . htmlspecialchars($handshakeError) . "</b></p>
+         <p>The sandbox server refused to respond over the active network interface layout. This confirms an API gateway drop.</p>");
+}
 curl_close($ch);
+
 
 $sessionData = json_decode($sessionResponse, true);
 $sessionID = isset($sessionData['output_SessionID']) ? $sessionData['output_SessionID'] : false;
