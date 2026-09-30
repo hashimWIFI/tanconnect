@@ -17,7 +17,8 @@ $db_user     = getenv('MYSQLUSER') ?: 'root';
 $db_password = getenv('MYSQLPASSWORD') ?: 'TxGqIUapIhgwhpKbqywjJXkiOWGmQVLJ';
 $db_name = getenv('MYSQLDATABASE') ?: 'railway';
 
-$conn = mysqli_connect((db_host,)db_user, (db_password,)db_name);
+$conn = mysqli_connect($db_host, $db_user, $db_password, $db_name);
+
 if (!$conn) {
     die("Database Connection Failure: " . mysqli_connect_error());
 }
