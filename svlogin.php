@@ -123,10 +123,11 @@ curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    "Authorization: " . $sessionID, 
+    "Authorization: Bearer " . $sessionID, // ⚡ FIXED: Kept the Bearer prefix with trailing space, passing raw session token
     "Content-Type: application/json",
     "Origin: *"
 ]);
+
 
 $paymentResponse = curl_exec($ch);
 $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
