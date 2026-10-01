@@ -1,8 +1,13 @@
 <?php
+// ====================================================================
+// TANCONNECT AUTOMATED VOUCHER POOL RECOVERY ENGINE ('cron_cleanup.php')
+// ====================================================================
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 header("Content-Type: application/json");
 
+// 1. ESTABLISH CONNECTIVITY USING RAILWAY ENV VARIABLES
 // 1. Establish database connection using your dynamic Railway variables
 $db_host = getenv('MYSQLHOST')     ?: '127.0.0.1';
 $db_port = getenv('MYSQLPORT')     ?: '3306';
@@ -11,20 +16,16 @@ $db_pass = getenv('MYSQLPASSWORD') ?: '';
 $db_name = getenv('MYSQLDATABASE') ?: 'railway';
 
 $conn = new mysqli($db_host, $db_user, $db_pass, $db_name, $db_port);
+
 if ($conn->connect_error) {
-    echo json_encode(["status" => "error", "message" => "Database node connection failed"]);
+    echo json_encode(["status" => "error", "message" => "Database node connection failed: " . $conn->connect_error]);
     exit();
 }
 
 try {
-    // 2. ISOLATE OLD EXPIRED ASSIGNED VOUCHERS (Older than 2 hours)
-    // We convert the current timestamp minus 7200 seconds (2 hours) to target abandoned sessions.
-    $expirationThreshold = time() - 7200; 
-    
-    // 3. EXECUTE RECOVERY QUERY
-    // This updates the status back to AVAILABLE, clears out the phone, transaction ID, and MAC,
-    // ensuring no voucher gets permanently locked by an abandoned checkout attempt.
-        // RECOVERY ENGINE: Isolates rows stuck in ASSIGNED state for longer than 2 hours (7200 seconds)
+    // 2. CONSOLIDATED RECOVERY ENGINE QUERY
+    // Reverts records stuck in 'ASSIGNED' state for longer than 2 hours back to 'AVAILABLE'
+    // safely clearing out temporary transaction strings so new customers can buy them.
     $cleanupQuery = "UPDATE wifi_vouchers 
                      SET status = 'AVAILABLE', 
                          assigned_phone = NULL, 
@@ -32,12 +33,10 @@ try {
                          transaction_id = NULL,
                          purchased_at = NULL 
                      WHERE status = 'ASSIGNED' 
-                     AND purchased_at < NOW() - INTERVAL 2 HOUR";
-                     ABS(CAST(SUBSTRING(transaction_id, 6) AS UNSIGNED)) < $expirationThreshold 
-                     AND transaction_id LIKE 'WIFI-%'";
+                     AND (`Muda wa Malipo (EAT Time)` < NOW() - INTERVAL 2 HOUR OR created_at < NOW() - INTERVAL 2 HOUR)";
 
-    if ($conn->query($cleanupQuery) === TRUE) {
-        $recoveredRows = $conn->affected_rows;
+    if (conn->query(cleanupQuery) === TRUE) {
+        recoveredRows = conn->affected_rows;
         echo json_encode([
             "status" => "success",
             "message" => "Database cleanup completed successfully",
