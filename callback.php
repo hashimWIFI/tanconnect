@@ -37,16 +37,17 @@ if (!$paymentData) {
 }
 
 // Lines 38-40: Added all missing $ signs and removed stray parenthesis formatting blocks
+// Lines 38-40: Keep your clean lowercase parameters mapping intact
 $status    = isset($paymentData['transactionstatus']) ? strtolower(trim($paymentData['transactionstatus'])) : (isset($paymentData['transactionStatus']) ? strtolower(trim($paymentData['transactionStatus'])) : '');
 $realTxId  = isset($paymentData['transactionid']) ? trim($paymentData['transactionid']) : (isset($paymentData['transactionId']) ? trim($paymentData['transactionId']) : (isset($paymentData['reference']) ? trim($paymentData['reference']) : ''));
 $prePaidId = isset($paymentData['utilityref']) ? trim($paymentData['utilityref']) : (isset($paymentData['utilityReference']) ? trim($paymentData['utilityReference']) : '');
 
-// Line 42: Fixed missing $ signs on status and prePaidId variables
+// Line 42: Aligned variable spelling completely ($prePaidId matches line 40)
 if (($status === 'success' || $status === 'completed') && !empty($prePaidId)) {
-    // Line 43: Fixed missing $ sign on $searchQuery and $conn variables
+    
+    // Line 43: Swapped temporary parameter identifier mapping safely
     $searchQuery = mysqli_query($conn, "SELECT id FROM wifi_vouchers WHERE transaction_id = '$prePaidId' LIMIT 1");
     
-    // Line 45: Fixed missing $ sign on $voucherRow
     if (mysqli_num_rows($searchQuery) > 0) {
         $voucherRow = mysqli_fetch_assoc($searchQuery);
         $voucherId  = $voucherRow['id'];
