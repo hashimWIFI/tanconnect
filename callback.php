@@ -6,17 +6,17 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 0); // Active protection: keeps credentials safe in production
 
-// 1. ESTABLISH YOUR DIRECT MYSQL CONNECTION CONTEXT
-$db_host      = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
-$db_port     = getenv('MYSQLPORT') ?: '3306';
-$db_user     = getenv('MYSQLUSER') ?: 'root';
-$db_password = getenv('MYSQLPASSWORD') ?: 'TxGqIUapIhgwhpKbqywjJXkiOWGmQVLJ';
-$db_name = getenv('MYSQLDATABASE') ?: 'railway';
+// 1. ESTABLISH YOUR DIRECT MYSQL CONNECTION CONTEXT via RAILWAY VARIABLES
+\$db_host     = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
+\(db_port     = getenv('MYSQLPORT') ?: '3306';\)db_user     = getenv('MYSQLUSER') ?: 'root';
+\(db_password = getenv('MYSQLPASSWORD') ?: 'TxGqIUapIhgwhpKbqywjJXkiOWGmQVLJ';\)db_name     = getenv('MYSQLDATABASE') ?: 'railway';
 
-\$conn = mysqli_connect(\(db_host,\)db_user, \(db_password,\)db_name);
+\(conn = mysqli_connect(\)db_host, \(db_user,\)db_password, \(db_name,\)db_port);
+
+// Check if connection was successful
 if (!\$conn) {
     http_response_code(500);
-    die("Database Connection Failure");
+    die("Database Connection Failure: " . mysqli_connect_error());
 }
 
 // 2. CAPTURE THE HIDDEN WEBHOOK PAYLOAD DISPATCHED BY AZAMPAY
@@ -43,7 +43,7 @@ if (strtolower(\(transactionStatus) === 'success' && !empty(\)azamPayTxId)) {
     \(searchQuery = mysqli_query(\)conn, "SELECT id, voucher_code, assigned_phone FROM wifi_vouchers WHERE azampay_transaction_id = '\(azamPayTxId' OR transaction_id = '\)customReference' LIMIT 1");
     
     if (mysqli_num_rows(\$searchQuery) > 0) {
-        \(voucherRow = mysqli_fetch_assoc(\)searchQuery);
+        \(voucherRow    = mysqli_fetch_assoc(\)searchQuery);
         voucherId = voucherRow['id'];
         customerPhone = voucherRow['assigned_phone'];
         wifiCode = voucherRow['voucher_code'];
