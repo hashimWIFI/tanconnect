@@ -4,7 +4,7 @@
 // ====================================================================
 
 error_reporting(E_ALL);
-ini_set('display_errors', 0); // Keep logs safe in production
+ini_set('display_errors', 0); // Active protection: keeps credentials safe in production
 
 // 1. ESTABLISH YOUR DIRECT MYSQL CONNECTION CONTEXT via RAILWAY VARIABLES
 $db_host     = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
@@ -33,10 +33,10 @@ if (!$paymentData) {
     die("Invalid JSON Request Payload Structure");
 }
 
-// 3. EXTRACT CORE AZAMPAY DATA KEYS CLEANLY
-$transactionStatus = isset($paymentData['transactionStatus']) ? trim($paymentData['transactionStatus']) : '';
+// 3. EXTRACT AZAMPAY DATA KEYS WITH LOWERCASE INDEX ALIGNMENT
+$transactionStatus = isset($paymentData['transactionstatus']) ? trim($paymentData['transactionstatus']) : ''; // ⚡ FIXED: Lowercase mapping
 $azamPayTxId       = isset($paymentData['transactionId']) ? trim($paymentData['transactionId']) : '';
-$customReference    = isset($paymentData['utilityReference']) ? trim($paymentData['utilityReference']) : '';
+$customReference    = isset($paymentData['utilityref']) ? trim($paymentData['utilityref']) : '';         // ⚡ FIXED: Lowercase mapping
 
 // 4. VERIFY LOGIC STATUS MATRIX
 if (strtolower($transactionStatus) === 'success' && !empty($azamPayTxId)) {
@@ -73,7 +73,6 @@ if (strtolower($transactionStatus) === 'success' && !empty($azamPayTxId)) {
             exit();
         }
     } else {
-        // Log if AzamPay sent a success reference but it didn't match any row in your table
         file_put_contents('azampay_error_log.txt', date('[Y-m-d H:i:s] ') . "Mismatch Error: No record found for AzamPay ID: $azamPayTxId or Ref: $customReference" . PHP_EOL, FILE_APPEND);
     }
 }
