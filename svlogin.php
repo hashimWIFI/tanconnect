@@ -117,9 +117,18 @@ if (!$sessionID) {
     die();
 }
 
-/// ====================================================================
+// ====================================================================
 // STEP 3: EXECUTE STK PUSH USING GENERATED TOKEN
 // ====================================================================
+
+// ⏳ SDK SPECIFICATION COMPLIANCE: Wait for the session token to propagate live across gateways
+sleep(30); 
+
+// 🔒 RE-ENCRYPTION LAYER: The Vodacom API gateway expects the Session ID to be RSA encrypted too!
+$encryptedSession = "";
+openssl_public_encrypt($sessionID, $encryptedSession, $publicKeyResource, OPENSSL_PKCS1_PADDING);
+$finalAuthToken = base64_encode($encryptedSession);
+
 $payload = [
     "input_Amount" => (string)$packageAmount,
     "input_Country" => "TZN",
@@ -139,11 +148,10 @@ curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4); 
 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
-     "X-API-Key: " . $sessionID, // ⚡ FIXED: Passed the token dynamically via Vodacom's custom open api parameter header
+    "Authorization: Bearer " . $finalAuthToken, // ⚡ FIXED: Passed the newly encrypted session context string
     "Content-Type: application/json",
     "Origin: *"
 ]);
-
 
 $paymentResponse = curl_exec($ch);
 $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
