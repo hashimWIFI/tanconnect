@@ -31,12 +31,10 @@ if (!$paymentData) {
     echo json_encode(["status" => "error", "message" => "Invalid JSON payload structure"]);
     exit();
 }
-
-$status = isset($paymentData['transactionstatus']) ? strtolower(trim($paymentData['transactionstatus'])) : (isset($paymentData['transactionStatus']) ? strtolower(trim($paymentData['transactionStatus'])) : '');
-
-$realTxId = isset($paymentData['reference']) ? trim($paymentData['reference']) : (isset($paymentData['transactionId']) ? trim($paymentData['transactionId']) : (isset($paymentData['transactionid']) ? trim($paymentData['transactionid']) : ''));
-
-$prePaidId = isset($paymentData['utilityref']) ? trim($paymentData['utilityref']) : (isset($paymentData['utilityReference']) ? trim($paymentData['utilityReference']) : '');
+// ⚡ SANITIZATION PATCH: Clean out line-breaks (\n) and spaces dynamically from AzamPay's payload strings
+$status    = isset($paymentData['transactionstatus']) ? strtolower(trim($paymentData['transactionstatus'])) : '';
+$realTxId  = isset($paymentData['reference']) ? trim($paymentData['reference']) : '';
+$prePaidId = isset($paymentData['utilityref']) ? trim(preg_replace('/\s+/', '', $paymentData['utilityref'])) : '';
 
 if ($status === 'success' || $status === 'completed') {
     
