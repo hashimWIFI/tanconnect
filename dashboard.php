@@ -185,7 +185,7 @@ $stock_result = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE 
 $remaining_stock = $stock_result ? ($stock_result->fetch_assoc()['total'] ?: 0) : 0;
 
 // 📋 LOG ENTRIES FETCH FOR LATEST 50 TRANSACTIONS
-$log_query = "SELECT id, voucher_code, price_tier, transactionstatus, assigned_phone, mac_address, transaction_id, azampay_transaction_id, purchased_at FROM wifi_vouchers WHERE transactionstatus IN ('SUCCESS', 'ASSIGNED') ORDER BY purchased_at DESC LIMIT 50";
+$log_query = "SELECT id, voucher_code, price_tier, transactionstatus, assigned_phone, mac_address, utilityref, reference, purchased_at FROM wifi_vouchers WHERE transactionstatus IN ('SUCCESS', 'ASSIGNED') ORDER BY purchased_at DESC LIMIT 50";
 $log_result = $conn->query($log_query);
 ?>
 <!DOCTYPE html>
@@ -454,10 +454,10 @@ $log_result = $conn->query($log_query);
                                 <?php echo !empty($row['purchased_at']) ? date("d-m-Y H:i:s", strtotime($row['purchased_at'])) : '-'; ?>
                             </td>
                             <td style="color: #7f8c8d; font-size: 12px; font-family: monospace; padding: 12px 15px;">
-                                <?php echo htmlspecialchars($row['transaction_id']); ?>
+                                <?php echo htmlspecialchars($row['utilityref']); ?>
                             </td>
                             <td style="color: #27ae60; font-weight: bold; font-family: monospace; font-size: 13px; padding: 12px 15px;">
-                                <?php echo !empty($row['azampay_transaction_id']) ? htmlspecialchars($row['azampay_transaction_id']) : '-'; ?>
+                                <?php echo !empty($row['reference']) ? htmlspecialchars($row['reference']) : '-'; ?>
                             </td>
                         </tr>
                     <?php endwhile; ?>
