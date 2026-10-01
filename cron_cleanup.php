@@ -11,32 +11,32 @@ $db_name = getenv('MYSQLDATABASE') ?: 'railway';
 
 $conn = new mysqli($db_host, $db_user, $db_pass, $db_name, $db_port);
 if ($conn->connect_error) {
-    echo json_encode(["status" => "error", "message" => "Database node connection failed"]);
+    echo json_encode(["transactionstatus" => "error", "message" => "Database node connection failed"]);
     exit();
 }
 
 try {
     $cleanupQuery = "UPDATE wifi_vouchers 
-                     SET status = 'AVAILABLE', 
+                     SET transactionstatus = 'AVAILABLE', 
                          assigned_phone = NULL, 
                          mac_address = NULL, 
-                         transaction_id = NULL 
-                     WHERE status = 'ASSIGNED' 
+                         utilityref = NULL 
+                     WHERE transactionstatus = 'ASSIGNED' 
                      AND (`Muda wa Malipo (EAT Time)` < NOW() - INTERVAL 2 HOUR OR created_at < NOW() - INTERVAL 2 HOUR)";
 
     if ($conn->query($cleanupQuery) === TRUE) {
         $recoveredRows = $conn->affected_rows;
         echo json_encode([
-            "status" => "success",
+            "transactionstatus" => "success",
             "vouchers_recovered" => $recoveredRows,
             "timestamp" => date("Y-m-d H:i:s")
         ]);
     } else {
-        echo json_encode(["status" => "error", "message" => $conn->error]);
+        echo json_encode(["transactionstatus" => "error", "message" => $conn->error]);
     }
 
 } catch (Exception $e) {
-    echo json_encode(["status" => "error", "message" => $e->getMessage()]);
+    echo json_encode(["transactionstatus" => "error", "message" => $e->getMessage()]);
 }
 
 $conn->close();
