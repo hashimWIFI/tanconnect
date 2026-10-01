@@ -1,82 +1,83 @@
 <?php
 // ====================================================================
-// AUTOMATED AZAMPAY WEBHOOK CALLBACK LISTENER ('callback.php')
+// TANCONNECT AUTOMATED WEBHOOK CALLBACK LISTENER ('callback.php')
 // ====================================================================
 
 error_reporting(E_ALL);
-ini_set('display_errors', 0); // Active protection: keeps credentials safe in production
+ini_set('display_errors', 0); // Keep logs safe in production
 
 // 1. ESTABLISH YOUR DIRECT MYSQL CONNECTION CONTEXT via RAILWAY VARIABLES
-\$db_host     = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
-\(db_port     = getenv('MYSQLPORT') ?: '3306';\)db_user     = getenv('MYSQLUSER') ?: 'root';
-\(db_password = getenv('MYSQLPASSWORD') ?: 'TxGqIUapIhgwhpKbqywjJXkiOWGmQVLJ';\)db_name     = getenv('MYSQLDATABASE') ?: 'railway';
+$db_host     = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
+$db_port     = getenv('MYSQLPORT') ?: '3306';
+$db_user     = getenv('MYSQLUSER') ?: 'root';
+$db_password = getenv('MYSQLPASSWORD') ?: 'TxGqIUapIhgwhpKbqywjJXkiOWGmQVLJ';
+$db_name     = getenv('MYSQLDATABASE') ?: 'railway';
 
-\(conn = mysqli_connect(\)db_host, \(db_user,\)db_password, \(db_name,\)db_port);
+$conn = mysqli_connect($db_host, $db_user, $db_password, $db_name, $db_port);
 
-// Check if connection was successful
-if (!\$conn) {
+if (!$conn) {
     http_response_code(500);
-    die("Database Connection Failure: " . mysqli_connect_error());
+    file_put_contents('azampay_error_log.txt', date('[Y-m-d H:i:s] ') . "DB Conn Fail: " . mysqli_connect_error() . PHP_EOL, FILE_APPEND);
+    die("Database Connection Failure");
 }
 
 // 2. CAPTURE THE HIDDEN WEBHOOK PAYLOAD DISPATCHED BY AZAMPAY
-\$incomingRawJson = file_get_contents('php://input');
-\(paymentData = json_decode(\)incomingRawJson, true);
+$incomingRawJson = file_get_contents('php://input');
+$paymentData = json_decode($incomingRawJson, true);
 
 // 📝 AUDIT LOG TRAIL: Saves incoming payloads to check parameter matching easily
-file_put_contents('azampay_webhook_log.txt', date('[Y-m-d H:i:s] ') . \$incomingRawJson . PHP_EOL, FILE_APPEND);
+file_put_contents('azampay_webhook_log.txt', date('[Y-m-d H:i:s] ') . $incomingRawJson . PHP_EOL, FILE_APPEND);
 
-if (!\$paymentData) {
+if (!$paymentData) {
     http_response_code(400);
     die("Invalid JSON Request Payload Structure");
 }
 
-// 3. EXTRACT CORE AZAMPAY DATA KEYS
-\$transactionStatus = isset(\(paymentData['transactionStatus']) ? trim(\)paymentData['transactionStatus']) : '';
-azamPayTxId = isset(paymentData['transactionId']) ? trim(\(paymentData['transactionId']) : '';\)customReference   = isset(\(paymentData['utilityReference']) ? trim(\)paymentData['utilityReference']) : '';
+// 3. EXTRACT CORE AZAMPAY DATA KEYS CLEANLY
+$transactionStatus = isset($paymentData['transactionStatus']) ? trim($paymentData['transactionStatus']) : '';
+$azamPayTxId       = isset($paymentData['transactionId']) ? trim($paymentData['transactionId']) : '';
+$customReference    = isset($paymentData['utilityReference']) ? trim($paymentData['utilityReference']) : '';
 
 // 4. VERIFY LOGIC STATUS MATRIX
-// AzamPay sends 'success' or 'SUCCESS' when the customer inputs their correct PIN
-if (strtolower(\(transactionStatus) === 'success' && !empty(\)azamPayTxId)) {
+if (strtolower($transactionStatus) === 'success' && !empty($azamPayTxId)) {
     
     // Look up the voucher record that holds this matching transaction reference string
-    \(searchQuery = mysqli_query(\)conn, "SELECT id, voucher_code, assigned_phone FROM wifi_vouchers WHERE azampay_transaction_id = '\(azamPayTxId' OR transaction_id = '\)customReference' LIMIT 1");
+    $searchQuery = mysqli_query($conn, "SELECT id, voucher_code, assigned_phone FROM wifi_vouchers WHERE azampay_transaction_id = '$azamPayTxId' OR transaction_id = '$customReference' LIMIT 1");
     
-    if (mysqli_num_rows(\$searchQuery) > 0) {
-        \(voucherRow    = mysqli_fetch_assoc(\)searchQuery);
-        voucherId = voucherRow['id'];
-        customerPhone = voucherRow['assigned_phone'];
-        wifiCode = voucherRow['voucher_code'];
+    if (mysqli_num_rows($searchQuery) > 0) {
+        $voucherRow    = mysqli_fetch_assoc($searchQuery);
+        $voucherId     = $voucherRow['id'];
+        $customerPhone = $voucherRow['assigned_phone'];
+        $wifiCode      = $voucherRow['voucher_code'];
         
         // START SECURE TRANSACTION PROCESSING CHAIN
-        mysqli_begin_transaction(\$conn);
+        mysqli_begin_transaction($conn);
         try {
             // A. Move voucher status to SUCCESS and lock down transaction completion metrics
-            \$updateSql = "UPDATE wifi_vouchers 
-                          SET status = 'SUCCESS', 
-                              `Muda wa Malipo (EAT Time)` = NOW() 
-                          WHERE id = '\$voucherId'";
-            mysqli_query(conn, updateSql);
-            mysqli_commit(\$conn);
+            $updateSql = "UPDATE wifi_vouchers 
+                          SET status = 'SUCCESS' 
+                          WHERE id = '$voucherId'";
             
-            // 🚀 B. AUTOMATED SMS DELIVERY DISPATCH BRIDGE
-            // Insert your active SMS gateway code snippet here (Beem / NextSMS)
-            // to send the wifiCode string directly to customerPhone right now!
+            mysqli_query($conn, $updateSql);
+            mysqli_commit($conn);
             
             // Inform the aggregator gateway that the message was received and processed cleanly
             http_response_code(200);
             echo json_encode(["status" => "success", "message" => "Voucher unlocked successfully"]);
             exit();
             
-        } catch (Exception \$e) {
-            mysqli_rollback(\$conn);
+        } catch (Exception $e) {
+            mysqli_rollback($conn);
+            file_put_contents('azampay_error_log.txt', date('[Y-m-d H:i:s] ') . "SQL Exception: " . $e->getMessage() . PHP_EOL, FILE_APPEND);
             http_response_code(500);
             exit();
         }
+    } else {
+        // Log if AzamPay sent a success reference but it didn't match any row in your table
+        file_put_contents('azampay_error_log.txt', date('[Y-m-d H:i:s] ') . "Mismatch Error: No record found for AzamPay ID: $azamPayTxId or Ref: $customReference" . PHP_EOL, FILE_APPEND);
     }
 }
 
-// Default response if transaction data doesn't fulfill successful parameters
 http_response_code(200); 
 echo json_encode(["status" => "ignored"]);
 ?>
