@@ -1,78 +1,81 @@
 <?php
-header('Content-Type: application/json');
+// ====================================================================
+// AUTOMATED AZAMPAY WEBHOOK CALLBACK LISTENER ('callback.php')
+// ====================================================================
 
-$rawIncomingData = file_get_contents('php://input');
-$paymentData = json_decode($rawIncomingData, true);
+error_reporting(E_ALL);
+ini_set('display_errors', 0); // Active protection: keeps credentials safe in production
 
-if (!$paymentData) {
+// 1. ESTABLISH YOUR DIRECT MYSQL CONNECTION CONTEXT
+\$db_host     = "localhost";          
+\$db_user     = "YOUR_MYSQL_USER";    // Replace with the username from alogin.php
+\$db_password = "YOUR_MYSQL_PASSWORD";// Replace with the password from alogin.php
+\$db_name     = "YOUR_DATABASE_NAME"; // Replace with the database name from alogin.php
+
+\$conn = mysqli_connect(\(db_host,\)db_user, \(db_password,\)db_name);
+if (!\$conn) {
+    http_response_code(500);
+    die("Database Connection Failure");
+}
+
+// 2. CAPTURE THE HIDDEN WEBHOOK PAYLOAD DISPATCHED BY AZAMPAY
+\$incomingRawJson = file_get_contents('php://input');
+\(paymentData = json_decode(\)incomingRawJson, true);
+
+// 📝 AUDIT LOG TRAIL: Saves incoming payloads to check parameter matching easily
+file_put_contents('azampay_webhook_log.txt', date('[Y-m-d H:i:s] ') . \$incomingRawJson . PHP_EOL, FILE_APPEND);
+
+if (!\$paymentData) {
     http_response_code(400);
-    echo json_encode(["status" => "fail", "message" => "Empty payload received"]);
-    exit();
+    die("Invalid JSON Request Payload Structure");
 }
 
-// Harvest variables sent asynchronously from AzamPay's system notification payload
-// 🚀 FIX 1: Robust fallback case parameters array mapping for status string
-$transactionStatus = isset($paymentData['transactionstatus']) ? trim($paymentData['transactionstatus']) : (isset($paymentData['transactionStatus']) ? trim($paymentData['transactionStatus']) : ''); 
+// 3. EXTRACT CORE AZAMPAY DATA KEYS
+\$transactionStatus = isset(\(paymentData['transactionStatus']) ? trim(\)paymentData['transactionStatus']) : '';
+azamPayTxId = isset(paymentData['transactionId']) ? trim(\(paymentData['transactionId']) : '';\)customReference   = isset(\(paymentData['utilityReference']) ? trim(\)paymentData['utilityReference']) : '';
 
-// 🚀 FIX 2: Check for both standard all-lowercase 'externalid' and camelCase 'externalId'
-$externalId = '';
-if (isset($paymentData['externalid'])) {
-    $externalId = trim($paymentData['externalid']);
-} elseif (isset($paymentData['externalId'])) {
-    $externalId = trim($paymentData['externalId']);
-}
-
-// 🚀 FIX 3: Check AzamPay's official webhook key names for the transaction ID token
-$azamPayRef = '';
-if (isset($paymentData['azampayTransactionId']) && !empty($paymentData['azampayTransactionId'])) {
-    $azamPayRef = trim($paymentData['azampayTransactionId']);
-} elseif (isset($paymentData['transactionId']) && !empty($paymentData['transactionId'])) {
-    $azamPayRef = trim($paymentData['transactionId']);
-} elseif (isset($paymentData['id']) && !empty($paymentData['id'])) {
-    $azamPayRef = trim($paymentData['id']);
-} else {
-    // Keep your historical submerchant references as a clean fallback layer
-    $azamPayRef = isset($paymentData['submerchantAcc']) ? trim($paymentData['submerchantAcc']) : (isset($paymentData['utilityref']) ? trim($paymentData['utilityref']) : '');
-}
-
-// Log raw result text patterns into your cloud storage folder for permanent auditing audits
-file_put_contents('payment_logs.txt', "ID: " . $externalId . " | Status: " . $transactionStatus . " | AzamPayID: " . $azamPayRef . " | Time: " . date('Y-m-d H:i:s') . "\n", FILE_APPEND);
-
-// Evaluate code response matches safely
-if (strtolower($transactionStatus) === 'success' && !empty($externalId) && !empty($azamPayRef)) {
+// 4. VERIFY LOGIC STATUS MATRIX
+// AzamPay sends 'success' or 'SUCCESS' when the customer inputs their correct PIN
+if (strtolower(\(transactionStatus) === 'success' && !empty(\)azamPayTxId)) {
     
-    $db_host = getenv('MYSQLHOST')     ?: '127.0.0.1';
-    $db_port = getenv('MYSQLPORT')     ?: '3306';
-    $db_user = getenv('MYSQLUSER')     ?: 'root';
-    $db_pass = getenv('MYSQLPASSWORD') ?: '';
-    $db_name = getenv('MYSQLDATABASE') ?: 'railway';
-
-    $conn = new mysqli($db_host, $db_user, $db_pass, $db_name, $db_port);
-    if (!$conn->connect_error) {
+    // Look up the voucher record that holds this matching transaction reference string
+    \(searchQuery = mysqli_query(\)conn, "SELECT id, voucher_code, assigned_phone FROM wifi_vouchers WHERE azampay_transaction_id = '\(azamPayTxId' OR transaction_id = '\)customReference' LIMIT 1");
+    
+    if (mysqli_num_rows(\$searchQuery) > 0) {
+        \(voucherRow = mysqli_fetch_assoc(\)searchQuery);
+        voucherId = voucherRow['id'];
+        customerPhone = voucherRow['assigned_phone'];
+        wifiCode = voucherRow['voucher_code'];
         
-        date_default_timezone_set('Africa/Dar_es_Salaam');
-        $currentDateTime = date("Y-m-d H:i:s");
-        
-        // Match the row using your unique internal NITW tracking key
-        $updateQuery = "UPDATE wifi_vouchers 
-                        SET status = 'SUCCESS', 
-                            purchased_at = ?, 
-                            azampay_transaction_id = ? 
-                        WHERE transaction_id = ? 
-                        LIMIT 1";
-                        
-        $stmt = $conn->prepare($updateQuery);
-        if ($stmt) {
-            $stmt->bind_param("sss", $currentDateTime, $azamPayRef, $externalId);
-            $stmt->execute();
-            $stmt->close();
+        // START SECURE TRANSACTION PROCESSING CHAIN
+        mysqli_begin_transaction(\$conn);
+        try {
+            // A. Move voucher status to SUCCESS and lock down transaction completion metrics
+            \$updateSql = "UPDATE wifi_vouchers 
+                          SET status = 'SUCCESS', 
+                              `Muda wa Malipo (EAT Time)` = NOW() 
+                          WHERE id = '\$voucherId'";
+            mysqli_query(conn, updateSql);
+            mysqli_commit(\$conn);
+            
+            // 🚀 B. AUTOMATED SMS DELIVERY DISPATCH BRIDGE
+            // Insert your active SMS gateway code snippet here (Beem / NextSMS)
+            // to send the wifiCode string directly to customerPhone right now!
+            
+            // Inform the aggregator gateway that the message was received and processed cleanly
+            http_response_code(200);
+            echo json_encode(["status" => "success", "message" => "Voucher unlocked successfully"]);
+            exit();
+            
+        } catch (Exception \$e) {
+            mysqli_rollback(\$conn);
+            http_response_code(500);
+            exit();
         }
-        $conn->close();
     }
 }
 
-// Always respond with an acknowledgement so AzamPay knows your webhook received the row
-http_response_code(200);
-echo json_encode(["status" => "acknowledged", "reference" => $externalId]);
-exit();
+// Default response if transaction data doesn't fulfill successful parameters
+http_response_code(200); 
+echo json_encode(["status" => "ignored"]);
 ?>
