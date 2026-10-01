@@ -1,66 +1,33 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
 header("Content-Type: application/json");
-header("Cache-Control: no-cache, must-revalidate");
 
-// 1. Establish database connection contexts using your dynamic cloud variables
-$db_host = getenv('MYSQLHOST')     ?: '127.0.0.1';
-$db_user = getenv('MYSQLUSER')     ?: 'root';
-$db_pass = getenv('MYSQLPASSWORD') ?: '';
-$db_name = getenv('MYSQLDATABASE') ?: 'railway';
-$db_port = getenv('MYSQLPORT')     ?: '3306';
+$db_host     = getenv('MYSQLHOST')     ?: 'mysql.railway.internal';
+$db_port     = getenv('MYSQLPORT')     ?: '3306';
+$db_user     = getenv('MYSQLUSER')     ?: 'root';
+$db_password = getenv('MYSQLPASSWORD') ?: 'TxGqIUapIhgwhpKbqywjJXkiOWGmQVLJ';
+$db_name     = getenv('MYSQLDATABASE') ?: 'railway';
 
-// 2. Safely harvest the active transaction tracking ID parameter coming from your script loops
-$txnId = isset($_GET['txn_id']) ? trim($_GET['txn_id']) : (isset($_GET['tx_id']) ? trim($_GET['tx_id']) : '');
-
-if (empty($txnId)) {
-    echo json_encode(["status" => "PENDING", "message" => "Missing transaction id parameter"]);
+$conn = mysqli_connect($db_host, $db_user, $db_password, $db_name, $db_port);
+if (!$conn) {
+    echo json_encode(["status" => "ERROR"]);
     exit();
 }
 
-try {
-    // 3. Initialize the live MySQL connector bridge instance
-    $conn = new mysqli($db_host, $db_user, $db_pass, $db_name, $db_port);
-    if ($conn->connect_error) {
-        echo json_encode(["status" => "PENDING", "message" => "Database node connection failed"]);
+$txId = isset($_GET['transaction_id']) ? trim($_GET['transaction_id']) : '';
+
+if (!empty($txId)) {
+    $query = mysqli_query($conn, "SELECT status, voucher_code FROM wifi_vouchers WHERE transaction_id = '" . mysqli_real_escape_string($conn, $txId) . "' LIMIT 1");
+    if (mysqli_num_rows($query) > 0) {
+        $row = mysqli_fetch_assoc($query);
+        echo json_encode([
+            "status" => $row['status'],
+            "voucher_code" => ($row['status'] === 'SUCCESS') ? $row['voucher_code'] : ''
+        ]);
         exit();
     }
-
-    // 4. Securely extract data matching your strict alphanumeric parameters
-    $safeTxnId = $conn->real_escape_string($txnId);
-    
-    // UPDATED SELECT QUERY: Appended mac_address into the table column selection fields
-    $query = "SELECT status, voucher_code, mac_address FROM wifi_vouchers WHERE transaction_id = '$safeTxnId' LIMIT 1";
-    $result = $conn->query($query);
-
-    if ($result && $result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        
-        // Convert status string values to strict uppercase to eliminate layout spelling mismatches
-        $currentStatus = strtoupper(trim($row['status']));
-
-        // 5. If the fake callback webhook successfully verified the transaction loop, unlock the parameters!
-        if ($currentStatus === 'SUCCESS') {
-            
-            // Clean dynamic structural fallback tracking: outputs baseline '0' string if cell value is empty
-            $dbMacAddress = !empty($row['mac_address']) ? trim($row['mac_address']) : '0';
-
-            echo json_encode([
-                "status"       => "SUCCESS",
-                "voucher_code" => $row['voucher_code'],
-                "mac_address"  => $dbMacAddress // <-- FEEDS THE STORED HARDWARE ADDRESS DOWN TO JAVASCRIPT!
-            ]);
-        } else {
-            // Keep the loader active if the status field still reads ASSIGNED or AVAILABLE
-            echo json_encode(["status" => "PENDING"]);
-        }
-    } else {
-        echo json_encode(["status" => "PENDING", "message" => "Record not matched yet"]);
-    }
-
-    $conn->close();
-
-} catch (Exception $e) {
-    echo json_encode(["status" => "PENDING", "message" => "Runtime exception processed"]);
 }
-exit();
+
+echo json_encode(["status" => "PENDING"]);
 ?>
