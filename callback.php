@@ -33,17 +33,17 @@ if (!$paymentData) {
 }
 
 // 🛡️ SECURITY & CLEANING LAYER: Wipes out case variations and strips raw trailing newlines (\n) or string space elements completely
-$status    = isset($paymentData['transactionstatus']) ? strtolower(trim($paymentData['transactionstatus'])) : (isset($paymentData['transactionStatus']) ? strtolower(trim($paymentData['transactionStatus'])) : '');
+$transactionstatus    = isset($paymentData['transactionstatus']) ? strtolower(trim($paymentData['transactionstatus'])) : (isset($paymentData['transactionStatus']) ? strtolower(trim($paymentData['transactionStatus'])) : '');
 $realTxId  = isset($paymentData['reference']) ? trim($paymentData['reference']) : (isset($paymentData['transactionId']) ? trim($paymentData['transactionId']) : (isset($paymentData['transactionid']) ? trim($paymentData['transactionid']) : ''));
 
 // ⚡ EXPLICIT RECOVERY CLEANING ENGINE: Clears hidden trailing formatting elements (\n) natively before running queries
 $rawUtilityRef = isset($paymentData['utilityref']) ? $paymentData['utilityref'] : (isset($paymentData['utilityReference']) ? $paymentData['utilityReference'] : '');
 $prePaidId     = trim(preg_replace('/\s+/', '', $rawUtilityRef));
 
-if (($status === 'success' || $status === 'completed') && !empty($prePaidId)) {
+if (($transactionstatus === 'success' || $transactionstatus === 'completed') && !empty($prePaidId)) {
     
     // Executes direct row target validation lookup checking
-    $searchQuery = mysqli_query($conn, "SELECT id FROM wifi_vouchers WHERE transaction_id = '$prePaidId' LIMIT 1");
+    $searchQuery = mysqli_query($conn, "SELECT id FROM wifi_vouchers WHERE utilityref = '$prePaidId' LIMIT 1");
     
     if (mysqli_num_rows($searchQuery) > 0) {
         $voucherRow = mysqli_fetch_assoc($searchQuery);
@@ -52,13 +52,13 @@ if (($status === 'success' || $status === 'completed') && !empty($prePaidId)) {
         mysqli_begin_transaction($conn);
         try {
             // Re-aligned target query database schema field keys to 'purchased_at' safely
-            $updateSql = "UPDATE wifi_vouchers SET status = 'SUCCESS', azampay_transaction_id = '$realTxId', purchased_at = NOW() WHERE id = '$voucherId'";
+            $updateSql = "UPDATE wifi_vouchers SET transactionstatus = 'SUCCESS', reference = '$realTxId', purchased_at = NOW() WHERE id = '$voucherId'";
             mysqli_query($conn, $updateSql);
             mysqli_commit($conn);
             
             error_log("TANCONNECT WEBHOOK SUCCESS: Row ID $voucherId successfully shifted to SUCCESS!");
             http_response_code(200);
-            echo json_encode(["status" => "success", "message" => "Voucher unlocked cleanly"]);
+            echo json_encode(["transactionstatus" => "success", "message" => "Voucher unlocked cleanly"]);
             exit();
             
         } catch (Exception $e) {
@@ -73,5 +73,5 @@ if (($status === 'success' || $status === 'completed') && !empty($prePaidId)) {
 }
 
 http_response_code(200); 
-echo json_encode(["status" => "ignored"]);
+echo json_encode(["transactionstatus" => "ignored"]);
 ?>
