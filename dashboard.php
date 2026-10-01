@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_upload']) && i
         $duplicate_count = 0;
         
         $check_stmt = $conn->prepare("SELECT COUNT(*) AS exists_count FROM wifi_vouchers WHERE voucher_code = ?");
-        $insert_stmt = $conn->prepare("INSERT INTO wifi_vouchers (voucher_code, price_tier, status) VALUES (?, ?, 'AVAILABLE')");
+        $insert_stmt = $conn->prepare("INSERT INTO wifi_vouchers (voucher_code, price_tier, transactionstatus) VALUES (?, ?, 'AVAILABLE')");
         
         foreach ($raw_lines as $line) {
             $clean_code = preg_replace('/[^a-zA-Z0-9]/', '', trim($line));
@@ -139,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_upload']) && i
 }
 
 // Fetch remaining stock broken down per specific price tier batch
-$tier_stock_query = "SELECT price_tier, COUNT(*) AS tier_count FROM wifi_vouchers WHERE status = 'AVAILABLE' GROUP BY price_tier ORDER BY price_tier ASC";
+$tier_stock_query = "SELECT price_tier, COUNT(*) AS tier_count FROM wifi_vouchers WHERE transactionstatus = 'AVAILABLE' GROUP BY price_tier ORDER BY price_tier ASC";
 $tier_stock_result = $conn->query($tier_stock_query);
 
 $tier_stock_data = [];
@@ -165,27 +165,27 @@ $safe_to   = $conn->real_escape_string($to_date);
 $period_condition = "AND DATE(purchased_at) BETWEEN '$safe_from' AND '$safe_to'";
 
 // 🗓️ TODAY'S METRICS (Stays static for instant comparisons)
-$today_earnings_res = $conn->query("SELECT SUM(price_tier) AS total FROM wifi_vouchers WHERE status = 'SUCCESS' AND DATE(purchased_at) = CURDATE()");
+$today_earnings_res = $conn->query("SELECT SUM(price_tier) AS total FROM wifi_vouchers WHERE transactionstatus = 'SUCCESS' AND DATE(purchased_at) = CURDATE()");
 $today_earnings = $today_earnings_res ? ($today_earnings_res->fetch_assoc()['total'] ?: 0) : 0;
 
-$today_count_res = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE status = 'SUCCESS' AND DATE(purchased_at) = CURDATE()");
+$today_count_res = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE transactionstatus = 'SUCCESS' AND DATE(purchased_at) = CURDATE()");
 $today_vouchers_sold = $today_count_res ? ($today_count_res->fetch_assoc()['total'] ?: 0) : 0;
 
 // 📊 DYNAMIC REVENUE METRICS CALCULATOR BASED ON THE CHOSEN "FROM / TO" RANGE
-$earnings_query = "SELECT SUM(price_tier) AS total FROM wifi_vouchers WHERE status = 'SUCCESS' $period_condition";
+$earnings_query = "SELECT SUM(price_tier) AS total FROM wifi_vouchers WHERE transactionstatus = 'SUCCESS' $period_condition";
 $earnings_result = $conn->query($earnings_query);
 $total_earnings = $earnings_result ? ($earnings_result->fetch_assoc()['total'] ?: 0) : 0;
 
-$count_query = "SELECT COUNT(*) AS total FROM wifi_vouchers WHERE status = 'SUCCESS' $period_condition";
+$count_query = "SELECT COUNT(*) AS total FROM wifi_vouchers WHERE transactionstatus = 'SUCCESS' $period_condition";
 $count_result = $conn->query($count_query);
 $vouchers_sold = $count_result ? ($count_result->fetch_assoc()['total'] ?: 0) : 0;
 
 // 📦 STOCK AVAILABLE (Keeps current live warehouse total balance)
-$stock_result = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE status = 'AVAILABLE'");
+$stock_result = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE transactionstatus = 'AVAILABLE'");
 $remaining_stock = $stock_result ? ($stock_result->fetch_assoc()['total'] ?: 0) : 0;
 
 // 📋 LOG ENTRIES FETCH FOR LATEST 50 TRANSACTIONS
-$log_query = "SELECT id, voucher_code, price_tier, status, assigned_phone, mac_address, transaction_id, azampay_transaction_id, purchased_at FROM wifi_vouchers WHERE status IN ('SUCCESS', 'ASSIGNED') ORDER BY purchased_at DESC LIMIT 50";
+$log_query = "SELECT id, voucher_code, price_tier, transactionstatus, assigned_phone, mac_address, transaction_id, azampay_transaction_id, purchased_at FROM wifi_vouchers WHERE transactionstatus IN ('SUCCESS', 'ASSIGNED') ORDER BY purchased_at DESC LIMIT 50";
 $log_result = $conn->query($log_query);
 ?>
 <!DOCTYPE html>
@@ -425,7 +425,7 @@ $log_result = $conn->query($log_query);
                         $displayMac = strlen($rawMac) === 12 ? implode(':', str_split($rawMac, 2)) : $row['mac_address'];
                         
                         // 🚀 THE FIX: Standardize database status strings to uppercase to eliminate visual rendering locks
-                        $checkStatus = strtoupper(trim($row['status']));
+                        $checkStatus = strtoupper(trim($row['transactionstatus']));
                     ?>
                         <tr style="border-bottom: 1px solid #e2e8f0;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
                             <td style="font-weight: bold; color: #475569; font-family: monospace; text-align: center; padding: 12px 15px;">
