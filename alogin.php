@@ -71,7 +71,7 @@ if ($conn->connect_error) {
 // =========================================================================
 
 // Query the database to find one available voucher matching the selected price tier
-$stmt = $conn->prepare("SELECT id, voucher_code FROM wifi_vouchers WHERE price_tier = ? AND status = 'AVAILABLE' LIMIT 1");
+$stmt = $conn->prepare("SELECT id, voucher_code FROM wifi_vouchers WHERE price_tier = ? AND transactionstatus = 'AVAILABLE' LIMIT 1");
 
 // 🚀 THE CRITICAL FIX: Explicitly enforce mathematical integer validation type conversion metrics
 $cleanAmount = intval($amount);
