@@ -89,7 +89,6 @@ if ($conn->connect_error) {
 
 // 🌍 TIMEZONE SYNCHRONIZATION
 date_default_timezone_set('Africa/Dar_es_Salaam');
-$conn->query("SET time_zone = '+03:00'");
 // =========================================================================
 // 2. DYNAMIC BULK UPLOADER ENGINE PARSER
 // =========================================================================
