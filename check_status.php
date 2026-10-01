@@ -15,19 +15,19 @@ if (!$conn) {
     exit();
 }
 
-$txId = isset($_GET['transaction_id']) ? trim($_GET['transaction_id']) : '';
+$txId = isset($_GET['utilityref']) ? trim($_GET['utilityref']) : '';
 
 if (!empty($txId)) {
-    $query = mysqli_query($conn, "SELECT status, voucher_code FROM wifi_vouchers WHERE transaction_id = '" . mysqli_real_escape_string($conn, $txId) . "' LIMIT 1");
+    $query = mysqli_query($conn, "SELECT transactionstatus, voucher_code FROM wifi_vouchers WHERE utilityref = '" . mysqli_real_escape_string($conn, $txId) . "' LIMIT 1");
     if (mysqli_num_rows($query) > 0) {
         $row = mysqli_fetch_assoc($query);
         echo json_encode([
-            "status" => $row['status'],
-            "voucher_code" => ($row['status'] === 'SUCCESS') ? $row['voucher_code'] : ''
+            "transactionstatus" => $row['transactionstatus'],
+            "voucher_code" => ($row['transactionstatus'] === 'SUCCESS') ? $row['voucher_code'] : ''
         ]);
         exit();
     }
 }
 
-echo json_encode(["status" => "PENDING"]);
+echo json_encode(["transactionstatus" => "PENDING"]);
 ?>
