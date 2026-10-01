@@ -7,10 +7,11 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0); // Active protection: keeps credentials safe in production
 
 // 1. ESTABLISH YOUR DIRECT MYSQL CONNECTION CONTEXT
-\$db_host     = "localhost";          
-\$db_user     = "YOUR_MYSQL_USER";    // Replace with the username from alogin.php
-\$db_password = "YOUR_MYSQL_PASSWORD";// Replace with the password from alogin.php
-\$db_name     = "YOUR_DATABASE_NAME"; // Replace with the database name from alogin.php
+$db_host      = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
+$db_port     = getenv('MYSQLPORT') ?: '3306';
+$db_user     = getenv('MYSQLUSER') ?: 'root';
+$db_password = getenv('MYSQLPASSWORD') ?: 'TxGqIUapIhgwhpKbqywjJXkiOWGmQVLJ';
+$db_name = getenv('MYSQLDATABASE') ?: 'railway';
 
 \$conn = mysqli_connect(\(db_host,\)db_user, \(db_password,\)db_name);
 if (!\$conn) {
