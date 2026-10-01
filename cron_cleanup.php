@@ -9,11 +9,12 @@ header("Content-Type: application/json");
 
 // 1. ESTABLISH CONNECTIVITY USING RAILWAY ENV VARIABLES
 // 1. Establish database connection using your dynamic Railway variables
-$db_host = getenv('MYSQLHOST')     ?: '127.0.0.1';
-$db_port = getenv('MYSQLPORT')     ?: '3306';
-$db_user = getenv('MYSQLUSER')     ?: 'root';
-$db_pass = getenv('MYSQLPASSWORD') ?: '';
-$db_name = getenv('MYSQLDATABASE') ?: 'railway';
+$db_host     = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
+$db_port     = getenv('MYSQLPORT') ?: '3306';
+$db_user     = getenv('MYSQLUSER') ?: 'root';
+$db_pass = getenv('MYSQLPASSWORD') ?: 'TxGqIUapIhgwhpKbqywjJXkiOWGmQVLJ';
+$db_name     = getenv('MYSQLDATABASE') ?: 'railway';
+
 
 $conn = new mysqli($db_host, $db_user, $db_pass, $db_name, $db_port);
 
