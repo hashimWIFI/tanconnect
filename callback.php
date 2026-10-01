@@ -6,16 +6,22 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 0); 
 
-\$db_host     = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
-\(db_port     = getenv('MYSQLPORT') ?: '3306';\)db_user     = getenv('MYSQLUSER') ?: 'root';
-\(db_password = getenv('MYSQLPASSWORD') ?: 'TxGqIUapIhgwhpKbqywjJXkiOWGmQVLJ';\)db_name     = getenv('MYSQLDATABASE') ?: 'railway';
+// 1. ESTABLISH YOUR DIRECT MYSQL CONNECTION CONTEXT via RAILWAY VARIABLES
+$db_host     = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
+$db_port     = getenv('MYSQLPORT') ?: '3306';
+$db_user     = getenv('MYSQLUSER') ?: 'root';
+$db_password = getenv('MYSQLPASSWORD') ?: 'TxGqIUapIhgwhpKbqywjJXkiOWGmQVLJ';
+$db_name     = getenv('MYSQLDATABASE') ?: 'railway';
 
-\(conn = mysqli_connect(\)db_host, \(db_user,\)db_password, \(db_name,\)db_port);
+// ⚡ PORT PATCH: Added the 5th parameter slot to allow Railway internal connection matrix routing
+$conn = mysqli_connect($db_host, $db_user, $db_password, $db_name, $db_port);
 
-if (!\$conn) {
+// Check if connection was successful
+if (!$conn) {
     http_response_code(500);
-    die("Database Connection Failure");
+    die("Database Connection Failure: " . mysqli_connect_error());
 }
+
 
 // 1. CAPTURE THE RAW HIDDEN TEXT INBOUND FROM AZAMPAY
 \$incomingRawJson = file_get_contents('php://input');
