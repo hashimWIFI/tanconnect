@@ -216,17 +216,17 @@ if ($httpStatusCode === 200 && isset($allocatedVoucherId) && !empty($azamPayTran
     
     // PRODUCTION INTEGRATION QUERY: Securely records the active reference string right into your voucher rows
     $updateQuery = "UPDATE wifi_vouchers 
-                    SET status = 'ASSIGNED', 
+                    SET transactionstatus = 'ASSIGNED', 
                         assigned_phone = ?, 
                         mac_address = ?, 
-                        transaction_id = ?, 
-                        azampay_transaction_id = ?, 
+                        utilityref = ?, 
+                      reference = ?, 
                         purchased_at = ? 
                     WHERE id = ?";
                     
     $updateStmt = $conn->prepare($updateQuery);
     if ($updateStmt) {
-        $updateStmt->bind_param("sssssi", $phone, $sessionMac, $transactionId, $azamPayTransactionId, $currentDateTime, $allocatedVoucherId);
+        $updateStmt->bind_param("sssssi", $phone, $sessionMac, $transactionId, $reference, $currentDateTime, $allocatedVoucherId);
         $updateStmt->execute();
         $updateStmt->close();
     }
