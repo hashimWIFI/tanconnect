@@ -44,13 +44,18 @@ if ($status === 'success' || $status === 'completed') {
         $voucherRow = mysqli_fetch_assoc($searchQuery);
         $voucherId = $voucherRow['id'];
         
-        mysqli_begin_transaction($conn);
+ mysqli_begin_transaction($conn);
         try {
-            $updateSql = "UPDATE wifi_vouchers SET status = 'SUCCESS', azampay_transaction_id = '$realTxId', `Muda wa Malipo (EAT Time)` = NOW() WHERE id = '$voucherId'";
+            // ⚡ REALIGNED SQL QUERY: Uses your exact table column name 'purchased_at'
+            $updateSql = "UPDATE wifi_vouchers 
+                          SET status = 'SUCCESS', 
+                              azampay_transaction_id = '$realTxId', 
+                              purchased_at = NOW() 
+                          WHERE id = '$voucherId'";
+                          
             mysqli_query($conn, $updateSql);
             mysqli_commit($conn);
             
-            error_log("TANCONNECT WEBHOOK SUCCESS: Voucher record updated successfully!");
             http_response_code(200);
             echo json_encode(["status" => "success", "message" => "Voucher unlocked cleanly"]);
             exit();
