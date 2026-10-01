@@ -166,8 +166,8 @@ border-radius: 6px; cursor: pointer; transition: all 0.3s ease; }
     <div class="subtitle">1. Bonyeza kifurushi unachohitaji;</div>
     <div class="package-grid">
 
-        <div class="package-card" onclick="document.getElementById('selected-amount').value='500'; document.getElementById('summary-bold-text').innerHTML='500 TZS || Masaa 6 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
-            <div class="card-price">500 <span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
+        <div class="package-card" onclick="document.getElementById('selected-amount').value='100'; document.getElementById('summary-bold-text').innerHTML='100 TZS || Masaa 6 kuperuzi || Unlimited DATA'; document.getElementById('active-spinner-layer').style.setProperty('display', 'none', 'important'); document.getElementById('payment-modal-overlay').style.display='block'; resetButtonState();">
+            <div class="card-price">100 <span style= "font-size: 8px; font-weight: bold; color: #34495e;"> TZS</span></div>
             <div class="card-time">Masaa 6</div>
             <div class="card-data">Unlimit DATA</div>
 
