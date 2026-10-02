@@ -58,7 +58,7 @@ $cleanUtilityRef = trim(preg_replace('/\s+/', '', $utilityref));
 $cleanReference  = trim(preg_replace('/\s+/', '', $reference));
 
 // 4. VERIFY LOGIC AND UPDATE RENAMED MYSQL COLUMNS
-if (($status === 'success' || $status === 'completed') && (!empty($cleanUtilityRef) || !empty($cleanReference))) {
+if (($transactionstatus === 'success' || $transactionstatus === 'completed') && (!empty($cleanUtilityRef) || !empty($cleanReference))) {
     
     // ⚡ NEW SCHEMA QUERY: Looks up rows using your newly renamed table columns!
     $searchQuery = mysqli_query($conn, "SELECT id FROM wifi_vouchers WHERE utilityref = '$cleanUtilityRef' OR reference = '$cleanReference' LIMIT 1");
@@ -80,7 +80,7 @@ if (($status === 'success' || $status === 'completed') && (!empty($cleanUtilityR
             mysqli_commit($conn);
             
             http_response_code(200);
-            echo json_encode(["status" => "success", "message" => "Voucher unlocked cleanly"]);
+            echo json_encode(["transactionstatus" => "success", "message" => "Voucher unlocked cleanly"]);
             exit();
             
         } catch (Exception $e) {
@@ -92,5 +92,5 @@ if (($status === 'success' || $status === 'completed') && (!empty($cleanUtilityR
 }
 
 http_response_code(200); 
-echo json_encode(["status" => "ignored"]);
+echo json_encode(["transactionstatus" => "ignored"]);
 ?>
