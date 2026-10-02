@@ -42,7 +42,7 @@ $customReference    = isset($paymentData['utilityref']) ? trim($paymentData['uti
 if (strtolower($transactionStatus) === 'success' && !empty($azamPayTxId)) {
     
     // Look up the voucher record that holds this matching transaction reference string
-    $searchQuery = mysqli_query($conn, "SELECT id, voucher_code, assigned_phone FROM wifi_vouchers WHERE azampay_transaction_id = '$azamPayTxId' OR transaction_id = '$customReference' LIMIT 1");
+    $searchQuery = mysqli_query($conn, "SELECT id, voucher_code, assigned_phone FROM wifi_vouchers WHERE reference = '$azamPayTxId' OR transaction_id = '$customReference' LIMIT 1");
     
     if (mysqli_num_rows($searchQuery) > 0) {
         $voucherRow    = mysqli_fetch_assoc($searchQuery);
@@ -55,7 +55,7 @@ if (strtolower($transactionStatus) === 'success' && !empty($azamPayTxId)) {
         try {
             // A. Move voucher status to SUCCESS and lock down transaction completion metrics
             $updateSql = "UPDATE wifi_vouchers 
-                          SET status = 'SUCCESS' 
+                          SET transactionstatus = 'SUCCESS' 
                           WHERE id = '$voucherId'";
             
             mysqli_query($conn, $updateSql);
@@ -63,7 +63,7 @@ if (strtolower($transactionStatus) === 'success' && !empty($azamPayTxId)) {
             
             // Inform the aggregator gateway that the message was received and processed cleanly
             http_response_code(200);
-            echo json_encode(["status" => "success", "message" => "Voucher unlocked successfully"]);
+            echo json_encode(["transactionstatus" => "success", "message" => "Voucher unlocked successfully"]);
             exit();
             
         } catch (Exception $e) {
