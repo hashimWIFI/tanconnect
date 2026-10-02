@@ -20,18 +20,24 @@ if (!$conn) {
     exit();
 }
 
-// 2. CAPTURE THE RAW INCOMING POST DATA DISPATCHED BY AZAMPAY
+// 2. COMPREHENSIVE DATA CAPTURE LAYER
 $incomingRawJson = file_get_contents('php://input');
-file_put_contents('azampay_webhook_log.txt', date('[Y-m-d H:i:s] ') . $incomingRawJson . PHP_EOL, FILE_APPEND);
-
 $paymentData = json_decode($incomingRawJson, true);
 
-if (!$paymentData) {
+// ⚡ BROAD DATA DISCOVERY: If raw JSON is empty, fall back to native POST/REQUEST arrays
+if (empty($paymentData)) {
+    $paymentData = $_REQUEST;
+}
+
+// 📝 AUDIT LOG TRAIL: Saves the parsed array context text directly to verify parameter arrival
+file_put_contents('azampay_webhook_log.txt', date('[Y-m-d H:i:s] ') . json_encode($paymentData) . PHP_EOL, FILE_APPEND);
+
+if (empty($paymentData)) {
     http_response_code(400);
     exit();
 }
 
-// 3. EXTRACT CORE METRICS MATCHING AZAMPAY WEBHOOK SPECIFICATIONS
+// 3. EXTRACT CORE METRICS MATCHING AZAMPAY SPECIFICATIONS
 $status = '';
 if (isset($paymentData['transactionstatus'])) {
     $status = strtolower(trim($paymentData['transactionstatus']));
@@ -58,10 +64,10 @@ $cleanUtilityRef = trim(preg_replace('/\s+/', '', $utilityref));
 $cleanReference  = trim(preg_replace('/\s+/', '', $reference));
 
 // 4. VERIFY LOGIC AND UPDATE RENAMED MYSQL COLUMNS
-if (($transactionstatus === 'success' || $transactionstatus === 'completed') && (!empty($cleanUtilityRef) || !empty($cleanReference))) {
+if (($status === 'success' || $status === 'completed') && (!empty($cleanUtilityRef) || !empty($cleanReference))) {
     
-    // ⚡ NEW SCHEMA QUERY: Looks up rows using your newly renamed table columns!
-    $searchQuery = mysqli_query($conn, "SELECT id FROM wifi_vouchers WHERE utilityref = '$cleanUtilityRef' OR reference = '$cleanReference' LIMIT 1");
+    // Looks up rows using your newly renamed table columns
+    $searchQuery = mysqli_query($conn, "SELECT id FROM wifi_vouchers WHERE utilityref = '" . mysqli_real_escape_string($conn, $cleanUtilityRef) . "' OR reference = '" . mysqli_real_escape_string($conn, $cleanReference) . "' LIMIT 1");
     
     if (mysqli_num_rows($searchQuery) > 0) {
         $voucherRow = mysqli_fetch_assoc($searchQuery);
@@ -69,10 +75,10 @@ if (($transactionstatus === 'success' || $transactionstatus === 'completed') && 
         
         mysqli_begin_transaction($conn);
         try {
-            // ⚡ NEW SCHEMA UPDATE: Modifies your newly named database columns cleanly
+            // Modifies your newly named database columns cleanly
             $updateSql = "UPDATE wifi_vouchers 
                           SET transactionstatus = 'SUCCESS', 
-                              reference = '$cleanReference', 
+                              reference = '" . mysqli_real_escape_string($conn, $cleanReference) . "', 
                               purchased_at = NOW() 
                           WHERE id = '$voucherId'";
             
@@ -80,7 +86,7 @@ if (($transactionstatus === 'success' || $transactionstatus === 'completed') && 
             mysqli_commit($conn);
             
             http_response_code(200);
-            echo json_encode(["transactionstatus" => "success", "message" => "Voucher unlocked cleanly"]);
+            echo json_encode(["status" => "success", "message" => "Voucher unlocked cleanly"]);
             exit();
             
         } catch (Exception $e) {
@@ -92,5 +98,5 @@ if (($transactionstatus === 'success' || $transactionstatus === 'completed') && 
 }
 
 http_response_code(200); 
-echo json_encode(["transactionstatus" => "ignored"]);
+echo json_encode(["status" => "ignored"]);
 ?>
