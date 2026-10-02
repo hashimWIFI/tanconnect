@@ -220,13 +220,13 @@ if ($httpStatusCode === 200 && isset($allocatedVoucherId) && !empty($azamPayTran
                         assigned_phone = ?, 
                         mac_address = ?, 
                         utilityref = ?, 
-                      reference = ?, 
+                        reference = ?, 
                         purchased_at = ? 
                     WHERE id = ?";
                     
     $updateStmt = $conn->prepare($updateQuery);
     if ($updateStmt) {
-        $updateStmt->bind_param("sssssi", $phone, $sessionMac, $transactionId, $reference, $currentDateTime, $allocatedVoucherId);
+        $updateStmt->bind_param("sssssi", $phone, $sessionMac, $transactionId, $azamPayTransactionId, $currentDateTime, $allocatedVoucherId);
         $updateStmt->execute();
         $updateStmt->close();
     }
@@ -272,7 +272,7 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
             if (!activeTxId) return;
             
             var checkInterval = setInterval(function() {
-                fetch('check_status.php?transaction_id=' + encodeURIComponent(activeTxId))
+                fetch('check_status.php?txn_id=' + encodeURIComponent(activeTxId))
                     .then(response => response.json())
                     .then(data => {
                         var upperStatus = data.status ? data.status.toUpperCase() : '';
@@ -283,7 +283,7 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
                             var planAmount = parseInt("<?php echo htmlspecialchars($amount); ?>", 10) || 0;
                             var planDuration = "Siku 1"; // Fallback tracking
                             
-                            if (planAmount === 100) { planDuration = "Masaa 6"; }
+                            if (planAmount === 500) { planDuration = "Masaa 6"; }
                             else if (planAmount === 1000) { planDuration = "Siku 1"; }
                             else if (planAmount === 2000) { planDuration = "Siku 2"; }
                             else if (planAmount === 4000) { planDuration = "Siku 5"; }
