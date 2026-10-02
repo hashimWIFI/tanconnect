@@ -20,17 +20,17 @@ if (!$conn) {
     exit();
 }
 
-// 2. BROAD DATA CAPTURE DISCOVERY LAYER
+// 2. NATIVE BROAD PARAMETER INTERCEPTION ENGINE
 $incomingRawJson = file_get_contents('php://input');
 $paymentData = json_decode($incomingRawJson, true);
 
-// ⚡ THE FIX FOR EMPTY BRACKETS: If raw JSON channel is completely empty, 
-// extract the parameters dynamically from standard web request headers!
-if (empty($paymentData)) {
-    $paymentData = $_REQUEST;
+// ⚡ THE ARCHITECTURAL PATCH: Force inclusion of the primary POST superglobal array 
+// to read AzamPay's native application form parameters cleanly.
+if (empty($paymentData) || !is_array($paymentData)) {
+    $paymentData = !empty($_POST) ? $_POST : $_REQUEST;
 }
 
-// 📝 AUDIT LOG TRAIL: Saves the full captured array dataset text to verify parameter arrival
+// 📝 AUDIT LOG TRAIL: Saves the actual parsed dataset to verify parameters
 file_put_contents('azampay_webhook_log.txt', date('[Y-m-d H:i:s] ') . json_encode($paymentData) . PHP_EOL, FILE_APPEND);
 
 if (empty($paymentData)) {
@@ -60,14 +60,14 @@ if (isset($paymentData['utilityref'])) {
     $utilityref = $paymentData['properties']['utilityref'];
 }
 
-// Strip hidden lines (\n) and carriage returns cleanly from the incoming reference strings
+// Clean out hidden lines (\n) and carriage returns cleanly from the reference strings
 $cleanUtilityRef = trim(preg_replace('/\s+/', '', $utilityref));
 $cleanReference  = trim(preg_replace('/\s+/', '', $reference));
 
 // 4. VERIFY LOGIC AND UPDATE RENAMED MYSQL COLUMNS
 if (($status === 'success' || $status === 'completed') && (!empty($cleanUtilityRef) || !empty($cleanReference))) {
     
-    // Looks up rows using your newly renamed table columns
+    // Look up rows using your newly renamed table columns
     $searchQuery = mysqli_query($conn, "SELECT id FROM wifi_vouchers WHERE utilityref = '" . mysqli_real_escape_string($conn, $cleanUtilityRef) . "' OR reference = '" . mysqli_real_escape_string($conn, $cleanReference) . "' LIMIT 1");
     
     if (mysqli_num_rows($searchQuery) > 0) {
