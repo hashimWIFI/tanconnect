@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         include('svlogin.php');
     } else {
         // Chagua Alogin.php kwa namba za Tigo, Airtel, na Halotel
-        include('alogin.php');
+        include('login.php');
     }
     exit();
 }
