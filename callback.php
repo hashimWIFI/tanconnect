@@ -74,23 +74,25 @@ if (($transactionstatus === 'success' || $transactionstatus === 'completed') && 
         $voucherRow = mysqli_fetch_assoc($searchQuery);
         $voucherId  = $voucherRow['id'];
         
-        mysqli_begin_transaction($conn);
-        try {
-            // Modifies your newly named database fields character-for-character!
-            $updateSql = "UPDATE wifi_vouchers 
-                          SET transactionstatus = 'SUCCESS', 
-                              reference = '" . mysqli_real_escape_string($conn, $cleanReference) . "', 
-                              purchased_at = NOW() 
-                          WHERE id = '$voucherId'";
-            
-            mysqli_query($conn, $updateSql);
-            mysqli_commit($conn);
-            
-            http_response_code(200);
-            echo json_encode(["status" => "success", "message" => "Voucher unlocked cleanly"]);
-            exit();
-            
-        } catch (Exception $e) {
+       mysqli_begin_transaction($conn);
+try {
+    // ⚡ FIXED: Targets the update query explicitly to match the exact active reference keys
+    $updateSql = "UPDATE wifi_vouchers 
+                  SET transactionstatus = 'SUCCESS', 
+                      purchased_at = NOW() 
+                  WHERE utilityref = '" . mysqli_real_escape_string($conn, $cleanUtilityRef) . "' 
+                     OR reference = '" . mysqli_real_escape_string($conn, $cleanReference) . "'";
+    
+    mysqli_query($conn, $updateSql);
+    mysqli_commit($conn);
+    
+    error_log("TANCONNECT WEBHOOK SUCCESS: Transaction successfully updated to SUCCESS!");
+    http_response_code(200);
+    echo json_encode(["status" => "success", "message" => "Voucher unlocked cleanly"]);
+    exit();
+    
+} catch (Exception $e) {
+
             mysqli_rollback($conn);
             http_response_code(500);
             exit();
