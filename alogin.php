@@ -215,7 +215,29 @@ if ($httpStatusCode === 200 && isset($allocatedVoucherId) && !empty($azamPayTran
     $currentDateTime = date("Y-m-d H:i:s");
     
    // Extract handshake indicators cleanly out of the response layer matrix
-$handshakeSuccessFlag = (isset($authResult['success']) && $authResult['success'] === true) ? 'TRUE' : 'FALSE';
+// ⚡ RAW CAPTURE: Grabs the exact success value sent back by AzamPay's handshake response array
+$rawSuccessValue = isset($apiResult['success']) ? $apiResult['success'] : '';
+
+// Convert the raw boolean value cleanly to a string ('1' or '0') so MySQL records it perfectly
+// ====================================================================
+// ⚡ 3-STATE DATA CAPTURE MATRIX (EXACT SAME AS TRANSACTION ID)
+// ====================================================================
+
+// 1. Initialize the parameter with your fallback 0 state (Means: Not sent/Pending)
+$handshakeSuccessFlag = '0'; 
+
+if (isset($apiResult)) {
+    // 2. State A: AzamPay explicitly responded with a true boolean condition
+    if (isset($apiResult['success']) && ($apiResult['success'] === true || $apiResult['success'] === 'true' || $apiResult['success'] === 1)) {
+        $handshakeSuccessFlag = 'true';
+    } 
+    // 3. State B: AzamPay explicitly responded with a false condition
+    elseif (isset($apiResult['success']) && ($apiResult['success'] === false || $apiResult['success'] === 'false' || $apiResult['success'] === 0)) {
+        $handshakeSuccessFlag = 'false';
+    }
+}
+
+
     // PRODUCTION INTEGRATION QUERY: Securely records the new handshake tracking indicator parameters
     $updateQuery = "UPDATE wifi_vouchers 
                     SET transactionstatus = 'ASSIGNED', 
