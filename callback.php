@@ -106,6 +106,7 @@ if (($transactionstatus === 'success' || $transactionstatus === 'completed') && 
             define('TANCONNECT_SECURE_PASS', true);
             $customer_phone = $row['assigned_phone'] ?? '';
             $voucherCode    = $row['voucher_code'] ?? '';
+             $price    = $row['price_tier'] ?? '';
             
             if (file_exists('sms_processor.php') && !empty($customer_phone) && !empty($voucherCode)) {
                 ob_start();
