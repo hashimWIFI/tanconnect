@@ -22,7 +22,7 @@ echo "✓ Connected to MySQL Database successfully.\n";
 echo "Initiating global wipe of testing data states...\n";
 
 // This resets SUCCESS back to PENDING so you can rerun your fake_callback.php loops infinitely
-$resetQuery = "UPDATE wifi_vouchers SET transactionstatus = 'AVAILABLE', purchased_at = NULL, reference = NULL, utilityref = NULL, assigned_phone = NULL WHERE transactionstatus = 'ASSIGNED'";
+$resetQuery = "UPDATE wifi_vouchers SET transactionstatus = 'AVAILABLE', purchased_at = NULL, reference = NULL, utilityref = NULL, assigned_phone = NULL, mac_address = NULL WHERE transactionstatus = 'ASSIGNED'";
 
 if ($conn->query($resetQuery) === TRUE) {
     // Get the exact number of rows that were modified by this action
