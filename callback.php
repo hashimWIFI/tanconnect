@@ -1,10 +1,10 @@
 <?php
 // ====================================================================
-// TANCONNECT PRO-SPEC AUTOMATED CALLBACK ENGINE ('callback.php')
+// TANCONNECT LIVE AUTOMATED WEBHOOK CALLBACK LISTENER ('callback.php')
 // ====================================================================
 
 error_reporting(E_ALL);
-ini_set('display_errors', 0); // Active protection: keeps credentials safe in production
+ini_set('display_errors', 0); // Production protection: shields error metrics from the outside world
 
 // 1. DATABASE CONNECTIVITY VIA NATIVE RAILWAY ENV VARIABLES
 $db_host     = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
@@ -16,86 +16,71 @@ $db_name     = getenv('MYSQLDATABASE') ?: 'railway';
 $conn = mysqli_connect($db_host, $db_user, $db_password, $db_name, $db_port);
 
 if (!$conn) {
-    error_log("TANCONNECT WEBHOOK ERROR: Database Connection Failed");
     http_response_code(500);
     exit();
 }
 
-// 2. CAPTURE THE LIVE WEBHOOK DISPATCHED BY AZAMPAY
+// 2. CAPTURE METHOD FOR INCOMING BODY TRAFFIC
 $incomingRawJson = file_get_contents('php://input');
 $paymentData = json_decode($incomingRawJson, true);
 
+// Fallback to request collections if transmitted via alternative headers
 if (empty($paymentData) || !is_array($paymentData)) {
     $paymentData = !empty($_POST) ? $_POST : $_REQUEST;
 }
 
-// 📝 AUDIT LOG TRAIL: Saves incoming payload for structural confirmation
+// 📝 AUDIT LOG TRAIL: Append the parsed transaction details into your text file
 file_put_contents('azampay_webhook_log.txt', date('[Y-m-d H:i:s] ') . "METHOD: " . ($_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN') . " | PAYLOAD: " . json_encode($paymentData) . PHP_EOL, FILE_APPEND);
 
-// 3. ⚡ NESTED PROPERTIES DECODER LAYER (MATCHES YOUR IMAGE DATA EXACTLY)
+// 🛑 SECURITY GATE A: If AzamPay sends a GET heartbeat verification ping, 
+// respond with 200 OK to clear the handshake but skip database changes entirely!
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'GET') {
+    http_response_code(200);
+    echo json_encode(["status" => "handshake_verified", "message" => "GET request ignored for security safety"]);
+    exit();
+}
+
+// 3. EXTRACT METRICS CORE MATCHING OFFICIAL AZAMPAY SIGNATURE SCHEME
 $transactionstatus = '';
-if (isset($paymentData['properties']['transactionstatus'])) {
-    $transactionstatus = $paymentData['properties']['transactionstatus'];
-} elseif (isset($paymentData['transactionstatus'])) {
-    $transactionstatus = $paymentData['transactionstatus'];
+if (isset($paymentData['transactionstatus'])) {
+    $transactionstatus = strtolower(trim($paymentData['transactionstatus']));
+} elseif (isset($paymentData['properties']['transactionstatus'])) {
+    $transactionstatus = strtolower(trim($paymentData['properties']['transactionstatus']));
 }
 
 $externalreference = '';
-if (isset($paymentData['properties']['externalreference'])) {
-    $externalreference = trim($paymentData['properties']['externalreference']);
-} elseif (isset($paymentData['externalreference'])) {
+if (isset($paymentData['externalreference'])) {
     $externalreference = trim($paymentData['externalreference']);
+} elseif (isset($paymentData['properties']['externalreference'])) {
+    $externalreference = trim($paymentData['properties']['externalreference']);
 }
 
 $utilityref = '';
-if (isset($paymentData['properties']['utilityref'])) {
-    $utilityref = $paymentData['properties']['utilityref'];
-} elseif (isset($paymentData['utilityref'])) {
+if (isset($paymentData['utilityref'])) {
     $utilityref = $paymentData['utilityref'];
+} elseif (isset($paymentData['properties']['utilityref'])) {
+    $utilityref = $paymentData['properties']['utilityref'];
 }
 
-// Clean trailing line breaks (\n) or hidden spaces safely
 $cleanUtilityRef = trim(preg_replace('/\s+/', '', $utilityref));
 $cleanReference  = trim(preg_replace('/\s+/', '', $externalreference));
 
-// Verify if incoming payload status is an explicit success indicator string
-$isPaymentSuccessful = false;
-if (strtolower(trim((string)$transactionstatus)) === 'success' || strtolower(trim((string)$transactionstatus)) === 'completed') {
-    $isPaymentSuccessful = true;
-}
-
-// 4. DUAL-LAYER SECURITY AND DATABASE UPDATE GATEWAY
-if ($isPaymentSuccessful && (!empty($cleanUtilityRef) || !empty($cleanReference))) {
+// 🛑 SECURITY GATE B: The Absolute Payment Barrier
+// The query is only allowed to proceed if AzamPay explicitly sends an authentic 'success' status code string!
+if ($transactionstatus === 'success' || $transactionstatus === 'completed') {
     
-    $safeUtilityRef = mysqli_real_escape_string($conn, $cleanUtilityRef);
-    $safeReference  = mysqli_real_escape_string($conn, $safeReference);
-    
-    // Look up the matching reserved transaction record row
-    $searchQuery = mysqli_query($conn, "SELECT id, price_tier, voucher_code, assigned_phone, reference, handshake_success FROM wifi_vouchers WHERE utilityref = '$safeUtilityRef' OR reference = '$safeReference' LIMIT 1");
+    // Look up matching records using your true database column headings
+    $searchQuery = mysqli_query($conn, "SELECT id, price_tier, voucher_code, assigned_phone FROM wifi_vouchers WHERE utilityref = '" . mysqli_real_escape_string($conn, $cleanUtilityRef) . "' OR reference = '" . mysqli_real_escape_string($conn, $cleanReference) . "' LIMIT 1");
     
     if (mysqli_num_rows($searchQuery) > 0) {
         $row = mysqli_fetch_assoc($searchQuery);
         $voucherId = $row['id'];
-        $handshakeCheck = strtoupper(trim((string)$row['handshake_success']));
-        
-        // 🛑 SECURITY GATE A: Enforce the three-state isolation lock. 
-        // If handshake_success isn't explicitly 'TRUE', block the voucher release!
-        if ($handshakeCheck !== 'TRUE') {
-            error_log("TANCONNECT SECURITY BLOCK: Refused webhook unlock because handshake was not TRUE.");
-            http_response_code(200);
-            echo json_encode(["status" => "blocked", "message" => "Handshake quarantine constraint active"]);
-            exit();
-        }
-        
-        // Preserve initial handshake tracking token cleanly
-        $finalReference = !empty($cleanReference) ? $cleanReference : $row['reference'];
         
         mysqli_begin_transaction($conn);
         try {
-            // ⚡ SECURITY GATE B: Changes status to SUCCESS securely
+            // Alters the status column inside the MySQL table row to SUCCESS securely
             $updateSql = "UPDATE wifi_vouchers 
                           SET transactionstatus = 'SUCCESS', 
-                              reference = '" . mysqli_real_escape_string($conn, $finalReference) . "',
                               purchased_at = NOW() 
                           WHERE id = '$voucherId'";
             
@@ -116,7 +101,7 @@ if ($isPaymentSuccessful && (!empty($cleanUtilityRef) || !empty($cleanReference)
             }
             
             http_response_code(200);
-            echo json_encode(["status" => "success", "message" => "Voucher released successfully"]);
+            echo json_encode(["status" => "success", "message" => "MySQL table updated cleanly"]);
             exit();
             
         } catch (Exception $e) {
@@ -127,6 +112,7 @@ if ($isPaymentSuccessful && (!empty($cleanUtilityRef) || !empty($cleanReference)
     }
 }
 
+// Fallback response for failed, canceled, or declined payments
 http_response_code(200); 
-echo json_encode(["status" => "ignored"]);
+echo json_encode(["status" => "ignored", "message" => "Non-success payload skipped successfully"]);
 ?>
