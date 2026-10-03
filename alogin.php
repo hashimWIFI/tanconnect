@@ -233,7 +233,7 @@ $handshakeSuccessFlag = (isset($authResult['success']) && $authResult['success']
         $updateStmt->bind_param("ssssssi", $phone, $sessionMac, $transactionId, $azamPayTransactionId, $handshakeSuccessFlag, $currentDateTime, $allocatedVoucherId);
         $updateStmt->execute();
         $updateStmt->close();
-    }
+    }     }
 
 // Type safety wrapper for connection closure prevents uncaught execution crashes
 if (isset($conn) && $conn instanceof mysqli) {
@@ -352,7 +352,7 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
 
             // SIMPLIFIED REDIRECT PATHWAY: Direct layout return straight to your local interface gates
             window.top.location.href = "http://5wifi.net";
-        }
+        }     
     </script>
 </head>
 <body>
