@@ -270,9 +270,10 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
 
         function startPaymentVerificationLoop() {
             if (!activeTxId) return;
+
             
             var checkInterval = setInterval(function() {
-                fetch('check_status.php?txn_id=' + encodeURIComponent(activeTxId))
+               fetch('./check_status.php?transaction_id=' + encodeURIComponent(activeTxId))
                     .then(response => response.json())
                     .then(data => {
                         var upperStatus = data.status ? data.status.toUpperCase() : '';
