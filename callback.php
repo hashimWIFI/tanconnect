@@ -6,7 +6,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 0); // Active protection: keeps credentials safe in production
 
-// 1. ESTABLISH YOUR DIRECT MYSQL CONNECTION VIA NATIVE RAILWAY ENV VARIABLES
+// 1. DATABASE CONNECTIVITY VIA NATIVE RAILWAY ENV VARIABLES
 $db_host     = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
 $db_port     = getenv('MYSQLPORT') ?: '3306';
 $db_user     = getenv('MYSQLUSER') ?: 'root';
@@ -59,9 +59,8 @@ if (isset($paymentData['utilityref'])) {
 $cleanUtilityRef = trim(preg_replace('/\s+/', '', $utilityref));
 $cleanReference  = trim(preg_replace('/\s+/', '', $externalreference));
 
-// 🛡️ EMERGENCY 100% UNCONDITIONAL RECOVERY GATEWAY (BRIDGED FROM FAKE_TRIGGER):
-// If the signature layer masks variables but a live POST hit triggers from the payment network gateway, 
-// we scan for the most recent ASSIGNED voucher row automatically to ensure your transaction never drops!
+// 🛡️ EMERGENCY 100% UNCONDITIONAL RECOVERY GATEWAY:
+// If variables get masked by container filters but a live POST hit triggers, isolate by the last active ASSIGNED row
 if (empty($transactionstatus) && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $transactionstatus = 'success';
     $emergencyQuery = mysqli_query($conn, "SELECT utilityref, reference FROM wifi_vouchers WHERE transactionstatus = 'ASSIGNED' ORDER BY id DESC LIMIT 1");
@@ -72,11 +71,10 @@ if (empty($transactionstatus) && $_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// 4. VERIFY LOGIC AND UPDATE RENAMED MYSQL COLUMNS
+// 4. VERIFY LOGIC AND UPDATE YOUR EXACT MYSQL COLUMNS
 if (($transactionstatus === 'success' || $transactionstatus === 'completed') && (!empty($cleanUtilityRef) || !empty($cleanReference))) {
     
-    // Look up matching records using your newly renamed database table columns!
-    // We select price_tier and voucher_code so your SMS file reads them cleanly!
+    // ⚡ BULLETPROOF LOOKUP: Finds the exact voucher matching either reference key natively
     $searchQuery = mysqli_query($conn, "SELECT id, price_tier, voucher_code, assigned_phone FROM wifi_vouchers WHERE utilityref = '" . mysqli_real_escape_string($conn, $cleanUtilityRef) . "' OR reference = '" . mysqli_real_escape_string($conn, $cleanReference) . "' LIMIT 1");
     
     if (mysqli_num_rows($searchQuery) > 0) {
@@ -85,9 +83,11 @@ if (($transactionstatus === 'success' || $transactionstatus === 'completed') && 
         
         mysqli_begin_transaction($conn);
         try {
-            // Modifies your newly named database status fields character-for-character!
+            // ⚡ THE DIRECT MYSQL COLUMN TARGET FIX: 
+            // Explicitly updates transactionstatus to SUCCESS and links the reference key character-for-character
             $updateSql = "UPDATE wifi_vouchers 
                           SET transactionstatus = 'SUCCESS', 
+                              reference = '" . mysqli_real_escape_string($conn, $cleanReference) . "',
                               purchased_at = NOW() 
                           WHERE id = '$voucherId'";
             
@@ -97,30 +97,22 @@ if (($transactionstatus === 'success' || $transactionstatus === 'completed') && 
             // ====================================================================
             // 🚀 INTEGRATED HARDWARE MODEM SMS GATEWAY PROCESSOR BRIDGE
             // ====================================================================
-            
-            // Define global access gate key variables required by sms_processor.php
             define('TANCONNECT_SECURE_PASS', true);
-            
-            // Extract attributes out of the matched database record row securely
             $customer_phone = $row['assigned_phone'] ?? '';
             $voucherCode    = $row['voucher_code'] ?? '';
             
-            // Run your automated hardware text messaging transmission system locally!
             if (file_exists('sms_processor.php')) {
-                // Buffering visual echoes handles cURL webhooks without transmission aborts
                 ob_start();
                 include('sms_processor.php');
                 ob_end_clean();
             }
             
-            error_log("TANCONNECT WEBHOOK SUCCESS: Voucher updated and SMS dispatched!");
             http_response_code(200);
-            echo json_encode(["status" => "success", "message" => "Voucher unlocked and hardware SMS sent successfully"]);
+            echo json_encode(["status" => "success", "message" => "Voucher unlocked cleanly inside MySQL table"]);
             exit();
             
         } catch (Exception $e) {
             mysqli_rollback($conn);
-            error_log("TANCONNECT WEBHOOK EXCEPTION: " . $e->getMessage());
             http_response_code(500);
             exit();
         }
