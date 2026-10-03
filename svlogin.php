@@ -38,7 +38,7 @@ $packageAmount = isset($cleanAmount) ? $cleanAmount : 500;
 $transactionRef = "9" . time() . rand(10, 99);
 
 // 🔍 Check voucher availability BEFORE calling the external API
-$voucherQuery = mysqli_query($conn, "SELECT id, voucher_code FROM wifi_vouchers WHERE status = 'AVAILABLE' LIMIT 1");
+$voucherQuery = mysqli_query($conn, "SELECT id, voucher_code FROM wifi_vouchers WHERE transactionstatus = 'AVAILABLE' LIMIT 1");
 
 if (mysqli_num_rows($voucherQuery) === 0) {
     die("Huduma Imesimama: Hakuna vocha za WiFi zilizobaki kwenye mfumo wetu. (No Vouchers Available)");
@@ -50,7 +50,7 @@ $voucherCode = $voucherRow['voucher_code'];
 
 // 🛡️ Lock, reserve the voucher, and save the transaction_id inside MySQL
 $updateSql = "UPDATE wifi_vouchers 
-              SET status = 'ASSIGNED', 
+              SET transactionstatus = 'ASSIGNED', 
                   assigned_phone = '$customerPhone', 
                   transaction_id = '$transactionRef' 
               WHERE id = '$voucherId'";       
