@@ -1,12 +1,12 @@
 <?php
 // ====================================================================
-// TANCONNECT PRO-SPEC LIVE AUTOMATED WEBHOOK CALLBACK ('callback.php')
+// TANCONNECT PRO-SPEC AUTOMATED CALLBACK ENGINE ('callback.php')
 // ====================================================================
 
 error_reporting(E_ALL);
 ini_set('display_errors', 0); // Active protection: keeps credentials completely safe
 
-// 1. DATABASE CONNECTIVITY VIA NATIVE RAILWAY ENV VARIABLES
+// 1. ESTABLISH YOUR DIRECT MYSQL CONNECTION VIA NATIVE RAILWAY ENV VARIABLES
 $db_host     = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
 $db_port     = getenv('MYSQLPORT') ?: '3306';
 $db_user     = getenv('MYSQLUSER') ?: 'root';
@@ -24,9 +24,8 @@ if (!$conn) {
 // Log the automated callback arrival history inside your text audit trail file
 file_put_contents('azampay_webhook_log.txt', date('[Y-m-d H:i:s] ') . "AUTOMATED WEBHOOK HIT RECEIVED VIA: " . ($_SERVER['REQUEST_METHOD'] ?? 'GET') . PHP_EOL, FILE_APPEND);
 
-// 2. ⚡ THE ABSOLUTE NATIVE AUTOMATION RESOLUTION
-// When AzamPay hits this path via GET after PIN confirmation, we instantly locate 
-// the active row stuck at ASSIGNED and transition it straight to SUCCESS!
+// 2. ⚡ THE RESILIENT DATA-BLIND RECOVERY ENGINE
+// Finds the absolute most recent transaction row currently stuck in the ASSIGNED state
 $searchQuery = mysqli_query($conn, "SELECT id, price_tier, voucher_code, assigned_phone, reference FROM wifi_vouchers WHERE transactionstatus = 'ASSIGNED' ORDER BY id DESC LIMIT 1");
 
 if (mysqli_num_rows($searchQuery) > 0) {
@@ -35,7 +34,7 @@ if (mysqli_num_rows($searchQuery) > 0) {
     
     mysqli_begin_transaction($conn);
     try {
-        // ⚡ THE OBJECTIVE LIVE UPDATE: Explicitly pushes the true database row to SUCCESS automatically!
+        // ⚡ THE OBJECTIVE UPDATE: Automatically alters the status inside the MySQL table row to SUCCESS
         $updateSql = "UPDATE wifi_vouchers 
                       SET transactionstatus = 'SUCCESS', 
                           purchased_at = NOW() 
@@ -59,7 +58,7 @@ if (mysqli_num_rows($searchQuery) > 0) {
             ob_end_clean();
         }
         
-        // Respond with 200 OK to successfully close the handshake loop with AzamPay
+        // Respond with a solid 200 OK to successfully close the handshake loop with AzamPay
         http_response_code(200);
         echo json_encode(["status" => "success", "message" => "MySQL status updated automatically"]);
         exit();
