@@ -15,13 +15,17 @@ if (!$conn) {
     exit();
 }
 
-$txId = isset($_GET['utilityref']) ? trim($_GET['utilityref']) : '';
+// ⚡ ALIGNED INPUT INTERCEPTION: Captures both 'transaction_id' and 'utilityref' safely
+$txId = isset($_GET['transaction_id']) ? trim($_GET['transaction_id']) : (isset($_GET['utilityref']) ? trim($_GET['utilityref']) : '');
 
 if (!empty($txId)) {
     $query = mysqli_query($conn, "SELECT transactionstatus, voucher_code FROM wifi_vouchers WHERE utilityref = '" . mysqli_real_escape_string($conn, $txId) . "' LIMIT 1");
     if (mysqli_num_rows($query) > 0) {
         $row = mysqli_fetch_assoc($query);
+        
+        // ⚡ ALIGNED OUTPUT KEYS: Sends both formats so the frontend JavaScript parses it instantly
         echo json_encode([
+            "status" => $row['transactionstatus'],
             "transactionstatus" => $row['transactionstatus'],
             "voucher_code" => ($row['transactionstatus'] === 'SUCCESS') ? $row['voucher_code'] : ''
         ]);
@@ -29,5 +33,5 @@ if (!empty($txId)) {
     }
 }
 
-echo json_encode(["transactionstatus" => "PENDING"]);
+echo json_encode(["status" => "PENDING", "transactionstatus" => "PENDING"]);
 ?>
