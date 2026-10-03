@@ -36,11 +36,11 @@ $cleanAmount = intval($amount);
         <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
         
         
-                <p style="font-size: 14px; color: #e74c3c; font-weight: bold;">
-            ⚠️ MWONGOZO WA MALIPO KWA WATEJA WA M-PESA
+                <p style="font-size: 15px; color: #e74c3c; font-weight: bold;">
+            ⚠️ MALIPO KWA WATEJA WA M-PESA
         </p>
 
-        <div class="instructions-box" style="border: 1px solid #f5c6cb; background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; text-align: left;">
+        <div class="instructions-box" style="border: 1px solid #f5c6cb; background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; text-align: justify;;">
             <b>Ndugu Mteja:</b><br><br>
             Mfumo wetu wa malipo wa <b>TANConnect</b><sup style="font-family: Arial, Helvetica, sans-serif; font-size: 6px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup> bado haujaunganishwa na huduma ya <b>M-Pesa</b> kwa sasa. Wakati juhudi zinachukuliwa kuunganisha mifumo, tafadhali tumia nambari za <b>Tigo, Airtel, au Halotel</b> kukamilisha muamala na kupata voucher yako kwa njia ya mtandao.<br><br> Tupigie kwa nambari 0713 123 974 tukufahamishe utaratibu mwingine kupata voucher yako
            
@@ -48,7 +48,7 @@ $cleanAmount = intval($amount);
 
         <div style="margin-top: 25px;">
             <a href="javascript:history.back()" class="btn-portal" style="background-color: #34495e; padding: 12px 25px; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">
-                ⬅️ RUDI NYUMA (GO BACK)
+                ⬅️ RUDI NYUMA
             </a>
         </div>
     
