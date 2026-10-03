@@ -216,25 +216,24 @@ if ($httpStatusCode === 200 && isset($allocatedVoucherId) && !empty($azamPayTran
     
    // Extract handshake indicators cleanly out of the response layer matrix
 $handshakeSuccessFlag = (isset($authResult['success']) && $authResult['success'] === true) ? 'TRUE' : 'FALSE';
-
-// PRODUCTION INTEGRATION QUERY: Securely records the new handshake tracking indicator parameters
-$updateQuery = "UPDATE wifi_vouchers 
-                SET transactionstatus = 'ASSIGNED', 
-                    assigned_phone = ?, 
-                    mac_address = ?, 
-                    utilityref = ?, 
-                    reference = ?, 
-                    handshake_success = ?, // ⚡ NEW QUARANTINE FIELD
-                    purchased_at = ? 
-                WHERE id = ?";
-                
-$updateStmt = $conn->prepare($updateQuery);
-if ($updateStmt) {
-    // Fixed: Binds the custom $handshakeSuccessFlag parameter directly into your columns block
-    $updateStmt->bind_param("ssssssi", $phone, $sessionMac, $transactionId, $azamPayTransactionId, $handshakeSuccessFlag, $currentDateTime, $allocatedVoucherId);
-    $updateStmt->execute();
-    $updateStmt->close();
-}}
+    // PRODUCTION INTEGRATION QUERY: Securely records the new handshake tracking indicator parameters
+    $updateQuery = "UPDATE wifi_vouchers 
+                    SET transactionstatus = 'ASSIGNED', 
+                        assigned_phone = ?, 
+                        mac_address = ?, 
+                        utilityref = ?, 
+                        reference = ?, 
+                        handshake_success = ?, 
+                        purchased_at = ? 
+                    WHERE id = ?";
+                    
+    $updateStmt = $conn->prepare($updateQuery);
+    if ($updateStmt) {
+        // Binds the custom $handshakeSuccessFlag parameter directly into your columns block
+        $updateStmt->bind_param("ssssssi", $phone, $sessionMac, $transactionId, $azamPayTransactionId, $handshakeSuccessFlag, $currentDateTime, $allocatedVoucherId);
+        $updateStmt->execute();
+        $updateStmt->close();
+    }
 
 // Type safety wrapper for connection closure prevents uncaught execution crashes
 if (isset($conn) && $conn instanceof mysqli) {
