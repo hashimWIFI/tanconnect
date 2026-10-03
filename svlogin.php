@@ -52,7 +52,7 @@ $voucherCode = $voucherRow['voucher_code'];
 $updateSql = "UPDATE wifi_vouchers 
               SET transactionstatus = 'ASSIGNED', 
                   assigned_phone = '$customerPhone', 
-                  transaction_id = '$transactionRef' 
+                  utilityref = '$transactionRef' 
               WHERE id = '$voucherId'";       
 mysqli_query($conn, $updateSql);
 
