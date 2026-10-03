@@ -21,7 +21,7 @@ echo "✓ Connected to MySQL Database successfully.\n";
 // Change the target table name if you ever migrate from wifi_vouchers
 echo "Initiating global wipe of testing data states...\n";
 
-// This resets SUCCESS back to PENDING so you can rerun your fake_callback.php loops infinitely
+// resets ASSIGNED Voucher parameters inside TABLE wifi_vouchers.
 $resetQuery = "UPDATE wifi_vouchers SET transactionstatus = 'AVAILABLE', purchased_at = NULL, reference = NULL, utilityref = NULL, assigned_phone = NULL, mac_address = NULL WHERE transactionstatus = 'ASSIGNED'";
 
 if ($conn->query($resetQuery) === TRUE) {
