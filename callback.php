@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// 1. DATABASE CONNECTIVITY VIA NATIVE RAILWAY ENV VARIABLES
+// 1. DATABASE CONNECTIVITY
 $db_host     = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
 $db_port     = getenv('MYSQLPORT') ?: '3306';
 $db_user     = getenv('MYSQLUSER') ?: 'root';
@@ -27,9 +27,13 @@ try {
     exit;
 }
 
-// 2. Parse Incoming Webhook Payload from AzamPay
+// 2. Parse Incoming Webhook Payload
 $rawPayload = file_get_contents('php://input');
 $data = json_decode($rawPayload, true);
+
+// CRITICAL DEBUG STEP: Write the exact raw JSON from AzamPay to an error log file
+// This lets you see if AzamPay is sending the values in a different casing (e.g., transactionStatus vs transactionstatus)
+file_put_contents('azampay_webhook_debug.log', date('[Y-m-d H:i:s] ') . $rawPayload . PHP_EOL, FILE_APPEND);
 
 if (json_last_error() !== JSON_ERROR_NONE || empty($data)) {
     http_response_code(400);
@@ -37,43 +41,66 @@ if (json_last_error() !== JSON_ERROR_NONE || empty($data)) {
     exit;
 }
 
-// Extract variables safely from the payload
-$utilityref        = $data['utilityref'] ?? null;
+// Extract variables safely - checking both lowercase and camelCase just in case
+$utilityref        = $data['utilityref'] ?? $data['utilityRef'] ?? null;
 $reference         = $data['reference'] ?? null; 
-$webhookStatus     = isset($data['transactionstatus']) ? strtolower(trim($data['transactionstatus'])) : '';
+$rawStatus         = $data['transactionstatus'] ?? $data['transactionStatus'] ?? '';
+$cleanStatus       = strtolower(trim($rawStatus));
 
-// 3. Map the incoming AzamPay status to your desired DB state
-// AzamPay sends "success" or "success" variations when paid
-if ($webhookStatus === 'success' || $webhookStatus === 'completed') {
+// 3. Normalize Status to Strictly SUCCESS or FAILED
+if ($cleanStatus === 'success' || $cleanStatus === 'completed') {
     $dbStatus = 'SUCCESS';
 } else {
     $dbStatus = 'FAILED';
 }
 
-// 4. Process and Update Table
+// 4. Update the Table
 if (!empty($reference)) {
     try {
-        // This will successfully overwrite 'ASSIGNED' with 'SUCCESS' or 'FAILED'
+        // SQL Statement using standard reference
         $sql = "UPDATE wifi_vouchers 
                 SET utilityref = :utilityref, 
                     transactionstatus = :transactionstatus 
                 WHERE reference = :reference";
         
         $stmt = $pdo->prepare($sql);
-        
         $stmt->execute([
             ':utilityref'        => $utilityref,
-            ':transactionstatus' => $dbStatus, // Overwrites 'ASSIGNED' with 'SUCCESS'
+            ':transactionstatus' => $dbStatus,
             ':reference'         => $reference
         ]);
         
-        error_log("Successfully updated wifi_vouchers for reference: $reference to status: $dbStatus");
+        $rowCount = $stmt->rowCount();
+        
+        // If 0 rows were updated, it means the column 'reference' does not contain the value $reference
+        if ($rowCount === 0) {
+            error_log("⚠️ SQL executed successfully, but 0 rows matched reference: $reference. Checking table columns...");
+            
+            // ALTERNATE ATTEMPT: If your system uses the reference string as the voucher_code itself
+            $backupSql = "UPDATE wifi_vouchers 
+                          SET utilityref = :utilityref, 
+                              transactionstatus = :transactionstatus 
+                          WHERE voucher_code = :reference";
+            $backupStmt = $pdo->prepare($backupSql);
+            $backupStmt->execute([
+                ':utilityref'        => $utilityref,
+                ':transactionstatus' => $dbStatus,
+                ':reference'         => $reference
+            ]);
+            
+            if ($backupStmt->rowCount() > 0) {
+                error_log("✅ Backup update fixed it! Matched via voucher_code column instead.");
+            }
+        } else {
+            error_log("✅ Successfully updated $rowCount row(s) to status: $dbStatus");
+        }
 
     } catch (PDOException $e) {
-        error_log("SQL Execution Error: " . $e->getMessage());
+        // Captures if column names don't exist or if an ENUM value constraint blocks the update
+        error_log("❌ SQL DB Exception Error: " . $e->getMessage());
     }
 } else {
-    error_log("Webhook payload received without a valid unique reference parameter.");
+    error_log("❌ Webhook payload received without a valid unique reference parameter.");
 }
 
 // 5. Respond back to AzamPay with a 200 OK
