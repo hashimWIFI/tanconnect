@@ -258,17 +258,17 @@ if ($httpStatusCode === 200 && isset($allocatedVoucherId) && !empty($azamPayTran
     
     // ⚡ CLEAN SPEC-ALIGNED QUERY: 
     // - $transactionId ('NITW-...') is now explicitly bound to the 'reference' column [image_iGqfKd.png].
-    // - $azamPayTransactionId ('AZM-...') is now explicitly bound to the 'utilityref' column [image_iGqfKd.png].
-    $updateQuery = "UPDATE wifi_vouchers 
+       $updateQuery = "UPDATE wifi_vouchers 
                     SET transactionstatus = 'ASSIGNED', 
                         assigned_phone = ?, 
                         mac_address = ?, 
-                        reference = ?,     // ⚡ Maps your internal ID [image_iGqfKd.png]
-                        utilityref = ?,    // ⚡ Maps AzamPay's ID [image_iGqfKd.png]
+                        reference = ?, 
+                        utilityref = ?, 
                         access_token = ?, 
                         token_status = ?, 
                         purchased_at = ? 
                     WHERE id = ?";
+
                     
        $updateStmt = $conn->prepare($updateQuery);
     if ($updateStmt) {
