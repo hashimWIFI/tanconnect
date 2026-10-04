@@ -1,14 +1,13 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 
-// Only allow incoming POST requests from AzamPay
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(["status" => "error", "message" => "Method Not Allowed"]);
     exit;
 }
 
-// 1. DATABASE CONNECTIVITY (Railway Environment)
+// 1. DATABASE CONNECTIVITY VIA NATIVE RAILWAY ENV VARIABLES
 $db_host     = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
 $db_port     = getenv('MYSQLPORT') ?: '3306';
 $db_user     = getenv('MYSQLUSER') ?: 'root';
@@ -28,7 +27,7 @@ try {
     exit;
 }
 
-// 2. Parse the Incoming Webhook Payload from AzamPay
+// 2. Parse Incoming Webhook Payload from AzamPay
 $rawPayload = file_get_contents('php://input');
 $data = json_decode($rawPayload, true);
 
@@ -38,62 +37,45 @@ if (json_last_error() !== JSON_ERROR_NONE || empty($data)) {
     exit;
 }
 
-// Extract variables sent by the AzamPay checkout completion callback
-$utilityref        = $data['utilityref'] ?? null;
-$reference         = $data['reference'] ?? null; // This matches the reference you created during checkout
+// Extract variables safely from incoming payload
+$utilityref        = $data['utilityref'] ?? null; // e.g., "AZM01a106a59fae..."
+$reference         = $data['reference'] ?? null;  // e.g., "NITW-1791112877"
 $webhookStatus     = isset($data['transactionstatus']) ? strtolower(trim($data['transactionstatus'])) : '';
 
-// 3. Map the customer's actual payment outcome
+// 3. Map the payment outcome to your strict database state
 if ($webhookStatus === 'success' || $webhookStatus === 'completed') {
     $dbStatus = 'SUCCESS';
 } else {
     $dbStatus = 'FAILED';
 }
 
-// 4. Update the wifi_vouchers Table based on the payment outcome
-if (!empty($reference)) {
+// 4. Update the Table matching BOTH critical keys to eliminate collisions
+if (!empty($reference) && !empty($utilityref)) {
     try {
-        // Find the voucher row that was previously 'ASSIGNED' matching this reference
-        // and update its transactionstatus to SUCCESS or FAILED.
+        // Strict double-matching WHERE clause guarantees no two overlapping transactions collide
         $sql = "UPDATE wifi_vouchers 
                 SET transactionstatus = :transactionstatus,
-                    purchased_at = NOW() 
-                WHERE reference = :reference";
+                    purchased_at = NOW()
+                WHERE reference = :reference 
+                  AND utilityref = :utilityref";
         
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
-            ':transactionstatus' => $dbStatus, // Changes 'ASSIGNED' to 'SUCCESS' or 'FAILED'
-            ':reference'         => $reference
+            ':transactionstatus' => $dbStatus, // Flips 'ASSIGNED' strictly to 'SUCCESS' or 'FAILED'
+            ':reference'         => $reference,
+            ':utilityref'        => $utilityref
         ]);
         
-        $rowCount = $stmt->rowCount();
-        
-        if ($rowCount > 0) {
-            error_log("✅ Voucher Reference $reference updated successfully from ASSIGNED to $dbStatus");
-            
-            // OPTIONAL: If the status is SUCCESS, you can trigger your SMS gateway here 
-            // to send the voucher_code to the customer's assigned_phone number.
-            if ($dbStatus === 'SUCCESS') {
-                // Fetch the row data to get the voucher code and phone if needed for SMS
-                $fetchStmt = $pdo->prepare("SELECT voucher_code, assigned_phone FROM wifi_vouchers WHERE reference = :reference");
-                $fetchStmt->execute([':reference' => $reference]);
-                $voucher = $fetchStmt->fetch();
-                
-                if ($voucher) {
-                    error_log("📱 Ready to send Voucher Code: " . $voucher['voucher_code'] . " to Phone: " . $voucher['assigned_phone']);
-                }
-            }
-        } else {
-            error_log("⚠️ Webhook received for Reference $reference, but no matching row was modified. (It may already be updated).");
-        }
+        // Debug confirmation line
+        error_log("AzamPay Callback Handler -> Dual-matched Reference: $reference and UtilityRef: $utilityref. Status updated to: $dbStatus");
 
     } catch (PDOException $e) {
-        error_log("❌ MySQL Database Exception Error: " . $e->getMessage());
+        error_log("❌ MySQL Webhook Update Error: " . $e->getMessage());
     }
 } else {
-    error_log("❌ Webhook ignored: No reference key found in the payload data.");
+    error_log("❌ Webhook ignored: Missing tracking parameters (reference or utilityref empty).");
 }
 
-// 5. Respond back to AzamPay with a 200 OK so they know you processed it
+// 5. Always respond 200 OK to AzamPay to clear the queue callback
 http_response_code(200);
 echo json_encode(["status" => "success", "message" => "Webhook processed successfully"]);
