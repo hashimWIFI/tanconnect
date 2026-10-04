@@ -243,44 +243,28 @@ if (!$token || $tokenStatusFlag !== 'true') {
 }
 
 // Update database status flags to 'ASSIGNED' if cURL checkout request hit 200 OK successfully
+// =========================================================================
+// ⚡ STANDARDIZED INTEGRATION MAPPING BLOCK (SPEC-COMPLIANT)
+// =========================================================================
 if ($httpStatusCode === 200 && isset($allocatedVoucherId) && !empty($azamPayTransactionId)) {
-    // STORES MAC DIRECTLY IN YOUR DB: Saves all attributes side-by-side perfectly
     $sessionMac = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0';
     
-    // Set local East African Time parameters upon successful database write operations
     date_default_timezone_set('Africa/Dar_es_Salaam');
     $currentDateTime = date("Y-m-d H:i:s");
     
-   // Extract handshake indicators cleanly out of the response layer matrix
-// ⚡ RAW CAPTURE: Grabs the exact success value sent back by AzamPay's handshake response array
-$rawSuccessValue = isset($apiResult['success']) ? $apiResult['success'] : '';
-
-// Convert the raw boolean value cleanly to a string ('1' or '0') so MySQL records it perfectly
-// ====================================================================
-// ⚡ 3-STATE DATA CAPTURE MATRIX (EXACT SAME AS TRANSACTION ID)
-// ====================================================================
-
-// 1. Initialize the parameter with your fallback 0 state (Means: Not sent/Pending)
-$handshakeSuccessFlag = '0'; 
-
-if (isset($apiResult)) {
-    // 2. State A: AzamPay explicitly responded with a true boolean condition
-    if (isset($apiResult['success']) && ($apiResult['success'] === true || $apiResult['success'] === 'true' || $apiResult['success'] === 1)) {
-        $handshakeSuccessFlag = 'true';
-    } 
-    // 3. State B: AzamPay explicitly responded with a false condition
-    elseif (isset($apiResult['success']) && ($apiResult['success'] === false || $apiResult['success'] === 'false' || $apiResult['success'] === 0)) {
-        $handshakeSuccessFlag = 'false';
-    }
-}  }
-
-    // PRODUCTION INTEGRATION QUERY: Securely records Stage 1 and Stage 2 variables in a uniform row block!
+    // Retrieve Stage 1 parameters safely from session state
+    $savedToken  = isset($_SESSION['active_access_token']) ? $_SESSION['active_access_token'] : null;
+    $savedStatus = isset($_SESSION['active_token_status']) ? $_SESSION['active_token_status'] : '0';
+    
+    // ⚡ CLEAN SPEC-ALIGNED QUERY: 
+    // - $transactionId ('NITW-...') is now explicitly bound to the 'reference' column [image_iGqfKd.png].
+    // - $azamPayTransactionId ('AZM-...') is now explicitly bound to the 'utilityref' column [image_iGqfKd.png].
     $updateQuery = "UPDATE wifi_vouchers 
                     SET transactionstatus = 'ASSIGNED', 
                         assigned_phone = ?, 
                         mac_address = ?, 
-                        utilityref = ?, 
-                        reference = ?, 
+                        reference = ?,     // ⚡ Maps your internal ID [image_iGqfKd.png]
+                        utilityref = ?,    // ⚡ Maps AzamPay's ID [image_iGqfKd.png]
                         access_token = ?, 
                         token_status = ?, 
                         purchased_at = ? 
@@ -288,20 +272,17 @@ if (isset($apiResult)) {
                     
     $updateStmt = $conn->prepare($updateQuery);
     if ($updateStmt) {
-        // Retrieve the clean Stage 1 variables we stored in the session memory earlier
-        $savedToken  = isset($_SESSION['active_access_token']) ? $_SESSION['active_access_token'] : null;
-        $savedStatus = isset($_SESSION['active_token_status']) ? $_SESSION['active_token_status'] : '0';
-        $sessionMac  = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0';
-        
-        // ⚡ EXACTLY 8 PARAMETERS MATCHING 8 QUESTION MARKS PERFECTLY:
+        // Enforces exact 8-parameter bindings matching the new spec requirements character-for-character
         $updateStmt->bind_param("sssssssi", $phone, $sessionMac, $transactionId, $azamPayTransactionId, $savedToken, $savedStatus, $currentDateTime, $allocatedVoucherId);
         $updateStmt->execute();
         $updateStmt->close();
     }
     
-    // Clear the temporary session tokens safely
+    // Clean up temporary session tokens safely
     unset($_SESSION['active_access_token']);
     unset($_SESSION['active_token_status']);
+}
+
 
 
 // Type safety wrapper for connection closure prevents uncaught execution crashes
