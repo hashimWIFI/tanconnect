@@ -146,14 +146,51 @@ if (!$dbResult) {
     $httpStatusCode = curl_getinfo($chAuth, CURLINFO_HTTP_CODE);
     curl_close($chAuth);
 
-    $authResult = json_decode($authResponse, true);
+  $authResult = json_decode($authResponse, true);
+
+// 1. UNIFORM DATA CAPTURE MATRIX (EXACT SAME FORMAT AS TRANSACTION ID)
+// Extracts the literal raw text token string character-for-character
+$azamPayAccessToken = null;
+if (isset($authResult['data']['accessToken']) && !empty($authResult['data']['accessToken'])) {
+    $azamPayAccessToken = trim((string)$authResult['data']['accessToken']);
+} elseif (isset($authResult['token'])) {
+    $azamPayAccessToken = trim((string)$authResult['token']);
+}
+
+// 2. 3-STATE DATA CAPTURE MATRIX FOR TOKEN STATUS
+$tokenStatusFlag = '0'; // Default fallback: 0 means request wasn't sent or timeout occurred
+
+if (isset($authResult)) {
+    // State A: AzamPay explicitly returned a true success flag AND a 200 status code
+    if (isset($authResult['success']) && $authResult['success'] === true && isset($authResult['statusCode']) && intval($authResult['statusCode']) === 200) {
+        $tokenStatusFlag = 'true';
+    } 
+    // State B: AzamPay explicitly responded with a false condition or non-200 code
+    elseif (isset($authResult['success']) && ($authResult['success'] === false || intval($authResult['statusCode']) !== 200)) {
+        $tokenStatusFlag = 'false';
+    }
+}
+
+// Map the extracted token variable back into the legacy global pointer string to keep Stage 2 running cleanly
+$token = $azamPayAccessToken;
+
+if (!$token || $tokenStatusFlag !== 'true') {
+    $httpStatusCode = 401; // Flag failure state if something slips
     
-    // Extract token cleanly from your profile's data object response parameters layer
-    $token = isset($authResult['data']['accessToken']) ? $authResult['data']['accessToken'] : (isset($authResult['token']) ? $authResult['token'] : null);
-    
-    if (!$token) {
-        $httpStatusCode = 401; // Flag failure state if something slips
-    } else {
+    // Safety fallback: Immediately write the token failure state into your database table
+    if (isset($allocatedVoucherId)) {
+        $failStmt = $conn->prepare("UPDATE wifi_vouchers SET token_status = ?, access_token = NULL WHERE id = ?");
+        if ($failStmt) {
+            $failStmt->bind_param("si", $tokenStatusFlag, $allocatedVoucherId);
+            $failStmt->execute();
+            $failStmt->close();
+        }
+    }
+} else {
+    // Stage 1 is a 100% verified success! Store attributes in session memory to bind in the final checkout statement
+    $_SESSION['active_access_token'] = $azamPayAccessToken;
+    $_SESSION['active_token_status'] = $tokenStatusFlag;
+
         // =========================================================================
         // 5. STAGE 2: EXECUTE LIVE MOBILE CHECKOUT DISPATCH
         // =========================================================================
