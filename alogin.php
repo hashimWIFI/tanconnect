@@ -287,7 +287,7 @@ if (isset($apiResult)) {
     $updateStmt = $conn->prepare($updateQuery);
     if ($updateStmt) {
         // Binds the custom $handshakeSuccessFlag parameter directly into your columns block
-        $updateStmt->bind_param("ssssssi", $phone, $sessionMac, $transactionId, $azamPayTransactionId, $handshakeSuccessFlag, $currentDateTime, $allocatedVoucherId);
+        $updateStmt->bind_param("ssssssi", $phone, $transactionId, $azamPayTransactionId, $handshakeSuccessFlag, $currentDateTime, $allocatedVoucherId);
         $updateStmt->execute();
         $updateStmt->close();
     }     }
