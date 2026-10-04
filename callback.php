@@ -1,10 +1,10 @@
 <?php
 // ====================================================================
-// TANCONNECT LIVE AUTOMATED WEBHOOK CALLBACK LISTENER ('callback.php')
+// TANCONNECT PRO-SPEC AUTOMATED CALLBACK ENGINE ('callback.php')
 // ====================================================================
 
 error_reporting(E_ALL);
-ini_set('display_errors', 0); // Production protection: shields credentials from outside viewing
+ini_set('display_errors', 0); // Active protection: keeps credentials safe in production
 
 // 1. DATABASE CONNECTIVITY VIA NATIVE RAILWAY ENV VARIABLES
 $db_host     = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
@@ -33,40 +33,37 @@ if (empty($paymentData) || !is_array($paymentData)) {
 // 📝 AUDIT LOG TRAIL: Saves the flat raw metrics payload to your text log history file
 file_put_contents('azampay_webhook_log.txt', date('[Y-m-d H:i:s] ') . "METHOD: " . ($_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN') . " | FLAT_PAYLOAD: " . json_encode($paymentData) . PHP_EOL, FILE_APPEND);
 
-// 3. EXTRACT FLAT PARAMETERS CORE MATCHING OFFICIAL AZAMPAY NODE.JS SPECIFICATION
-$transactionstatus = isset($paymentData['transactionstatus']) ? strtolower(trim((string)$paymentData['transactionstatus'])) : '';
+// 3. EXTRACT FLAT PARAMETERS CORE MATCHING OFFICIAL AZAMPAY SPECIFICATION
+$transactionstatus = isset($paymentData['transactionstatus']) ? trim((string)$paymentData['transactionstatus']) : '';
 $reference         = isset($paymentData['reference'])         ? trim((string)$paymentData['reference'])         : '';
 $utilityref        = isset($paymentData['utilityref'])        ? trim((string)$paymentData['utilityref'])        : '';
+$message           = isset($paymentData['message'])           ? trim((string)$paymentData['message'])           : 'No message provided';
 
 // Wipes out hidden trailing line breaks (\n) or carriage returns completely
 $cleanUtilityRef = trim(preg_replace('/\s+/', '', $utilityref));
 $cleanReference  = trim(preg_replace('/\s+/', '', $reference));
 
-// ⚡ THE EXPLICIT FLAT STATUS CHECKER GATE
-$isPaymentSuccessful = false;
-if ($transactionstatus === 'success' || $transactionstatus === 'completed' || $transactionstatus === 'true' || $transactionstatus === true) {
-    $isPaymentSuccessful = true;
-}
+$statusLower = strtolower($transactionstatus);
+$isPaymentSuccessful = ($statusLower === 'success' || $statusLower === 'completed' || $statusLower === 'true');
 
-// 4. DUAL-LAYER SECURITY AND DATABASE UPDATE GATEWAY
-if ($isPaymentSuccessful && (!empty($cleanUtilityRef) || !empty($cleanReference))) {
+if (!empty($cleanUtilityRef) || !empty($cleanReference)) {
     
     $safeUtilityRef = mysqli_real_escape_string($conn, $cleanUtilityRef);
     $safeReference  = mysqli_real_escape_string($conn, $cleanReference);
     
     // Look up rows using your true database column headings character-for-character
-    $searchQuery = mysqli_query($conn, "SELECT id, price_tier, voucher_code, assigned_phone, reference, handshake_success FROM wifi_vouchers WHERE utilityref = '$safeUtilityRef' OR reference = '$safeReference' LIMIT 1");
+    $searchQuery = mysqli_query($conn, "SELECT id, price_tier, voucher_code, assigned_phone, reference, token_status FROM wifi_vouchers WHERE utilityref = '$safeUtilityRef' OR reference = '$safeReference' LIMIT 1");
     
     if (mysqli_num_rows($searchQuery) > 0) {
         $row = mysqli_fetch_assoc($searchQuery);
         $voucherId = $row['id'];
-        $handshakeCheck = strtoupper(trim((string)$row['handshake_success']));
+        $tokenCheck = strtolower(trim((string)$row['token_status']));
         
-        // 🛑 SECURITY GATE A: Enforce the isolated pre-payment sandbox quarantine constraint!
-        if ($handshakeCheck !== 'TRUE' && $handshakeCheck !== '1') {
-            error_log("TANCONNECT SECURITY BLOCK: Refused callback update because handshake status was not true.");
+        // 🛑 SECURITY GATE A: Enforce the isolated Stage 1 token check constraint
+        if ($tokenCheck !== 'true') {
+            error_log("TANCONNECT SECURITY BLOCK: Refused callback update because token_status was not true.");
             http_response_code(200);
-            echo json_encode(["status" => "blocked", "message" => "Handshake validation mismatch"]);
+            echo json_encode(["status" => "blocked", "message" => "Stage 1 authentication constraint active"]);
             exit();
         }
         
@@ -75,32 +72,57 @@ if ($isPaymentSuccessful && (!empty($cleanUtilityRef) || !empty($cleanReference)
         
         mysqli_begin_transaction($conn);
         try {
-            // ⚡ SECURITY GATE B: Changes status to SUCCESS inside your MySQL row layout cleanly
-            $updateSql = "UPDATE wifi_vouchers 
-                          SET transactionstatus = 'SUCCESS', 
-                              reference = '" . mysqli_real_escape_string($conn, $finalReference) . "',
-                              purchased_at = NOW() 
-                          WHERE id = '$voucherId'";
-            
-            mysqli_query($conn, $updateSql);
-            mysqli_commit($conn);
-            
-            // ====================================================================
-            // 🚀 INTEGRATED HARDWARE MODEM SMS GATEWAY PROCESSOR BRIDGE
-            // ====================================================================
-            define('TANCONNECT_SECURE_PASS', true);
-            $customer_phone = $row['assigned_phone'] ?? '';
-            $voucherCode    = $row['voucher_code'] ?? '';
-            
-            if (file_exists('sms_processor.php') && !empty($customer_phone) && !empty($voucherCode)) {
-                ob_start();
-                include('sms_processor.php');
-                ob_end_clean();
+            if ($isPaymentSuccessful) {
+                // ⚡ STAGE 3 SUCCESS MATRIX: Wallet deduction verified! 
+                // Updates standard status to SUCCESS and explicitly logs all arriving parameters for cross-audit reference!
+                $updateSql = "UPDATE wifi_vouchers 
+                              SET transactionstatus = 'SUCCESS', 
+                                  reference = '" . mysqli_real_escape_string($conn, $finalReference) . "',
+                                  callback_status = '" . mysqli_real_escape_string($conn, $transactionstatus) . "',
+                                  callback_message = '" . mysqli_real_escape_string($conn, $message) . "',
+                                  callback_utilityref = '$safeUtilityRef',
+                                  callback_reference = '$safeReference',
+                                  callback_raw = '" . mysqli_real_escape_string($conn, $incomingRawJson) . "',
+                                  purchased_at = NOW() 
+                              WHERE id = '$voucherId'";
+                
+                mysqli_query($conn, $updateSql);
+                mysqli_commit($conn);
+                
+                // ====================================================================
+                // 🚀 INTEGRATED HARDWARE MODEM SMS GATEWAY PROCESSOR BRIDGE
+                // ====================================================================
+                define('TANCONNECT_SECURE_PASS', true);
+                $customer_phone = $row['assigned_phone'] ?? '';
+                $voucherCode    = $row['voucher_code'] ?? '';
+                
+                if (file_exists('sms_processor.php') && !empty($customer_phone) && !empty($voucherCode)) {
+                    ob_start();
+                    include('sms_processor.php');
+                    ob_end_clean();
+                }
+                
+                http_response_code(200);
+                echo json_encode(["status" => "success", "message" => "Voucher unlocked cleanly and Stage 3 parameters logged"]);
+                exit();
+            } else {
+                // ⚡ STAGE 3 FAILURE MATRIX: Wallet deduction failed (Canceled / Wrong PIN / Insufficient Balance).
+                $updateSql = "UPDATE wifi_vouchers 
+                              SET transactionstatus = 'FAILED', 
+                                  callback_status = '" . mysqli_real_escape_string($conn, $transactionstatus) . "',
+                                  callback_message = '" . mysqli_real_escape_string($conn, $message) . "',
+                                  callback_utilityref = '$safeUtilityRef',
+                                  callback_reference = '$safeReference',
+                                  callback_raw = '" . mysqli_real_escape_string($conn, $incomingRawJson) . "' 
+                              WHERE id = '$voucherId'";
+                
+                mysqli_query($conn, $updateSql);
+                mysqli_commit($conn);
+                
+                http_response_code(200);
+                echo json_encode(["status" => "failed", "message" => "Payment failed state captured inside database"]);
+                exit();
             }
-            
-            http_response_code(200);
-            echo json_encode(["status" => "success", "message" => "Voucher unlocked cleanly"]);
-            exit();
             
         } catch (Exception $e) {
             mysqli_rollback($conn);
