@@ -274,23 +274,35 @@ if (isset($apiResult)) {
     }
 }
 
-
-    // PRODUCTION INTEGRATION QUERY: Securely records the new handshake tracking indicator parameters
+    // PRODUCTION INTEGRATION QUERY: Securely records Stage 1 and Stage 2 variables in a uniform row block!
     $updateQuery = "UPDATE wifi_vouchers 
                     SET transactionstatus = 'ASSIGNED', 
                         assigned_phone = ?, 
+                        mac_address = ?, 
                         utilityref = ?, 
                         reference = ?, 
+                        access_token = ?, 
+                        token_status = ?, 
                         purchased_at = ? 
                     WHERE id = ?";
                     
     $updateStmt = $conn->prepare($updateQuery);
     if ($updateStmt) {
-        // Binds the custom $handshakeSuccessFlag parameter directly into your columns block
-        $updateStmt->bind_param("ssssssi", $phone, $transactionId, $azamPayTransactionId, $handshakeSuccessFlag, $currentDateTime, $allocatedVoucherId);
+        // Retrieve the clean Stage 1 variables we stored in the session memory earlier
+        $savedToken  = isset($_SESSION['active_access_token']) ? $_SESSION['active_access_token'] : null;
+        $savedStatus = isset($_SESSION['active_token_status']) ? $_SESSION['active_token_status'] : '0';
+        $sessionMac  = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0';
+        
+        // ⚡ EXACTLY 8 PARAMETERS MATCHING 8 QUESTION MARKS PERFECTLY:
+        $updateStmt->bind_param("sssssssi", $phone, $sessionMac, $transactionId, $azamPayTransactionId, $savedToken, $savedStatus, $currentDateTime, $allocatedVoucherId);
         $updateStmt->execute();
         $updateStmt->close();
-    }     }
+    }
+    
+    // Clear the temporary session tokens safely
+    unset($_SESSION['active_access_token']);
+    unset($_SESSION['active_token_status']);
+
 
 // Type safety wrapper for connection closure prevents uncaught execution crashes
 if (isset($conn) && $conn instanceof mysqli) {
