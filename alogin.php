@@ -272,7 +272,7 @@ if (isset($apiResult)) {
     elseif (isset($apiResult['success']) && ($apiResult['success'] === false || $apiResult['success'] === 'false' || $apiResult['success'] === 0)) {
         $handshakeSuccessFlag = 'false';
     }
-}
+}  }
 
     // PRODUCTION INTEGRATION QUERY: Securely records Stage 1 and Stage 2 variables in a uniform row block!
     $updateQuery = "UPDATE wifi_vouchers 
