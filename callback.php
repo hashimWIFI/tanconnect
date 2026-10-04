@@ -37,45 +37,71 @@ if (json_last_error() !== JSON_ERROR_NONE || empty($data)) {
     exit;
 }
 
-// Extract variables safely from incoming payload
-$utilityref        = $data['utilityref'] ?? null; // e.g., "AZM01a106a59fae..."
-$reference         = $data['reference'] ?? null;  // e.g., "NITW-1791112877"
+// Extract payment details safely from the incoming payload
+$utilityref        = $data['utilityref'] ?? null; 
+$reference         = $data['reference'] ?? null;  
 $webhookStatus     = isset($data['transactionstatus']) ? strtolower(trim($data['transactionstatus'])) : '';
 
-// 3. Map the payment outcome to your strict database state
+// Map the webhook payload string strictly to uppercase SUCCESS or FAILED
 if ($webhookStatus === 'success' || $webhookStatus === 'completed') {
     $dbStatus = 'SUCCESS';
 } else {
     $dbStatus = 'FAILED';
 }
 
-// 4. Update the Table matching BOTH critical keys to eliminate collisions
-if (!empty($reference) && !empty($utilityref)) {
+// 3. Process and Update the Table using the existing callback_response column
+if (!empty($reference)) {
     try {
-        // Strict double-matching WHERE clause guarantees no two overlapping transactions collide
+        // Step A: Attempt strict matching via BOTH reference and utilityref
         $sql = "UPDATE wifi_vouchers 
                 SET transactionstatus = :transactionstatus,
+                    callback_response = :callback_response,
                     purchased_at = NOW()
                 WHERE reference = :reference 
                   AND utilityref = :utilityref";
         
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
-            ':transactionstatus' => $dbStatus, // Flips 'ASSIGNED' strictly to 'SUCCESS' or 'FAILED'
+            ':transactionstatus' => $dbStatus,
+            ':callback_response' => $rawPayload, // Writes the entire raw AzamPay payload text string
             ':reference'         => $reference,
             ':utilityref'        => $utilityref
         ]);
         
-        // Debug confirmation line
-        error_log("AzamPay Callback Handler -> Dual-matched Reference: $reference and UtilityRef: $utilityref. Status updated to: $dbStatus");
+        // Step B: Fallback if the strict combination matched 0 rows (e.g., due to whitespace or case issues)
+        if ($stmt->rowCount() === 0) {
+            error_log("⚠️ Strict dual-match found 0 rows. Attempting fallback matching via reference string alone...");
+            
+            $fallbackSql = "UPDATE wifi_vouchers 
+                            SET transactionstatus = :transactionstatus,
+                                callback_response = :callback_response,
+                                purchased_at = NOW()
+                            WHERE reference = :reference";
+            
+            $fallbackStmt = $pdo->prepare($fallbackSql);
+            $fallbackStmt->execute([
+                ':transactionstatus' => $dbStatus,
+                ':callback_response' => $rawPayload,
+                ':reference'         => $reference
+            ]);
+            
+            if ($fallbackStmt->rowCount() > 0) {
+                error_log("✅ Fallback Update Successful! Row updated using reference key match.");
+            } else {
+                error_log("❌ Failure: Both update attempts returned 0 modified rows. Reference target: $reference");
+            }
+        } else {
+            error_log("✅ Primary Update Successful! Matched both reference and utilityref codes.");
+        }
 
     } catch (PDOException $e) {
-        error_log("❌ MySQL Webhook Update Error: " . $e->getMessage());
+        // Captures strict SQL constraint breaks (e.g. if transactionstatus is blocked by ENUM keys)
+        error_log("❌ MySQL Callback Writer Exception: " . $e->getMessage());
     }
 } else {
-    error_log("❌ Webhook ignored: Missing tracking parameters (reference or utilityref empty).");
+    error_log("❌ Webhook ignored: Incoming data stream missing structural 'reference' tracker.");
 }
 
-// 5. Always respond 200 OK to AzamPay to clear the queue callback
+// 4. Always respond 200 OK to AzamPay so they clear the request out of their queue
 http_response_code(200);
 echo json_encode(["status" => "success", "message" => "Webhook processed successfully"]);
