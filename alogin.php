@@ -270,17 +270,21 @@ if ($httpStatusCode === 200 && isset($allocatedVoucherId) && !empty($azamPayTran
                         purchased_at = ? 
                     WHERE id = ?";
                     
-    $updateStmt = $conn->prepare($updateQuery);
+       $updateStmt = $conn->prepare($updateQuery);
     if ($updateStmt) {
-        // Enforces exact 8-parameter bindings matching the new spec requirements character-for-character
+        $savedToken  = isset($_SESSION['active_access_token']) ? $_SESSION['active_access_token'] : null;
+        $savedStatus = isset($_SESSION['active_token_status']) ? $_SESSION['active_token_status'] : '0';
+        $sessionMac  = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0';
+        
+        // Exact 8 parameters matching your 8 question marks perfectly
         $updateStmt->bind_param("sssssssi", $phone, $sessionMac, $transactionId, $azamPayTransactionId, $savedToken, $savedStatus, $currentDateTime, $allocatedVoucherId);
         $updateStmt->execute();
         $updateStmt->close();
     }
     
-    // Clean up temporary session tokens safely
     unset($_SESSION['active_access_token']);
     unset($_SESSION['active_token_status']);
+
 }
 
 
