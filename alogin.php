@@ -279,10 +279,8 @@ if (isset($apiResult)) {
     $updateQuery = "UPDATE wifi_vouchers 
                     SET transactionstatus = 'ASSIGNED', 
                         assigned_phone = ?, 
-                        mac_address = ?, 
                         utilityref = ?, 
                         reference = ?, 
-                        handshake_success = ?, 
                         purchased_at = ? 
                     WHERE id = ?";
                     
