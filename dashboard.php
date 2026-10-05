@@ -185,7 +185,7 @@ $stock_result = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE 
 $remaining_stock = $stock_result ? ($stock_result->fetch_assoc()['total'] ?: 0) : 0;
 
 // 📋 LOG ENTRIES FETCH FOR LATEST 50 TRANSACTIONS
-$log_query = "SELECT id, voucher_code, price_tier, transactionstatus, assigned_phone, mac_address, utilityref, reference, purchased_at FROM wifi_vouchers WHERE transactionstatus IN ('SUCCESS', 'ASSIGNED') ORDER BY purchased_at DESC LIMIT 50";
+$log_query = "SELECT id, voucher_code, price_tier, transactionstatus, assigned_phone, utilityref, reference, purchased_at FROM wifi_vouchers WHERE transactionstatus IN ('SUCCESS', 'ASSIGNED') ORDER BY purchased_at DESC LIMIT 50";
 $log_result = $conn->query($log_query);
 ?>
 <!DOCTYPE html>
@@ -410,7 +410,6 @@ $log_result = $conn->query($log_query);
                     <th style="padding: 12px 15px; font-weight: bold;">Price Tier (Tsh)</th>
                     <th style="padding: 12px 15px; font-weight: bold;">Status</th>
                     <th style="padding: 12px 15px; font-weight: bold;">Assigned Phone</th>
-                    <th style="padding: 12px 15px; font-weight: bold;">MAC Address</th>
                     <th style="padding: 12px 15px; font-weight: bold;">Muda wa Malipo (EAT Time)</th>
                     <th style="padding: 12px 15px; font-weight: bold;">NIT Transaction ID</th>
                     <th style="padding: 12px 15px; font-weight: bold;">AzamPay Transaction ID</th>
