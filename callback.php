@@ -30,15 +30,17 @@ if (empty($paymentData) || !is_array($paymentData)) {
     $paymentData = !empty($_POST) ? $_POST : $_REQUEST;
 }
 
-// 📝 AUDIT LOG TRAIL: Saves incoming data packet variables to your log file
-file_put_contents('azampay_webhook_log.txt', date('[Y-m-d H:i:s] ') . "METHOD: " . ($_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN') . " | PAYLOAD: " . json_encode($paymentData) . PHP_EOL, FILE_APPEND);
+// 📝 AUDIT LOG TRAIL: Outputs payload directly into Railway App Console Logs
+error_log("TANCONNECT METHOD: " . ($_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN') . " | RAW PAYLOAD: " . $incomingRawJson);
 
-// 3. EXTRACT METRICS HANDLING BOTH FLAT AND NESTED KEY-VALUE MATRIX SCHEMES
+// 3. EXTRACT METRICS HANDLING BOTH CAMELCASE, LOWERCASE AND NESTED SCHEMES
 $transactionstatus = '';
-if (isset($paymentData['transactionstatus'])) {
+if (isset($paymentData['transactionStatus'])) {
+    $transactionstatus = $paymentData['transactionStatus'];
+} elseif (isset($paymentData['transactionstatus'])) {
     $transactionstatus = $paymentData['transactionstatus'];
-} elseif (isset($paymentData['properties']['transactionstatus'])) {
-    $transactionstatus = $paymentData['properties']['transactionstatus'];
+} elseif (isset($paymentData['properties']['transactionStatus'])) {
+    $transactionstatus = $paymentData['properties']['transactionStatus'];
 }
 
 $reference = '';
@@ -49,11 +51,16 @@ if (isset($paymentData['reference'])) {
 }
 
 $utilityref = '';
-if (isset($paymentData['utilityref'])) {
+if (isset($paymentData['utilityRef'])) {
+    $utilityref = $paymentData['utilityRef'];
+} elseif (isset($paymentData['utilityref'])) {
     $utilityref = $paymentData['utilityref'];
-} elseif (isset($paymentData['properties']['utilityref'])) {
-    $utilityref = $paymentData['properties']['utilityref'];
+} elseif (isset($paymentData['properties']['utilityRef'])) {
+    $utilityref = $paymentData['properties']['utilityRef'];
 }
+
+// Extract message or message alternative safely to avoid undefined variable crashes
+$callbackMessage = $paymentData['message'] ?? $paymentData['substatus'] ?? 'No message provided';
 
 // Clean out hidden trailing line breaks (\n) or carriage returns completely
 $cleanReference  = strtolower(trim(preg_replace('/\s+/', '', (string)$reference)));
@@ -69,8 +76,7 @@ if (!empty($cleanReference) || !empty($cleanUtilityRef)) {
     $safeReference  = mysqli_real_escape_string($conn, $cleanReference);
     $safeUtilityRef = mysqli_real_escape_string($conn, $cleanUtilityRef);
     
-    // ⚡ DUAL-ROW SWEEP LOOKUP MATRIX:
-    // Searches both incoming parameters against both database columns simultaneously!
+    // ⚡ DUAL-ROW SWEEP LOOKUP MATRIX
     $searchQuery = mysqli_query($conn, "SELECT id, price_tier, voucher_code, assigned_phone 
                                         FROM wifi_vouchers 
                                         WHERE LOWER(reference) = '$safeReference' 
@@ -79,7 +85,7 @@ if (!empty($cleanReference) || !empty($cleanUtilityRef)) {
                                            OR LOWER(utilityref) = '$safeUtilityRef' 
                                         LIMIT 1");
     
-    if (mysqli_num_rows($searchQuery) > 0) {
+    if ($searchQuery && mysqli_num_rows($searchQuery) > 0) {
         $row = mysqli_fetch_assoc($searchQuery);
         $voucherId = $row['id'];
         
@@ -92,7 +98,7 @@ if (!empty($cleanReference) || !empty($cleanUtilityRef)) {
                 $updateSql = "UPDATE wifi_vouchers 
                               SET transactionstatus = 'SUCCESS', 
                                   callback_status = '" . mysqli_real_escape_string($conn, (string)$transactionstatus) . "',
-                                  callback_message = '" . mysqli_real_escape_string($conn, $message) . "',
+                                  callback_message = '" . mysqli_real_escape_string($conn, $callbackMessage) . "',
                                   callback_raw = '" . mysqli_real_escape_string($conn, $incomingRawJson) . "',
                                   purchased_at = NOW() 
                               WHERE id = '$voucherId'";
@@ -100,7 +106,7 @@ if (!empty($cleanReference) || !empty($cleanUtilityRef)) {
                 mysqli_query($conn, $updateSql);
                 mysqli_commit($conn);
                 
-                // Integrated Hardware Samsung Phone MODEM SMS Gateway Bridge
+                // Integrated Hardware Phone MODEM SMS Gateway Bridge
                 define('TANCONNECT_SECURE_PASS', true);
                 $customer_phone = $row['assigned_phone'] ?? '';
                 $voucherCode    = $row['voucher_code'] ?? '';
@@ -111,6 +117,7 @@ if (!empty($cleanReference) || !empty($cleanUtilityRef)) {
                     ob_end_clean();
                 }
                 
+                header("Content-Type: application/json");
                 http_response_code(200);
                 echo json_encode(["status" => "success", "message" => "Voucher released successfully"]);
                 exit();
@@ -127,7 +134,7 @@ if (!empty($cleanReference) || !empty($cleanUtilityRef)) {
                                   access_token = NULL,
                                   token_status = 'PENDING',
                                   callback_status = '" . mysqli_real_escape_string($conn, (string)$transactionstatus) . "',
-                                  callback_message = '" . mysqli_real_escape_string($conn, $message) . "',
+                                  callback_message = '" . mysqli_real_escape_string($conn, $callbackMessage) . "',
                                   callback_raw = '" . mysqli_real_escape_string($conn, $incomingRawJson) . "',
                                   purchased_at = NULL 
                               WHERE id = '$voucherId'";
@@ -135,6 +142,7 @@ if (!empty($cleanReference) || !empty($cleanUtilityRef)) {
                 mysqli_query($conn, $updateSql);
                 mysqli_commit($conn);
                 
+                header("Content-Type: application/json");
                 http_response_code(200);
                 echo json_encode(["status" => "recovered", "message" => "Voucher inventory pool recycled successfully"]);
                 exit();
@@ -142,13 +150,19 @@ if (!empty($cleanReference) || !empty($cleanUtilityRef)) {
             
         } catch (Exception $e) {
             mysqli_rollback($conn);
+            error_log("TANCONNECT TRANSACTION EXCEPTION: " . $e->getMessage());
             http_response_code(500);
             exit();
         }
+    } else {
+        error_log("TANCONNECT LOOKUP FAIL: No voucher matched Reference: $cleanReference or UtilityRef: $cleanUtilityRef");
     }
+} else {
+    error_log("TANCONNECT PAYLOAD ERROR: Both Reference and UtilityRef extracted empty.");
 }
 
 // Always acknowledge webhook receipt with a clean 200 OK block to satisfy API requirements
+header("Content-Type: application/json");
 http_response_code(200); 
 echo json_encode(["success" => true, "message" => "Callback request handled successfully"]);
 ?>
