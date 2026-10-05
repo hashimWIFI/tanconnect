@@ -1,6 +1,6 @@
 <?php
 // ====================================================================
-// TANCONNECT DUO-SPEC AUTOMATED CALLBACK ENGINE ('callback.php')
+// TANCONNECT DUO-SPEC DEDICATED TRANSACTION LOGGING ENGINE
 // ====================================================================
 
 error_reporting(E_ALL);
@@ -16,7 +16,7 @@ $db_name     = getenv('MYSQLDATABASE') ?: 'railway';
 $conn = mysqli_connect($db_host, $db_user, $db_password, $db_name, $db_port);
 
 if (!$conn) {
-    error_log("TANCONNECT WEBHOOK ERROR: Database Connection Failed");
+    error_log("TANCONNECT CALLBACK SYSTEM: Database Connection Failed");
     http_response_code(500);
     exit();
 }
@@ -30,17 +30,15 @@ if (empty($paymentData) || !is_array($paymentData)) {
 }
 
 // 📝 AUDIT LOG TRAIL: Prints out exactly what AzamPay sends after PIN entry directly into your Railway console
-error_log("TANCONNECT POST-PIN INBOUND PAYLOAD: " . $incomingRawJson);
+error_log("TANCONNECT RAW INBOUND WEBHOOK PAYLOAD: " . $incomingRawJson);
 
 // 3. EXTRACT INCOMING METRICS FROM THE WEBHOOK PAYLOAD
-$transactionstatus = $paymentData['transactionStatus'] ?? $paymentData['transactionstatus'] ?? '';
-$statusLower       = strtolower(trim((string)$transactionstatus));
-
-$utilityref = $paymentData['utilityRef'] ?? $paymentData['utilityref'] ?? $paymentData['externalId'] ?? '';
+$transactionstatus = $paymentData['transactionStatus'] ?? $paymentData['transactionstatus'] ?? $paymentData['status'] ?? 'UNKNOWN';
+$utilityref        = $paymentData['utilityRef'] ?? $paymentData['utilityref'] ?? $paymentData['externalId'] ?? '';
 $azampay_reference = $paymentData['reference'] ?? $paymentData['transactionId'] ?? '';
 
-// --- FALLBACK REGEX PARSER ---
-// If the payload structure shifts nested keys, scrape the raw JSON string directly for safety
+// --- ADVANCED REGEX STRING FALLBACK CRAWLERS ---
+// If keys are nested differently inside the JSON, parse the raw text string directly for safety
 if (empty($utilityref) && preg_match('/(AZM01[a-zA-Z0-9\-_]+)/i', $incomingRawJson, $matches)) {
     $utilityref = $matches[1];
 }
@@ -50,97 +48,62 @@ if (empty($azampay_reference) && preg_match('/(AZM08[a-zA-Z0-9\-_]+)/i', $incomi
 
 $cleanUtilityRef = trim((string)$utilityref);
 $cleanReference  = trim((string)$azampay_reference);
+$cleanStatus     = trim((string)$transactionstatus);
 
-// Check if status evaluates to success
-$isPaymentSuccessful = ($statusLower === 'success' || $statusLower === 'completed' || $statusLower === 'true');
+// 4. INSTANT PASSIVE INGESTION STEP (No lookup required)
+$safeUtilityRef = mysqli_real_escape_string($conn, $cleanUtilityRef);
+$safeReference  = mysqli_real_escape_string($conn, $cleanReference);
+$safeStatus     = mysqli_real_escape_string($conn, $cleanStatus);
+$safeRawPayload = mysqli_real_escape_string($conn, $incomingRawJson);
 
-// 4. TRANSACTION LOOKUP MATRIX USING PRE-SAVED ENTRIES
-// We find the record using either the pre-saved baseline utilityref or checkout reference codes
-if (!empty($cleanUtilityRef) || !empty($cleanReference)) {
+$insertSql = "INSERT INTO azampay_callbacks (utilityref, reference, transaction_status, raw_payload, received_at) 
+              VALUES ('$safeUtilityRef', '$safeReference', '$safeStatus', '$safeRawPayload', NOW())";
+
+if (mysqli_query($conn, $insertSql)) {
+    error_log("TANCONNECT SUCCESS: Webhook metrics saved successfully to azampay_callbacks table.");
     
-    $safeUtilityRef = mysqli_real_escape_string($conn, $cleanUtilityRef);
-    $safeReference  = mysqli_real_escape_string($conn, $cleanReference);
-    
-    error_log("TANCONNECT RUNNING DB SEARCH: Handshake search criteria -> Utility: '$safeUtilityRef' | Ref: '$safeReference'");
-    
-    $searchQuery = mysqli_query($conn, "SELECT id, assigned_phone, voucher_code 
-                                        FROM wifi_vouchers 
-                                        WHERE utilityref = '$safeUtilityRef' 
-                                           OR reference = '$safeReference'
-                                           OR utilityref = '$safeReference'");
-    
-    if ($searchQuery && mysqli_num_rows($searchQuery) > 0) {
-        $matchedCount = mysqli_num_rows($searchQuery);
-        error_log("TANCONNECT ROW MATCH SUCCESS: Found $matchedCount reserved voucher records.");
+    // ====================================================================
+    // ⚡ OPTIONAL BRIDGE: UPDATE VOUCHER STATUS VIA DEDICATED INTERNAL HOOK
+    // ====================================================================
+    // Since we know exactly what tracking number arrived, we can update the core table cleanly now
+    if (!empty($safeUtilityRef) && (strtolower($safeStatus) === 'success' || strtolower($safeStatus) === 'completed')) {
         
-        mysqli_begin_transaction($conn);
-        try {
-            // 🔄 Loop through all associated vouchers assigned to this customer checkout push session
-            while ($row = mysqli_fetch_assoc($searchQuery)) {
-                $voucherId = $row['id'];
+        $updateVoucherSql = "UPDATE wifi_vouchers 
+                             SET transactionstatus = 'SUCCESS',
+                                 callback_utilityref = '$safeUtilityRef',
+                                 callback_reference = '$safeReference',
+                                 purchased_at = NOW() 
+                             WHERE utilityref = '$safeUtilityRef' 
+                                OR reference = '$safeReference'";
+                                
+        if (mysqli_query($conn, $updateVoucherSql)) {
+            error_log("TANCONNECT CORE BRIDGE: Linked wifi_vouchers records updated to SUCCESS.");
+            
+            // Trigger your SMS script if the voucher matching lookup passes locally
+            $searchQuery = mysqli_query($conn, "SELECT assigned_phone, voucher_code FROM wifi_vouchers WHERE utilityref = '$safeUtilityRef' LIMIT 1");
+            if ($searchQuery && mysqli_num_rows($searchQuery) > 0) {
+                $row = mysqli_fetch_assoc($searchQuery);
                 
-                if ($isPaymentSuccessful) {
-                    // ====================================================================
-                    // 🟢 CASE A: PAYMENT VERIFIED SUCCESSFUL
-                    // ====================================================================
-                    // Updates ONLY transactionstatus to SUCCESS, and directs input values to callback specific columns
-                    $updateSql = "UPDATE wifi_vouchers 
-                                  SET transactionstatus = 'SUCCESS', 
-                                      callback_utilityref = '$safeUtilityRef',
-                                      callback_reference = '$safeReference'
-                                  WHERE id = '$voucherId'";
-                    
-                    mysqli_query($conn, $updateSql);
-                    
-                    // Integrated Hardware Phone MODEM SMS Gateway Bridge execution loop
-                    define('TANCONNECT_SECURE_PASS', true);
-                    $customer_phone = $row['assigned_phone'] ?? '';
-                    $voucherCode    = $row['voucher_code'] ?? '';
-                    
-                    if (file_exists('sms_processor.php') && !empty($customer_phone) && !empty($voucherCode)) {
-                        ob_start();
-                        include('sms_processor.php');
-                        ob_end_clean();
-                    }
-                    
-                } else {
-                    // ====================================================================
-                    // 🔴 CASE B: PAYMENT TRIPPED / FAILED / CANCELED
-                    // ====================================================================
-                    // Releases voucher seat back to pool if transaction dropped
-                    $updateSql = "UPDATE wifi_vouchers 
-                                  SET transactionstatus = 'FAIL',
-                                      callback_utilityref = '$safeUtilityRef',
-                                      callback_reference = '$safeReference'
-                                  WHERE id = '$voucherId'";
-                    
-                    mysqli_query($conn, $updateSql);
+                define('TANCONNECT_SECURE_PASS', true);
+                $customer_phone = $row['assigned_phone'] ?? '';
+                $voucherCode    = $row['voucher_code'] ?? '';
+                
+                if (file_exists('sms_processor.php') && !empty($customer_phone) && !empty($voucherCode)) {
+                    ob_start();
+                    include('sms_processor.php');
+                    ob_end_clean();
                 }
             }
-            
-            mysqli_commit($conn);
-            error_log("TANCONNECT CALL-PROCESSING RECORD COMPLETE: Successfully saved callback entries.");
-            
-            header("Content-Type: application/json");
-            http_response_code(200);
-            echo json_encode(["status" => "processed", "message" => "Voucher transaction status evaluated successfully."]);
-            exit();
-            
-        } catch (Exception $e) {
-            mysqli_rollback($conn);
-            error_log("TANCONNECT EXCEPTION THROWN: " . $e->getMessage());
-            http_response_code(500);
-            exit();
         }
-    } else {
-        error_log("TANCONNECT LOOKUP MISMATCH: No 'ASSIGNED' records matching criteria found.");
     }
+    
+    header("Content-Type: application/json");
+    http_response_code(200);
+    echo json_encode(["status" => "success", "message" => "Data ingested successfully into dedicated logging layer."]);
+    exit();
 } else {
-    error_log("TANCONNECT FAULT: Webhook fired but both extracted parameters returned completely empty.");
+    error_log("TANCONNECT ERROR: Failed writing to logging layer table: " . mysqli_error($conn));
+    http_response_code(500);
+    exit();
 }
-
-// Always acknowledge webhook receipt with a clean 200 OK block to satisfy API requirements
-header("Content-Type: application/json");
-http_response_code(200); 
-echo json_encode(["success" => true, "message" => "Callback request handled successfully"]);
 ?>
