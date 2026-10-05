@@ -246,8 +246,8 @@ if ($httpStatusCode === 200 && isset($allocatedVoucherId) && !empty($azamPayTran
     $savedStatus = isset($_SESSION['active_token_status']) ? $_SESSION['active_token_status'] : '0';
     
     // ⚡ CLEAN SPEC-ALIGNED QUERY: 
-    // - $transactionId ('NITW-...') is now explicitly bound to the 'reference' column [image_iGqfKd.png].
-       $updateQuery = "UPDATE wifi_vouchers 
+      // CLEAN SPEC-ALIGNED QUERY (MATCHES YOUR TRIPPED BACK TABLE SCHEMA RULES DEFINITIVELY)
+    $updateQuery = "UPDATE wifi_vouchers 
                     SET transactionstatus = 'ASSIGNED', 
                         assigned_phone = ?, 
                         reference = ?, 
@@ -255,18 +255,23 @@ if ($httpStatusCode === 200 && isset($allocatedVoucherId) && !empty($azamPayTran
                         token_status = ?, 
                         purchased_at = ? 
                     WHERE id = ?";
-
                     
-       $updateStmt = $conn->prepare($updateQuery);
+    $updateStmt = $conn->prepare($updateQuery);
     if ($updateStmt) {
-        $savedToken  = isset($_SESSION['active_access_token']) ? $_SESSION['active_access_token'] : null;
         $savedStatus = isset($_SESSION['active_token_status']) ? $_SESSION['active_token_status'] : '0';
         
-        // Exact 8 parameters matching your 8 question marks perfectly
-        $updateStmt->bind_param("sssssssi", $phone, $transactionId, $azamPayTransactionId, $savedStatus, $currentDateTime, $allocatedVoucherId);
+        // ⚡ PERFECT 6-PARAMETER MATRIX MATCHING 6 QUESTION MARKS EXACTLY:
+        // s = assigned_phone (string)
+        // s = reference      (string - maps your internal 'NITW-...' token identifier)
+        // s = utilityref     (string - maps AzamPay's official 'AZM-...' token identifier)
+        // s = token_status   (string)
+        // s = purchased_at   (string)
+        // i = id             (integer)
+        $updateStmt->bind_param("sssssi", $phone, $transactionId, $azamPayTransactionId, $savedStatus, $currentDateTime, $allocatedVoucherId);
         $updateStmt->execute();
         $updateStmt->close();
     }
+
     
     unset($_SESSION['active_access_token']);
     unset($_SESSION['active_token_status']);
