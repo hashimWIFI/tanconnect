@@ -453,7 +453,7 @@ $log_result = $conn->query($log_query);
                                 <?php echo htmlspecialchars($row['utilityref']); ?>
                             </td>
                             <td style="color: #27ae60; font-weight: bold; font-family: monospace; font-size: 13px; padding: 12px 15px;">
-                                <?php echo !empty($row['reference']) ? htmlspecialchars($row['reference']) : '-'; ?>
+                             <b>   <?php echo !empty($row['reference']) ? htmlspecialchars($row['reference']) : '-'; ?> </b>
                             </td>
                         </tr>
                     <?php endwhile; ?>
