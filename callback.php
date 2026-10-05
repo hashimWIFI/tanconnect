@@ -25,49 +25,63 @@ if (!$conn) {
 $incomingRawJson = file_get_contents('php://input');
 $paymentData = json_decode($incomingRawJson, true);
 
-// Fallback to request superglobals if data transmits via standard web forms
 if (empty($paymentData) || !is_array($paymentData)) {
     $paymentData = !empty($_POST) ? $_POST : $_REQUEST;
 }
 
-// 📝 AUDIT LOG TRAIL: Outputs payload directly into Railway App Console Logs
-error_log("TANCONNECT METHOD: " . ($_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN') . " | RAW PAYLOAD: " . $incomingRawJson);
+// 📝 AUDIT LOG TRAIL: Streams the exact payload object into your Railway app panel view logs
+error_log("TANCONNECT INBOUND PAYLOAD DATA: " . $incomingRawJson);
 
-// 3. EXTRACT METRICS HANDLING BOTH CAMELCASE, LOWERCASE AND NESTED SCHEMES
-$transactionstatus = '';
-if (isset($paymentData['transactionStatus'])) {
-    $transactionstatus = $paymentData['transactionStatus'];
-} elseif (isset($paymentData['transactionstatus'])) {
-    $transactionstatus = $paymentData['transactionstatus'];
-} elseif (isset($paymentData['properties']['transactionStatus'])) {
-    $transactionstatus = $paymentData['properties']['transactionStatus'];
+/**
+ * Helper function to deeply find any values matching your tracker pattern (e.g., AZM01...)
+ */
+function findTrackerCodeDeep($array) {
+    if (!is_array($array)) return null;
+    foreach ($array as $key => $value) {
+        if (is_string($value) && stripos($value, 'AZM01') === 0) {
+            return trim($value);
+        }
+        if (is_array($value)) {
+            $deepSearch = findTrackerCodeDeep($value);
+            if ($deepSearch !== null) return $deepSearch;
+        }
+    }
+    return null;
 }
 
-$reference = '';
-if (isset($paymentData['reference'])) {
-    $reference = $paymentData['reference'];
-} elseif (isset($paymentData['properties']['reference'])) {
-    $reference = $paymentData['properties']['reference'];
+/**
+ * Helper function to deeply extract AzamPay's final transaction ID (e.g., AZM08...)
+ */
+function findAzamPayReferenceDeep($array) {
+    if (!is_array($array)) return null;
+    foreach ($array as $key => $value) {
+        if (is_string($value) && stripos($value, 'AZM08') === 0) {
+            return trim($value);
+        }
+        if (is_array($value)) {
+            $deepSearch = findAzamPayReferenceDeep($value);
+            if ($deepSearch !== null) return $deepSearch;
+        }
+    }
+    if (isset($array['reference'])) return trim((string)$array['reference']);
+    if (isset($array['transactionId'])) return trim((string)$array['transactionId']);
+    return null;
 }
 
-$utilityref = '';
-if (isset($paymentData['utilityRef'])) {
-    $utilityref = $paymentData['utilityRef'];
-} elseif (isset($paymentData['utilityref'])) {
-    $utilityref = $paymentData['utilityref'];
-} elseif (isset($paymentData['properties']['utilityRef'])) {
-    $utilityref = $paymentData['properties']['utilityRef'];
+// 3. EXTRACT TARGET MATRICES DYNAMICALLY
+$cleanUtilityRef  = findTrackerCodeDeep($paymentData);
+$cleanReference   = findAzamPayReferenceDeep($paymentData);
+
+// Fallback explicit extraction if the deep loop parser handles alternative keys
+if (empty($cleanUtilityRef)) {
+    $cleanUtilityRef = $paymentData['utilityRef'] ?? $paymentData['utilityref'] ?? $paymentData['externalId'] ?? '';
+    $cleanUtilityRef = trim((string)$cleanUtilityRef);
 }
 
-// Extract message or message alternative safely to avoid undefined variable crashes
-$callbackMessage = $paymentData['message'] ?? $paymentData['substatus'] ?? 'No message provided';
+$transactionstatus = $paymentData['transactionStatus'] ?? $paymentData['transactionstatus'] ?? '';
+$statusLower       = strtolower(trim((string)$transactionstatus));
+$callbackMessage   = $paymentData['message'] ?? $paymentData['substatus'] ?? 'No message provided';
 
-// Clean out hidden trailing line breaks (\n) or carriage returns completely
-$cleanReference  = strtolower(trim(preg_replace('/\s+/', '', (string)$reference)));
-$cleanUtilityRef = strtolower(trim(preg_replace('/\s+/', '', (string)$utilityref)));
-$statusLower     = strtolower(trim((string)$transactionstatus));
-
-// Flexible status validation check
 $isPaymentSuccessful = ($statusLower === 'success' || $statusLower === 'completed' || $statusLower === 'true' || $transactionstatus === true);
 
 // 4. TRANSACTION LOOKUP & TRANSACTIONAL STEP EXECUTION GATEWAY
@@ -76,16 +90,20 @@ if (!empty($cleanUtilityRef)) {
     $safeUtilityRef = mysqli_real_escape_string($conn, $cleanUtilityRef);
     $safeReference  = mysqli_real_escape_string($conn, $cleanReference);
     
-    // ⚡ STEP 1: Look up rows using the pre-registered tracking number in your main utilityref column
+    error_log("TANCONNECT LOOKUP DB EXECUTION: Querying where utilityref = '$safeUtilityRef'");
+    
+    // ⚡ STEP 1: Find row(s) using the handshake tracking token residing in your main 'utilityref' column
     $searchQuery = mysqli_query($conn, "SELECT id, price_tier, voucher_code, assigned_phone 
                                         FROM wifi_vouchers 
                                         WHERE utilityref = '$safeUtilityRef'");
     
     if ($searchQuery && mysqli_num_rows($searchQuery) > 0) {
+        $matchedRowsCount = mysqli_num_rows($searchQuery);
+        error_log("TANCONNECT DATABASE MATCH SUCCESS: Found $matchedRowsCount row(s) mapped to this session.");
         
         mysqli_begin_transaction($conn);
         try {
-            // 🔄 Loop through all vouchers linked to this customer checkout push session
+            // 🔄 Loop through all associated vouchers assigned to this single customer checkout action
             while ($row = mysqli_fetch_assoc($searchQuery)) {
                 $voucherId = $row['id'];
                 
@@ -93,20 +111,18 @@ if (!empty($cleanUtilityRef)) {
                     // ====================================================================
                     // 🟢 CASE A: TRANSACTION SUCCEEDED (Release Voucher PIN)
                     // ====================================================================
-                    // 📝 UPDATED: Explicitly maps incoming webhook payloads into your callback specific matrix columns
+                    // Updates transactionstatus to SUCCESS, and populates callback structural log columns
                     $updateSql = "UPDATE wifi_vouchers 
                                   SET transactionstatus = 'SUCCESS', 
                                       callback_utilityref = '$safeUtilityRef',
                                       callback_reference = '$safeReference',
-                                      callback_status = '" . mysqli_real_escape_string($conn, (string)$transactionstatus) . "',
-                                      callback_message = '" . mysqli_real_escape_string($conn, $callbackMessage) . "',
-                                      callback_raw = '" . mysqli_real_escape_string($conn, $incomingRawJson) . "',
+                                      token_status = 'COMPLETED',
                                       purchased_at = NOW() 
                                   WHERE id = '$voucherId'";
                     
                     mysqli_query($conn, $updateSql);
                     
-                    // Integrated Hardware Phone MODEM SMS Gateway Bridge
+                    // Integrated Hardware Phone MODEM SMS Gateway Bridge execution loop
                     define('TANCONNECT_SECURE_PASS', true);
                     $customer_phone = $row['assigned_phone'] ?? '';
                     $voucherCode    = $row['voucher_code'] ?? '';
@@ -130,9 +146,6 @@ if (!empty($cleanUtilityRef)) {
                                       token_status = 'PENDING',
                                       callback_utilityref = NULL,
                                       callback_reference = NULL,
-                                      callback_status = '" . mysqli_real_escape_string($conn, (string)$transactionstatus) . "',
-                                      callback_message = '" . mysqli_real_escape_string($conn, $callbackMessage) . "',
-                                      callback_raw = '" . mysqli_real_escape_string($conn, $incomingRawJson) . "',
                                       purchased_at = NULL 
                                   WHERE id = '$voucherId'";
                     
@@ -141,21 +154,24 @@ if (!empty($cleanUtilityRef)) {
             }
             
             mysqli_commit($conn);
+            error_log("TANCONNECT STATUS EXECUTION COMPLETE: Successfully updated and committed updates to the database table.");
             
             header("Content-Type: application/json");
             http_response_code(200);
-            echo json_encode(["status" => "success", "message" => "Callback matrix written successfully"]);
+            echo json_encode(["status" => "success", "message" => "Vouchers columns modified successfully"]);
             exit();
             
         } catch (Exception $e) {
             mysqli_rollback($conn);
-            error_log("TANCONNECT EXCEPTION: " . $e->getMessage());
+            error_log("TANCONNECT RUNTIME EXCEPTION: " . $e->getMessage());
             http_response_code(500);
             exit();
         }
     } else {
-        error_log("TANCONNECT LOOKUP FAIL: No records matched initial tracker utilityref: '$cleanUtilityRef'");
+        error_log("TANCONNECT LOOKUP FAIL: The value '$cleanUtilityRef' does not exist inside your primary utilityref table column.");
     }
+} else {
+    error_log("TANCONNECT CRITICAL FAILURE: Both utilityRef and externalId patterns extracted blank from inbound webhook payload JSON packet.");
 }
 
 // Always acknowledge webhook receipt with a clean 200 OK block to satisfy API requirements
