@@ -1,10 +1,10 @@
 <?php
 // ====================================================================
-// TANCONNECT STREAMLINED LIVE WEBHOOK CALLBACK ENGINE ('callback.php')
+// TANCONNECT DUO-SPEC AUTOMATED CALLBACK ENGINE ('callback.php')
 // ====================================================================
 
 error_reporting(E_ALL);
-ini_set('display_errors', 0); // Active protection: shields credentials from outside viewing
+ini_set('display_errors', 0); // Production shield: blocks credential exposure
 
 // 1. DATABASE CONNECTIVITY VIA NATIVE RAILWAY ENV VARIABLES
 $db_host     = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
@@ -21,7 +21,7 @@ if (!$conn) {
     exit();
 }
 
-// 2. CAPTURE THE RAW INCOMING FLAT JSON PAYLOAD STREAM FROM AZAMPAY
+// 2. CAPTURE THE RAW INBOUND JSON PAYLOAD STREAM FROM AZAMPAY
 $incomingRawJson = file_get_contents('php://input');
 $paymentData = json_decode($incomingRawJson, true);
 
@@ -30,29 +30,54 @@ if (empty($paymentData) || !is_array($paymentData)) {
     $paymentData = !empty($_POST) ? $_POST : $_REQUEST;
 }
 
-// 📝 AUDIT LOG TRAIL: Temporary flat file logs for launch validation (Safe to delete post-launch)
+// 📝 AUDIT LOG TRAIL: Saves incoming data packet variables to your log file
 file_put_contents('azampay_webhook_log.txt', date('[Y-m-d H:i:s] ') . "METHOD: " . ($_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN') . " | PAYLOAD: " . json_encode($paymentData) . PHP_EOL, FILE_APPEND);
 
-// 3. EXTRACT FLAT PARAMETERS CORE MATCHING OFFICIAL AZAMPAY DATA SPECIFICATION
-$transactionstatus = isset($paymentData['transactionstatus']) ? strtolower(trim((string)$paymentData['transactionstatus'])) : '';
-$reference         = isset($paymentData['reference'])         ? trim((string)$paymentData['reference'])         : '';
-$utilityref        = isset($paymentData['utilityref'])        ? trim((string)$paymentData['utilityref'])        : '';
-$message           = isset($paymentData['message'])           ? trim((string)$paymentData['message'])           : 'No message provided';
+// 3. EXTRACT METRICS HANDLING BOTH FLAT AND NESTED KEY-VALUE MATRIX SCHEMES
+$transactionstatus = '';
+if (isset($paymentData['transactionstatus'])) {
+    $transactionstatus = $paymentData['transactionstatus'];
+} elseif (isset($paymentData['properties']['transactionstatus'])) {
+    $transactionstatus = $paymentData['properties']['transactionstatus'];
+}
+
+$reference = '';
+if (isset($paymentData['reference'])) {
+    $reference = $paymentData['reference'];
+} elseif (isset($paymentData['properties']['reference'])) {
+    $reference = $paymentData['properties']['reference'];
+}
+
+$utilityref = '';
+if (isset($paymentData['utilityref'])) {
+    $utilityref = $paymentData['utilityref'];
+} elseif (isset($paymentData['properties']['utilityref'])) {
+    $utilityref = $paymentData['properties']['utilityref'];
+}
 
 // Clean out hidden trailing line breaks (\n) or carriage returns completely
-$cleanReference  = trim(preg_replace('/\s+/', '', $reference));  // This holds your internal 'NITW-...' string
-$cleanUtilityRef = trim(preg_replace('/\s+/', '', $utilityref)); // This holds AzamPay's official 'AZM-...' token
+$cleanReference  = strtolower(trim(preg_replace('/\s+/', '', (string)$reference)));
+$cleanUtilityRef = strtolower(trim(preg_replace('/\s+/', '', (string)$utilityref)));
+$statusLower     = strtolower(trim((string)$transactionstatus));
 
-$isPaymentSuccessful = ($transactionstatus === 'success' || $transactionstatus === 'completed' || $transactionstatus === 'true');
+// Flexible status validation check
+$isPaymentSuccessful = ($statusLower === 'success' || $statusLower === 'completed' || $statusLower === 'true' || $transactionstatus === true);
 
-// 4. TRANSACTION LOOKUP & EXECUTION ENGINE
+// 4. TRANSACTION LOOKUP & TRANSACTIONAL STEP EXECUTION GATEWAY
 if (!empty($cleanReference) || !empty($cleanUtilityRef)) {
     
     $safeReference  = mysqli_real_escape_string($conn, $cleanReference);
     $safeUtilityRef = mysqli_real_escape_string($conn, $cleanUtilityRef);
     
-    // Look up matching records using your true spec-aligned database column headings (Bypasses token checks completely!)
-    $searchQuery = mysqli_query($conn, "SELECT id, price_tier, voucher_code, assigned_phone FROM wifi_vouchers WHERE reference = '$safeReference' OR utilityref = '$safeUtilityRef' LIMIT 1");
+    // ⚡ DUAL-ROW SWEEP LOOKUP MATRIX:
+    // Searches both incoming parameters against both database columns simultaneously!
+    $searchQuery = mysqli_query($conn, "SELECT id, price_tier, voucher_code, assigned_phone 
+                                        FROM wifi_vouchers 
+                                        WHERE LOWER(reference) = '$safeReference' 
+                                           OR LOWER(utilityref) = '$safeReference' 
+                                           OR LOWER(reference) = '$safeUtilityRef' 
+                                           OR LOWER(utilityref) = '$safeUtilityRef' 
+                                        LIMIT 1");
     
     if (mysqli_num_rows($searchQuery) > 0) {
         $row = mysqli_fetch_assoc($searchQuery);
@@ -62,11 +87,11 @@ if (!empty($cleanReference) || !empty($cleanUtilityRef)) {
         try {
             if ($isPaymentSuccessful) {
                 // ====================================================================
-                // 🟢 CASE A: TRANSACTION SUCCEEDED (Instantly Release Voucher)
+                // 🟢 CASE A: TRANSACTION SUCCEEDED (Release Voucher PIN)
                 // ====================================================================
                 $updateSql = "UPDATE wifi_vouchers 
                               SET transactionstatus = 'SUCCESS', 
-                                  callback_status = '" . mysqli_real_escape_string($conn, $transactionstatus) . "',
+                                  callback_status = '" . mysqli_real_escape_string($conn, (string)$transactionstatus) . "',
                                   callback_message = '" . mysqli_real_escape_string($conn, $message) . "',
                                   callback_raw = '" . mysqli_real_escape_string($conn, $incomingRawJson) . "',
                                   purchased_at = NOW() 
@@ -87,22 +112,21 @@ if (!empty($cleanReference) || !empty($cleanUtilityRef)) {
                 }
                 
                 http_response_code(200);
-                echo json_encode(["status" => "success", "message" => "Voucher unlocked and SMS triggered cleanly"]);
+                echo json_encode(["status" => "success", "message" => "Voucher released successfully"]);
                 exit();
                 
             } else {
                 // ====================================================================
                 // 🔴 CASE B: AUTOMATED STOCK RECOVERY LOOP (Transaction Failed / Canceled)
                 // ====================================================================
-                // Clears data trail, retains audit reasons, and recycles voucher back to pool instantly!
                 $updateSql = "UPDATE wifi_vouchers 
-                              SET transactionstatus = 'AVAILABLE', // Returns code back to general pool
-                                  assigned_phone = NULL,           // Wipes mobile tracker string
-                                  reference = NULL,                // Wipes internal ID string
-                                  utilityref = NULL,               // Wipes AzamPay ID string
-                                  access_token = NULL,             // Flushes the token string cleanly
-                                  token_status = 'PENDING',        // Restores baseline handshake status
-                                  callback_status = '" . mysqli_real_escape_string($conn, $transactionstatus) . "',
+                              SET transactionstatus = 'AVAILABLE',
+                                  assigned_phone = NULL,
+                                  reference = NULL,
+                                  utilityref = NULL,
+                                  access_token = NULL,
+                                  token_status = 'PENDING',
+                                  callback_status = '" . mysqli_real_escape_string($conn, (string)$transactionstatus) . "',
                                   callback_message = '" . mysqli_real_escape_string($conn, $message) . "',
                                   callback_raw = '" . mysqli_real_escape_string($conn, $incomingRawJson) . "',
                                   purchased_at = NULL 
@@ -112,7 +136,7 @@ if (!empty($cleanReference) || !empty($cleanUtilityRef)) {
                 mysqli_commit($conn);
                 
                 http_response_code(200);
-                echo json_encode(["status" => "recovered", "message" => "Payment failed flag recorded. Inventory pool recycled successfully."]);
+                echo json_encode(["status" => "recovered", "message" => "Voucher inventory pool recycled successfully"]);
                 exit();
             }
             
@@ -124,7 +148,7 @@ if (!empty($cleanReference) || !empty($cleanUtilityRef)) {
     }
 }
 
-// Always acknowledge webhook receipt with a clean 200 OK block to prevent endpoint retry loops
+// Always acknowledge webhook receipt with a clean 200 OK block to satisfy API requirements
 http_response_code(200); 
 echo json_encode(["success" => true, "message" => "Callback request handled successfully"]);
 ?>
