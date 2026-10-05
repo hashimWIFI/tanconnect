@@ -310,9 +310,16 @@ if (isset($conn) && $conn instanceof mysqli) {
         var clientMac = "<?php echo htmlspecialchars($macAddress); ?>";
         var activeTxId = "<?php echo isset($transactionId) ? htmlspecialchars($transactionId) : ''; ?>";
 
-        function closeThisWindow() {
-            window.history.back();
+               function closeThisWindow() {
+            // 1. First attempt: Try standard back navigation
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                // 2. Safe Fallback: Redirect straight back to your local Wi-Fi router login gate
+                window.top.location.href = "http://5wifi.net";
+            }
         }
+
 
         function startPaymentVerificationLoop() {
             if (!activeTxId) return;
