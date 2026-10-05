@@ -71,94 +71,91 @@ $statusLower     = strtolower(trim((string)$transactionstatus));
 $isPaymentSuccessful = ($statusLower === 'success' || $statusLower === 'completed' || $statusLower === 'true' || $transactionstatus === true);
 
 // 4. TRANSACTION LOOKUP & TRANSACTIONAL STEP EXECUTION GATEWAY
-if (!empty($cleanReference) || !empty($cleanUtilityRef)) {
+if (!empty($cleanUtilityRef)) {
     
-    $safeReference  = mysqli_real_escape_string($conn, $cleanReference);
     $safeUtilityRef = mysqli_real_escape_string($conn, $cleanUtilityRef);
+    $safeReference  = mysqli_real_escape_string($conn, $cleanReference);
     
-    // ⚡ DUAL-ROW SWEEP LOOKUP MATRIX
+    // ⚡ STEP 1: Look up rows using the pre-registered tracking number in your main utilityref column
     $searchQuery = mysqli_query($conn, "SELECT id, price_tier, voucher_code, assigned_phone 
                                         FROM wifi_vouchers 
-                                        WHERE LOWER(reference) = '$safeReference' 
-                                           OR LOWER(utilityref) = '$safeReference' 
-                                           OR LOWER(reference) = '$safeUtilityRef' 
-                                           OR LOWER(utilityref) = '$safeUtilityRef' 
-                                        LIMIT 1");
+                                        WHERE utilityref = '$safeUtilityRef'");
     
     if ($searchQuery && mysqli_num_rows($searchQuery) > 0) {
-        $row = mysqli_fetch_assoc($searchQuery);
-        $voucherId = $row['id'];
         
         mysqli_begin_transaction($conn);
         try {
-            if ($isPaymentSuccessful) {
-                // ====================================================================
-                // 🟢 CASE A: TRANSACTION SUCCEEDED (Release Voucher PIN)
-                // ====================================================================
-                $updateSql = "UPDATE wifi_vouchers 
-                              SET transactionstatus = 'SUCCESS', 
-                                  callback_status = '" . mysqli_real_escape_string($conn, (string)$transactionstatus) . "',
-                                  callback_message = '" . mysqli_real_escape_string($conn, $callbackMessage) . "',
-                                  callback_raw = '" . mysqli_real_escape_string($conn, $incomingRawJson) . "',
-                                  purchased_at = NOW() 
-                              WHERE id = '$voucherId'";
+            // 🔄 Loop through all vouchers linked to this customer checkout push session
+            while ($row = mysqli_fetch_assoc($searchQuery)) {
+                $voucherId = $row['id'];
                 
-                mysqli_query($conn, $updateSql);
-                mysqli_commit($conn);
-                
-                // Integrated Hardware Phone MODEM SMS Gateway Bridge
-                define('TANCONNECT_SECURE_PASS', true);
-                $customer_phone = $row['assigned_phone'] ?? '';
-                $voucherCode    = $row['voucher_code'] ?? '';
-                
-                if (file_exists('sms_processor.php') && !empty($customer_phone) && !empty($voucherCode)) {
-                    ob_start();
-                    include('sms_processor.php');
-                    ob_end_clean();
+                if ($isPaymentSuccessful) {
+                    // ====================================================================
+                    // 🟢 CASE A: TRANSACTION SUCCEEDED (Release Voucher PIN)
+                    // ====================================================================
+                    // 📝 UPDATED: Explicitly maps incoming webhook payloads into your callback specific matrix columns
+                    $updateSql = "UPDATE wifi_vouchers 
+                                  SET transactionstatus = 'SUCCESS', 
+                                      callback_utilityref = '$safeUtilityRef',
+                                      callback_reference = '$safeReference',
+                                      callback_status = '" . mysqli_real_escape_string($conn, (string)$transactionstatus) . "',
+                                      callback_message = '" . mysqli_real_escape_string($conn, $callbackMessage) . "',
+                                      callback_raw = '" . mysqli_real_escape_string($conn, $incomingRawJson) . "',
+                                      purchased_at = NOW() 
+                                  WHERE id = '$voucherId'";
+                    
+                    mysqli_query($conn, $updateSql);
+                    
+                    // Integrated Hardware Phone MODEM SMS Gateway Bridge
+                    define('TANCONNECT_SECURE_PASS', true);
+                    $customer_phone = $row['assigned_phone'] ?? '';
+                    $voucherCode    = $row['voucher_code'] ?? '';
+                    
+                    if (file_exists('sms_processor.php') && !empty($customer_phone) && !empty($voucherCode)) {
+                        ob_start();
+                        include('sms_processor.php');
+                        ob_end_clean();
+                    }
+                    
+                } else {
+                    // ====================================================================
+                    // 🔴 CASE B: AUTOMATED STOCK RECOVERY LOOP (Transaction Failed / Canceled)
+                    // ====================================================================
+                    $updateSql = "UPDATE wifi_vouchers 
+                                  SET transactionstatus = 'AVAILABLE',
+                                      assigned_phone = NULL,
+                                      reference = NULL,
+                                      utilityref = NULL,
+                                      access_token = NULL,
+                                      token_status = 'PENDING',
+                                      callback_utilityref = NULL,
+                                      callback_reference = NULL,
+                                      callback_status = '" . mysqli_real_escape_string($conn, (string)$transactionstatus) . "',
+                                      callback_message = '" . mysqli_real_escape_string($conn, $callbackMessage) . "',
+                                      callback_raw = '" . mysqli_real_escape_string($conn, $incomingRawJson) . "',
+                                      purchased_at = NULL 
+                                  WHERE id = '$voucherId'";
+                    
+                    mysqli_query($conn, $updateSql);
                 }
-                
-                header("Content-Type: application/json");
-                http_response_code(200);
-                echo json_encode(["status" => "success", "message" => "Voucher released successfully"]);
-                exit();
-                
-            } else {
-                // ====================================================================
-                // 🔴 CASE B: AUTOMATED STOCK RECOVERY LOOP (Transaction Failed / Canceled)
-                // ====================================================================
-                $updateSql = "UPDATE wifi_vouchers 
-                              SET transactionstatus = 'AVAILABLE',
-                                  assigned_phone = NULL,
-                                  reference = NULL,
-                                  utilityref = NULL,
-                                  access_token = NULL,
-                                  token_status = 'PENDING',
-                                  callback_status = '" . mysqli_real_escape_string($conn, (string)$transactionstatus) . "',
-                                  callback_message = '" . mysqli_real_escape_string($conn, $callbackMessage) . "',
-                                  callback_raw = '" . mysqli_real_escape_string($conn, $incomingRawJson) . "',
-                                  purchased_at = NULL 
-                              WHERE id = '$voucherId'";
-                
-                mysqli_query($conn, $updateSql);
-                mysqli_commit($conn);
-                
-                header("Content-Type: application/json");
-                http_response_code(200);
-                echo json_encode(["status" => "recovered", "message" => "Voucher inventory pool recycled successfully"]);
-                exit();
             }
+            
+            mysqli_commit($conn);
+            
+            header("Content-Type: application/json");
+            http_response_code(200);
+            echo json_encode(["status" => "success", "message" => "Callback matrix written successfully"]);
+            exit();
             
         } catch (Exception $e) {
             mysqli_rollback($conn);
-            error_log("TANCONNECT TRANSACTION EXCEPTION: " . $e->getMessage());
+            error_log("TANCONNECT EXCEPTION: " . $e->getMessage());
             http_response_code(500);
             exit();
         }
     } else {
-        error_log("TANCONNECT LOOKUP FAIL: No voucher matched Reference: $cleanReference or UtilityRef: $cleanUtilityRef");
+        error_log("TANCONNECT LOOKUP FAIL: No records matched initial tracker utilityref: '$cleanUtilityRef'");
     }
-} else {
-    error_log("TANCONNECT PAYLOAD ERROR: Both Reference and UtilityRef extracted empty.");
 }
 
 // Always acknowledge webhook receipt with a clean 200 OK block to satisfy API requirements
