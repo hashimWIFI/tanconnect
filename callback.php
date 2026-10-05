@@ -29,95 +29,65 @@ if (empty($paymentData) || !is_array($paymentData)) {
     $paymentData = !empty($_POST) ? $_POST : $_REQUEST;
 }
 
-// 📝 AUDIT LOG TRAIL: Streams the exact payload object into your Railway app panel view logs
-error_log("TANCONNECT INBOUND PAYLOAD DATA: " . $incomingRawJson);
+// 📝 AUDIT LOG TRAIL: Prints out exactly what AzamPay sends after PIN entry directly into your Railway console
+error_log("TANCONNECT POST-PIN INBOUND PAYLOAD: " . $incomingRawJson);
 
-/**
- * Helper function to deeply find any values matching your tracker pattern (e.g., AZM01...)
- */
-function findTrackerCodeDeep($array) {
-    if (!is_array($array)) return null;
-    foreach ($array as $key => $value) {
-        if (is_string($value) && stripos($value, 'AZM01') === 0) {
-            return trim($value);
-        }
-        if (is_array($value)) {
-            $deepSearch = findTrackerCodeDeep($value);
-            if ($deepSearch !== null) return $deepSearch;
-        }
-    }
-    return null;
-}
-
-/**
- * Helper function to deeply extract AzamPay's final transaction ID (e.g., AZM08...)
- */
-function findAzamPayReferenceDeep($array) {
-    if (!is_array($array)) return null;
-    foreach ($array as $key => $value) {
-        if (is_string($value) && stripos($value, 'AZM08') === 0) {
-            return trim($value);
-        }
-        if (is_array($value)) {
-            $deepSearch = findAzamPayReferenceDeep($value);
-            if ($deepSearch !== null) return $deepSearch;
-        }
-    }
-    if (isset($array['reference'])) return trim((string)$array['reference']);
-    if (isset($array['transactionId'])) return trim((string)$array['transactionId']);
-    return null;
-}
-
-// 3. EXTRACT TARGET MATRICES DYNAMICALLY
-$cleanUtilityRef  = findTrackerCodeDeep($paymentData);
-$cleanReference   = findAzamPayReferenceDeep($paymentData);
-
-// Fallback explicit extraction if the deep loop parser handles alternative keys
-if (empty($cleanUtilityRef)) {
-    $cleanUtilityRef = $paymentData['utilityRef'] ?? $paymentData['utilityref'] ?? $paymentData['externalId'] ?? '';
-    $cleanUtilityRef = trim((string)$cleanUtilityRef);
-}
-
+// 3. EXTRACT INCOMING METRICS FROM THE WEBHOOK PAYLOAD
 $transactionstatus = $paymentData['transactionStatus'] ?? $paymentData['transactionstatus'] ?? '';
 $statusLower       = strtolower(trim((string)$transactionstatus));
-$callbackMessage   = $paymentData['message'] ?? $paymentData['substatus'] ?? 'No message provided';
 
-$isPaymentSuccessful = ($statusLower === 'success' || $statusLower === 'completed' || $statusLower === 'true' || $transactionstatus === true);
+$utilityref = $paymentData['utilityRef'] ?? $paymentData['utilityref'] ?? $paymentData['externalId'] ?? '';
+$azampay_reference = $paymentData['reference'] ?? $paymentData['transactionId'] ?? '';
 
-// 4. TRANSACTION LOOKUP & TRANSACTIONAL STEP EXECUTION GATEWAY
-if (!empty($cleanUtilityRef)) {
+// --- FALLBACK REGEX PARSER ---
+// If the payload structure shifts nested keys, scrape the raw JSON string directly for safety
+if (empty($utilityref) && preg_match('/(AZM01[a-zA-Z0-9\-_]+)/i', $incomingRawJson, $matches)) {
+    $utilityref = $matches[1];
+}
+if (empty($azampay_reference) && preg_match('/(AZM08[a-zA-Z0-9\-_]+)/i', $incomingRawJson, $matches)) {
+    $azampay_reference = $matches[1];
+}
+
+$cleanUtilityRef = trim((string)$utilityref);
+$cleanReference  = trim((string)$azampay_reference);
+
+// Check if status evaluates to success
+$isPaymentSuccessful = ($statusLower === 'success' || $statusLower === 'completed' || $statusLower === 'true');
+
+// 4. TRANSACTION LOOKUP MATRIX USING PRE-SAVED ENTRIES
+// We find the record using either the pre-saved baseline utilityref or checkout reference codes
+if (!empty($cleanUtilityRef) || !empty($cleanReference)) {
     
     $safeUtilityRef = mysqli_real_escape_string($conn, $cleanUtilityRef);
     $safeReference  = mysqli_real_escape_string($conn, $cleanReference);
     
-    error_log("TANCONNECT LOOKUP DB EXECUTION: Querying where utilityref = '$safeUtilityRef'");
+    error_log("TANCONNECT RUNNING DB SEARCH: Handshake search criteria -> Utility: '$safeUtilityRef' | Ref: '$safeReference'");
     
-    // ⚡ STEP 1: Find row(s) using the handshake tracking token residing in your main 'utilityref' column
-    $searchQuery = mysqli_query($conn, "SELECT id, price_tier, voucher_code, assigned_phone 
+    $searchQuery = mysqli_query($conn, "SELECT id, assigned_phone, voucher_code 
                                         FROM wifi_vouchers 
-                                        WHERE utilityref = '$safeUtilityRef'");
+                                        WHERE utilityref = '$safeUtilityRef' 
+                                           OR reference = '$safeReference'
+                                           OR utilityref = '$safeReference'");
     
     if ($searchQuery && mysqli_num_rows($searchQuery) > 0) {
-        $matchedRowsCount = mysqli_num_rows($searchQuery);
-        error_log("TANCONNECT DATABASE MATCH SUCCESS: Found $matchedRowsCount row(s) mapped to this session.");
+        $matchedCount = mysqli_num_rows($searchQuery);
+        error_log("TANCONNECT ROW MATCH SUCCESS: Found $matchedCount reserved voucher records.");
         
         mysqli_begin_transaction($conn);
         try {
-            // 🔄 Loop through all associated vouchers assigned to this single customer checkout action
+            // 🔄 Loop through all associated vouchers assigned to this customer checkout push session
             while ($row = mysqli_fetch_assoc($searchQuery)) {
                 $voucherId = $row['id'];
                 
                 if ($isPaymentSuccessful) {
                     // ====================================================================
-                    // 🟢 CASE A: TRANSACTION SUCCEEDED (Release Voucher PIN)
+                    // 🟢 CASE A: PAYMENT VERIFIED SUCCESSFUL
                     // ====================================================================
-                    // Updates transactionstatus to SUCCESS, and populates callback structural log columns
+                    // Updates ONLY transactionstatus to SUCCESS, and directs input values to callback specific columns
                     $updateSql = "UPDATE wifi_vouchers 
                                   SET transactionstatus = 'SUCCESS', 
                                       callback_utilityref = '$safeUtilityRef',
-                                      callback_reference = '$safeReference',
-                                      token_status = 'COMPLETED',
-                                      purchased_at = NOW() 
+                                      callback_reference = '$safeReference'
                                   WHERE id = '$voucherId'";
                     
                     mysqli_query($conn, $updateSql);
@@ -135,18 +105,13 @@ if (!empty($cleanUtilityRef)) {
                     
                 } else {
                     // ====================================================================
-                    // 🔴 CASE B: AUTOMATED STOCK RECOVERY LOOP (Transaction Failed / Canceled)
+                    // 🔴 CASE B: PAYMENT TRIPPED / FAILED / CANCELED
                     // ====================================================================
+                    // Releases voucher seat back to pool if transaction dropped
                     $updateSql = "UPDATE wifi_vouchers 
-                                  SET transactionstatus = 'AVAILABLE',
-                                      assigned_phone = NULL,
-                                      reference = NULL,
-                                      utilityref = NULL,
-                                      access_token = NULL,
-                                      token_status = 'PENDING',
-                                      callback_utilityref = NULL,
-                                      callback_reference = NULL,
-                                      purchased_at = NULL 
+                                  SET transactionstatus = 'FAIL',
+                                      callback_utilityref = '$safeUtilityRef',
+                                      callback_reference = '$safeReference'
                                   WHERE id = '$voucherId'";
                     
                     mysqli_query($conn, $updateSql);
@@ -154,24 +119,24 @@ if (!empty($cleanUtilityRef)) {
             }
             
             mysqli_commit($conn);
-            error_log("TANCONNECT STATUS EXECUTION COMPLETE: Successfully updated and committed updates to the database table.");
+            error_log("TANCONNECT CALL-PROCESSING RECORD COMPLETE: Successfully saved callback entries.");
             
             header("Content-Type: application/json");
             http_response_code(200);
-            echo json_encode(["status" => "success", "message" => "Vouchers columns modified successfully"]);
+            echo json_encode(["status" => "processed", "message" => "Voucher transaction status evaluated successfully."]);
             exit();
             
         } catch (Exception $e) {
             mysqli_rollback($conn);
-            error_log("TANCONNECT RUNTIME EXCEPTION: " . $e->getMessage());
+            error_log("TANCONNECT EXCEPTION THROWN: " . $e->getMessage());
             http_response_code(500);
             exit();
         }
     } else {
-        error_log("TANCONNECT LOOKUP FAIL: The value '$cleanUtilityRef' does not exist inside your primary utilityref table column.");
+        error_log("TANCONNECT LOOKUP MISMATCH: No 'ASSIGNED' records matching criteria found.");
     }
 } else {
-    error_log("TANCONNECT CRITICAL FAILURE: Both utilityRef and externalId patterns extracted blank from inbound webhook payload JSON packet.");
+    error_log("TANCONNECT FAULT: Webhook fired but both extracted parameters returned completely empty.");
 }
 
 // Always acknowledge webhook receipt with a clean 200 OK block to satisfy API requirements
