@@ -20,17 +20,6 @@ $phone  = isset($_POST['customer_phone']) ? trim($_POST['customer_phone']) : '';
 $amount = isset($_POST['amount']) ? trim($_POST['amount']) : ''; 
 $amount = str_replace(',', '', $amount);
 
-// Intercept incoming hidden form parameter fields sent from index.php
-$capturedMac = isset($_POST['mac_address']) ? trim($_POST['mac_address']) : '0';
-if ($capturedMac !== '0' && !empty($capturedMac) && $capturedMac !== '$mac') {
-    // Strips colons or symbols to preserve clean database formatting parameters
-    $_SESSION['customer_mac'] = preg_replace('/[^a-zA-Z0-9]/', '', $capturedMac);
-} else {
-    if (!isset($_SESSION['customer_mac'])) {
-        $_SESSION['customer_mac'] = '0';
-    }
-}
-
 // Enforce international dialing schema standard formatting rules (Tanzania 255)
 if (substr($phone, 0, 1) === '0') {
     $phone = '255' . substr($phone, 1);
@@ -247,7 +236,7 @@ if (!$token || $tokenStatusFlag !== 'true') {
 // ⚡ STANDARDIZED INTEGRATION MAPPING BLOCK (SPEC-COMPLIANT)
 // =========================================================================
 if ($httpStatusCode === 200 && isset($allocatedVoucherId) && !empty($azamPayTransactionId)) {
-    $sessionMac = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0';
+  
     
     date_default_timezone_set('Africa/Dar_es_Salaam');
     $currentDateTime = date("Y-m-d H:i:s");
@@ -261,10 +250,8 @@ if ($httpStatusCode === 200 && isset($allocatedVoucherId) && !empty($azamPayTran
        $updateQuery = "UPDATE wifi_vouchers 
                     SET transactionstatus = 'ASSIGNED', 
                         assigned_phone = ?, 
-                        mac_address = ?, 
                         reference = ?, 
                         utilityref = ?, 
-                        access_token = ?, 
                         token_status = ?, 
                         purchased_at = ? 
                     WHERE id = ?";
@@ -274,10 +261,9 @@ if ($httpStatusCode === 200 && isset($allocatedVoucherId) && !empty($azamPayTran
     if ($updateStmt) {
         $savedToken  = isset($_SESSION['active_access_token']) ? $_SESSION['active_access_token'] : null;
         $savedStatus = isset($_SESSION['active_token_status']) ? $_SESSION['active_token_status'] : '0';
-        $sessionMac  = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0';
         
         // Exact 8 parameters matching your 8 question marks perfectly
-        $updateStmt->bind_param("sssssssi", $phone, $sessionMac, $transactionId, $azamPayTransactionId, $savedToken, $savedStatus, $currentDateTime, $allocatedVoucherId);
+        $updateStmt->bind_param("sssssssi", $phone, $transactionId, $azamPayTransactionId, $savedStatus, $currentDateTime, $allocatedVoucherId);
         $updateStmt->execute();
         $updateStmt->close();
     }
@@ -294,8 +280,6 @@ if (isset($conn) && $conn instanceof mysqli) {
     $conn->close();
 }
 
-// Capture the active session MAC address variable for target template parsing
-$macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0';
 ?>
 <!DOCTYPE html>
 <html lang="sw">
@@ -363,7 +347,6 @@ $macAddress = isset($_SESSION['customer_mac']) ? $_SESSION['customer_mac'] : '0'
                             }
 
                             var trueVoucherCode = data.voucher_code || data.code || data.voucher || "KODI-SAHIHI";
-                            var trueDatabaseMac = data.mac_address || clientMac || "0";
 
                             var containerBox = document.getElementById('status-loading-container');
                             if (containerBox) {
