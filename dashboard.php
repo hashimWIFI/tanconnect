@@ -411,8 +411,8 @@ $log_result = $conn->query($log_query);
                     <th style="padding: 12px 15px; font-weight: bold;">Status</th>
                     <th style="padding: 12px 15px; font-weight: bold;">Assigned Phone</th>
                     <th style="padding: 12px 15px; font-weight: bold;">Muda wa Malipo (EAT Time)</th>
-                    <th style="padding: 12px 15px; font-weight: bold;">NIT Transaction ID</th>
                     <th style="padding: 12px 15px; font-weight: bold;">AzamPay Transaction ID</th>
+                    <th style="padding: 12px 15px; font-weight: bold;">NIT Transaction ID</th>
                 </tr>
             </thead>
                        <tbody>
