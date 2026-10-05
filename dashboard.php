@@ -208,7 +208,7 @@ $log_result = $conn->query($log_query);
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     
-    <title><a href="https://www.tanconnect.co.tz/fake_callback.php" class="btn-portal btn-buy">RESET </a>TANConnect - Admin Dashboard</title>
+    <title><TANConnect - Admin Dashboard</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; color: #333; margin: 0; padding: 20px; }
         .wrapper { max-width: 1200px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
@@ -420,8 +420,7 @@ $log_result = $conn->query($log_query);
                     <?php 
                     $sn_counter = $log_result->num_rows; 
                     while ($row = $log_result->fetch_assoc()): 
-                        $rawMac = preg_replace('/[^a-zA-Z0-9]/', '', $row['mac_address']);
-                        $displayMac = strlen($rawMac) === 12 ? implode(':', str_split($rawMac, 2)) : $row['mac_address'];
+                        
                         
                         // 🚀 THE FIX: Standardize database status strings to uppercase to eliminate visual rendering locks
                         $checkStatus = strtoupper(trim($row['transactionstatus']));
@@ -446,9 +445,7 @@ $log_result = $conn->query($log_query);
                             <td style="padding: 12px 15px; font-family: monospace; color: #334155;">
                                 <?php echo !empty($row['assigned_phone']) ? htmlspecialchars($row['assigned_phone']) : '-'; ?>
                             </td>
-                            <td style="padding: 12px 15px; font-family: monospace; color: #64748b;">
-                                <?php echo !empty($rawMac) ? htmlspecialchars(strtoupper($displayMac)) : '-'; ?>
-                            </td>
+                          
                             <td style="font-family: monospace; color: #2c3e50; font-weight: 500; padding: 12px 15px;">
                                 <?php echo !empty($row['purchased_at']) ? date("d-m-Y H:i:s", strtotime($row['purchased_at'])) : '-'; ?>
                             </td>
