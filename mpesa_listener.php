@@ -1,12 +1,12 @@
 <?php
 // ====================================================================
-// TANCONNECT PRO-SPEC NATIVE VODACOM M-PESA RECOVERY BRIDGE
+// TANCONNECT DIRECT M-PESA EXTRACTION ENGINE ('mpesa_listener.php')
 // ====================================================================
 
 error_reporting(E_ALL);
-ini_set('display_errors', 0); // Production protection: shields credentials from view
+ini_set('display_errors', 0); // Active production safety protection
 
-// 1. DATABASE CONNECTIVITY VIA NATIVE RAILWAY ENV VARIABLES
+// 1. DATABASE CONNECTIVITY
 $db_host     = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
 $db_port     = getenv('MYSQLPORT') ?: '3306';
 $db_user     = getenv('MYSQLUSER') ?: 'root';
@@ -16,113 +16,131 @@ $db_name     = getenv('MYSQLDATABASE') ?: 'railway';
 $conn = mysqli_connect($db_host, $db_user, $db_password, $db_name, $db_port);
 
 if (!$conn) {
-    error_log("M-PESA BRIDGE ERROR: Database Connection Failed");
+    error_log("M-PESA EXTRACTOR ERROR: Database Connection Failed");
     http_response_code(500);
     exit();
 }
 
-// 2. CAPTURE THE WEBHOOK DISPATCHED BY GATESMS API
-// (Adjust these key indices to match your GATESMS gateway layout structure precisely)
-$sender  = isset($_REQUEST['sender']) ? strtoupper(trim($_REQUEST['sender'])) : ''; // Expected: 'M-PESA'
-$messageText = isset($_REQUEST['message']) ? trim($_REQUEST['message']) : '';
+// 2. INTERCEPT THE INBOUND RAW JSON DISPATCH STREAM FROM THE APP ENGINE
+$incomingRawJson = file_get_contents('php://input');
+$smsGateData = json_decode($incomingRawJson, true);
 
-// 📝 AUDIT LOG TRAIL: Logs incoming messages for debugging string validation loops
-file_put_contents('mpesa_sms_audit_log.txt', date('[Y-m-d H:i:s] ') . "SENDER: $sender | TEXT: $messageText" . PHP_EOL, FILE_APPEND);
+// Extract parameters from standard request streams if JSON fails
+if (empty($smsGateData) || !is_array($smsGateData)) {
+    $smsGateData = array_merge($_GET, $_POST, $_REQUEST);
+}
 
-// 🛑 SECURITY FIREWALL GATE A: Ignore any messages not originating from Vodacom's official header!
-if (strpos($sender, 'M-PESA') === false && strpos(strtoupper($messageText), 'UMEPOKEA TSHS') === false) {
+// 📝 AUDIT TRAIL LOG: Saves the raw inbound text stream to check pattern alignment strings
+file_put_contents('mpesa_sms_audit_log.txt', date('[Y-m-d H:i:s] ') . "RAW_STREAM: " . json_encode($smsGateData) . PHP_EOL, FILE_APPEND);
+
+// 3. SECURE PARAMETER EXTRACTION
+$sender = '';
+$messageText = '';
+
+// Capture variables handles either the flat root schema or nested payload wrappers
+if (isset($smsGateData['payload'])) {
+    $sender      = $smsGateData['payload']['sender'] ?? '';
+    $messageText = $smsGateData['payload']['message'] ?? $smsGateData['payload']['text'] ?? '';
+} else {
+    $sender      = $smsGateData['sender'] ?? $smsGateData['from'] ?? '';
+    $messageText = $smsGateData['message'] ?? $smsGateData['text'] ?? '';
+}
+
+$cleanSender   = strtoupper(trim((string)$sender));
+$cleanSmsText  = trim((string)$messageText);
+
+// 🛑 FIREWALL GUARD: Only process actual confirmation receipts containing cash deposit markers
+if (strpos($cleanSender, 'M-PESA') === false && strpos(strtoupper($cleanSmsText), 'UMEPOKEA TSHS') === false) {
+    header("Content-Type: application/json");
     http_response_code(200);
-    echo json_encode(["status" => "ignored", "reason" => "Not a valid M-Pesa receipt transaction message"]);
+    echo json_encode(["status" => "ignored", "message" => "Text does not contain valid M-Pesa transaction identifiers"]);
     exit();
 }
 
 // ====================================================================
-// 🔍 3. THE ENTERPRISE REGEX EXTRACTION ENGINE (UNIFORM PATTERN MATCHING)
+// 🔍 4. THE EXTRACTION MATRIX (REGULAR EXPRESSION ENGINE)
 // ====================================================================
 $mpesaTxId       = '';
 $extractedAmount = 0;
 $customerPhone   = '';
 
-// A. Extract Transaction ID (Grabs 'DEU9614W7C' - the word immediately preceding 'imethibitishwa')
-if (preg_match('/^([A-Z0-9]+)\s+imethibitishwa/i', $messageText, $matches)) {
+// A. Extract Transaction ID (Grabs 'DEU9614W7C' - the first word before 'imethibitishwa')
+if (preg_match('/^([A-Z0-9]+)\s+imethibitishwa/i', $cleanSmsText, $matches)) {
     $mpesaTxId = trim($matches[1]);
 }
 
-// B. Extract Numerical Amount (Grabs '1,500.00' cleanly out of 'Tshs 1,500.00')
-if (preg_match('/Umepokea\s+Tshs\s+([\d,]+\.\d{2})/i', $messageText, $matches)) {
-    // Strips commas cleanly to turn string text "1,500.00" into pure numerical integer 1500 safely
+// B. Extract Cash Amount Value (Grabs '1500' cleanly out of 'Tshs 1,500.00')
+if (preg_match('/Umepokea\s+Tshs\s+([\d,]+\.\d{2})/i', $cleanSmsText, $matches)) {
     $extractedAmount = intval(str_replace(',', '', $matches[1]));
 }
 
-// C. Extract Customer Phone Destination (Grabs '255778343646' sitting inside the text brackets ': 255778343646 -')
-if (preg_match('/:\s+(\d+)\s+-/i', $messageText, $matches)) {
+// C. Extract Sender Mobile Number (Grabs '255778343646' sitting inside the text brackets ': 255778343646 -')
+if (preg_match('/:\s+(\d+)\s+-/i', $cleanSmsText, $matches)) {
     $customerPhone = trim($matches[1]);
 }
 
-
-// 4. TRANSACTION DUP CHECK & VOUCHER ALLOCATION TIMELINE
-$safeTxId = mysqli_real_escape_string($conn, $mpesaTxId);
-$dupCheck = mysqli_query($conn, "SELECT id FROM wifi_vouchers WHERE mpesa_trans_id = '$safeTxId' LIMIT 1");
-
-if (mysqli_num_rows($dupCheck) > 0) {
-    http_response_code(200);
-    echo json_encode(["status" => "blocked", "reason" => "This M-Pesa transaction ID has already been fulfilled previously."]);
-    exit();
-}
-
-// Convert amount values to package price tiers cleanly
-$targetPriceTier = (string)$extractedAmount; // e.g. '1500', '1000', '500'
-
-// Query database schema pool for an available voucher matching this price category block
-$voucherQuery = mysqli_query($conn, "SELECT id, voucher_code FROM wifi_vouchers WHERE price_tier = '$targetPriceTier' AND transactionstatus = 'AVAILABLE' LIMIT 1");
-
-if (mysqli_num_rows($voucherQuery) > 0) {
-    $voucherRow = mysqli_fetch_assoc($voucherQuery);
-    $allocatedId = $voucherRow['id'];
-    $voucherCodeString = $voucherRow['voucher_code'];
+// 5. DATABASE INTEGRATION LAYER
+if (!empty($mpesaTxId) && $extractedAmount > 0) {
     
-    $safePhone = mysqli_real_escape_string($conn, $customerPhone);
+    $safeTxId   = mysqli_real_escape_string($conn, $mpesaTxId);
+    $safePhone  = mysqli_real_escape_string($conn, $customerPhone);
+    $priceTier  = (string)$extractedAmount;
     
-    mysqli_begin_transaction($conn);
-    try {
-        // Securely logs customer details, sets tracking parameters, and flips state to SUCCESS instantly!
-        $updateSql = "UPDATE wifi_vouchers 
-                      SET transactionstatus = 'SUCCESS',
-                          assigned_phone = '$safePhone',
-                          mpesa_trans_id = '$safeTxId',
-                          purchased_at = NOW() 
-                      WHERE id = '$allocatedId'";
-                      
-        mysqli_query($conn, $updateSql);
-        mysqli_commit($conn);
-        
-        // ====================================================================
-        // 🚀 INTEGRATED HARDWARE MODEM SMS TRANSMISSION BRIDGE
-        // ====================================================================
-        define('TANCONNECT_SECURE_PASS', true);
-        $customer_phone = $customerPhone;
-        $voucherCode    = $voucherCodeString;
-        
-        // Fires your native Swahili voucher SMS delivery directly back over your Samsung Phone hardware pipeline!
-        if (file_exists('sms_processor.php') && !empty($customer_phone) && !empty($voucherCode)) {
-            ob_start();
-            include('sms_processor.php');
-            ob_end_clean();
-        }
-        
+    // Check if this specific network ID has already been fulfilled to prevent duplicate text reuse
+    $dupCheck = mysqli_query($conn, "SELECT id FROM wifi_vouchers WHERE mpesa_trans_id = '$safeTxId' LIMIT 1");
+    if (mysqli_num_rows($dupCheck) > 0) {
         http_response_code(200);
-        echo json_encode(["status" => "success", "message" => "M-Pesa payment captured. Voucher code released successfully via hardware SMS."]);
-        exit();
-        
-    } catch (Exception $e) {
-        mysqli_rollback($conn);
-        http_response_code(500);
+        echo json_encode(["status" => "duplicate", "message" => "Voucher already released for this tracking token"]);
         exit();
     }
-} else {
-    // Fallback error logging: In case a customer transfers money but your stock pool runs completely empty
-    error_log("TANCONNECT CRITICAL INVENTORY ALERT: Received M-Pesa package for Tsh $targetPriceTier but no AVAILABLE vouchers exist!");
-    http_response_code(200); 
-    exit();
+    
+    // Scan pool inventory for the first available card matching this category amount
+    $voucherQuery = mysqli_query($conn, "SELECT id, voucher_code FROM wifi_vouchers WHERE price_tier = '$priceTier' AND transactionstatus = 'AVAILABLE' LIMIT 1");
+    
+    if (mysqli_num_rows($voucherQuery) > 0) {
+        $voucherRow = mysqli_fetch_assoc($voucherQuery);
+        $voucherId  = $voucherRow['id'];
+        $voucherCodeString = $voucherRow['voucher_code'];
+        
+        mysqli_begin_transaction($conn);
+        try {
+            // ⚡ EXECUTION BRIDGE: Shifts the tracking record status cleanly to SUCCESS!
+            $updateSql = "UPDATE wifi_vouchers 
+                          SET transactionstatus = 'SUCCESS',
+                              assigned_phone = '$safePhone',
+                              mpesa_trans_id = '$safeTxId',
+                              purchased_at = NOW() 
+                          WHERE id = '$voucherId'";
+            
+            mysqli_query($conn, $updateSql);
+            mysqli_commit($conn);
+            
+            // Integrated Hardware Samsung Phone MODEM SMS Gateway Receipt Dispatch
+            define('TANCONNECT_SECURE_PASS', true);
+            $customer_phone = $customerPhone;
+            $voucherCode    = $voucherCodeString;
+            
+            if (file_exists('sms_processor.php') && !empty($customer_phone) && !empty($voucherCode)) {
+                ob_start();
+                include('sms_processor.php');
+                ob_end_clean();
+            }
+            
+            header("Content-Type: application/json");
+            http_response_code(200);
+            echo json_encode(["status" => "success", "message" => "M-Pesa data extracted. Voucher state updated to SUCCESS."]);
+            exit();
+            
+        } catch (Exception $e) {
+            mysqli_rollback($conn);
+            http_response_code(500);
+            exit();
+        }
+    }
 }
+
+header("Content-Type: application/json");
+http_response_code(200);
+echo json_encode(["status" => "failed", "message" => "Extraction fields could not be matched completely"]);
+exit();
 ?>
