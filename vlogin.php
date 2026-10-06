@@ -43,8 +43,8 @@ $cleanAmount = intval($amount);
         <div class="instructions-box" style="border: 1px solid #f5c6cb; background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; text-align: justify;;">
             <b>Ndugu Mteja:</b><br><br>
             Mfumo wetu wa malipo wa <b>TANConnect</b><sup style="font-family: Arial, Helvetica, sans-serif; font-size: 5px; font-weight: normal; vertical-align: super; line-height: 0;">&reg;</sup> bado haujaunganishwa na huduma ya <b>M-Pesa</b> kwa sasa. Wakati juhudi zinachukuliwa kuunganisha mifumo, tafadhali tumia nambari za <b>Tigo, Airtel, au Halotel</b> kukamilisha muamala na kupata voucher yako kwa njia ya mtandao.<br><br> <p style="font-size: 14px; line-height: 1.6; color: #34495e; text-align: left; margin-top: 15px;">
-    Vilevile unaweza kutumia njia ya kawaida kutuma M-pesa sawa na kifurushi unachohitaji kwenda nambari 
-    <a href="tel:*150*00%23" style="color: #e74c3c; font-weight: bold; text-decoration: underline;">0753 476 850</a> 
+    Vilevile unaweza kutumia njia ya kawaida kutuma M-pesa kwa kubonyeza nambari
+    <a href="tel:*150*00%23" style="color: #e74c3c; font-weight: bold; text-decoration: underline;">0753476850</a> 
     na mtambo utakutumia voucher yako kwa njia ya SMS mara moja.
 </p>
        
