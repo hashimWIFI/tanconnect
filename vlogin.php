@@ -36,8 +36,8 @@ $cleanAmount = intval($amount);
         <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
         
         
-                <p style="font-size: 15px; color: #e74c3c; font-weight: bold;">
-            ⚠️ MALIPO KWA WATEJA WA M-PESA
+                <p style="font-size: 14px; color: #e74c3c; font-weight: bold;">
+            ⚠️ Mfumo Wa Malipo Kwa Wateja Wa M-pesa.
         </p>
 
         <div class="instructions-box" style="border: 1px solid #f5c6cb; background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; text-align: justify;;">
