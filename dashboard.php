@@ -165,7 +165,7 @@ $safe_to   = $conn->real_escape_string($to_date);
 $period_condition = "AND DATE(purchased_at) BETWEEN '$safe_from' AND '$safe_to'";
 
 // 🗓️ TODAY'S METRICS (Stays static for instant comparisons)
-$today_earnings_res = $conn->query("SELECT SUM(price_tier) AS total FROM wifi_vouchers WHERE status = 'SUCCESS' AND DATE(purchased_at) = CURDATE()");
+$today_earnings_res = $conn->query("SELECT SUM(price_tier) AS total FROM wifi_vouchers WHERE transactionstatus = 'SUCCESS' AND DATE(purchased_at) = CURDATE()");
 $today_earnings = $today_earnings_res ? ($today_earnings_res->fetch_assoc()['total'] ?: 0) : 0;
 
 $today_count_res = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE status = 'SUCCESS' AND DATE(purchased_at) = CURDATE()");
