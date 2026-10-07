@@ -313,7 +313,7 @@ $log_result = $conn->query($log_query);
                     <div style="display: flex; flex-direction: column; gap: 6px;">
                         <?php foreach ($tier_stock_data as $tier): ?>
                             <div style="display: flex; justify-content: space-between; font-size: 12px; color: #475569;">
-                                <span style="font-weight: 600;"><?php echo number_format($tier['price_tier']); ?>:</span>
+                                <span style="font-weight: 600;">Tsh.<?php echo number_format($tier['price_tier']); ?>:</span>
                                 <span style="color: #e65100; font-weight: 700;"><?php echo number_format($tier['tier_count']); ?> pcs</span>
                             </div>
                         <?php endforeach; ?>
