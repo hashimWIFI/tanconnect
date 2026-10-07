@@ -415,7 +415,10 @@ $log_result = $conn->query($log_query);
                     <?php 
                     $sn_counter = $log_result->num_rows; 
                     while ($row = $log_result->fetch_assoc()): 
-                      
+                        $rawMac = preg_replace('/[^a-zA-Z0-9]/', '', $row['mac_address']);
+                        
+                        $displayMac = strlen($rawMac) === 12 ? implode(':', str_split($rawMac, 2)) : $row['mac_address'];
+                    ?>
                         <tr style="border-bottom: 1px solid #e2e8f0;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
                             <td style="font-weight: bold; color: #475569; font-family: monospace; text-align: center; padding: 12px 15px;">
                                 <?php echo $sn_counter--; ?>
