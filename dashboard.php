@@ -429,7 +429,7 @@ $log_result = $conn->query($log_query);
                                 Tsh <?php echo number_format($row['price_tier']); ?>
                             </td>
                             <td style="padding: 12px 15px;">
-                                <?php if ($row['status'] === 'SUCCESS'): ?>
+                                <?php if ($row['transactionstatus'] === 'SUCCESS'): ?>
                                     <span style="background-color: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">SUCCESS</span>
                                 <?php else: ?>
                                     <span style="background-color: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">ASSIGNED</span>
@@ -445,10 +445,10 @@ $log_result = $conn->query($log_query);
                                 <?php echo !empty($row['purchased_at']) ? date("d-m-Y H:i:s", strtotime($row['purchased_at'])) : '-'; ?>
                             </td>
                             <td style="color: #7f8c8d; font-size: 12px; font-family: monospace; padding: 12px 15px;">
-                                <?php echo htmlspecialchars($row['transaction_id']); ?>
+                                <?php echo htmlspecialchars($row['reference']); ?>
                             </td>
                             <td style="color: #27ae60; font-weight: bold; font-family: monospace; font-size: 13px; padding: 12px 15px;">
-                                <?php echo !empty($row['azampay_transaction_id']) ? htmlspecialchars($row['azampay_transaction_id']) : '-'; ?>
+                                <?php echo !empty($row['utilityref']) ? htmlspecialchars($row['utilityref']) : '-'; ?>
                             </td>
                         </tr>
                     <?php endwhile; ?>
