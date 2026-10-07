@@ -30,15 +30,16 @@ $smsGatewayPassword = "icqsrlspg85th2";
 // The endpoint address linking directly to the gateway engine messages directory
 $gatewayBaseUrl = "https://sms-gate.app"; 
 
-// 2. FETCH LATEST INBOUND INBOX SMS FROM GATEWAY SERVER VIA BASIC AUTHENTICATION
+// 2. CONNECT TO THE SMS GATEWAY APPLICATION PLATFORM VIA BASIC AUTH HEADERS
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $gatewayBaseUrl . "?type=received&limit=20");
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-curl_setopt($ch, CURLOPT_USERPWD, $smsGatewayEmail . ":" . $smsGatewayPassword);
+curl_setopt($ch, CURLOPT_USERPWD, $smsGatewayUsername . ":" . $smsGatewayPassword); // ⚡ Binds username natively!
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
     "Content-Type: application/json"
 ]);
+
 
 $apiResponse = curl_exec($ch);
 $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
