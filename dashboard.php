@@ -5,7 +5,7 @@ ini_set('display_errors', 1);
 // 🔐 Start session tracking safely at the absolute beginning 
 session_start();
 
-// 🚀 CACHE-BUSTING BLOCK: Forces the browser to sync live database records on every single loop
+// 🚀 CACHE-BUSTING BLOCK: Forces the browser to sync live database records on every single loop 
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
