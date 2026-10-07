@@ -415,42 +415,37 @@ $log_result = $conn->query($log_query);
                     <?php 
                     $sn_counter = $log_result->num_rows; 
                     while ($row = $log_result->fetch_assoc()): 
-                        $rawMac = preg_replace('/[^a-zA-Z0-9]/', '', $row['mac_address']);
-                        $displayMac = strlen($rawMac) === 12 ? implode(':', str_split($rawMac, 2)) : $row['mac_address'];
-                    ?>
-                        <tr style="border-bottom: 1px solid #e2e8f0;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
-                            <td style="font-weight: bold; color: #475569; font-family: monospace; text-align: center; padding: 12px 15px;">
-                                <?php echo $sn_counter--; ?>
-                            </td>
-                            <td style="font-weight: bold; font-family: monospace; font-size: 14px; padding: 12px 15px; color: #1e293b;">
-                                <?php echo htmlspecialchars($row['voucher_code']); ?>
-                            </td>
-                            <td style="padding: 12px 15px; font-weight: 500;">
-                                Tsh <?php echo number_format($row['price_tier']); ?>
-                            </td>
-                            <td style="padding: 12px 15px;">
-                                <?php if ($row['transactionstatus'] === 'SUCCESS'): ?>
-                                    <span style="background-color: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">SUCCESS</span>
-                                <?php else: ?>
-                                    <span style="background-color: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">ASSIGNED</span>
-                                <?php endif; ?>
-                            </td>
-                            <td style="padding: 12px 15px; font-family: monospace; color: #334155;">
-                                <?php echo !empty($row['assigned_phone']) ? htmlspecialchars($row['assigned_phone']) : '-'; ?>
-                            </td>
-                            <td style="padding: 12px 15px; font-family: monospace; color: #64748b;">
-                                <?php echo !empty($rawMac) ? htmlspecialchars(strtoupper($displayMac)) : '-'; ?>
-                            </td>
-                            <td style="font-family: monospace; color: #2c3e50; font-weight: 500; padding: 12px 15px;">
-                                <?php echo !empty($row['purchased_at']) ? date("d-m-Y H:i:s", strtotime($row['purchased_at'])) : '-'; ?>
-                            </td>
-                            <td style="color: #7f8c8d; font-size: 12px; font-family: monospace; padding: 12px 15px;">
-                                <?php echo htmlspecialchars($row['reference']); ?>
-                            </td>
-                            <td style="color: #27ae60; font-weight: bold; font-family: monospace; font-size: 13px; padding: 12px 15px;">
-                                <?php echo !empty($row['utilityref']) ? htmlspecialchars($row['utilityref']) : '-'; ?>
-                            </td>
-                        </tr>
+         // Line 418: Safely handle null to prevent PHP errors, keeping logic silent
+        $macAddress = $row['mac_address'] ?? '';
+        ?>
+        <tr style="border-bottom: 1px solid #e2e8f0;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
+            <td style="font-weight: bold; color: #475569; font-family: monospace; text-align: center; padding: 12px 15px;">
+                <?php echo $sn_counter--; ?>
+            </td>
+            <td style="font-weight: bold; font-family: monospace; font-size: 14px; padding: 12px 15px; color: #1e293b;">
+                <?php echo htmlspecialchars($row['voucher_code']); ?>
+            </td>
+            <td style="padding: 12px 15px; font-weight: 500;">
+                Tsh <?php echo number_format($row['price_tier']); ?>
+            </td>
+            <td style="padding: 12px 15px;">
+                <?php if ($row['transactionstatus'] === 'SUCCESS'): ?>
+                    <span style="background-color: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">SUCCESS</span>
+                <?php else: ?>
+                    <span style="background-color: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">ASSIGNED</span>
+                <?php endif; ?>
+            </td>
+            <td style="padding: 12px 15px; font-family: monospace; color: #334155;">
+                <?php echo !empty($row['assigned_phone']) ? htmlspecialchars($row['assigned_phone']) : '-'; ?>
+            </td>
+            
+            <!-- THE MAC ADDRESS DATA CELL (TD) HAS BEEN REMOVED FROM HERE -->
+            
+            <td style="padding: 12px 15px; color: #475569;">
+                 <?php echo htmlspecialchars($row['muda_wa_malipo'] ?? '-'); ?>
+            </td>
+            <!-- Keep adding the remaining trailing TDs like NIT Transaction ID below -->
+
                     <?php endwhile; ?>
                 <?php else: ?>
                     <tr>
