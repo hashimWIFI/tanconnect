@@ -1,28 +1,10 @@
-
-
 <?php
 // ====================================================================
-// CADDY PROXY COMPATIBILITY LAYER
-// ====================================================================
-// Forces the FrankenPHP runtime to recognize external cloud gateway headers
-if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
-    $_SERVER['HTTPS'] = 'on';
-}
-
-// Fallback: If Caddy blocks the raw php://input stream, attempt to read the request buffer
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty(file_get_contents('php://input'))) {
-    if (isset($HTTP_RAW_POST_DATA)) {
-        $incomingRawJson = $HTTP_RAW_POST_DATA;
-    }
-}
-// ====================================================================
-
-// ====================================================================
-// TANCONNECT DUO-SPEC AUTOMATED CALLBACK ENGINE ('callback.php')
+// TANCONNECT PRO-SPEC AUTOMATED CALLBACK ENGINE ('callback.php')
 // ====================================================================
 
 error_reporting(E_ALL);
-ini_set('display_errors', 0); // Production shield: blocks credential exposure
+ini_set('display_errors', 0); // Production protection: blocks credential exposure
 
 // 1. DATABASE CONNECTIVITY VIA NATIVE RAILWAY ENV VARIABLES
 $db_host     = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
@@ -34,98 +16,82 @@ $db_name     = getenv('MYSQLDATABASE') ?: 'railway';
 $conn = mysqli_connect($db_host, $db_user, $db_password, $db_name, $db_port);
 
 if (!$conn) {
-    error_log("TANCONNECT WEBHOOK ERROR: Database Connection Failed");
+    error_log("TANCONNECT SYSTEM ERROR: Database Connection Failed");
     http_response_code(500);
     exit();
 }
 
-// 2. CAPTURE THE RAW INBOUND JSON PAYLOAD STREAM FROM AZAMPAY
+// 2. CAPTURE THE RAW INCOMING FLAT JSON PAYLOAD STREAM FROM AZAMPAY
 $incomingRawJson = file_get_contents('php://input');
 $paymentData = json_decode($incomingRawJson, true);
 
-// Fallback to request superglobals if data transmits via standard web forms
 if (empty($paymentData) || !is_array($paymentData)) {
     $paymentData = !empty($_POST) ? $_POST : $_REQUEST;
 }
 
-// 📝 AUDIT LOG TRAIL: Saves incoming data packet variables to your log file
-file_put_contents('azampay_webhook_log.txt', date('[Y-m-d H:i:s] ') . "METHOD: " . ($_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN') . " | PAYLOAD: " . json_encode($paymentData) . PHP_EOL, FILE_APPEND);
+// 📝 AUDIT LOG TRAIL: Prints raw metrics directly to your live Railway console stream
+error_log("TANCONNECT RAW INBOUND WEBHOOK PAYLOAD: " . $incomingRawJson);
 
-// 3. EXTRACT METRICS HANDLING BOTH FLAT AND NESTED KEY-VALUE MATRIX SCHEMES
-// FIXED: Added check for 'transactionStatus' (camelCase matching AzamPay specification)
-$transactionstatus = '';
-if (isset($paymentData['transactionStatus'])) {
-    $transactionstatus = $paymentData['transactionStatus'];
-} elseif (isset($paymentData['transactionstatus'])) {
-    $transactionstatus = $paymentData['transactionstatus'];
-} elseif (isset($paymentData['properties']['transactionStatus'])) {
-    $transactionstatus = $paymentData['properties']['transactionStatus'];
-}
+// 3. EXTRACT METRICS CORE MATCHING OFFICIAL AZAMPAY DATA SPECIFICATION
+$transactionstatus = $paymentData['transactionStatus'] ?? $paymentData['transactionstatus'] ?? $paymentData['status'] ?? 'UNKNOWN';
+$utilityref        = $paymentData['utilityRef'] ?? $paymentData['utilityref'] ?? $paymentData['externalId'] ?? '';
+$azampay_reference = $paymentData['reference'] ?? $paymentData['transactionId'] ?? '';
 
-$reference = '';
-if (isset($paymentData['reference'])) {
-    $reference = $paymentData['reference'];
-} elseif (isset($paymentData['properties']['reference'])) {
-    $reference = $paymentData['properties']['reference'];
-}
-
-$utilityref = '';
-if (isset($paymentData['utilityref'])) {
-    $utilityref = $paymentData['utilityref'];
-} elseif (isset($paymentData['properties']['utilityref'])) {
-    $utilityref = $paymentData['properties']['utilityref'];
-}
-
-// FIXED: Extracted message field directly from AzamPay payload safely
-$payloadMessage = $paymentData['message'] ?? $paymentData['properties']['message'] ?? 'No message provided';
-
-// Clean out hidden trailing line breaks (\n) or carriage returns completely
-$cleanReference  = strtolower(trim(preg_replace('/\s+/', '', (string)$reference)));
-$cleanUtilityRef = strtolower(trim(preg_replace('/\s+/', '', (string)$utilityref)));
+$cleanUtilityRef = trim((string)$utilityref);        // Holds your system order ID string ("NITW-...")
+$cleanReference  = trim((string)$azampay_reference);   // Holds AzamPay's unique network string ("01a0d...")
 $statusLower     = strtolower(trim((string)$transactionstatus));
 
-// Flexible status validation check
-$isPaymentSuccessful = ($statusLower === 'success' || $statusLower === 'completed' || $statusLower === 'true' || $transactionstatus === true);
+$safeUtilityRef = mysqli_real_escape_string($conn, $cleanUtilityRef);
+$safeReference  = mysqli_real_escape_string($conn, $cleanReference);
+$safeStatus     = mysqli_real_escape_string($conn, $statusLower);
+$safeRawPayload = mysqli_real_escape_string($conn, $incomingRawJson);
 
-// 4. TRANSACTION LOOKUP & TRANSACTIONAL STEP EXECUTION GATEWAY
-if (!empty($cleanReference) || !empty($cleanUtilityRef)) {
-    
-    $safeReference  = mysqli_real_escape_string($conn, $cleanReference);
-    $safeUtilityRef = mysqli_real_escape_string($conn, $cleanUtilityRef);
-    
-    // ⚡ DUAL-ROW SWEEP LOOKUP MATRIX:
-    // Searches both incoming parameters against both database columns simultaneously!
-    $searchQuery = mysqli_query($conn, "SELECT id, price_tier, voucher_code, assigned_phone 
-                                        FROM wifi_vouchers 
-                                        WHERE LOWER(reference) = '$safeReference' 
-                                           OR LOWER(utilityref) = '$safeReference' 
-                                           OR LOWER(reference) = '$safeUtilityRef' 
-                                           OR LOWER(utilityref) = '$safeUtilityRef' 
-                                        LIMIT 1");
-    
-    if (mysqli_num_rows($searchQuery) > 0) {
-        $row = mysqli_fetch_assoc($searchQuery);
-        $voucherId = $row['id'];
+// ====================================================================
+// 🟢 STEP A: INGEST DATA INTO YOUR DEDICATED LOGGING VAULT TABLE
+// ====================================================================
+// Wrapped inside a resilient try/catch to ensure database schema drops don't block voucher code releases!
+try {
+    $insertSql = "INSERT INTO azampay_callbacks (utilityref, reference, transaction_status, raw_payload, received_at) 
+                  VALUES ('$safeUtilityRef', '$safeReference', '$safeStatus', '$safeRawPayload', NOW())";
+    mysqli_query($conn, $insertSql);
+} catch (Exception $logEx) {
+    error_log("TANCONNECT AUDIT WARNING: Log table write bypassed due to schema mismatch: " . $logEx->getMessage());
+}
+
+// ====================================================================
+// 🔵 STEP B: THE DUAL-CROSS OVER OPERATION TO UNLOCK WIFI_VOUCHERS
+// ====================================================================
+if (!empty($cleanUtilityRef) || !empty($cleanReference)) {
+    if ($statusLower === 'success' || $statusLower === 'completed' || $statusLower === 'true') {
         
-        mysqli_begin_transaction($conn);
-        try {
-            if ($isPaymentSuccessful) {
-                // ====================================================================
-                // 🟢 CASE A: TRANSACTION SUCCEEDED (Release Voucher PIN)
-                // ====================================================================
-                // FIXED: Changed $message to $payloadMessage variable reference
-                $updateSql = "UPDATE wifi_vouchers 
-                              SET transactionstatus = 'SUCCESS', 
-                                  callback_status = '" . mysqli_real_escape_string($conn, (string)$transactionstatus) . "',
-                                  callback_message = '" . mysqli_real_escape_string($conn, $payloadMessage) . "',
-                                  callback_raw = '" . mysqli_real_escape_string($conn, $incomingRawJson) . "',
-                                  purchased_at = NOW() 
-                              WHERE id = '$voucherId'";
+        // ⚡ THE FOUR-KEY SAFETY MATRIX:
+        // Sweeps both arriving payload parameters across both database columns simultaneously!
+        // This guarantees a match even if columns are reversed in alogin.php.
+        $searchSql = "SELECT id, assigned_phone, voucher_code FROM wifi_vouchers 
+                      WHERE reference = '$safeUtilityRef' 
+                         OR utilityref = '$safeReference'
+                         OR reference = '$safeReference'
+                         OR utilityref = '$safeUtilityRef' 
+                      LIMIT 1";
+                      
+        $searchQuery = mysqli_query($conn, $searchSql);
+        
+        if ($searchQuery && mysqli_num_rows($searchQuery) > 0) {
+            $row = mysqli_fetch_assoc($searchQuery);
+            $voucherId = $row['id'];
+            
+            // Updates only your clean, baseline database fields to release the code safely
+            $updateVoucherSql = "UPDATE wifi_vouchers 
+                                 SET transactionstatus = 'SUCCESS',
+                                     purchased_at = NOW() 
+                                 WHERE id = '$voucherId'";
+                                    
+            if (mysqli_query($conn, $updateVoucherSql)) {
+                error_log("TANCONNECT CORE BRIDGE: Linked wifi_vouchers record ID $voucherId updated to SUCCESS successfully.");
                 
-                mysqli_query($conn, $updateSql);
-                mysqli_commit($conn);
-                
-                // Integrated Hardware Samsung Phone MODEM SMS Gateway Bridge
+                // ====================================================================
+                // 🚀 INTEGRATED HARDWARE MODEM SMS GATEWAY PROCESSOR BRIDGE
+                // ====================================================================
                 define('TANCONNECT_SECURE_PASS', true);
                 $customer_phone = $row['assigned_phone'] ?? '';
                 $voucherCode    = $row['voucher_code'] ?? '';
@@ -135,47 +101,16 @@ if (!empty($cleanReference) || !empty($cleanUtilityRef)) {
                     include('sms_processor.php');
                     ob_end_clean();
                 }
-                
-                http_response_code(200);
-                echo json_encode(["status" => "success", "message" => "Voucher released successfully"]);
-                exit();
-                
-            } else {
-                // ====================================================================
-                // 🔴 CASE B: AUTOMATED STOCK RECOVERY LOOP (Transaction Failed / Canceled)
-                // ====================================================================
-                // FIXED: Changed $message to $payloadMessage variable reference
-                $updateSql = "UPDATE wifi_vouchers 
-                              SET transactionstatus = 'AVAILABLE',
-                                  assigned_phone = NULL,
-                                  reference = NULL,
-                                  utilityref = NULL,
-                                  access_token = NULL,
-                                  token_status = 'PENDING',
-                                  callback_status = '" . mysqli_real_escape_string($conn, (string)$transactionstatus) . "',
-                                  callback_message = '" . mysqli_real_escape_string($conn, $payloadMessage) . "',
-                                  callback_raw = '" . mysqli_real_escape_string($conn, $incomingRawJson) . "',
-                                  purchased_at = NULL 
-                              WHERE id = '$voucherId'";
-                
-                mysqli_query($conn, $updateSql);
-                mysqli_commit($conn);
-                
-                http_response_code(200);
-                echo json_encode(["status" => "recovered", "message" => "Voucher inventory pool recycled successfully"]);
-                exit();
             }
-            
-        } catch (Exception $e) {
-            mysqli_rollback($conn);
-            error_log("TANCONNECT TRANSACTION ERROR: " . $e->getMessage());
-            http_response_code(500);
-            exit();
+        } else {
+            error_log("TANCONNECT WARNING: Webhook tokens matched no active record rows in wifi_vouchers inventory. Release skipped.");
         }
     }
 }
 
-// Always acknowledge webhook receipt with a clean 200 OK block to satisfy API requirements
-http_response_code(200); 
+// Always acknowledge webhook receipt with a clean 200 OK block to satisfy integration constraints
+header("Content-Type: application/json");
+http_response_code(200);
 echo json_encode(["success" => true, "message" => "Callback request handled successfully"]);
+exit();
 ?>
