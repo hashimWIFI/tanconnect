@@ -20,12 +20,11 @@ if (!$conn) {
     http_response_code(500);
     exit();
 }
-
 // ====================================================================
-// 🎛️ CONFIGURATION LAYER: ENTER YOUR PORTAL CREDENTIALS NATIVELY HERE
+// 🎛️ CONFIGURATION LAYER: ENTER YOUR ACCOUNT CREDENTIALS
 // ====================================================================
-// Enter the exact Email and Password you use to log into the dashboard panel
-$smsGatewayEmail    = "PKHHG1";
+// Enter the exact Username and Password you use to access your dashboard portal
+$smsGatewayUsername  = "PKHHG1";
 $smsGatewayPassword = "icqsrlspg85th2";
 
 // The endpoint address linking directly to the gateway engine messages directory
