@@ -429,7 +429,7 @@ $log_result = $conn->query($log_query);
                                 Tsh <?php echo number_format($row['price_tier']); ?>
                             </td>
                             <td style="padding: 12px 15px;">
-                                <?php if ($row['status'] === 'SUCCESS'): ?>
+                                <?php if ($row['transactionstatus'] === 'SUCCESS'): ?>
                                     <span style="background-color: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">SUCCESS</span>
                                 <?php else: ?>
                                     <span style="background-color: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">ASSIGNED</span>
