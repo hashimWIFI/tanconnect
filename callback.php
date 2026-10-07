@@ -1,4 +1,22 @@
+
+
 <?php
+// ====================================================================
+// CADDY PROXY COMPATIBILITY LAYER
+// ====================================================================
+// Forces the FrankenPHP runtime to recognize external cloud gateway headers
+if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+    $_SERVER['HTTPS'] = 'on';
+}
+
+// Fallback: If Caddy blocks the raw php://input stream, attempt to read the request buffer
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty(file_get_contents('php://input'))) {
+    if (isset($HTTP_RAW_POST_DATA)) {
+        $incomingRawJson = $HTTP_RAW_POST_DATA;
+    }
+}
+// ====================================================================
+
 // ====================================================================
 // TANCONNECT DUO-SPEC AUTOMATED CALLBACK ENGINE ('callback.php')
 // ====================================================================
