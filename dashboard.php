@@ -185,7 +185,7 @@ $stock_result = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE 
 $remaining_stock = $stock_result ? ($stock_result->fetch_assoc()['total'] ?: 0) : 0;
 
 // 📋 LOG ENTRIES FETCH FOR LATEST 50 TRANSACTIONS
-$log_query = "SELECT id, voucher_code, price_tier, transactionstatus, assigned_phone, mac_address, transaction_id, azampay_transaction_id, purchased_at FROM wifi_vouchers WHERE status IN ('SUCCESS', 'ASSIGNED') ORDER BY purchased_at DESC LIMIT 50";
+$log_query = "SELECT id, voucher_code, price_tier, transactionstatus, assigned_phone, mac_address, transaction_id, azampay_transaction_id, purchased_at FROM wifi_vouchers WHERE transactionstatus IN ('SUCCESS', 'ASSIGNED') ORDER BY purchased_at DESC LIMIT 50";
 $log_result = $conn->query($log_query);
 ?>
 <!DOCTYPE html>
