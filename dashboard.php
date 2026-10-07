@@ -139,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_upload']) && i
 }
 
 // Fetch remaining stock broken down per specific price tier batch
-$tier_stock_query = "SELECT price_tier, COUNT(*) AS tier_count FROM wifi_vouchers WHERE status = 'AVAILABLE' GROUP BY price_tier ORDER BY price_tier ASC";
+$tier_stock_query = "SELECT price_tier, COUNT(*) AS tier_count FROM wifi_vouchers WHERE transactionstatus = 'AVAILABLE' GROUP BY price_tier ORDER BY price_tier ASC";
 $tier_stock_result = $conn->query($tier_stock_query);
 
 $tier_stock_data = [];
