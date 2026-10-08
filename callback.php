@@ -1,7 +1,12 @@
 <?php
+// 1. ABSOLUTE TOP: Catch any inbound connection before database or logic runs
+$rawPayload = file_get_contents('php://input');
+$logMessage = "[" . date('Y-m-d H:i:s') . "] INBOUND WEBHOOK HIT! Raw Data: " . $rawPayload . PHP_EOL;
+file_put_contents('azampay_network.log', $logMessage, FILE_APPEND);
+
 header("Content-Type: application/json");
 
-// 1. Establish Database Connection
+// 2. Establish Database Connection (Railway parameters)
 $host     = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
 $db       = getenv('MYSQLDATABASE') ?: 'railway';
 $user     = getenv('MYSQLUSER') ?: 'root';
@@ -18,29 +23,19 @@ $options = [
 try {
     $pdo = new PDO($dsn, $user, $password, $options);
 } catch (\PDOException $e) {
+    file_put_contents('azampay_network.log', "[ERROR] DB Connection Failed: " . $e->getMessage() . PHP_EOL, FILE_APPEND);
     http_response_code(500);
-    echo json_encode(["success" => false, "message" => "Database disconnect"]);
+    echo json_encode(["status" => "error", "message" => "Database disconnect"]);
     exit;
 }
 
-// 2. Read the JSON sent by AzamPay
-$rawPayload = file_get_contents('php://input');
 $data = json_decode($rawPayload, true);
-
-// Save a copy of what arrived to check formatting later
-file_put_contents('azampay_debug.log', $rawPayload . PHP_EOL, FILE_APPEND);
-
-// 3. IF A BROWSER VISITS (Empty Data), alert the tester
 if (!$data) {
-    http_response_code(200); 
-    echo json_encode([
-        "success" => true, 
-        "message" => "Endpoint is live! Ready and waiting for AzamPay's POST data."
-    ]);
+    http_response_code(200);
+    echo json_encode(["status" => "ready", "message" => "Waiting for POST data"]);
     exit;
 }
 
-// 4. IF AZAMPAY SENDS DATA, process the database update
 $transactionStatus = $data['transactionStatus'] ?? null; 
 $reference         = $data['reference'] ?? null; 
 
@@ -53,29 +48,36 @@ if ($reference) {
                     
             $stmt = $pdo->prepare($sql);
             $stmt->execute([':reference' => $reference]);
+            
+            $rowsAffected = $stmt->rowCount();
+            file_put_contents('azampay_network.log', "[SQL SUCCESS] Reference: $reference | Rows Updated: $rowsAffected" . PHP_EOL, FILE_APPEND);
 
             http_response_code(200);
-            echo json_encode(["success" => true, "message" => "Voucher updated to SUCCESS"]);
+            echo json_encode(["status" => "success"]);
             exit;
         } catch (\PDOException $e) {
+            file_put_contents('azampay_network.log', "[SQL ERROR] Success Block: " . $e->getMessage() . PHP_EOL, FILE_APPEND);
             http_response_code(500);
-            echo json_encode(["success" => false, "message" => "Database update failed"]);
             exit;
         }
     } else {
-        // Payment failed or timed out -> Revert back to AVAILABLE
-        $sql = "UPDATE wifi_vouchers 
-                SET status = 'AVAILABLE', assigned_phone = NULL, reference = NULL, utilityref = NULL 
-                WHERE reference = :reference";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([':reference' => $reference]);
-        
-        http_response_code(200);
-        echo json_encode(["success" => true, "message" => "Transaction failed, voucher reset"]);
-        exit;
+        try {
+            $sql = "UPDATE wifi_vouchers 
+                    SET status = 'AVAILABLE', assigned_phone = NULL, reference = NULL, utilityref = NULL 
+                    WHERE reference = :reference";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([':reference' => $reference]);
+            
+            file_put_contents('azampay_network.log', "[SQL REVERSED] Reference: $reference" . PHP_EOL, FILE_APPEND);
+            http_response_code(200);
+            exit;
+        } catch (\PDOException $e) {
+            file_put_contents('azampay_network.log', "[SQL ERROR] Failure Block: " . $e->getMessage() . PHP_EOL, FILE_APPEND);
+            http_response_code(500);
+            exit;
+        }
     }
 }
 
-// Fallback safety response
 http_response_code(200);
-echo json_encode(["success" => false, "message" => "No valid transaction reference found in payload"]);
+echo json_encode(["status" => "ignored"]);
