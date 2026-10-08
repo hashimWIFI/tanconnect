@@ -1,12 +1,12 @@
 <?php
-// 1. ABSOLUTE TOP: Catch any inbound connection before database or logic runs
-$rawPayload = file_get_contents('php://input');
-$logMessage = "[" . date('Y-m-d H:i:s') . "] INBOUND WEBHOOK HIT! Raw Data: " . $rawPayload . PHP_EOL;
-file_put_contents('azampay_network.log', $logMessage, FILE_APPEND);
-
 header("Content-Type: application/json");
 
-// 2. Establish Database Connection (Railway parameters)
+// 1. SYSTEM POOL LOGGING (Bypasses local directory permission issues)
+$rawPayload = file_get_contents('php://input');
+$logMessage = "[" . date('Y-m-d H:i:s') . "] INBOUND WEBHOOK HIT! -> Data: " . $rawPayload . PHP_EOL;
+file_put_contents('/tmp/azampay_gateway.log', $logMessage, FILE_APPEND);
+
+// 2. Database Connection Framework
 $host     = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
 $db       = getenv('MYSQLDATABASE') ?: 'railway';
 $user     = getenv('MYSQLUSER') ?: 'root';
@@ -23,7 +23,7 @@ $options = [
 try {
     $pdo = new PDO($dsn, $user, $password, $options);
 } catch (\PDOException $e) {
-    file_put_contents('azampay_network.log', "[ERROR] DB Connection Failed: " . $e->getMessage() . PHP_EOL, FILE_APPEND);
+    file_put_contents('/tmp/azampay_gateway.log', "[DB CONNECTION ERROR] " . $e->getMessage() . PHP_EOL, FILE_APPEND);
     http_response_code(500);
     echo json_encode(["status" => "error", "message" => "Database disconnect"]);
     exit;
@@ -32,7 +32,7 @@ try {
 $data = json_decode($rawPayload, true);
 if (!$data) {
     http_response_code(200);
-    echo json_encode(["status" => "ready", "message" => "Waiting for POST data"]);
+    echo json_encode(["status" => "ready", "message" => "Callback active in the root folder!"]);
     exit;
 }
 
@@ -49,14 +49,14 @@ if ($reference) {
             $stmt = $pdo->prepare($sql);
             $stmt->execute([':reference' => $reference]);
             
-            $rowsAffected = $stmt->rowCount();
-            file_put_contents('azampay_network.log', "[SQL SUCCESS] Reference: $reference | Rows Updated: $rowsAffected" . PHP_EOL, FILE_APPEND);
+            $rows = $stmt->rowCount();
+            file_put_contents('/tmp/azampay_gateway.log', "[SQL SUCCESS] Ref: $reference | Rows modified: $rows" . PHP_EOL, FILE_APPEND);
 
             http_response_code(200);
             echo json_encode(["status" => "success"]);
             exit;
         } catch (\PDOException $e) {
-            file_put_contents('azampay_network.log', "[SQL ERROR] Success Block: " . $e->getMessage() . PHP_EOL, FILE_APPEND);
+            file_put_contents('/tmp/azampay_gateway.log', "[SQL EXCEPTION Success block] " . $e->getMessage() . PHP_EOL, FILE_APPEND);
             http_response_code(500);
             exit;
         }
@@ -68,11 +68,11 @@ if ($reference) {
             $stmt = $pdo->prepare($sql);
             $stmt->execute([':reference' => $reference]);
             
-            file_put_contents('azampay_network.log', "[SQL REVERSED] Reference: $reference" . PHP_EOL, FILE_APPEND);
+            file_put_contents('/tmp/azampay_gateway.log', "[SQL REVERSED] Ref: $reference" . PHP_EOL, FILE_APPEND);
             http_response_code(200);
             exit;
         } catch (\PDOException $e) {
-            file_put_contents('azampay_network.log', "[SQL ERROR] Failure Block: " . $e->getMessage() . PHP_EOL, FILE_APPEND);
+            file_put_contents('/tmp/azampay_gateway.log', "[SQL EXCEPTION Failure block] " . $e->getMessage() . PHP_EOL, FILE_APPEND);
             http_response_code(500);
             exit;
         }
