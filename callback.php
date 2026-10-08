@@ -15,15 +15,6 @@ $user     = getenv('MYSQLUSER') ?: 'root';
 $password = getenv('MYSQLPASSWORD') ?: 'TxGqIUapIhgwhpKbqywjJXkiOWGmQVLJ';
 $charset  = 'utf8mb4';
 
-// OPTIONAL CHECK: If your Railway database container provided an absolute internal URL string instead, 
-// you can replace the connection details by using your private environment variable link like this:
-// if (getenv('MYSQL_URL')) {
-//     $dbUrl = parse_url(getenv('MYSQL_URL'));
-//     $host = $dbUrl['host'];
-//     $db   = ltrim($dbUrl['path'], '/');
-//     $user = $dbUrl['user'];
-//     $password = $dbUrl['pass'];
-// }
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
 $options = [
