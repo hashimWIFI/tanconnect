@@ -1,12 +1,7 @@
 <?php
-// 1. ABSOLUTE TOP: Catch any inbound connection before database or logic runs
-$rawPayload = file_get_contents('php://input');
-$logMessage = "[" . date('Y-m-d H:i:s') . "] INBOUND WEBHOOK HIT! Raw Data: " . $rawPayload . PHP_EOL;
-file_put_contents('azampay_network.log', $logMessage, FILE_APPEND);
-
 header("Content-Type: application/json");
 
-// 2. Establish Database Connection (Railway parameters)
+// 1. Database Connection Configuration
 $host     = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
 $db       = getenv('MYSQLDATABASE') ?: 'railway';
 $user     = getenv('MYSQLUSER') ?: 'root';
@@ -23,56 +18,55 @@ $options = [
 try {
     $pdo = new PDO($dsn, $user, $password, $options);
 } catch (\PDOException $e) {
-    file_put_contents('azampay_network.log', "[ERROR] DB Connection Failed: " . $e->getMessage() . PHP_EOL, FILE_APPEND);
     http_response_code(500);
     echo json_encode(["status" => "error", "message" => "Database disconnect"]);
     exit;
 }
 
+// 2. Safely capture the data stream without writing files
+$rawPayload = file_get_contents('php://input');
 $data = json_decode($rawPayload, true);
+
 if (!$data) {
     http_response_code(200);
-    echo json_encode(["status" => "ready", "message" => "Waiting for POST data"]);
+    echo json_encode(["status" => "ready", "message" => "Endpoint live inside public folder!"]);
     exit;
 }
 
+// 3. Extract AzamPay Variables
 $transactionStatus = $data['transactionStatus'] ?? null; 
 $reference         = $data['reference'] ?? null; 
 
 if ($reference) {
     if ($transactionStatus === 'success') {
         try {
+            // Update status to SUCCESS for the assigned voucher reference
             $sql = "UPDATE wifi_vouchers 
                     SET status = 'SUCCESS' 
                     WHERE reference = :reference AND status = 'ASSIGNED'";
                     
             $stmt = $pdo->prepare($sql);
             $stmt->execute([':reference' => $reference]);
-            
-            $rowsAffected = $stmt->rowCount();
-            file_put_contents('azampay_network.log', "[SQL SUCCESS] Reference: $reference | Rows Updated: $rowsAffected" . PHP_EOL, FILE_APPEND);
 
             http_response_code(200);
             echo json_encode(["status" => "success"]);
             exit;
         } catch (\PDOException $e) {
-            file_put_contents('azampay_network.log', "[SQL ERROR] Success Block: " . $e->getMessage() . PHP_EOL, FILE_APPEND);
             http_response_code(500);
             exit;
         }
     } else {
         try {
+            // Revert voucher to AVAILABLE if user cancels or transaction fails
             $sql = "UPDATE wifi_vouchers 
                     SET status = 'AVAILABLE', assigned_phone = NULL, reference = NULL, utilityref = NULL 
                     WHERE reference = :reference";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([':reference' => $reference]);
             
-            file_put_contents('azampay_network.log', "[SQL REVERSED] Reference: $reference" . PHP_EOL, FILE_APPEND);
             http_response_code(200);
             exit;
         } catch (\PDOException $e) {
-            file_put_contents('azampay_network.log', "[SQL ERROR] Failure Block: " . $e->getMessage() . PHP_EOL, FILE_APPEND);
             http_response_code(500);
             exit;
         }
