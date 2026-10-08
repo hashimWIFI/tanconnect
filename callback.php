@@ -1,108 +1,81 @@
 <?php
-// ====================================================================
-// TANCONNECT LIVE AUTOMATED WEBHOOK CALLBACK LISTENER ('callback.php')
-// ====================================================================
-
 header("Content-Type: application/json");
 
-// 1. DATABASE CONNECTIVITY VIA NATIVE RAILWAY ENV VARIABLES
-$db_host     = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
-$db_port     = getenv('MYSQLPORT') ?: '3306';
-$db_user     = getenv('MYSQLUSER') ?: 'root';
-$db_password = getenv('MYSQLPASSWORD') ?: 'TxGqIUapIhgwhpKbqywjJXkiOWGmQVLJ';
-$db_name     = getenv('MYSQLDATABASE') ?: 'railway';
+// 1. Establish Database Connection
+$host     = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
+$db       = getenv('MYSQLDATABASE') ?: 'railway';
+$user     = getenv('MYSQLUSER') ?: 'root';
+$password = getenv('MYSQLPASSWORD') ?: 'TxGqIUapIhgwhpKbqywjJXkiOWGmQVLJ';
+$charset  = 'utf8mb4';
 
-$conn = mysqli_connect($db_host, $db_user, $db_password, $db_name, $db_port);
+$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+$options = [
+    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    PDO::ATTR_EMULATE_PREPARES   => false,
+];
 
-if (!$conn) {
-    error_log("TANCONNECT WEBHOOK ERROR: Database Connection Failed");
+try {
+    $pdo = new PDO($dsn, $user, $password, $options);
+} catch (\PDOException $e) {
     http_response_code(500);
-    exit();
+    echo json_encode(["success" => false, "message" => "Database disconnect"]);
+    exit;
 }
 
-// 2. CAPTURE THE RAW INCOMING WEBHOOK STREAM (AS SENT TO JOSEPH'S DESK)
-$rawInput = file_get_contents('php://input');
-$payloadData = json_decode($rawInput, true);
+// 2. Read the JSON sent by AzamPay
+$rawPayload = file_get_contents('php://input');
+$data = json_decode($rawPayload, true);
 
-if (empty($payloadData) || !is_array($payloadData)) {
-    $payloadData = !empty($_POST) ? $_POST : $_REQUEST;
+// Save a copy of what arrived to check formatting later
+file_put_contents('azampay_debug.log', $rawPayload . PHP_EOL, FILE_APPEND);
+
+// 3. IF A BROWSER VISITS (Empty Data), alert the tester
+if (!$data) {
+    http_response_code(200); 
+    echo json_encode([
+        "success" => true, 
+        "message" => "Endpoint is live! Ready and waiting for AzamPay's POST data."
+    ]);
+    exit;
 }
 
-// 3. EXTRACT METRICS HANDLING DUAL CASE SCENARIOS
-$transactionStatus = $payloadData['transactionStatus'] ?? $payloadData['transactionstatus'] ?? 'Not Provided';
-$reference         = $payloadData['reference']         ?? $payloadData['transactionId']       ?? 'Not Provided';
-$utilityRef        = $payloadData['utilityRef']        ?? $payloadData['utilityref']          ?? 'Not Provided';
-$message           = $payloadData['message']           ?? 'No message';
+// 4. IF AZAMPAY SENDS DATA, process the database update
+$transactionStatus = $data['transactionStatus'] ?? null; 
+$reference         = $data['reference'] ?? null; 
 
-// 📝 AUDIT LOG TRAIL: Creates the clean human-readable text block you shared with Joseph
-$logEntry = "========================================\n";
-$logEntry .= "TIMESTAMP: " . date('Y-m-d H:i:s') . "\n";
-$logEntry .= "STATUS EXTRACTED: " . $transactionStatus . "\n";
-$logEntry .= "REFERENCE MATCHED: " . $reference . "\n";
-$logEntry .= "UTILITY REF: " . $utilityRef . "\n";
-$logEntry .= "PROVIDER MESSAGE: " . $message . "\n";
-$logEntry .= "RAW JSON PAYLOAD: " . $rawInput . "\n";
-$logEntry .= "========================================\n";
+if ($reference) {
+    if ($transactionStatus === 'success') {
+        try {
+            $sql = "UPDATE wifi_vouchers 
+                    SET status = 'SUCCESS' 
+                    WHERE reference = :reference AND status = 'ASSIGNED'";
+                    
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([':reference' => $reference]);
 
-file_put_contents('azampay_delivery_report.txt', $logEntry, FILE_APPEND);
-
-// Normalize text parameters to lowercase strings to survive case shifts safely
-$cleanUtilityRef = strtolower(trim((string)$utilityRef));
-$cleanReference  = strtolower(trim((string)$reference));
-$statusLower     = strtolower(trim((string)$transactionStatus));
-
-$safeUtilityRef = mysqli_real_escape_string($conn, $cleanUtilityRef);
-$safeReference  = mysqli_real_escape_string($conn, $cleanReference);
-
-// ====================================================================
-// ⚡ THE FOUR-KEY CASE-INSENSITIVE CROSS-OVER BRIDGE VOUCHER RELEASE
-// ====================================================================
-if (!empty($cleanUtilityRef) || !empty($cleanReference)) {
-    if ($statusLower === 'success' || $statusLower === 'completed' || $statusLower === 'true') {
-        
-        // Sweeps both arriving payload parameters across both database columns to guarantee a match
-        $searchSql = "SELECT id, assigned_phone, voucher_code FROM wifi_vouchers 
-                      WHERE LOWER(reference) = '$safeUtilityRef' 
-                         OR LOWER(utilityref) = '$safeReference'
-                         OR LOWER(reference) = '$safeReference'
-                         OR LOWER(utilityref) = '$safeUtilityRef' 
-                      LIMIT 1";
-                      
-        $searchQuery = mysqli_query($conn, $searchSql);
-        
-        if ($searchQuery && mysqli_num_rows($searchQuery) > 0) {
-            $row = mysqli_fetch_assoc($searchQuery);
-            $voucherId = $row['id'];
-            
-            // Updates voucher row to SUCCESS instantly
-            $updateVoucherSql = "UPDATE wifi_vouchers 
-                                 SET transactionstatus = 'SUCCESS',
-                                     purchased_at = NOW() 
-                                 WHERE id = '$voucherId'";
-                                    
-            if (mysqli_query($conn, $updateVoucherSql)) {
-                error_log("TANCONNECT CORE BRIDGE: Linked wifi_vouchers record ID $voucherId updated to SUCCESS.");
-                
-                // Integrated Hardware Phone MODEM SMS Bridge
-                define('TANCONNECT_SECURE_PASS', true);
-                $customer_phone = $row['assigned_phone'] ?? '';
-                $voucherCode    = $row['voucher_code'] ?? '';
-                
-                if (file_exists('sms_processor.php') && !empty($customer_phone) && !empty($voucherCode)) {
-                    ob_start();
-                    include('sms_processor.php');
-                    ob_end_clean();
-                }
-            }
+            http_response_code(200);
+            echo json_encode(["success" => true, "message" => "Voucher updated to SUCCESS"]);
+            exit;
+        } catch (\PDOException $e) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Database update failed"]);
+            exit;
         }
+    } else {
+        // Payment failed or timed out -> Revert back to AVAILABLE
+        $sql = "UPDATE wifi_vouchers 
+                SET status = 'AVAILABLE', assigned_phone = NULL, reference = NULL, utilityref = NULL 
+                WHERE reference = :reference";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':reference' => $reference]);
+        
+        http_response_code(200);
+        echo json_encode(["success" => true, "message" => "Transaction failed, voucher reset"]);
+        exit;
     }
 }
 
-// 4. RETURN THE CONFIRMATION RESPONSE TO SATISFY AZAMPAY'S INTERFACE RULES
+// Fallback safety response
 http_response_code(200);
-echo json_encode([
-    "success" => true,
-    "message" => "Webhook payload successfully extracted and logged by TanConnect"
-]);
-exit();
-?>
+echo json_encode(["success" => false, "message" => "No valid transaction reference found in payload"]);
