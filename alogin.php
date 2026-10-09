@@ -304,10 +304,9 @@ if (isset($conn) && $conn instanceof mysqli) {
         .btn-portal:hover { filter: brightness(0.95); }
         .close-btn { position: absolute; top: 12px; right: 16px; font-weight: bold; font-size: 30px; cursor: pointer; color: #64748b; line-height: 1; }
     </style>
-
-    <script type="text/javascript">
+ 
+        <script type="text/javascript">
         var fixedDeviceId = "8600081897";
-        var clientMac = "<?php echo htmlspecialchars($macAddress); ?>";
         var activeTxId = "<?php echo isset($transactionId) ? htmlspecialchars($transactionId) : ''; ?>";
 
                function closeThisWindow() {
