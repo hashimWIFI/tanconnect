@@ -1,10 +1,11 @@
 {
     frankenphp
+    # Force automatic SSL generation globally using Let's Encrypt production standards
+    email info@tanconnect.co.tz
 }
 
-# ⚡ LIVE ENCRYPTED SELF-HEALING ROUTING ENGINE
-# By declaring your public domains explicitly, Caddy will auto-provision real Let's Encrypt SSL certificates!
-tanconnect.co.tz, www.tanconnect.co.tz {
+# ⚡ CHOOSE DIRECT SECURE PORT AND DOMAIN ANCHORS
+tanconnect.co.tz, www.tanconnect.co.tz, :8080 {
     root * /app
     route {
         file_server
