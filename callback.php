@@ -1,19 +1,27 @@
 <?php
 // ====================================================================
-// TANCONNECT HIGH-SPEED ASYNCHRONOUS WEBHOOK LISTENER ('callback.php')
+// TANCONNECT Live STREAM-OPTIMIZED AUTOMATED CALLBACK LISTENER
 // ====================================================================
 
-// 1. TERMINATE THE OUTBOUND CONNECTION INSTANTLY TO BYPASS AZAMPAY'S 429 TIMEOUT
-// This tells AzamPay's proxy we received the data immediately, unblocking their loop!
+// 🟢 STEP 1: INTERCEPT RAW STREAM IMMEDIATELY BEFORE BUFFER FLUSH CONSUMPTION
+// This isolates the raw data text safely in memory as the very first operation!
+$rawInput = file_get_contents('php://input');
+$payloadData = json_decode($rawInput, true);
+
+if (empty($payloadData) || !is_array($payloadData)) {
+    $payloadData = array_merge($_GET, $_POST, $_REQUEST);
+}
+
+// 🟢 STEP 2: RESPONSE BUFFER FLUSH TERMINATION LOOP
+// Instantly tells AzamPay we received the packet, keeping their firewalls 100% happy!
 ob_start();
 header("Content-Type: application/json");
 http_response_code(200);
 echo json_encode([
     "success" => true,
-    "message" => "Webhook payload successfully received by TanConnect"
+    "message" => "Webhook payload successfully extracted and logged by TanConnect"
 ]);
 
-// Get the exact length of the output string and flush the buffer to close the connection
 $size = ob_get_length();
 header("Content-Length: $size");
 header("Connection: close");
@@ -21,17 +29,15 @@ ob_end_flush();
 ob_flush();
 flush();
 
-// ⚡ CONNECTION IS NOW CLOSED WITH AZAMPAY. 
-// The code below executes silently in the background on your server!
-
+// ⚡ NET CHANNELS DISCONNECTED. The server now processes the database loop in the background!
 if (session_status() === PHP_SESSION_NONE) {
-    session_write_close(); // Prevent session locking delays
+    session_write_close();
 }
 
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 
-// 2. DATABASE CONNECTIVITY VIA NATIVE RAILWAY ENV VARIABLES
+// 3. DATABASE CONNECTIVITY VIA NATIVE RAILWAY ENV VARIABLES
 $db_host     = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
 $db_port     = getenv('MYSQLPORT') ?: '3306';
 $db_user     = getenv('MYSQLUSER') ?: 'root';
@@ -41,34 +47,46 @@ $db_name     = getenv('MYSQLDATABASE') ?: 'railway';
 $conn = mysqli_connect($db_host, $db_user, $db_password, $db_name, $db_port);
 
 if (!$conn) {
-    error_log("TANCONNECT ASYNC ERROR: Database Connection Failed");
+    error_log("TANCONNECT WEBHOOK ERROR: Database Connection Failed");
     exit();
 }
 
-// 3. CAPTURE THE INBOUND JSON PAYLOAD FROM THE RAW INPUT CHANNEL
-$rawInput = file_get_contents('php://input');
-$payloadData = json_decode($rawInput, true);
+// 📝 AUDIT TRAIL LOG: Writes the populated data packet directly to your text audit history
+$logEntry = "========================================\n";
+$logEntry .= "TIMESTAMP: " . date('Y-m-d H:i:s') . "\n";
+$logEntry .= "STATUS EXTRACTED: " . ($payloadData['transactionStatus'] ?? $payloadData['transactionstatus'] ?? 'Not Provided') . "\n";
+$logEntry .= "REFERENCE MATCHED: " . ($payloadData['reference'] ?? $payloadData['transactionId'] ?? 'Not Provided') . "\n";
+$logEntry .= "UTILITY REF: " . ($payloadData['utilityRef'] ?? $payloadData['utilityref'] ?? 'Not Provided') . "\n";
+$logEntry .= "RAW JSON PAYLOAD: " . $rawInput . "\n";
+$logEntry .= "========================================\n";
 
-if (empty($payloadData) || !is_array($payloadData)) {
-    $payloadData = !empty($_POST) ? $_POST : $_REQUEST;
-}
+file_put_contents('azampay_delivery_report.txt', $logEntry, FILE_APPEND);
 
-// 📝 HISTORICAL REPORT LOG: Writes data to file inside your container workspace
-file_put_contents('azampay_delivery_report.txt', date('[Y-m-d H:i:s] ') . "PAYLOAD: " . json_encode($payloadData) . PHP_EOL, FILE_APPEND);
-
-// 4. EXTRACT MAPPING TARGET METRICS
+// 4. INGEST DATA INTO YOUR HISTORICAL LOG TABLE VAULT
 $transactionStatus = $payloadData['transactionStatus'] ?? $payloadData['transactionstatus'] ?? 'UNKNOWN';
 $reference         = $payloadData['reference']         ?? $payloadData['transactionId']       ?? '';
 $utilityRef        = $payloadData['utilityRef']        ?? $payloadData['utilityref']          ?? '';
 
-$cleanUtilityRef = strtolower(trim((string)$utilityRef));        // Your system order ID ("nitw-...")
-$cleanReference  = strtolower(trim((string)$reference));         // AzamPay's network ID ("01a0d...")
+$cleanUtilityRef = strtolower(trim((string)$utilityRef));
+$cleanReference  = strtolower(trim((string)$reference));
 $statusLower     = strtolower(trim((string)$transactionStatus));
 
 $safeUtilityRef = mysqli_real_escape_string($conn, $cleanUtilityRef);
 $safeReference  = mysqli_real_escape_string($conn, $cleanReference);
+$safeStatus     = mysqli_real_escape_string($conn, $statusLower);
+$safeRawPayload = mysqli_real_escape_string($conn, $rawInput);
 
-// 5. THE FOUR-KEY CASE-INSENSITIVE CROSS-OVER CORE VOUCHER RELEASE
+try {
+    $insertSql = "INSERT INTO azampay_callbacks (utilityref, reference, transaction_status, raw_payload, received_at) 
+                  VALUES ('$safeUtilityRef', '$safeReference', '$safeStatus', '$safeRawPayload', NOW())";
+    mysqli_query($conn, $insertSql);
+} catch (Exception $logEx) {
+    error_log("TANCONNECT AUDIT EXCEPTION: Bypassed due to local column structure difference: " . $logEx->getMessage());
+}
+
+// ====================================================================
+// ⚡ THE FOUR-KEY CASE-INSENSITIVE CROSS-OVER BRIDGE VOUCHER RELEASE
+// ====================================================================
 if (!empty($cleanUtilityRef) || !empty($cleanReference)) {
     if ($statusLower === 'success' || $statusLower === 'completed' || $statusLower === 'true') {
         
@@ -85,16 +103,15 @@ if (!empty($cleanUtilityRef) || !empty($cleanReference)) {
             $row = mysqli_fetch_assoc($searchQuery);
             $voucherId = $row['id'];
             
-            // Securely logs customer details and sets tracking status to SUCCESS
             $updateVoucherSql = "UPDATE wifi_vouchers 
                                  SET transactionstatus = 'SUCCESS',
                                      purchased_at = NOW() 
                                  WHERE id = '$voucherId'";
                                     
             if (mysqli_query($conn, $updateVoucherSql)) {
-                error_log("TANCONNECT ASYNC BRIDGE: Linked record ID $voucherId updated to SUCCESS.");
+                error_log("TANCONNECT CORE BRIDGE: Linked wifi_vouchers record ID $voucherId updated to SUCCESS.");
                 
-                // Trigger your hardware Samsung Phone MODEM SMS Gateway Processor
+                // Integrated Hardware Phone MODEM SMS Bridge Execution
                 define('TANCONNECT_SECURE_PASS', true);
                 $customer_phone = $row['assigned_phone'] ?? '';
                 $voucherCode    = $row['voucher_code'] ?? '';
