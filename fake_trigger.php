@@ -33,7 +33,7 @@ if (empty($targetPhone)) {
 }
 
 // 3. LOOKUP THE LATEST 'ASSIGNED' VOUCHER FOR THIS SPECIFIC NUMBER
-(searchQuery = mysqli_query(\)conn, "SELECT id, voucher_code FROM wifi_vouchers WHERE assigned_phone = '$targetPhone' AND status = 'ASSIGNED' ORDER BY id DESC LIMIT 1");
+(searchQuery = mysqli_query(\)conn, "SELECT id, voucher_code FROM wifi_vouchers WHERE assigned_phone = '$targetPhone' AND transactionstatus = 'ASSIGNED' ORDER BY id DESC LIMIT 1");
 
 if (mysqli_num_rows($searchQuery) === 0) {
     die("<h3>Simulation Info:</h3> Hakuna vocha iliyopo kwenye hali ya 'ASSIGNED' kwa namba <b>$targetPhone</b> right now.<br>
@@ -50,7 +50,7 @@ mysqli_begin_transaction(\$conn);
 try {
     // Update voucher state dynamically into SUCCESS
     \$updateQuery = "UPDATE wifi_vouchers 
-                    SET status = 'SUCCESS', 
+                    SET transactionstatus = 'SUCCESS', 
                         `Muda wa Malipo (EAT Time)` = NOW() 
                     WHERE id = '$voucherId'";
                     
