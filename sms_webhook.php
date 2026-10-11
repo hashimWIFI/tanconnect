@@ -29,7 +29,7 @@ if (isset($data['event']) && $data['event'] === 'sms:received') {
     $time_received = $test_conn->real_escape_string($payload['received_at']);
 
     // 5. Insert directly into your clean test table
-    $query = "INSERT INTO sms_incoming (sender, message, received_time) 
+    $query = "INSERT INTO sms_incoming (sender, msg, received_time) 
               VALUES ('$phone_number', '$sms_text', '$time_received')";
     
     if ($test_conn->query($query) === TRUE) {
