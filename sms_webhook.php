@@ -44,7 +44,7 @@ if ($conn->connect_error) {
     }
 
     // 4. Secure Prepared Statement incorporating the received_time column
-    $stmt = $conn->prepare("INSERT INTO sms_incoming (sender, receiver, smg, received_time) VALUES (?, ?, ?, NOW())");
+    $stmt = $conn->prepare("INSERT INTO sms_incoming (sender, receiver, msg, received_time) VALUES (?, ?, ?, NOW())");
     $stmt->bind_param("sss", $sender, $receiver, $message);
     
     if ($stmt->execute()) {
