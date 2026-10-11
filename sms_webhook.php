@@ -1,51 +1,57 @@
 <?php
-// sms_webhook.php (Handles UPSTREAM inputs)
+header("Content-Type: application/json");
 
-// 1. Database Credentials (Fill these out with your actual Tanzanian/Cloud DB settings)
- $db_host = getenv('MYSQLHOST')     ?: '127.0.0.1';
+// 1. Grab raw input from SMSGate
+$raw_payload = file_get_contents('php://input');
+$data = json_decode($raw_payload, true);
+
+// 2. Validate that it's an incoming SMS event from SMSGate
+if ($data && isset($data['event']) && $data['event'] === 'sms:received') {
+    
+    $payload = $data['payload'];
+    
+    // Extracting all fields in the payload
+    $sender      = $payload['sender'] ?? '';
+    $createdAt   = $payload['createdAt'] ?? '';
+    $message     = $payload['contentPreview'] ?? '';
+    $id          = $payload['id'] ?? '';
+    $type        = $payload['type'] ?? '';
+
+
+    // =========================================================================
+    // 3. CONNECT TO DYNAMIC RAILWAY MYSQL INSTANCE
+    // =========================================================================
+    $db_host = getenv('MYSQLHOST')     ?: '127.0.0.1';
     $db_port = getenv('MYSQLPORT')     ?: '3306';
     $db_user = getenv('MYSQLUSER')     ?: 'root';
     $db_pass = getenv('MYSQLPASSWORD') ?: '';
     $db_name = getenv('MYSQLDATABASE') ?: 'railway';
 
+    $conn = new mysqli($db_host, $db_user, $db_pass, $db_name, $db_port);
 
-// 2. Open Direct Connection Over Custom Port
-$test_conn = new mysqli($db_host, $db_user, $db_pass, $db_name, $db_port);
-if ($test_conn->connect_error) {
-    http_response_code(500);
-    die(json_encode(["error" => "Railway Upstream pipe broken: " . $test_conn->connect_error]));
-}
+    if ($conn->connect_error) {
+        http_response_code(500);
+        echo json_encode(["error" => "Database connection failed"]);
+        exit;
+    }
 
-// 3. Receive the raw downstream JSON packet stream directly from the phone relay
-$raw_json = file_get_contents('php://input');
-$data = json_decode($raw_json, true);
-
-// 4. Validate upstream signature keys
-if (isset($data['event']) && $data['event'] === 'sms:received') {
-    $payload = $data['payload'];
+    // 4. Secure Prepared Statement incorporating the received_time column
+    $stmt = $conn->prepare("INSERT INTO sms_incoming (sender, transaction_id, message, received_time) VALUES (?, ?, ?, NOW())");
+    $stmt->bind_param("sss", $sender, $id, $message);
     
-    // Parse the inner nested components exactly how the app packs them
-    $phone_number = $test_conn->real_escape_string($payload['sender']); 
-    $sms_text     = $test_conn->real_escape_string($payload['message']);
-    
-    // Convert the phone's ISO time string (2024-06-22T15:46:11.000+07:00) cleanly into MySQL DATETIME
-    $time_received = date('Y-m-d H:i:s', strtotime($payload['receivedAt']));
-
-    // 5. Insert directly into your table
-    $query = "INSERT INTO sms_incoming (sender, msg, received_time) 
-              VALUES ('$phone_number', '$sms_text', '$time_received')";
-    
-    if ($test_conn->query($query) === TRUE) {
-        http_response_code(200);
-        echo json_encode(["status" => "success", "message" => "Upstream data logged!"]);
+    if ($stmt->execute()) {
+        http_response_code(200); // Confirms receipt to SMSGate app
+        echo json_encode(["status" => "success", "message" => "SMS stored in database with timestamp"]);
     } else {
         http_response_code(500);
-        echo json_encode(["status" => "error", "message" => $test_conn->error]);
+        echo json_encode(["error" => "Failed to insert record"]);
     }
+
+    $stmt->close();
+    $conn->close();
+
 } else {
     http_response_code(400);
-    echo json_encode(["status" => "error", "message" => "Invalid upstream payload design"]);
+    echo json_encode(["error" => "Invalid payload or unsupported event"]);
 }
-
-$test_conn->close();
 ?>
