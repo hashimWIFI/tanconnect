@@ -26,7 +26,7 @@
         <div class="alert"><?php echo $message; ?></div>
     <?php endif; ?>
 
-    <form action="https://www.tanconnect.co.tz/sms_webhook.php" method="post">
+    <form action="sms_webhook.php" method="post">
         <label for="mobile_number">Sender</label>
         <input type="tel" id="mobile_number" name="sender" placeholder="e.g. 255712345678" required>
  <label for="mobile_number">Receiver</label>
