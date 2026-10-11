@@ -36,7 +36,7 @@ if ($data && isset($data['event']) && $data['event'] === 'sms:received') {
     }
 
     // 4. Secure Prepared Statement incorporating the received_time column
-    $stmt = $conn->prepare("INSERT INTO sms_incoming (sender, transaction_id, message, received_time) VALUES (?, ?, ?, NOW())");
+    $stmt = $conn->prepare("INSERT INTO sms_incoming (sender, transactionId, message, received_time) VALUES (?, ?, ?, NOW())");
     $stmt->bind_param("sss", $sender, $id, $message);
     
     if ($stmt->execute()) {
