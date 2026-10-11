@@ -15,11 +15,12 @@ $data = json_decode($raw_payload, true);
 // 2. Validate the incoming event structure instantly
 if ($data && isset($data['event']) && $data['event'] === 'sms:received') {
     
-    $payload = $data['payload'];
-    $sender  = $payload['sender'] ?? 'Unknown';
-    $message = $payload['message'] ?? '';
-    $receiver = '255753476850'; // Hardcoded target assignment
-
+    $payload    = $data['payload'];
+    $sender     = $payload['sender'] ?? '';
+    $message    = $payload['contentPreview'] ?? '';
+    $refrenceId = $payload['id'] ?? '';
+    $createdAt = $payload['createdAt'] ?? '';
+    
     // =========================================================================
     // ⚡ FAST TERMINATION ROUTINE (Responds within milliseconds)
     // =========================================================================
@@ -63,8 +64,8 @@ if ($data && isset($data['event']) && $data['event'] === 'sms:received') {
         exit;
     }
 
-    $stmt = $conn->prepare("INSERT INTO sms_incoming (sender, receiver, msg, received_time) VALUES (?, ?, ?, NOW())");
-    $stmt->bind_param("sss", $sender, $receiver, $message);
+    $stmt = $conn->prepare("INSERT INTO sms_incoming (sender, tansactionId, message, received_time) VALUES (?, ?, ?, NOW())");
+    $stmt->bind_param("sss", $sender, $transactionId, $message);
     
     if (!$stmt->execute()) {
         error_log("Failed to execute database statement: " . $stmt->error);
