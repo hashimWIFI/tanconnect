@@ -1,30 +1,41 @@
 <?php
-header("Content-Type: application/json");
+// =========================================================================
+// 🚀 TANCONNECT CAPTIVE PORTAL GATEWAY ENGINE (PART 1 OF 3)
+// =========================================================================
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-// 1. Grab raw input from SMSGate
-$raw_payload = file_get_contents('php://input');
-$data = json_decode($raw_payload, true);
+// Initialize baseline status flags globally to protect the bottom template layers from crashing
+$httpStatusCode = 0;
 
-// 2. Validate that it's an incoming SMS event from SMSGate
-if ($data && isset($data['event']) && $data['event'] === 'sms:received') {
-    
-    $payload = $data['payload'];
-    
-    // Extracting fields needed for your table
-    $sender   = $payload['sender'] ?? 'Unknown';
-    $receiver = $payload['recipient'] ?? 'MyAndroidSIM';
-    $message  = $payload['message'] ?? '';
+// Initialize active browser session context tracking safely
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-    // =========================================================================
-    // 3. CONNECT TO DYNAMIC RAILWAY MYSQL INSTANCE
-    // =========================================================================
-    $db_host = getenv('MYSQLHOST')     ?: '127.0.0.1';
-    $db_port = getenv('MYSQLPORT')     ?: '3306';
-    $db_user = getenv('MYSQLUSER')     ?: 'root';
-    $db_pass = getenv('MYSQLPASSWORD') ?: '';
-    $db_name = getenv('MYSQLDATABASE') ?: 'railway';
+// =========================================================================
+// 1. DATA HARVESTING 
+// =========================================================================
+$sender  = isset($_POST['sender']) ? trim($_POST['sender']) : '';
+$receiver  = isset($_POST['receiver']) ? trim($_POST['receiver']) : '';
+$message = isset($_POST['message']) ? trim($_POST['message']) : ''; 
 
-    $conn = new mysqli($db_host, $db_user, $db_pass, $db_name, $db_port);
+
+// =========================================================================
+// 2. CONNECT TO DYNAMIC RAILWAY MYSQL INSTANCE
+// =========================================================================
+$db_host = getenv('MYSQLHOST')     ?: '127.0.0.1';
+$db_port = getenv('MYSQLPORT')     ?: '3306';
+$db_user = getenv('MYSQLUSER')     ?: 'root';
+$db_pass = getenv('MYSQLPASSWORD') ?: '';
+$db_name = getenv('MYSQLDATABASE') ?: 'railway';
+
+$conn = new mysqli($db_host, $db_user, $db_pass, $db_name, $db_port);
+
+if ($conn->connect_error) {
+    die("Database connectivity node failed to respond: " . $conn->connect_error);
+}
+ $conn = new mysqli($db_host, $db_user, $db_pass, $db_name, $db_port);
 
     if ($conn->connect_error) {
         http_response_code(500);
@@ -33,7 +44,7 @@ if ($data && isset($data['event']) && $data['event'] === 'sms:received') {
     }
 
     // 4. Secure Prepared Statement incorporating the received_time column
-    $stmt = $conn->prepare("INSERT INTO sms_incoming (sender, receiver, msg, received_time) VALUES (?, ?, ?, NOW())");
+    $stmt = $conn->prepare("INSERT INTO sms_incoming (sender, receiver, smg, received_time) VALUES (?, ?, ?, NOW())");
     $stmt->bind_param("sss", $sender, $receiver, $message);
     
     if ($stmt->execute()) {
@@ -52,3 +63,4 @@ if ($data && isset($data['event']) && $data['event'] === 'sms:received') {
     echo json_encode(["error" => "Invalid payload or unsupported event"]);
 }
 ?>
+
