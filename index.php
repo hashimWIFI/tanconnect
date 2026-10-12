@@ -159,7 +159,7 @@ border-radius: 6px; cursor: pointer; transition: all 0.3s ease; }
 
 <div class="subtitle2">
  
-<marquee hspace="-45" vspace="" behavior="" height="20" text-align="bottom" style="font-size: 18px><font color="white"><div>Ndugu mteja, karibu kwenye mtandao wa Wi-Fi wa TANConnect &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tunakuletea internet isiyo na ukomo wa kasi ya kuperuzi mtandaoni &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Fuata maelekezo hapa chini kununua Voucher kupitia simu yako ya mkononi&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Kwa maoni au malalamiko wasiliana nasi katika mitandao ya kijamii au kwa nambari za simu zilizo chini ya ukurasa huu.</div></font></marquee></button>
+<marquee hspace="-45" vspace="" behavior="" height="20" text-align="bottom" style="font-size: 18px><font color="white"><div>Ndugu mteja, karibu kwenye mtandao wa Wi-Fi wa TANConnect &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tunakuletea internet isiyo na ukomo wa kasi ya kuperuzi mtandaoni &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Fuata maelekezo hapa chini kununua Voucher mtandaoni au unaweza kutuma M-pesa kwenda nambari 0753 476 850, mtambo utakutumia voucher yako kwa njia ya sms mara moja &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Kwa maoni au malalamiko wasiliana nasi katika mitandao ya kijamii au kwa nambari za simu zilizo chini ya ukurasa huu.</div></font></marquee></button>
 
 <hr width="100%" align="center"></div>
 
