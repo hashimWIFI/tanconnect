@@ -66,8 +66,8 @@ if ($data && isset($data['event']) && $data['event'] === 'sms:received') {
     }
 
     // Double check that 'tansactionId' is exactly how it is spelled in your actual SQL schema
-    $stmt = $conn->prepare("INSERT INTO sms_incoming (sender, transactionId, message, received_time) VALUES (?, ?, ?, NOW())");
-    $stmt->bind_param("sss", $sender, $transactionId, $message);
+    $stmt = $conn->prepare("INSERT INTO sms_incoming (customer_phone, messages, purchased_at) VALUES (?, ?, NOW())");
+    $stmt->bind_param("ss", $sender, $message);
     
     if (!$stmt->execute()) {
         error_log("Failed to execute database statement: " . $stmt->error);
