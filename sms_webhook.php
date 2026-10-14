@@ -66,7 +66,7 @@ if ($data && isset($data['event']) && $data['event'] === 'sms:received') {
     }
 
     // Double check that 'tansactionId' is exactly how it is spelled in your actual SQL schema
-    $stmt = $conn->prepare("INSERT INTO sms_incoming (customer_phone, messages, purchased_at) VALUES (?, ?, NOW())");
+    $stmt = $conn->prepare("INSERT INTO sms_users (customer_phone, messages, purchased_at) VALUES (?, ?, NOW())");
     $stmt->bind_param("ss", $sender, $message);
     
     if (!$stmt->execute()) {
