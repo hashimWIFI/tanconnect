@@ -12,7 +12,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// $phone, $amount, and $capturedMac are already inherited perfectly from gate.php!
+// $phone, $amount, and $capturedMac are already inherited perfectly from gate.php!     
 $cleanAmount = intval($amount);
 ?>
 
