@@ -108,9 +108,7 @@ if (!$dbResult) {
                         purchased_at = ? 
                     WHERE id = ?";   
 
-        $updateStmt->bind_param("sssssi", $phone, $transactionId, $nitTransactionId, $savedStatus, $currentDateTime, $allocatedVoucherId);
-        $updateStmt->execute();
-        $updateStmt->close();
+       
     }
 
 
