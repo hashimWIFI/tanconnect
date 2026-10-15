@@ -25,6 +25,37 @@ $amount         = str_replace(',', '', $amount);
 if (substr($phone, 0, 1) === '0') {
     $phone = '255' . substr($phone, 1);
 }
+<?php
+// =========================================================================
+// 🚀 TANCONNECT CAPTIVE PORTAL GATEWAY ENGINE (PART 1 OF 3)
+// =========================================================================
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Initialize baseline status flags globally to protect the bottom template layers from crashing
+$httpStatusCode = 0;
+
+// Initialize active browser session context tracking safely
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// =========================================================================
+// 1. DATA HARVESTING & PHONE STANDARDIZATION ENGINE
+// =========================================================================
+$transactionId  = isset($_POST['transactionId']) ? trim($_POST['transactionId']) : '';
+$phone          = isset($_POST['customer_phone']) ? trim($_POST['customer_phone']) : '';
+$amount         = isset($_POST['amount']) ? trim($_POST['amount']) : ''; 
+$amount         = str_replace(',', '', $amount);
+
+// Enforce international dialing schema standard formatting rules (Tanzania 255)
+if (substr($phone, 0, 1) === '0') {
+    $phone = '255' . substr($phone, 1);
+}
+
+// =========================================================================
+// 3. VOUCHER SELECTION, STOCK MANAGEMENT, AND AZAMPAY CHECKOUT DISPATCH
+// =========================================================================
 
 // =========================================================================
 // 3. VOUCHER SELECTION, STOCK MANAGEMENT, AND AZAMPAY CHECKOUT DISPATCH
