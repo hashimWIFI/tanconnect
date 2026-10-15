@@ -1,14 +1,12 @@
 <?php
 // =========================================================================
-// 🚀 TANCONNECT CAPTIVE PORTAL GATEWAY ENGINE (PART 1 OF 3)
+// 🚀 TANCONNECT CAPTIVE PORTAL GATEWAY ENGINE (PART 1 OF 3) - LIVE FIXED
 // =========================================================================
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Initialize baseline status flags globally to protect the bottom template layers from crashing
 $httpStatusCode = 0;
 
-// Initialize active browser session context tracking safely
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -16,14 +14,27 @@ if (session_status() === PHP_SESSION_NONE) {
 // =========================================================================
 // 1. DATA HARVESTING & PHONE STANDARDIZATION ENGINE
 // =========================================================================
-$transactionId  = isset($_POST['transactionId']) ? trim($_POST['transactionId']) : '';
-$phone          = isset($_POST['customer_phone']) ? trim($_POST['customer_phone']) : '';
-$amount         = isset($_POST['amount']) ? trim($_POST['amount']) : ''; 
+$transactionId  = isset($_POST['transactionId'])   ? trim($_POST['transactionId']) : '';
+$phone          = isset($_POST['customer_phone'])  ? trim($_POST['customer_phone']) : '';
+$amount         = isset($_POST['amount'])          ? trim($_POST['amount']) : ''; 
 $amount         = str_replace(',', '', $amount);
 
-// Enforce international dialing schema standard formatting rules (Tanzania 255)
 if (substr($phone, 0, 1) === '0') {
     $phone = '255' . substr($phone, 1);
+}
+
+$routingPrefix = substr($phone, 3, 2); 
+
+if (in_array($routingPrefix, ['74', '75', '76', '14'])) {
+    $provider = "MPESA";
+} elseif (in_array($routingPrefix, ['70', '71', '77', '65', '07', '67', '72'])) {
+    $provider = "Tigo";
+} elseif (in_array($routingPrefix, ['78', '79', '68', '69'])) {
+    $provider = "Airtel";
+} elseif (in_array($routingPrefix, ['62', '61'])) {
+    $provider = "Halopesa";
+} else {
+    $provider = "MPESA"; 
 }
 
 // =========================================================================
@@ -42,23 +53,19 @@ if ($conn->connect_error) {
 }
 
 // =========================================================================
-// 3. VOUCHER SELECTION, STOCK MANAGEMENT, AND AZAMPAY CHECKOUT DISPATCH
+// 3. VOUCHER SELECTION, STOCK MANAGEMENT, AND AUTO-ALLOCATION LOCK
 // =========================================================================
-
-// Query the database to find one available voucher matching the selected price tier
 $stmt = $conn->prepare("SELECT id, voucher_code FROM wifi_vouchers WHERE price_tier = ? AND transactionstatus = 'AVAILABLE' LIMIT 1");
 
-// 🚀 THE CRITICAL FIX: Explicitly enforce mathematical integer validation type conversion metrics
 $cleanAmount = intval($amount);
 $stmt->bind_param("i", $cleanAmount);
-
 $stmt->execute();
 $dbResult = $stmt->get_result()->fetch_assoc();
 $stmt->close();
+
 if (!$dbResult) {
     date_default_timezone_set('Africa/Dar_es_Salaam');
     
-    // ---- FIREWALL-SAFE OUT OF STOCK SYSTEM ALERTS VIA NTFY ----
     $alertText  = "⚠️ TANConnect WiFi Alert ⚠️\n";
     $alertText .= "Voucher Tier OUT OF STOCK!\n";
     $alertText .= "• Price Tier: " . number_format((int)$amount) . " TZS\n";
@@ -74,34 +81,39 @@ if (!$dbResult) {
     ];
 
     $context = stream_context_create($streamOptions);
-@file_get_contents("https://ntfy.sh/tanconnect_vouchers_stock_alert_2026", false, $context);
+    @file_get_contents("https://ntfy.sh/tanconnect_vouchers_stock_alert_2026", false, $context);
     
-    $httpStatusCode = 503; // Sets failure flag to load the out-of-stock template later
+    $httpStatusCode = 503; 
  
 } else {
-    // Voucher is available, isolate variables for tracking
     $allocatedVoucherId   = $dbResult['id'];
     $allocatedVoucherCode = $dbResult['voucher_code'];
  
- 
-// CLEAN SPEC-ALIGNED QUERY (MATCHES YOUR TRIPPED BACK TABLE SCHEMA RULES DEFINITIVELY)
+    // ⚡ 4. FIXED UPDATE ENGINE MAPPED PERFECTLY TO YOUR SCHEMAS
+    // Exactly 3 placeholders matching 3 tracking arguments
     $updateQuery = "UPDATE wifi_vouchers 
                     SET transactionstatus = 'SUCCESS', 
                         assigned_phone = ?, 
-                        reference = ?, 
-                        utilityref = ?, 
-                        purchased_at = ? 
+                        utilityref = ? 
                     WHERE id = ?";   
 
-        $updateStmt->bind_param("sssssi", $phone, $transactionId, $nitTransactionId, $savedStatus, $currentDateTime, $allocatedVoucherId);
+    $updateStmt = $conn->prepare($updateQuery);
+    
+    if ($updateStmt) {
+        // s = assigned_phone (string)
+        // s = utilityref (string -> Stores your incoming feeding transactionId)
+        // i = id (integer -> Target row index)
+        $updateStmt->bind_param("ssi", $phone, $transactionId, $allocatedVoucherId);
         $updateStmt->execute();
         $updateStmt->close();
+        
+        $httpStatusCode = 200; // Registration process clears successfully!
+    } else {
+        $httpStatusCode = 500;
+    }
+}
 
-
-
-// Type safety wrapper for connection closure prevents uncaught execution crashes
 if (isset($conn) && $conn instanceof mysqli) {
     $conn->close();
 }
-
 ?>
