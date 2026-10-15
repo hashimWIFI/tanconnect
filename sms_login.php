@@ -25,18 +25,6 @@ if (substr($phone, 0, 1) === '0') {
 
 $routingPrefix = substr($phone, 3, 2); 
 
-if (in_array($routingPrefix, ['74', '75', '76', '14'])) {
-    $provider = "MPESA";
-} elseif (in_array($routingPrefix, ['70', '71', '77', '65', '07', '67', '72'])) {
-    $provider = "Tigo";
-} elseif (in_array($routingPrefix, ['78', '79', '68', '69'])) {
-    $provider = "Airtel";
-} elseif (in_array($routingPrefix, ['62', '61'])) {
-    $provider = "Halopesa";
-} else {
-    $provider = "MPESA"; 
-}
-
 // =========================================================================
 // 2. CONNECT TO DYNAMIC RAILWAY MYSQL INSTANCE
 // =========================================================================
