@@ -25,37 +25,21 @@ $amount         = str_replace(',', '', $amount);
 if (substr($phone, 0, 1) === '0') {
     $phone = '255' . substr($phone, 1);
 }
-<?php
-// =========================================================================
-// 🚀 TANCONNECT CAPTIVE PORTAL GATEWAY ENGINE (PART 1 OF 3)
-// =========================================================================
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
-// Initialize baseline status flags globally to protect the bottom template layers from crashing
-$httpStatusCode = 0;
+// =========================================================================
+// 2. CONNECT TO DYNAMIC RAILWAY MYSQL INSTANCE
+// =========================================================================
+$db_host = getenv('MYSQLHOST')     ?: '127.0.0.1';
+$db_port = getenv('MYSQLPORT')     ?: '3306';
+$db_user = getenv('MYSQLUSER')     ?: 'root';
+$db_pass = getenv('MYSQLPASSWORD') ?: '';
+$db_name = getenv('MYSQLDATABASE') ?: 'railway';
 
-// Initialize active browser session context tracking safely
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+$conn = new mysqli($db_host, $db_user, $db_pass, $db_name, $db_port);
+
+if ($conn->connect_error) {
+    die("Database connectivity node failed to respond: " . $conn->connect_error);
 }
-
-// =========================================================================
-// 1. DATA HARVESTING & PHONE STANDARDIZATION ENGINE
-// =========================================================================
-$transactionId  = isset($_POST['transactionId']) ? trim($_POST['transactionId']) : '';
-$phone          = isset($_POST['customer_phone']) ? trim($_POST['customer_phone']) : '';
-$amount         = isset($_POST['amount']) ? trim($_POST['amount']) : ''; 
-$amount         = str_replace(',', '', $amount);
-
-// Enforce international dialing schema standard formatting rules (Tanzania 255)
-if (substr($phone, 0, 1) === '0') {
-    $phone = '255' . substr($phone, 1);
-}
-
-// =========================================================================
-// 3. VOUCHER SELECTION, STOCK MANAGEMENT, AND AZAMPAY CHECKOUT DISPATCH
-// =========================================================================
 
 // =========================================================================
 // 3. VOUCHER SELECTION, STOCK MANAGEMENT, AND AZAMPAY CHECKOUT DISPATCH
@@ -122,4 +106,3 @@ if (isset($conn) && $conn instanceof mysqli) {
 }
 
 ?>
-
