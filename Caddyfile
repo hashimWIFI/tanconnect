@@ -1,16 +1,16 @@
 {
     frankenphp
-    order php_fastcgi before file_server
+    order trusted_proxies before basicauth
 }
 
-:{$PORT} {
-    # Searches your root directory comprehensively
-    root * /app/public
+# ⚡ LIVE ENCRYPTED ROUTING ENTRY GATE
+https://tanconnect.co.tz, https://tanconnect.co.tz, http://:8080 {
     root * /app
-    root * .
-
     route {
+        # Allow AzamPay and webhooks to bypass any default script timeout delays natively
         file_server
-        php_fastcgi
+        php_fastcgi unix//var/run/php/php-fpc.sock {
+            env read_timeout 60s
+        }
     }
 }
