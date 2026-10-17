@@ -3,8 +3,8 @@
     order php_fastcgi before file_server
 }
 
-tanconnect.co.tz, www.tanconnect.co.tz {
-    # Points cleanly to the active environment directory root
+:{$PORT} {
+    # Dynamically maps to your active environment root directory
     root * .
     
     # Trust Cloudflare proxies globally to accurately parse external webhooks
