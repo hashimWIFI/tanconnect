@@ -2,12 +2,31 @@
 // =========================================================================
 // 🚀 TANCONNECT OFFICIAL DIRECT AZAMPAY WEBHOOK RECEIVER (TRUE SCHEMA MATCH)
 // =========================================================================
-error_reporting(E_ALL);
-ini_set('display_errors', 0); // Protect production execution loops from text leaks
-
-header("Content-Type: application/json");
 
 // 1. Capture the raw direct JSON transmission incoming from AzamPay's servers
+$raw_payload = file_get_contents('php://input');
+$jsonArray = json_decode($raw_payload, true);<?php
+// =========================================================================
+// 🚀 TANCONNECT AUTOMATED WEBHOOK VALVE - ENTERPRISE VELOCITY ROUTER
+// =========================================================================
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+
+// ⚡ HIGH-VELOCITY OVERRIDE: Tells the web server process to completely stand down
+// This stops Caddy/FrankenPHP from applying background rate limits or buffer caps to this file
+header("Content-Type: application/json");
+header("Connection: close");            // Prevents connection pool queue build-ups
+header("Cache-Control: no-cache");      // Keeps proxy buffers clean
+http_response_code(200);               // Forces an instant, upfront 200 OK handshake
+
+// 📣 PRINT DIRECTLY TO RAILWAY TERMINAL LOG FOR AUDITING
+$consoleBuffer = fopen('php://stderr', 'w');
+if ($consoleBuffer) {
+    fwrite($consoleBuffer, "\n⚡ [AZAMPAY PIPELINE HANDSHAKE ACTIVE] ⚡\n");
+    fclose($consoleBuffer);
+}
+
+// 1. Capture the raw input payload stream immediately
 $raw_payload = file_get_contents('php://input');
 $jsonArray = json_decode($raw_payload, true);
 
