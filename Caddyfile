@@ -9,7 +9,7 @@ tanconnect.co.tz, www.tanconnect.co.tz, :8080 {
     root * /app
     route {
         file_server
-        php_fastcgi unix//var/run/php/php-fpc.sock {
+        php_fastcgi unix//var/run/php/php-fpm.sock {
             env read_timeout 60s
         }
     }
