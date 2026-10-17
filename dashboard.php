@@ -1,10 +1,12 @@
 <?php
+
+date_default_timezone_set('Africa/Dar_es_Salaam');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 // 🔐 Start session tracking safely at the absolute beginning 
 session_start();
-
+ date_default_timezone_set('Africa/Dar_es_Salaam');
 // 🚀 CACHE-BUSTING BLOCK: Forces the browser to sync live database records on every single loop 
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
@@ -74,16 +76,18 @@ if (isset($_POST['submit_upload']) && $_SESSION['dashboard_role'] !== 'admin') {
     die("Kosa: Huna ruhusa ya kupakia vocha. (Access Denied: Read-only guest mode active.)");
 }
 
-// 1. Establish database connection using your dynamic Railway variables
-$db_host = getenv('MYSQLHOST')     ?: '127.0.0.1';
-$db_port = getenv('MYSQLPORT')     ?: '3306';
-$db_user = getenv('MYSQLUSER')     ?: 'root';
-$db_pass = getenv('MYSQLPASSWORD') ?: '';
-$db_name = getenv('MYSQLDATABASE') ?: 'railway';
+// =========================================================================
+// 2. CONNECT TO MYSQL INSTANCE
+// =========================================================================
+$host = 'mysql8003.site4now.net';
+$user = 'acf82a_vouchers';
+$password = '@Swaumu2020#';
+$database = 'db_acf82a_vouchers';
 
-$conn = new mysqli($db_host, $db_user, $db_pass, $db_name, $db_port);
+$conn = mysqli_connect($host, $user, $password, $database);
+
 if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
+    die("Database connectivity node failed to respond: " . $conn->connect_error);
 }
 
 // 🌍 TIMEZONE SYNCHRONIZATION
@@ -139,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_upload']) && i
 }
 
 // Fetch remaining stock broken down per specific price tier batch
-$tier_stock_query = "SELECT price_tier, COUNT(*) AS tier_count FROM wifi_vouchers WHERE transactionstatus = 'AVAILABLE' GROUP BY price_tier ORDER BY price_tier ASC";
+$tier_stock_query = "SELECT price_tier, COUNT(*) AS tier_count FROM wifi_vouchers WHERE status = 'AVAILABLE' GROUP BY price_tier ORDER BY price_tier ASC";
 $tier_stock_result = $conn->query($tier_stock_query);
 
 $tier_stock_data = [];
@@ -165,27 +169,27 @@ $safe_to   = $conn->real_escape_string($to_date);
 $period_condition = "AND DATE(purchased_at) BETWEEN '$safe_from' AND '$safe_to'";
 
 // 🗓️ TODAY'S METRICS (Stays static for instant comparisons)
-$today_earnings_res = $conn->query("SELECT SUM(price_tier) AS total FROM wifi_vouchers WHERE transactionstatus = 'SUCCESS' AND DATE(purchased_at) = CURDATE()");
+$today_earnings_res = $conn->query("SELECT SUM(price_tier) AS total FROM wifi_vouchers WHERE status = 'SUCCESS' AND DATE(purchased_at) = CURDATE()");
 $today_earnings = $today_earnings_res ? ($today_earnings_res->fetch_assoc()['total'] ?: 0) : 0;
 
-$today_count_res = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE transactionstatus = 'SUCCESS' AND DATE(purchased_at) = CURDATE()");
+$today_count_res = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE status = 'SUCCESS' AND DATE(purchased_at) = CURDATE()");
 $today_vouchers_sold = $today_count_res ? ($today_count_res->fetch_assoc()['total'] ?: 0) : 0;
 
 // 📊 DYNAMIC REVENUE METRICS CALCULATOR BASED ON THE CHOSEN "FROM / TO" RANGE
-$earnings_query = "SELECT SUM(price_tier) AS total FROM wifi_vouchers WHERE transactionstatus = 'SUCCESS' $period_condition";
+$earnings_query = "SELECT SUM(price_tier) AS total FROM wifi_vouchers WHERE status = 'SUCCESS' $period_condition";
 $earnings_result = $conn->query($earnings_query);
 $total_earnings = $earnings_result ? ($earnings_result->fetch_assoc()['total'] ?: 0) : 0;
 
-$count_query = "SELECT COUNT(*) AS total FROM wifi_vouchers WHERE transactionstatus = 'SUCCESS' $period_condition";
+$count_query = "SELECT COUNT(*) AS total FROM wifi_vouchers WHERE status = 'SUCCESS' $period_condition";
 $count_result = $conn->query($count_query);
 $vouchers_sold = $count_result ? ($count_result->fetch_assoc()['total'] ?: 0) : 0;
 
 // 📦 STOCK AVAILABLE (Keeps current live warehouse total balance)
-$stock_result = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE transactionstatus = 'AVAILABLE'");
+$stock_result = $conn->query("SELECT COUNT(*) AS total FROM wifi_vouchers WHERE status = 'AVAILABLE'");
 $remaining_stock = $stock_result ? ($stock_result->fetch_assoc()['total'] ?: 0) : 0;
 
 // 📋 LOG ENTRIES FETCH FOR LATEST 50 TRANSACTIONS
-$log_query = "SELECT id, voucher_code, price_tier, transactionstatus, assigned_phone, utilityref, reference, purchased_at FROM wifi_vouchers WHERE transactionstatus IN ('SUCCESS', 'ASSIGNED') ORDER BY purchased_at DESC LIMIT 50";
+$log_query = "SELECT id, voucher_code, price_tier, status, assigned_phone, utilityref, reference, purchased_at FROM wifi_vouchers WHERE status IN ('SUCCESS', 'ASSIGNED') ORDER BY purchased_at DESC LIMIT 50";
 $log_result = $conn->query($log_query);
 ?>
 <!DOCTYPE html>
@@ -387,14 +391,14 @@ $log_result = $conn->query($log_query);
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-top: 35px; margin-bottom: 10px; gap: 15px;">
         <h3 style="margin: 0; color: #1e3c72; font-size: 16px;">📑 Live Transaction Audit Logs (Latest 50 Entries)</h3>
         
-        <!-- Positioned Real-time Search Input Box -->
+     <!-- Positioned Real-time Search Input Box -->
         <div style="position: relative; max-width: 320px; width: 100%;">
             <input type="text" id="dashboardSearchBox" onkeyup="filterAdminTransactionTable()" placeholder="Tafuta kwa namba ya simu au PIN..." style="width: 100%; padding: 10px 12px 10px 35px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; box-sizing: border-box; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='#1e3c72'" onblur="this.style.borderColor='#cbd5e1'">
             <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 14px;">🔍</span>
         </div>
     </div>
 
-    <!-- 📊 THE MAIN TRANSACTIONAL AUDIT DATA DISPLAY TABLE -->
+    <!-- 📊 THE MAIN TRANSACTIONAL AUDIT DATA DISPLAY TABLE (MAC ADDRESS DROPPED CLEANLY) -->
     <div style="overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 8px; background: white; margin-bottom: 30px;">
         <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
            <thead>
@@ -403,11 +407,10 @@ $log_result = $conn->query($log_query);
                     <th style="padding: 12px 15px; font-weight: bold;">Voucher Code</th>
                     <th style="padding: 12px 15px; font-weight: bold;">Price Tier (Tsh)</th>
                     <th style="padding: 12px 15px; font-weight: bold;">Status</th>
-                    <th style="padding: 12px 15px; font-weight: bold;">Assigned Phone</th>
-                     <th style="padding: 12px 15px; font-weight: bold;">MAC Address</th>
+                    <th style="padding: 12px 15px; font-weight: bold;">Customer Phone</th>
                     <th style="padding: 12px 15px; font-weight: bold;">Muda wa Malipo (EAT Time)</th>
-                    <th style="padding: 12px 15px; font-weight: bold;">NIT Transaction ID</th>
-                    <th style="padding: 12px 15px; font-weight: bold;">AzamPay Transaction ID</th>
+                    <th style="padding: 12px 15px; font-weight: bold;">NIT Reference</th>
+                    <th style="padding: 12px 15px; font-weight: bold;">Customer Reference</th>
                 </tr>
             </thead>
             <tbody>
@@ -415,50 +418,44 @@ $log_result = $conn->query($log_query);
                     <?php 
                     $sn_counter = $log_result->num_rows; 
                     while ($row = $log_result->fetch_assoc()): 
-         // Line 418: Safely handle null to prevent PHP errors, keeping logic silent
-      ?>
-        <tr style="border-bottom: 1px solid #e2e8f0;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
-            <td style="font-weight: bold; color: #475569; font-family: monospace; text-align: center; padding: 12px 15px;">
-                <?php echo $sn_counter--; ?>
-            </td>
-            <td style="font-weight: bold; font-family: monospace; font-size: 14px; padding: 12px 15px; color: #1e293b;">
-                <?php echo htmlspecialchars($row['voucher_code']); ?>
-            </td>
-            <td style="padding: 12px 15px; font-weight: 500;">
-                 <?php echo number_format($row['price_tier']); ?>
-            </td>
-            <td style="padding: 12px 15px;">
-                <?php if ($row['transactionstatus'] === 'SUCCESS'): ?>
-                    <span style="background-color: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">SUCCESS</span>
-                <?php else: ?>
-                    <span style="background-color: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">ASSIGNED</span>
-                <?php endif; ?>
-            </td>
-            <td style="padding: 12px 15px; font-family: monospace; color: #334155;">
-                <?php echo !empty($row['assigned_phone']) ? htmlspecialchars($row['assigned_phone']) : '-'; ?>
-            </td>
-            
-            <!-- THE MAC ADDRESS DATA CELL (TD) HAS BEEN REMOVED FROM HERE -->
-            
-            <td style="padding: 12px 15px; color: #475569;">
-                 <?php echo htmlspecialchars($row['muda_wa_malipo'] ?? '-'); ?>
-            </td>
-
-                            <td style="font-family: monospace; color: #2c3e50; font-weight: 500; padding: 12px 15px;">
-                                <?php echo !empty($row['purchased_at']) ? date("d-m-Y H:i:s", strtotime($row['purchased_at'])) : '-'; ?>
-                            </td>
-                            <td style="color: #7f8c8d; font-size: 12px; font-family: monospace; padding: 12px 15px;">
-                                <?php echo htmlspecialchars($row['reference']); ?>
-                            </td>
-                            <td style="color: #27ae60; font-weight: bold; font-family: monospace; font-size: 13px; padding: 12px 15px;">
-                                <?php echo !empty($row['utilityref']) ? htmlspecialchars($row['utilityref']) : '-'; ?>
-                            </td>
+                        // Safely handle null to prevent PHP errors, keeping logic silent
+                        $current_status = isset($row['transactionstatus']) ? $row['transactionstatus'] : (isset($row['status']) ? $row['status'] : 'SUCCESS');
+                    ?>
+                    <tr style="border-bottom: 1px solid #e2e8f0;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
+                        <td style="font-weight: bold; color: #475569; font-family: monospace; text-align: center; padding: 12px 15px;">
+                            <?php echo $sn_counter--; ?>
+                        </td>
+                        <td style="font-weight: bold; font-family: monospace; font-size: 14px; padding: 12px 15px; color: #1e293b;">
+                            <?php echo htmlspecialchars($row['voucher_code']); ?>
+                        </td>
+                        <td style="padding: 12px 15px; font-weight: 500;">
+                             <?php echo number_format($row['price_tier']); ?>
+                        </td>
+                        <td style="padding: 12px 15px;">
+                            <?php if ($current_status === 'SUCCESS'): ?>
+                                <span style="background-color: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">SUCCESS</span>
+                            <?php else: ?>
+                                <span style="background-color: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">ASSIGNED</span>
+                            <?php endif; ?>
+                        </td>
+                        <td style="padding: 12px 15px; font-family: monospace; color: #334155;">
+                            <?php echo !empty($row['assigned_phone']) ? htmlspecialchars($row['assigned_phone']) : '-'; ?>
+                        </td>
                         
-
+                        <td style="font-family: monospace; color: #2c3e50; font-weight: 500; padding: 12px 15px;">
+                            <?php echo !empty($row['purchased_at']) ? date("d-m-Y H:i:s", strtotime($row['purchased_at'])) : '-'; ?>
+                        </td>
+                        <td style="color: #7f8c8d; font-size: 12px; font-family: monospace; padding: 12px 15px;">
+                            <?php echo htmlspecialchars($row['reference'] ?? ($row['utilityref'] ?? '-')); ?>
+                        </td>
+                        <td style="color: #27ae60; font-weight: bold; font-family: monospace; font-size: 13px; padding: 12px 15px;">
+                            <?php echo !empty($row['utilityref']) ? htmlspecialchars($row['utilityref']) : '-'; ?>
+                        </td>
+                    </tr>
                     <?php endwhile; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="9" style="text-align: center; color: #7f8c8d; padding: 30px; font-style: italic;">
+                        <td colspan="8" style="text-align: center; color: #7f8c8d; padding: 30px; font-style: italic;">
                             Hakuna kumbukumbu za malipo bado. (No transaction history logs generated yet.)
                         </td>
                     </tr>
@@ -470,7 +467,7 @@ $log_result = $conn->query($log_query);
 </div> <!-- Close wrapper canvas container box -->
 
 <script type="text/javascript">
-    // 🚀 PERSISTENT SEARCH MEMORY FILTER ENGINE
+    // 🚀 PERSISTENT SEARCH MEMORY FILTER ENGINE (ALIGNED FOR CLEAN TABLE CELL SPANS)
     function filterAdminTransactionTable() {
         var input = document.getElementById("dashboardSearchBox");
         if (!input) return;
