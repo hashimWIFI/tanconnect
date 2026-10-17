@@ -408,7 +408,7 @@ $log_result = $conn->query($log_query);
                     <th style="padding: 12px 15px; font-weight: bold;">Price Tier (Tsh)</th>
                     <th style="padding: 12px 15px; font-weight: bold;">Status</th>
                     <th style="padding: 12px 15px; font-weight: bold;">Customer Phone</th>
-                    <th style="padding: 12px 15px; font-weight: bold;">Muda wa Malipo (EAT Time)</th>
+                    <th style="padding: 12px 15px; font-weight: bold;"Muda wa Malipo</th>
                     <th style="padding: 12px 15px; font-weight: bold;">NIT Reference</th>
                     <th style="padding: 12px 15px; font-weight: bold;">Customer Reference</th>
                 </tr>
