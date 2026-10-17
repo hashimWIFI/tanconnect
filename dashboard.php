@@ -77,19 +77,19 @@ if (isset($_POST['submit_upload']) && $_SESSION['dashboard_role'] !== 'admin') {
 }
 
 // =========================================================================
-// 2. CONNECT TO MYSQL INSTANCE
+// 2. CONNECT TO DYNAMIC RAILWAY MYSQL INSTANCE
 // =========================================================================
-$host = 'mysql8003.site4now.net';
-$user = 'acf82a_vouchers';
-$password = '@Swaumu2020#';
-$database = 'db_acf82a_vouchers';
+$db_host = getenv('MYSQLHOST')     ?: '127.0.0.1';
+$db_port = getenv('MYSQLPORT')     ?: '3306';
+$db_user = getenv('MYSQLUSER')     ?: 'root';
+$db_pass = getenv('MYSQLPASSWORD') ?: '';
+$db_name = getenv('MYSQLDATABASE') ?: 'railway';
 
-$conn = mysqli_connect($host, $user, $password, $database);
+$conn = new mysqli($db_host, $db_user, $db_pass, $db_name, $db_port);
 
 if ($conn->connect_error) {
     die("Database connectivity node failed to respond: " . $conn->connect_error);
 }
-
 // 🌍 TIMEZONE SYNCHRONIZATION
 date_default_timezone_set('Africa/Dar_es_Salaam');
 
