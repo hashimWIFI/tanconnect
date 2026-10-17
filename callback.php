@@ -1,20 +1,27 @@
 <?php
-// ====================================================================
-// TANCONNECT PRODUCTION LIVE UTILITY ENFORCEMENT ENGINE ('callback.php')
-// ====================================================================
+// =========================================================================
+// 🚀 TANCONNECT OFFICIAL DIRECT AZAMPAY CALLBACK WEBHOOK RECEIVER (RAILWAY)
+// =========================================================================
+error_reporting(E_ALL);
+ini_set('display_errors', 0); // Keep production execution completely clean of raw PHP leaks
 
-// 1. Capture incoming secure raw data stream from the gateway
-$rawPayloadData = file_get_contents('php://input');
-$jsonArray = json_decode($rawPayloadData, true);
+header("Content-Type: application/json");
+
+// 1. Capture the raw direct JSON transmission incoming from AzamPay's servers
+$raw_payload = file_get_contents('php://input');
+$jsonArray = json_decode($raw_payload, true);
 
 if (empty($jsonArray) || !is_array($jsonArray)) {
-    $jsonArray = array_merge($_GET, $_POST, $_REQUEST);
+    http_response_code(400);
+    echo json_encode(["status" => "error", "message" => "Malformed or absent webhook dataset payload"]);
+    exit;
 }
 
-// 📝 EMERGENCY BUFFER BACKUP Ledger
+// 📝 IMMUTABLE EMERGENCY REPORT FILE: Saves every single hit straight to disk space
 $logBlock = "========================================\n";
 $logBlock .= "TIMESTAMP: " . date('Y-m-d H:i:s') . "\n";
-$logBlock .= "RAW_STREAM: " . ($rawPayloadData ?: 'EMPTY_STREAM_BUFFER') . "\n";
+$logBlock .= "REQUEST_METHOD: " . ($_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN') . "\n";
+$logBlock .= "RAW_STREAM: " . ($raw_payload ?: 'EMPTY_STREAM_BUFFER') . "\n";
 $logBlock .= "========================================\n";
 file_put_contents('azampay_raw_sniffer_log.txt', $logBlock, FILE_APPEND);
 
@@ -23,8 +30,8 @@ header("Content-Type: application/json");
 http_response_code(200);
 echo json_encode(["success" => true, "message" => "Packet logged securely"]);
 
-// ====================================================================
-// 3. BACKGROUND DATABASE EXECUTION CONTEXT RUNNER
+// =========================================================================
+// 3. SEPARATE BACKGROUND DATABASE CONTEXT RUNNER (PAYLOAD ALIGNED)
 // =========================================================================
 $conn = mysqli_connect(
     getenv('MYSQLHOST')     ?: 'mysql.railway.internal',
@@ -36,43 +43,52 @@ $conn = mysqli_connect(
 
 if (!$conn) { exit(); }
 
-// ⚡ LEAN ATUMIC PARAMETER HARVESTING (Matches your live sniffer log format)
-$transactionStatus  = $jsonArray['transactionstatus'] ?? 'UNKNOWN';
-$checkout_reference = $jsonArray['reference']         ?? $jsonArray['transid'] ?? ''; 
-$carrier_receipt_id = $jsonArray['mnoreference']      ?? ''; 
+// ⚡ LIVE ATTRIBUTE EXTRACTION: Aligned perfectly with your flat root sniffer keys
+$transactionStatus = $jsonArray['transactionstatus'] ?? $jsonArray['message'] ?? 'UNKNOWN';
+$checkoutReference = $jsonArray['reference']         ?? $jsonArray['transid'] ?? ''; 
+$networkReceiptId  = $jsonArray['mnoreference']      ?? $jsonArray['utilityref'] ?? ''; 
+$customer_phone    = $jsonArray['msisdn']             ?? '';
 
 $cleanStatus = strtolower(trim((string)$transactionStatus));
 
-// Run the core update only if AzamPay reports an absolute success state
+// 🛡️ SECURE TRANSACTION VALIDATION GATE
 if ($cleanStatus === 'success' || $cleanStatus === 'completed' || $cleanStatus === 'true') {
     
-    // Sanitize values cleanly to neutralize malicious string formatting vectors
-    $safeCheckoutRef   = mysqli_real_escape_string($conn, trim((string)$checkout_reference));
-    $safeCarrierReceipt = mysqli_real_escape_string($conn, trim((string)$carrier_receipt_id));
+    // Clean inputs safely to protect your database structure
+    $safeCheckoutRef    = mysqli_real_escape_string($conn, trim((string)$checkoutReference));
+    $safeNetworkReceipt = mysqli_real_escape_string($conn, trim((string)$networkReceiptId));
+    $safeCustomerPhone  = mysqli_real_escape_string($conn, trim((string)$customer_phone));
 
-    // ⚡ STEP 1: Look up your active row where your internal tracking ID sits inside utilityref
+    // Normalize phone layout formatting automatically to local '0' representation format
+    if (substr($safeCustomerPhone, 0, 3) === '255') {
+        $safeCustomerPhone = '0' . substr($safeCustomerPhone, 3);
+    }
+
+    // ⚡ CLEAN PRODUCTION LOOKUP: Finds the pending voucher using your tracking reference identifier
+    // This targets your active utilityref column where checkout portals store the placeholder string
     $searchQuery = mysqli_query($conn, "SELECT id, assigned_phone, voucher_code FROM wifi_vouchers 
                                          WHERE utilityref = '$safeCheckoutRef' 
-                                           AND transactionstatus = 'PENDING' 
+                                           AND status = 'PENDING' 
                                          LIMIT 1");
                                          
     if ($searchQuery && mysqli_num_rows($searchQuery) > 0) {
         $row = mysqli_fetch_assoc($searchQuery);
         $vId = $row['id'];
         
-        // ⚡ STEP 2: Overwrite the tracking columns with your lean parameter mapping
-        // We write the mobile money carrier ID to utilityref to link it directly with the client
+        // Updates only your clean, production database columns [image_JZCnQZ.png]
+        // Overwrites placeholder tracking reference tag with verified carrier MNO reference number [image_JZCnQZ.png]
         $finalUpdate = "UPDATE wifi_vouchers 
-                        SET transactionstatus = 'SUCCESS', 
-                            utilityref = '$safeCarrierReceipt'
+                        SET status = 'SUCCESS', 
+                            utilityref = '$safeNetworkReceipt',
+                            assigned_phone = '$safeCustomerPhone'
                         WHERE id = '$vId'";
                         
         if (mysqli_query($conn, $finalUpdate)) {
             define('TANCONNECT_SECURE_PASS', true);
-            $customer_phone = $row['assigned_phone'] ?? '';
+            $customer_phone = $row['assigned_phone'] ?? $safeCustomerPhone;
             $voucherCode    = $row['voucher_code'] ?? '';
             
-            // Instantly route to your SMS wrapper file to text them the access code
+            // Instantly trigger your SMS wrapper file to text the voucher code to the customer
             if (file_exists('sms_processor.php') && !empty($customer_phone) && !empty($voucherCode)) {
                 ob_start(); 
                 include('sms_processor.php'); 
