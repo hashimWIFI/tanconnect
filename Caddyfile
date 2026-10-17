@@ -3,9 +3,12 @@
     order php_fastcgi before file_server
 }
 
-# Bind universally to whatever runtime port Railway injects
 :{$PORT} {
+    # Searches your root directory comprehensively
+    root * /app/public
+    root * /app
     root * .
+
     route {
         file_server
         php_fastcgi
