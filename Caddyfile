@@ -4,13 +4,21 @@
 }
 
 :{$PORT} {
-    # Dynamically targets the container root folder cleanly
+    # Set the base path to the root container environment
     root * .
-    
-    # Internal routing engine to cleanly pass scripts to PHP workers
+
     route {
-        try_files {path} {path}/ /index.php?{query}
+        # 1. First attempt to serve standard static assets or images
         file_server
+
+        # 2. If the request doesn't match an asset, look for it as a raw PHP script execution
+        php_fastcgi
+        
+        # 3. Fallback: If nothing is found above, rewrite the request path into the internal app folders
+        @not_found not file {path}
+        rewrite @not_found /app{uri}
+        
+        # 4. Final safety check: pass any rewritten routes cleanly straight into the core php workers
         php_fastcgi
     }
 }
