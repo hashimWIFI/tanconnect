@@ -111,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_upload']) && i
         $duplicate_count = 0;
         
         $check_stmt = $conn->prepare("SELECT COUNT(*) AS exists_count FROM wifi_vouchers WHERE voucher_code = ?");
-        $insert_stmt = $conn->prepare("INSERT INTO wifi_vouchers (voucher_code, price_tier, status) VALUES (?, ?, 'AVAILABLE')");
+        $insert_stmt = $conn->prepare("INSERT INTO wifi_vouchers (voucher_code, price_tier, transactionstatus) VALUES (?, ?, 'AVAILABLE')");
         
         foreach ($raw_lines as $line) {
             $clean_code = preg_replace('/[^a-zA-Z0-9]/', '', trim($line));
